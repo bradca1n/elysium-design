@@ -28,9 +28,46 @@ Skills MUST be invoked via the `Skill` tool — not described in text. Describin
 | `implement-design` | **Before any creative work** — Translates Figma designs into production-ready code with 1:1 visual fidelity. Use when implementing UI from Figma files, when user mentions "implement design", "generate code", "implement component", "build Figma design", provides Figma URLs, or asks to build components matching Figma specs. Requires Figma MCP server connection.|
 | `verification-before-completion` | **Before claiming done** — run tests, verify output, check all files |
 | `canvas-design` | **Before claiming done** — Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create original visual designs, never copying existing artists' work to avoid copyright violations. |
+| `writing-plans` | **Before implementation** — creates a reviewable plan with phases, tool/MCP/skill assignments, agent structure |
 
 **Required workflow chain** for non-trivial tasks (each step = actual `Skill` tool call):
 ```
 Skill("brainstorming") → Skill("writing-plans") → Skill("frontend-design") →
   Skill("implement-design") → Skill("verification-before-completion")
 ```
+
+## Gluestack MCP — Component Library
+
+When creating any new UI component, page, or layout, use the Gluestack MCP tools **before writing code**:
+
+1. `get_all_components_metadata` — discover available components
+2. `select_components` — confirm which components to use
+3. `get_selected_components_docs` — fetch full docs before generating code
+
+**Rules:**
+- Never use raw HTML tags (`<div>`, `<button>`, `<input>`, etc.) — use Gluestack components only
+- No StyleSheet — use TailwindCSS via `className` prop
+- Prefer `VStack`/`HStack` over `Box`
+- Import all components individually
+- All screens must be scrollable, responsive, and mobile-friendly
+
+**Triggers:** user requests a new component, page, dashboard, form, table, modal, or any UI element for the fund administration platform.
+
+## Figma Plugins
+
+Any Figma plugins built for this project should be created in `LOCAL/plugins/<plugin-name>/`. Each plugin folder must contain at minimum `manifest.json`, `code.js`, and `ui.html`.
+
+## Knowledge Base
+
+All domain, product, and technical context lives in `claude_context/`. Always read `claude_context/INDEX.md` first to find relevant files — load only what's needed for the task.
+
+**For every UI/UX task, load these before starting:**
+- `claude_context/technical/FRONTEND.md` — Gluestack UI, NativeWind, design tokens, spacing
+- `claude_context/errors/frontend.md` — UI pitfalls to avoid
+- `claude_context/patterns/frontend.md` — verified component patterns
+- `claude_context/product/OVERVIEW.md` — product context and target user
+
+**Also load when relevant:**
+- `claude_context/protocols/design-to-code.md` — Figma → Gluestack workflow
+- `claude_context/templates/component.md` — component scaffold format
+- `claude_context/product/FEATURES.md` — when building against existing feature inventory

@@ -1,0 +1,24 @@
+I'm working in the elysium-design project (cd to LOCAL/elysium-design first).
+
+Read CLAUDE.md, then implement the following wireframe as high-fidelity production code:
+
+Figma wireframe: [PASTE FIGMA URL HERE]
+High-fidelity reference (if exists): [PASTE FIGMA HI-FI URL OR "none"]
+
+Before writing any code:
+1. Invoke Skill("implement-design") — do not substitute it with your own approach
+2. Use the Figma MCP (get_design_context) to read the wireframe node
+3. Use get_variable_defs on the Figma file to extract design tokens — map them to the project token system in claude_context/technical/FRONTEND.md
+4. Check claude_context/protocols/design-to-code.md for the full workflow
+5. Use Gluestack MCP tools (get_all_components_metadata, select_components, get_selected_components_docs) before writing any component code
+6. Present HTML Mockup
+7. Request the promptee to push these designs to Figma
+
+Constraints:
+- For HTML mockups, output to output/<screen-name>.html
+- Use Gluestack components only — no raw HTML tags
+- Use design tokens only — no hardcoded hex values (see FRONTEND.md token table)
+- Use VStack/HStack space prop — not className="gap-N"
+- Dark mode: pass mode="dark" to GluestackUIProvider
+
+- After implementing, run Skill("verification-before-completion")

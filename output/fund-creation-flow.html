@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fund Creation — Elysium</title>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== Design Tokens ===== */
+    :root {
+      --bg-canvas:           #fefeff;
+      --bg-surface:          #f5f5f5;
+      --bg-subtle:           #f5f5f5;
+      --bg-elevated:         #e5e5e5;
+      --text-primary:        #171717;
+      --text-secondary:      #737373;
+      --text-muted:          #a3a3a3;
+      --text-inverse:        #fefeff;
+      --text-positive:       #348352;
+      --text-negative:       #ef4444;
+      --border-subtle:       #e5e5e5;
+      --border-default:      #e5e5e5;
+      --border-strong:       #dbdbdc;
+      --border-positive:     #348352;
+      --border-negative:     #dc2626;
+      --status-positive:     #348352;
+      --status-positive-bg:  #caffe8;
+      --status-negative:     #e63535;
+      --status-negative-bg:  #fee9e9;
+      --status-warning:      #e77828;
+      --status-warning-bg:   #fff4ec;
+      --status-info:         #0b8dcd;
+      --status-info-bg:      #c7ebfc;
+      --status-neutral:      #404040;
+      --status-neutral-bg:   #f5f5f5;
+      --btn-primary-bg:      #262627;
+      --btn-primary-text:    #f5f5f5;
+      --btn-secondary-bg:    #e5e5e5;
+      --btn-secondary-text:  #171717;
+      --btn-ghost-text:      #171717;
+      --radius-xs:  4px;
+      --radius-s:   6px;
+      --radius-m:   8px;
+      --radius-l:   12px;
+      --radius-xl:  16px;
+      --radius-2xl: 56px;
+      --radius-full: 999px;
+      /* Spacing */
+      --space-0:   0px;
+      --space-2:   2px;
+      --space-4:   4px;
+      --space-8:   8px;
+      --space-16:  16px;
+      --space-24:  24px;
+      --space-32:  32px;
+      --space-40:  40px;
+      --space-48:  48px;
+      --space-64:  64px;
+      --space-80:  80px;
+      --space-96:  96px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ===== Layout ===== */
+    .layout { display: flex; flex-direction: column; height: 100vh; }
+
+    /* Capture mode */
+    body.capture-mode,
+    body.capture-mode html { height: auto !important; overflow: visible !important; }
+    body.capture-mode .layout { height: auto !important; min-height: 100vh; }
+    body.capture-mode .body-row { overflow: visible !important; height: auto !important; }
+    body.capture-mode .main-area { overflow: visible !important; height: auto !important; }
+
+    /* ===== Navbar ===== */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-24) var(--space-32);
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-canvas);
+      flex-shrink: 0;
+      height: 86px;
+    }
+    .navbar-left { display: flex; align-items: center; gap: var(--space-24); }
+    .navbar-logo {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+    .navbar-right { display: flex; align-items: center; gap: var(--space-32); }
+    .navbar-user { display: flex; align-items: center; gap: var(--space-8); cursor: pointer; }
+    .navbar-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--bg-elevated);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 600; color: var(--text-secondary);
+    }
+    .navbar-username {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xs);
+      padding: var(--space-4) var(--space-8);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    /* ===== Body ===== */
+    .body-row { display: flex; flex: 1; overflow: hidden; }
+
+    /* ===== Stepper Sidebar ===== */
+    .stepper-sidebar {
+      width: 320px;
+      flex-shrink: 0;
+      background: var(--bg-canvas);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-32);
+      overflow-y: auto;
+    }
+    .stepper-header {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-24);
+    }
+    .stepper-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* Stepper Item */
+    .stepper-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-16);
+      position: relative;
+      padding-bottom: var(--space-32);
+    }
+    .stepper-item:last-child { padding-bottom: 0; }
+
+    /* Stepper line connector */
+    .stepper-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 34px;
+      bottom: 0;
+      width: 2px;
+      background: var(--border-subtle);
+    }
+    .stepper-item.completed:not(:last-child)::after {
+      background: var(--status-positive);
+    }
+    .stepper-item.active:not(:last-child)::after {
+      background: var(--border-subtle);
+    }
+
+    /* Stepper circle */
+    .stepper-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+      transition: all 0.2s ease;
+    }
+    .stepper-item.pending .stepper-circle {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 2px solid var(--border-subtle);
+    }
+    .stepper-item.active .stepper-circle {
+      background: var(--btn-primary-bg);
+      color: var(--text-inverse);
+      border: 2px solid var(--btn-primary-bg);
+      box-shadow: 0 0 0 4px rgba(38, 38, 39, 0.12);
+    }
+    .stepper-item.completed .stepper-circle {
+      background: var(--status-positive-bg);
+      color: var(--status-positive);
+      border: 2px solid var(--status-positive);
+    }
+    .stepper-circle .check-icon {
+      width: 16px; height: 16px;
+    }
+
+    /* Stepper text */
+    .stepper-content { flex: 1; padding-top: var(--space-4); }
+    .stepper-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+    .stepper-item.pending .stepper-title { color: var(--text-muted); }
+    .stepper-item.active .stepper-title { color: var(--text-primary); font-weight: 600; }
+    .stepper-item.completed .stepper-title { color: var(--text-secondary); }
+
+    .stepper-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: var(--space-2);
+      line-height: 1.4;
+    }
+    .stepper-item.active .stepper-desc { color: var(--text-secondary); }
+
+    /* ===== Main area ===== */
+    .main-area {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: var(--space-48) var(--space-32);
+      width: 100%;
+    }
+
+    /* ===== Step screens ===== */
+    .step-screen { display: none; flex-direction: column; flex: 1; }
+    .step-screen.active { display: flex; }
+
+    /* Welcome screen */
+    .welcome-icon {
+      width: 64px; height: 64px;
+      border-radius: var(--radius-xl);
+      background: var(--status-info-bg);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: var(--space-24);
+    }
+    .welcome-icon svg { width: 32px; height: 32px; color: var(--status-info); }
+
+    .step-heading {
+      font-size: 30px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin-bottom: var(--space-8);
+    }
+    .step-subheading {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: var(--space-32);
+    }
+
+    /* Welcome features list */
+    .features-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-16);
+      margin-bottom: var(--space-40);
+    }
+    .feature-item {
+      display: flex;
+      gap: var(--space-16);
+      align-items: flex-start;
+      padding: var(--space-16);
+      background: var(--bg-surface);
+      border-radius: var(--radius-l);
+    }
+    .feature-icon {
+      width: 40px; height: 40px;
+      border-radius: var(--radius-m);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .feature-icon.blue { background: var(--status-info-bg); color: var(--status-info); }
+    .feature-icon.green { background: var(--status-positive-bg); color: var(--status-positive); }
+    .feature-icon.orange { background: var(--status-warning-bg); color: var(--status-warning); }
+    .feature-text { flex: 1; }
+    .feature-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2); }
+    .feature-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
+
+    /* Estimated time */
+    .time-estimate {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: var(--space-32);
+    }
+    .time-estimate svg { width: 16px; height: 16px; }
+
+    /* ===== Form elements ===== */
+    .form-group {
+      margin-bottom: var(--space-24);
+    }
+    .form-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: var(--space-8);
+      display: block;
+    }
+    .form-label .required { color: var(--text-negative); }
+    .form-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: var(--space-4);
+    }
+
+    /* Card selection (for single-select options like current setup) */
+    .card-select-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+    }
+    .card-select {
+      display: flex;
+      align-items: center;
+      gap: var(--space-16);
+      padding: var(--space-16);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-l);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background: var(--bg-canvas);
+    }
+    .card-select:hover {
+      border-color: var(--border-strong);
+      background: var(--bg-subtle);
+    }
+    .card-select.selected {
+      border-color: var(--btn-primary-bg);
+      background: var(--bg-canvas);
+    }
+    .card-select-radio {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--border-strong);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s ease;
+    }
+    .card-select.selected .card-select-radio {
+      border-color: var(--btn-primary-bg);
+    }
+    .card-select.selected .card-select-radio::after {
+      content: '';
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--btn-primary-bg);
+    }
+    .card-select-icon {
+      width: 40px; height: 40px;
+      border-radius: var(--radius-m);
+      background: var(--bg-surface);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 18px;
+    }
+    .card-select-text { flex: 1; }
+    .card-select-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+    .card-select-desc { font-size: 12px; color: var(--text-secondary); margin-top: var(--space-2); }
+
+    /* Pill select (for AUM ranges) */
+    .pill-select-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-8);
+    }
+    .pill-select {
+      padding: var(--space-8) var(--space-16);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background: var(--bg-canvas);
+      white-space: nowrap;
+    }
+    .pill-select:hover {
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+    .pill-select.selected {
+      border-color: var(--btn-primary-bg);
+      background: var(--btn-primary-bg);
+      color: var(--text-inverse);
+    }
+
+    /* Slider input */
+    .slider-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-16);
+    }
+    .slider-input {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-full);
+      outline: none;
+    }
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--btn-primary-bg);
+      cursor: pointer;
+      border: 3px solid var(--bg-canvas);
+      box-shadow: 0 0 0 2px var(--btn-primary-bg);
+    }
+    .slider-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      min-width: 48px;
+      text-align: right;
+    }
+
+    /* Chip multi-select (for asset classes, investor regions) */
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-8);
+    }
+    .chip {
+      padding: var(--space-8) var(--space-16);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background: var(--bg-canvas);
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+    .chip:hover {
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+    .chip.selected {
+      border-color: var(--btn-primary-bg);
+      background: var(--status-neutral-bg);
+      color: var(--text-primary);
+    }
+    .chip .chip-check {
+      width: 14px; height: 14px;
+      display: none;
+    }
+    .chip.selected .chip-check { display: block; }
+
+    /* Text input */
+    .text-input {
+      width: 100%;
+      padding: var(--space-8) var(--space-16);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-m);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      background: var(--bg-canvas);
+      outline: none;
+      transition: border-color 0.15s ease;
+      height: 44px;
+    }
+    .text-input:focus { border-color: var(--btn-primary-bg); }
+    .text-input::placeholder { color: var(--text-muted); }
+
+    /* Inline two-column form */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-16);
+    }
+
+    /* Strategy details grid */
+    .strategy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: var(--space-16);
+    }
+    .strategy-card {
+      padding: var(--space-16);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-l);
+      text-align: center;
+    }
+    .strategy-card-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-8);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Section divider with text */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: var(--space-16);
+      margin: var(--space-32) 0;
+    }
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-subtle);
+    }
+    .section-divider span {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    /* ===== Buttons ===== */
+    .btn-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: var(--space-32);
+      border-top: 1px solid var(--border-subtle);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-8);
+      padding: 0 var(--space-24);
+      height: 44px;
+      border-radius: var(--radius-m);
+      font-size: 14px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+    }
+    .btn-primary {
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-text);
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+    }
+    .btn-secondary:hover { background: var(--bg-subtle); color: var(--text-primary); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 0 var(--space-16);
+    }
+    .btn-ghost:hover { color: var(--text-primary); }
+    .btn svg { width: 16px; height: 16px; }
+
+    /* ===== Recommendation screen ===== */
+    .rec-section {
+      margin-bottom: var(--space-32);
+    }
+    .rec-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-16);
+    }
+    .rec-section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .rec-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-4) var(--space-8);
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .rec-badge.auto {
+      background: var(--status-info-bg);
+      color: var(--status-info);
+    }
+    .rec-badge.editable {
+      background: var(--status-warning-bg);
+      color: var(--status-warning);
+    }
+
+    .rec-card {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-l);
+      overflow: hidden;
+    }
+    .rec-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-16);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .rec-row:last-child { border-bottom: none; }
+    .rec-row-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+    }
+    .rec-row-value {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+    }
+    .rec-row-edit {
+      width: 28px; height: 28px;
+      border-radius: var(--radius-s);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-canvas);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .rec-row-edit:hover { background: var(--bg-subtle); }
+    .rec-row-edit svg { width: 14px; height: 14px; color: var(--text-secondary); }
+
+    /* Derived tag */
+    .derived-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-4);
+      padding: 2px var(--space-8);
+      border-radius: var(--radius-full);
+      background: var(--status-positive-bg);
+      color: var(--status-positive);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* ===== Submitted screen ===== */
+    .submitted-icon {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: var(--status-positive-bg);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto var(--space-24);
+    }
+    .submitted-icon svg { width: 40px; height: 40px; color: var(--status-positive); }
+    .submitted-heading {
+      font-size: 30px;
+      font-weight: 600;
+      text-align: center;
+      color: var(--text-primary);
+      margin-bottom: var(--space-8);
+    }
+    .submitted-desc {
+      font-size: 16px;
+      color: var(--text-secondary);
+      text-align: center;
+      line-height: 1.5;
+      margin-bottom: var(--space-40);
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .submitted-summary {
+      background: var(--bg-surface);
+      border-radius: var(--radius-l);
+      padding: var(--space-24);
+      margin-bottom: var(--space-32);
+    }
+    .submitted-summary-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-16);
+    }
+    .submitted-summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-8) 0;
+    }
+    .submitted-summary-label { font-size: 13px; color: var(--text-secondary); }
+    .submitted-summary-value { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+    .submitted-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-16);
+    }
+
+    /* ===== Progress bar ===== */
+    .progress-bar-container {
+      height: 3px;
+      background: var(--bg-elevated);
+      flex-shrink: 0;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--btn-primary-bg);
+      transition: width 0.3s ease;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 1024px) {
+      .stepper-sidebar { display: none; }
+    }
+
+    /* Share class fee inline inputs */
+    .fee-input-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+    }
+    .fee-input {
+      width: 80px;
+      height: 44px;
+      padding: var(--space-8) var(--space-16);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-m);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      background: var(--bg-canvas);
+      outline: none;
+      text-align: right;
+    }
+    .fee-input:focus { border-color: var(--btn-primary-bg); }
+    .fee-suffix {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* Info callout */
+    .info-callout {
+      display: flex;
+      gap: var(--space-16);
+      padding: var(--space-16);
+      background: var(--status-info-bg);
+      border-radius: var(--radius-l);
+      margin-bottom: var(--space-24);
+    }
+    .info-callout-icon {
+      width: 20px; height: 20px; flex-shrink: 0;
+      color: var(--status-info);
+    }
+    .info-callout-text {
+      font-size: 13px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-left">
+        <div class="navbar-logo">Elysium</div>
+      </div>
+      <div class="navbar-right">
+        <div class="navbar-user">
+          <div class="navbar-avatar">JD</div>
+          <span class="navbar-username">John Doe</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Progress bar -->
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+    </div>
+
+    <div class="body-row">
+      <!-- Stepper sidebar -->
+      <aside class="stepper-sidebar">
+        <div class="stepper-header">Fund Setup</div>
+        <div class="stepper-list" id="stepperList">
+          <div class="stepper-item active" data-step="0">
+            <div class="stepper-circle">1</div>
+            <div class="stepper-content">
+              <div class="stepper-title">Welcome</div>
+              <div class="stepper-desc">Overview of the process</div>
+            </div>
+          </div>
+          <div class="stepper-item pending" data-step="1">
+            <div class="stepper-circle">2</div>
+            <div class="stepper-content">
+              <div class="stepper-title">Current Setup</div>
+              <div class="stepper-desc">Your existing infrastructure</div>
+            </div>
+          </div>
+          <div class="stepper-item pending" data-step="2">
+            <div class="stepper-circle">3</div>
+            <div class="stepper-content">
+              <div class="stepper-title">Fund Size</div>
+              <div class="stepper-desc">AUM and migration scope</div>
+            </div>
+          </div>
+          <div class="stepper-item pending" data-step="3">
+            <div class="stepper-circle">4</div>
+            <div class="stepper-content">
+              <div class="stepper-title">Strategy & Assets</div>
+              <div class="stepper-desc">Investment approach</div>
+            </div>
+          </div>
+          <div class="stepper-item pending" data-step="4">
+            <div class="stepper-circle">5</div>
+            <div class="stepper-content">
+              <div class="stepper-title">Investor Profile</div>
+              <div class="stepper-desc">Who invests in your fund</div>
+            </div>
+          </div>
+          <div class="stepper-item pending" data-step="5">
+            <div class="stepper-circle">6</div>
+            <div class="stepper-content">
+              <div class="stepper-title">Share Class</div>
+              <div class="stepper-desc">Initial class configuration</div>
+            </div>
+          </div>
+          <div class="stepper-item pending" data-step="6">
+            <div class="stepper-circle">7</div>
+            <div class="stepper-content">
+              <div class="stepper-title">Review</div>
+              <div class="stepper-desc">Your recommended configuration</div>
+            </div>
+          </div>
+          <div class="stepper-item pending" data-step="7">
+            <div class="stepper-circle">8</div>
+            <div class="stepper-content">
+              <div class="stepper-title">Submit</div>
+              <div class="stepper-desc">Request a callback</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <main class="main-area">
+        <div class="main-content">
+
+          <!-- STEP 0: Welcome -->
+          <div class="step-screen active" id="step-0">
+            <div class="welcome-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <h1 class="step-heading">Launch your fund on Elysium</h1>
+            <p class="step-subheading">We'll walk you through a few questions about your fund to generate a tailored configuration. This takes about 5 minutes.</p>
+
+            <div class="features-list">
+              <div class="feature-item">
+                <div class="feature-icon blue">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                </div>
+                <div class="feature-text">
+                  <div class="feature-title">Answer a few questions</div>
+                  <div class="feature-desc">Tell us about your current setup, strategy, and investor base. We'll use this to recommend the best configuration.</div>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon green">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0110 10c0 5.523-4.477 10-10 10S2 17.523 2 12"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+                <div class="feature-text">
+                  <div class="feature-title">Get a tailored recommendation</div>
+                  <div class="feature-desc">We'll generate a fund structure, share class design, and fee configuration based on your answers.</div>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon orange">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </div>
+                <div class="feature-text">
+                  <div class="feature-title">Refine and submit</div>
+                  <div class="feature-desc">Review and adjust the recommendation, then submit. Our team will schedule a call to finalize your setup.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="time-estimate">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Estimated time: 5 minutes
+            </div>
+
+            <div class="btn-row" style="border-top: none; padding-top: 0;">
+              <div></div>
+              <button class="btn btn-primary" onclick="goToStep(1)">
+                Get started
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 1: Current Setup -->
+          <div class="step-screen" id="step-1">
+            <h1 class="step-heading">What's your current setup?</h1>
+            <p class="step-subheading">Help us understand where you're starting from so we can recommend the right configuration.</p>
+
+            <div class="form-group">
+              <label class="form-label">Select your current arrangement <span class="required">*</span></label>
+              <div class="card-select-group">
+                <div class="card-select selected" onclick="selectCard(this)">
+                  <div class="card-select-radio"></div>
+                  <div class="card-select-icon">🏛</div>
+                  <div class="card-select-text">
+                    <div class="card-select-title">Regulated Fund</div>
+                    <div class="card-select-desc">You already operate a regulated fund structure (UCITS, AIF, etc.)</div>
+                  </div>
+                </div>
+                <div class="card-select" onclick="selectCard(this)">
+                  <div class="card-select-radio"></div>
+                  <div class="card-select-icon">📋</div>
+                  <div class="card-select-text">
+                    <div class="card-select-title">Separately Managed Accounts (SMAs)</div>
+                    <div class="card-select-desc">You manage individual accounts for clients with customized portfolios</div>
+                  </div>
+                </div>
+                <div class="card-select" onclick="selectCard(this)">
+                  <div class="card-select-radio"></div>
+                  <div class="card-select-icon">🏢</div>
+                  <div class="card-select-text">
+                    <div class="card-select-title">Portfolio Manager at a Fund</div>
+                    <div class="card-select-desc">You're a PM at an existing fund, preparing to launch your own pod or strategy</div>
+                  </div>
+                </div>
+                <div class="card-select" onclick="selectCard(this)">
+                  <div class="card-select-radio"></div>
+                  <div class="card-select-icon">🚀</div>
+                  <div class="card-select-text">
+                    <div class="card-select-title">Rolling Out / New Launch</div>
+                    <div class="card-select-desc">You're starting from scratch — no existing fund infrastructure</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-ghost" onclick="goToStep(0)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back
+              </button>
+              <button class="btn btn-primary" onclick="goToStep(2)">
+                Continue
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 2: Fund Size -->
+          <div class="step-screen" id="step-2">
+            <h1 class="step-heading">How large is your fund?</h1>
+            <p class="step-subheading">Your AUM helps us recommend the right fee structure and service tier.</p>
+
+            <div class="form-group">
+              <label class="form-label">Current AUM <span class="required">*</span></label>
+              <div class="pill-select-group">
+                <div class="pill-select" onclick="selectPill(this)">$0–5M</div>
+                <div class="pill-select" onclick="selectPill(this)">$5–10M</div>
+                <div class="pill-select selected" onclick="selectPill(this)">$10–25M</div>
+                <div class="pill-select" onclick="selectPill(this)">$25–50M</div>
+                <div class="pill-select" onclick="selectPill(this)">$50–100M</div>
+                <div class="pill-select" onclick="selectPill(this)">$100–250M</div>
+                <div class="pill-select" onclick="selectPill(this)">$250M+</div>
+              </div>
+            </div>
+
+            <div class="section-divider"><span>Migration</span></div>
+
+            <div class="form-group">
+              <label class="form-label">What portion of AUM will migrate to your Elysium pod?</label>
+              <div class="slider-container">
+                <div class="slider-row">
+                  <input type="range" class="slider-input" min="0" max="100" value="75" oninput="this.nextElementSibling.textContent = this.value + '%'">
+                  <span class="slider-value">75%</span>
+                </div>
+                <div class="form-hint">Slide to estimate how much of your current AUM will be managed through Elysium</div>
+              </div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-ghost" onclick="goToStep(1)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back
+              </button>
+              <button class="btn btn-primary" onclick="goToStep(3)">
+                Continue
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 3: Strategy & Assets -->
+          <div class="step-screen" id="step-3">
+            <h1 class="step-heading">Strategy & asset classes</h1>
+            <p class="step-subheading">Tell us about your investment approach so we can configure the right dealing cycle and pricing model.</p>
+
+            <div class="form-group">
+              <label class="form-label">What asset classes do you trade? <span class="required">*</span></label>
+              <div class="chip-group">
+                <div class="chip selected" onclick="toggleChip(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  Crypto Spot
+                </div>
+                <div class="chip selected" onclick="toggleChip(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  Crypto Derivatives
+                </div>
+                <div class="chip" onclick="toggleChip(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  Equities
+                </div>
+                <div class="chip" onclick="toggleChip(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  Fixed Income
+                </div>
+                <div class="chip" onclick="toggleChip(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  FX
+                </div>
+                <div class="chip" onclick="toggleChip(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  DeFi / Yield
+                </div>
+                <div class="chip" onclick="toggleChip(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  Commodities
+                </div>
+                <div class="chip" onclick="toggleChip(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  Other
+                </div>
+              </div>
+            </div>
+
+            <div class="section-divider"><span>Strategy details</span></div>
+
+            <div class="form-group">
+              <label class="form-label">Describe your strategy <span class="required">*</span></label>
+              <div class="strategy-grid">
+                <div class="strategy-card">
+                  <div class="strategy-card-label">Trade frequency</div>
+                  <div class="pill-select-group" style="justify-content: center;">
+                    <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">Low</div>
+                    <div class="pill-select selected" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">Medium</div>
+                    <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">High</div>
+                  </div>
+                </div>
+                <div class="strategy-card">
+                  <div class="strategy-card-label">Gross exposure</div>
+                  <div class="fee-input-group" style="justify-content: center;">
+                    <input class="fee-input" type="text" value="150" style="width: 70px; text-align: center;">
+                    <span class="fee-suffix">%</span>
+                  </div>
+                </div>
+                <div class="strategy-card">
+                  <div class="strategy-card-label">Net exposure</div>
+                  <div class="fee-input-group" style="justify-content: center;">
+                    <input class="fee-input" type="text" value="80" style="width: 70px; text-align: center;">
+                    <span class="fee-suffix">%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-ghost" onclick="goToStep(2)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back
+              </button>
+              <button class="btn btn-primary" onclick="goToStep(4)">
+                Continue
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 4: Investor Profile -->
+          <div class="step-screen" id="step-4">
+            <h1 class="step-heading">Investor profile</h1>
+            <p class="step-subheading">Where do your investors reside? This affects domicile selection and regulatory requirements.</p>
+
+            <div class="form-group">
+              <label class="form-label">Investor regions (select all that apply)</label>
+              <div class="chip-group">
+                <div class="chip selected" onclick="toggleChip(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  United States
+                </div>
+                <div class="chip selected" onclick="toggleChip(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  European Union
+                </div>
+                <div class="chip" onclick="toggleChip(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  United Kingdom
+                </div>
+                <div class="chip" onclick="toggleChip(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  Asia-Pacific
+                </div>
+                <div class="chip" onclick="toggleChip(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  Middle East
+                </div>
+                <div class="chip" onclick="toggleChip(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  Latin America
+                </div>
+                <div class="chip" onclick="toggleChip(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  Other
+                </div>
+              </div>
+            </div>
+
+            <div class="info-callout">
+              <svg class="info-callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <div class="info-callout-text">
+                <strong>Why this matters:</strong> US investors require specific fund structures (e.g., Cayman SPC with check-the-box election). EU investors benefit from UCITS passporting. This drives our domicile and structure recommendation.
+              </div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-ghost" onclick="goToStep(3)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back
+              </button>
+              <button class="btn btn-primary" onclick="goToStep(5)">
+                Continue
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 5: Share Class Design -->
+          <div class="step-screen" id="step-5">
+            <h1 class="step-heading">Initial share class</h1>
+            <p class="step-subheading">Configure your first share class. You can add more classes later.</p>
+
+            <div class="form-group">
+              <label class="form-label">Availability <span class="required">*</span></label>
+              <div class="card-select-group">
+                <div class="card-select selected" onclick="selectCard(this)">
+                  <div class="card-select-radio"></div>
+                  <div class="card-select-text">
+                    <div class="card-select-title">Manager only</div>
+                    <div class="card-select-desc">Seed class — only the manager can invest initially</div>
+                  </div>
+                </div>
+                <div class="card-select" onclick="selectCard(this)">
+                  <div class="card-select-radio"></div>
+                  <div class="card-select-text">
+                    <div class="card-select-title">Invite only</div>
+                    <div class="card-select-desc">Restricted to pre-approved investors</div>
+                  </div>
+                </div>
+                <div class="card-select" onclick="selectCard(this)">
+                  <div class="card-select-radio"></div>
+                  <div class="card-select-text">
+                    <div class="card-select-title">AUM threshold</div>
+                    <div class="card-select-desc">Open to investors meeting a minimum investment</div>
+                  </div>
+                </div>
+                <div class="card-select" onclick="selectCard(this)">
+                  <div class="card-select-radio"></div>
+                  <div class="card-select-text">
+                    <div class="card-select-title">Open</div>
+                    <div class="card-select-desc">Available to all eligible investors</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-divider"><span>Fees</span></div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Management fee</label>
+                <div class="fee-input-group">
+                  <input class="fee-input" type="text" value="1.50" style="width: 100%;">
+                  <span class="fee-suffix">% p.a.</span>
+                </div>
+                <div class="form-hint">Annual rate, accrued daily</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Performance fee</label>
+                <div class="fee-input-group">
+                  <input class="fee-input" type="text" value="20.00" style="width: 100%;">
+                  <span class="fee-suffix">%</span>
+                </div>
+                <div class="form-hint">Of profits above HWM</div>
+              </div>
+            </div>
+
+            <div class="section-divider"><span>Terms</span></div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Lock-up period</label>
+                <div class="pill-select-group">
+                  <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">None</div>
+                  <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">3 months</div>
+                  <div class="pill-select selected" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">6 months</div>
+                  <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">1 year</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Redemption notice</label>
+                <div class="pill-select-group">
+                  <div class="pill-select selected" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">1 day</div>
+                  <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">7 days</div>
+                  <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">30 days</div>
+                  <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">90 days</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Minimum subscription</label>
+              <div class="fee-input-group">
+                <span class="fee-suffix">$</span>
+                <input class="fee-input" type="text" value="0" style="width: 160px; text-align: left;" placeholder="No minimum">
+              </div>
+              <div class="form-hint">Leave at 0 for no minimum</div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-ghost" onclick="goToStep(4)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back
+              </button>
+              <button class="btn btn-primary" onclick="goToStep(6)">
+                Generate recommendation
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 6: Recommendation -->
+          <div class="step-screen" id="step-6">
+            <div style="display: flex; align-items: center; gap: var(--space-8); margin-bottom: var(--space-8);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--status-positive)" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+              <span style="font-size: 14px; font-weight: 600; color: var(--status-positive);">Recommendation ready</span>
+            </div>
+            <h1 class="step-heading">Your recommended fund configuration</h1>
+            <p class="step-subheading">Based on your answers, here's our suggested setup. Edit any value before submitting.</p>
+
+            <!-- Fund Structure -->
+            <div class="rec-section">
+              <div class="rec-section-header">
+                <div class="rec-section-title">Fund Structure</div>
+                <span class="rec-badge auto">Auto-derived</span>
+              </div>
+              <div class="rec-card">
+                <div class="rec-row">
+                  <span class="rec-row-label">Domicile</span>
+                  <span class="rec-row-value">
+                    Cayman Islands (SPC)
+                    <span class="derived-tag">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2a10 10 0 0110 10 10 10 0 01-10 10A10 10 0 012 12 10 10 0 0112 2z"/><path d="M12 6v6l4 2"/></svg>
+                      Derived
+                    </span>
+                  </span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Structure type</span>
+                  <span class="rec-row-value">Segregated Portfolio Company</span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Administrator</span>
+                  <span class="rec-row-value">Elysium (Irish-licensed)</span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Reporting currency</span>
+                  <span class="rec-row-value">
+                    USD
+                    <button class="rec-row-edit" title="Edit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                  </span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Rationale</span>
+                  <span class="rec-row-value" style="font-size: 13px; font-weight: 400; color: var(--text-secondary); max-width: 380px; text-align: right;">
+                    US + EU investors → Cayman SPC with check-the-box. Tax-neutral. Standard cross-border arrangement with Irish admin.
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dealing & Pricing -->
+            <div class="rec-section">
+              <div class="rec-section-header">
+                <div class="rec-section-title">Dealing & Pricing</div>
+                <span class="rec-badge auto">Auto-derived</span>
+              </div>
+              <div class="rec-card">
+                <div class="rec-row">
+                  <span class="rec-row-label">NAV frequency</span>
+                  <span class="rec-row-value">
+                    Daily
+                    <span class="derived-tag">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2a10 10 0 0110 10 10 10 0 01-10 10A10 10 0 012 12 10 10 0 0112 2z"/><path d="M12 6v6l4 2"/></svg>
+                      Derived
+                    </span>
+                    <button class="rec-row-edit" title="Edit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                  </span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Dealing cycle</span>
+                  <span class="rec-row-value">Daily (T+1 settlement)</span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Pricing source</span>
+                  <span class="rec-row-value">Haruko PMS (auto-feed)</span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Anti-dilution</span>
+                  <span class="rec-row-value">
+                    Swing pricing (±25bps)
+                    <button class="rec-row-edit" title="Edit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Share Class -->
+            <div class="rec-section">
+              <div class="rec-section-header">
+                <div class="rec-section-title">Share Class: Seed (Class S)</div>
+                <span class="rec-badge editable">Editable</span>
+              </div>
+              <div class="rec-card">
+                <div class="rec-row">
+                  <span class="rec-row-label">Availability</span>
+                  <span class="rec-row-value">
+                    Manager only
+                    <button class="rec-row-edit" title="Edit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                  </span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Management fee</span>
+                  <span class="rec-row-value">
+                    1.50% p.a.
+                    <button class="rec-row-edit" title="Edit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                  </span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Performance fee</span>
+                  <span class="rec-row-value">
+                    20.00% (HWM)
+                    <button class="rec-row-edit" title="Edit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                  </span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Crystallization</span>
+                  <span class="rec-row-value">
+                    Annual
+                    <button class="rec-row-edit" title="Edit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                  </span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Lock-up</span>
+                  <span class="rec-row-value">
+                    6 months
+                    <button class="rec-row-edit" title="Edit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                  </span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Redemption notice</span>
+                  <span class="rec-row-value">
+                    1 day
+                    <button class="rec-row-edit" title="Edit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                  </span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Minimum subscription</span>
+                  <span class="rec-row-value">
+                    No minimum
+                    <button class="rec-row-edit" title="Edit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                  </span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Denomination currency</span>
+                  <span class="rec-row-value">
+                    USD
+                    <button class="rec-row-edit" title="Edit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Regulatory -->
+            <div class="rec-section">
+              <div class="rec-section-header">
+                <div class="rec-section-title">Regulatory & Compliance</div>
+                <span class="rec-badge auto">Auto-derived</span>
+              </div>
+              <div class="rec-card">
+                <div class="rec-row">
+                  <span class="rec-row-label">KYC/AML tier</span>
+                  <span class="rec-row-value">
+                    Enhanced (accredited investors)
+                    <span class="derived-tag">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2a10 10 0 0110 10 10 10 0 01-10 10A10 10 0 012 12 10 10 0 0112 2z"/><path d="M12 6v6l4 2"/></svg>
+                      Derived
+                    </span>
+                  </span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Investor eligibility</span>
+                  <span class="rec-row-value">Accredited / Professional only</span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">FATCA/CRS</span>
+                  <span class="rec-row-value">Required (US + EU investors)</span>
+                </div>
+                <div class="rec-row">
+                  <span class="rec-row-label">Equalization method</span>
+                  <span class="rec-row-value">
+                    Series-based (on-chain)
+                    <span class="derived-tag">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2a10 10 0 0110 10 10 10 0 01-10 10A10 10 0 012 12 10 10 0 0112 2z"/><path d="M12 6v6l4 2"/></svg>
+                      Derived
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-ghost" onclick="goToStep(5)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back
+              </button>
+              <button class="btn btn-primary" onclick="goToStep(7)">
+                Submit & request callback
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 7: Submitted -->
+          <div class="step-screen" id="step-7">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; text-align: center;">
+              <div class="submitted-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+              </div>
+              <h1 class="submitted-heading">You're all set</h1>
+              <p class="submitted-desc">Your fund configuration has been submitted. Our team will review it and reach out to schedule a setup call within 1–2 business days.</p>
+
+              <div class="submitted-summary">
+                <div class="submitted-summary-title">Configuration Summary</div>
+                <div class="submitted-summary-row">
+                  <span class="submitted-summary-label">Structure</span>
+                  <span class="submitted-summary-value">Cayman SPC + Irish Admin</span>
+                </div>
+                <div class="submitted-summary-row">
+                  <span class="submitted-summary-label">AUM</span>
+                  <span class="submitted-summary-value">$10–25M (75% migrating)</span>
+                </div>
+                <div class="submitted-summary-row">
+                  <span class="submitted-summary-label">Strategy</span>
+                  <span class="submitted-summary-value">Crypto Spot + Derivatives</span>
+                </div>
+                <div class="submitted-summary-row">
+                  <span class="submitted-summary-label">Share class</span>
+                  <span class="submitted-summary-value">Seed (Class S) — 1.5/20</span>
+                </div>
+                <div class="submitted-summary-row">
+                  <span class="submitted-summary-label">NAV frequency</span>
+                  <span class="submitted-summary-value">Daily</span>
+                </div>
+                <div class="submitted-summary-row">
+                  <span class="submitted-summary-label">Reference ID</span>
+                  <span class="submitted-summary-value" style="font-family: monospace;">#FC-20260311-0042</span>
+                </div>
+              </div>
+
+              <div class="submitted-actions">
+                <button class="btn btn-primary" style="width: 260px;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+                  Send me a copy
+                </button>
+                <button class="btn btn-secondary" style="width: 260px;" onclick="goToStep(0)">
+                  Start a new configuration
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const totalSteps = 8; // 0-7
+    let currentStep = 0;
+
+    function goToStep(step) {
+      // Hide current
+      document.getElementById('step-' + currentStep).classList.remove('active');
+      // Show new
+      currentStep = step;
+      document.getElementById('step-' + currentStep).classList.add('active');
+
+      // Update stepper
+      const items = document.querySelectorAll('.stepper-item');
+      items.forEach((item, i) => {
+        const s = parseInt(item.dataset.step);
+        item.classList.remove('active', 'completed', 'pending');
+        if (s < step) {
+          item.classList.add('completed');
+          item.querySelector('.stepper-circle').innerHTML = '<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>';
+        } else if (s === step) {
+          item.classList.add('active');
+          item.querySelector('.stepper-circle').textContent = s + 1;
+        } else {
+          item.classList.add('pending');
+          item.querySelector('.stepper-circle').textContent = s + 1;
+        }
+      });
+
+      // Update progress bar
+      const progress = step === 7 ? 100 : (step / (totalSteps - 2)) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
+
+      // Scroll to top
+      document.querySelector('.main-area').scrollTop = 0;
+    }
+
+    function selectCard(el) {
+      const group = el.closest('.card-select-group');
+      group.querySelectorAll('.card-select').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function selectPill(el) {
+      const group = el.closest('.pill-select-group');
+      group.querySelectorAll('.pill-select').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function selectPillIn(el) {
+      const group = el.closest('.pill-select-group');
+      group.querySelectorAll('.pill-select').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function toggleChip(el) {
+      el.classList.toggle('selected');
+    }
+  </script>
+</body>
+</html>

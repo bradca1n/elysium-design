@@ -16,38 +16,144 @@
 
 ## Design Token System
 
-CSS variables defined in theme config -> mapped in `tailwind.config.ts`. Always use semantic tokens, never hardcoded hex values.
+Two-tier system: **Primitives** (raw values) → **Semantics** (intent). Always use semantic tokens in code, never hardcoded hex values. Tokens are CSS variables: `var(--text-color/primary)`.
 
-### Typography Tokens (dark mode)
+Source of truth: `LOCAL/elysium-design/tokens/`
 
-| Token | Hex | Usage |
-|-------|-----|-------|
-| typography-200 | #525252 | Disabled/muted text |
-| typography-300 | #737373 | Secondary text |
-| typography-400 | #8c8c8c | Tertiary text |
-| typography-500 | #a3a3a3 | Body text |
-| typography-950 | ~white | Primary text |
+### Text Color
 
-### Semantic Colors
+| Token | Light | Dark | Usage |
+|-------|-------|------|-------|
+| `text-color/primary` | #171717 | #FEFEFF | Headings, primary labels |
+| `text-color/secondary` | #737373 | #8C8C8C | Secondary labels |
+| `text-color/muted` | #A3A3A3 | #737373 | Placeholder, disabled text |
+| `text-color/inverse` | #FEFEFF | #171717 | Text on inverted surfaces |
+| `text-color/positive` | #348352 | #84D3A2 | Positive values |
+| `text-color/negative` | #EF4444 | #EF4444 | Negative/error values |
 
-| Token | Hex | Usage |
-|-------|-----|-------|
-| teal-400 | #2dd4bf | Success/positive indicators |
-| error-500 | #ef4444 | Error/negative states |
-| green-500 | #22c55e | Positive change values |
+### Background
 
-### VStack/HStack Space Values
+| Token | Light | Dark | Usage |
+|-------|-------|------|-------|
+| `bg/canvas` | #FEFEFF | #171717 | Page background |
+| `bg/surface` | #F5F5F5 | #202021 | Cards, panels |
+| `bg/elevated` | #E5E5E5 | #404040 | Elevated surfaces, modals |
+| `bg/subtle` | #F5F5F5 | #202021 | Subtle section backgrounds |
+
+### Border
+
+| Token | Light | Dark | Usage |
+|-------|-------|------|-------|
+| `border/subtle` | #E5E5E5 | #404040 | Dividers, subtle outlines |
+| `border/default` | #E5E5E5 | #525252 | Default borders |
+| `border/strong` | #DBDBDC | #737373 | Emphasis borders |
+| `border/positive` | #348352 | #84D3A2 | Success state borders |
+| `border/negative` | #DC2626 | #EF4444 | Error state borders |
+
+### Status
+
+| Token | Light | Dark | Usage |
+|-------|-------|------|-------|
+| `status/positive` | #348352 | #84D3A2 | Success indicator |
+| `status/positive-bg` | #CAFFE8 | #1B3224 | Success badge background |
+| `status/negative` | #E63535 | #EF4444 | Error indicator |
+| `status/negative-bg` | #FEE9E9 | #531313 | Error badge background |
+| `status/warning` | #E77828 | #FB954B | Warning indicator |
+| `status/warning-bg` | #FFF4EC | #542D12 | Warning badge background |
+| `status/info` | #0B8DCD | #32B4F4 | Info indicator |
+| `status/info-bg` | #C7EBFC | #032638 | Info badge background |
+| `status/neutral` | #404040 | #DBDBDC | Neutral indicator |
+| `status/neutral-bg` | #F5F5F5 | #202021 | Neutral badge background |
+
+### Chart Gradients
+
+| Token | Light | Dark |
+|-------|-------|------|
+| `gradient/chart/positive/start` | #ACFCD9 80% | #227752 80% |
+| `gradient/chart/positive/end` | #CAFFE8 0% | #0C2319 0% |
+| `gradient/chart/negative/start` | #EF4444 80% | #7B1C1C 80% |
+| `gradient/chart/negative/end` | #EF4444 0% | #7B1C1C 0% |
+
+### Spacing Scale
+
+Tokens live in the **semantic** collection (same value in Light and Dark). Token name: `space/N`.
+
+`0 · 2 · 4 · 8 · 16 · 24 · 32 · 40 · 48 · 64 · 80 · 96 · 112 · 128 · 144` (all in px)
+
+### Border Radius
+
+| Token | Value |
+|-------|-------|
+| `radius/xs` | 4px |
+| `radius/s` | 6px |
+| `radius/m` | 8px |
+| `radius/l` | 12px |
+| `radius/xl` | 16px |
+| `radius/2xl` | 56px |
+| `radius/full` | 999px |
+
+### Typography Scale
+
+| Token | Size | Usage |
+|-------|------|-------|
+| `text-size/display/lg` | 48px | Hero display |
+| `text-size/display/md` | 44px | Display |
+| `text-size/heading/lg` | 36px | Page headings |
+| `text-size/heading/md` | 30px | Section headings |
+| `text-size/heading/sm` | 24px | Sub-headings |
+| `text-size/title/lg` | 18px | Large titles |
+| `text-size/title/md` | 16px | Titles |
+| `text-size/title/sm` | 14px | Small titles |
+| `text-size/body/lg` | 18px | Large body |
+| `text-size/body/md` | 16px | Body text |
+| `text-size/body/sm` | 14px | Small body |
+| `text-size/caption/md` | 12px | Captions |
+| `text-size/caption/sm` | 10px | Small captions |
+| `text-size/label/lg` | 14px | Large labels |
+| `text-size/label/md` | 12px | Labels |
+| `text-size/label/sm` | 10px | Small labels |
+| `text-size/data/lg` | 48px | Large data figures |
+| `text-size/data/md` | 24px | Data figures |
+| `text-size/data/sm` | 14px | Small data figures |
+
+### Font Fixed Tokens
+
+| Token | Value |
+|-------|-------|
+| `font/line/tight` | 18px |
+| `font/line/normal` | 22px |
+| `font/line/relaxed` | 24px |
+| `font/weight/light` | 300 |
+| `font/weight/regular` | 400 |
+| `font/weight/medium` | 500 |
+| `font/weight/semibold` | 600 |
+| `font/weight/bold` | 700 |
+
+### Z-Index (layer)
+
+| Token | Value |
+|-------|-------|
+| `layer/base` | 0 |
+| `layer/sticky` | 10 |
+| `layer/dropdown` | 100 |
+| `layer/popover` | 200 |
+| `layer/sheet` | 300 |
+| `layer/modal` | 400 |
+| `layer/toast` | 500 |
+| `layer/tooltip` | 600 |
+
+### VStack/HStack Space Props (Gluestack)
+
+Gluestack `space` prop maps to the spacing scale above:
 
 | Prop | Pixels |
 |------|--------|
 | xs | 4px |
 | sm | 8px |
-| md | 12px |
-| lg | 16px |
-| xl | 20px |
-| 2xl | 24px |
-| 3xl | 28px |
-| 4xl | 32px |
+| md | 16px |
+| lg | 24px |
+| xl | 32px |
+| 2xl | 40px |
 
 ## Component Organization
 

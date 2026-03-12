@@ -41,13 +41,13 @@ Skip any step = lying, not verifying
 
 | Claim | Requires | Not Sufficient |
 |-------|----------|----------------|
-| Tests pass | Test command output: 0 failures | Previous run, "should pass" |
-| Linter clean | Linter output: 0 errors | Partial check, extrapolation |
-| Build succeeds | Build command: exit 0 | Linter passing, logs look good |
-| Bug fixed | Test original symptom: passes | Code changed, assumed fixed |
-| Regression test works | Red-green cycle verified | Test passes once |
 | Agent completed | VCS diff shows changes | Agent reports "success" |
-| Requirements met | Line-by-line checklist | Tests passing |
+| Requirements met | Line-by-line checklist | "Looks done" |
+| Figma design implemented | Screenshot comparison: layout/type/color match | "Looks close" |
+| Component matches design | implement-design Step 7 checklist completed | Build passes |
+| Gluestack components used correctly | MCP docs fetched + component names in code | "I used VStack" |
+| Canvas design complete | .pdf/.png file exists, second refinement pass done | First pass output |
+| Frontend design production-grade | No generic fonts, cohesive aesthetic, animations work | Code runs |
 
 ## Red Flags - STOP
 
@@ -58,6 +58,11 @@ Skip any step = lying, not verifying
 - Relying on partial verification
 - Thinking "just this once"
 - Tired and wanting work over
+- Claiming Figma parity without having run `get_screenshot` and compared it
+- Claiming Gluestack components used without having run `get_selected_components_docs`
+- Skipping the second refinement pass on canvas work
+- Using placeholder fonts, colors, or layout in "final" frontend output
+- Trusting that it "looks right" without side-by-side comparison against Figma screenshot
 - **ANY wording implying success without having run verification**
 
 ## Rationalization Prevention
@@ -67,42 +72,48 @@ Skip any step = lying, not verifying
 | "Should work now" | RUN the verification |
 | "I'm confident" | Confidence ≠ evidence |
 | "Just this once" | No exceptions |
-| "Linter passed" | Linter ≠ compiler |
 | "Agent said success" | Verify independently |
 | "I'm tired" | Exhaustion ≠ excuse |
 | "Partial check is enough" | Partial proves nothing |
+| "Looks close enough" | Visual ≠ verified |
 | "Different words so rule doesn't apply" | Spirit over letter |
 
 ## Key Patterns
 
-**Tests:**
-```
-✅ [Run test command] [See: 34/34 pass] "All tests pass"
-❌ "Should pass now" / "Looks correct"
-```
-
-**Regression tests (TDD Red-Green):**
-```
-✅ Write → Run (pass) → Revert fix → Run (MUST FAIL) → Restore → Run (pass)
-❌ "I've written a regression test" (without red-green verification)
-```
-
-**Build:**
-```
-✅ [Run build] [See: exit 0] "Build passes"
-❌ "Linter passed" (linter doesn't check compilation)
-```
-
 **Requirements:**
 ```
 ✅ Re-read plan → Create checklist → Verify each → Report gaps or completion
-❌ "Tests pass, phase complete"
+❌ "Looks done"
 ```
 
 **Agent delegation:**
 ```
 ✅ Agent reports success → Check VCS diff → Verify changes → Report actual state
 ❌ Trust agent report
+```
+
+**Figma implementation:**
+```
+✅ get_screenshot → compare side-by-side → confirm layout/type/color/spacing match
+❌ "Looks close" / "Matches the design"
+```
+
+**Gluestack components:**
+```
+✅ get_all_components_metadata → get_selected_components_docs → components in code
+❌ "I used Gluestack components"
+```
+
+**Canvas design:**
+```
+✅ File exists (.pdf/.png) → second refinement pass completed → composition cohesive
+❌ First pass output claimed as final
+```
+
+**Frontend design:**
+```
+✅ Brand fonts chosen, cohesive aesthetic, no generic AI patterns, animations verified
+❌ "It looks good" / "Styled correctly"
 ```
 
 ## Why This Matters
