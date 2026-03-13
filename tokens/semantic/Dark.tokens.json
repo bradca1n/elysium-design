@@ -274,7 +274,7 @@
           0.32156863808631897
         ],
         "alpha": 1,
-        "hex": "#525252"
+        "hex": "#404040"
       },
       "$extensions": {
         "com.figma.variableId": "VariableID:137:3757",
@@ -283,7 +283,7 @@
         ],
         "com.figma.aliasData": {
           "targetVariableId": "VariableID:161a62b5ab529cf35441117ed28dc8ebb244179c/-1:-1",
-          "targetVariableName": "neutral/neutral700",
+          "targetVariableName": "neutral/neutral800",
           "targetVariableSetId": "VariableCollectionId:00642838a78f2f35b1008bd5c1dbea94429f2940/-1:-1",
           "targetVariableSetName": "Primitives"
         },
@@ -300,7 +300,7 @@
           0.250980406999588
         ],
         "alpha": 1,
-        "hex": "#404040"
+        "hex": "#262627"
       },
       "$extensions": {
         "com.figma.variableId": "VariableID:137:3758",
@@ -309,7 +309,7 @@
         ],
         "com.figma.aliasData": {
           "targetVariableId": "VariableID:23b0f242c3e93224adcb48ac34a7f9792f68dbff/-1:-1",
-          "targetVariableName": "neutral/neutral800",
+          "targetVariableName": "neutral/neutral900",
           "targetVariableSetId": "VariableCollectionId:00642838a78f2f35b1008bd5c1dbea94429f2940/-1:-1",
           "targetVariableSetName": "Primitives"
         },
