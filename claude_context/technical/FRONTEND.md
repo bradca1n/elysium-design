@@ -36,9 +36,9 @@ Source of truth: `LOCAL/elysium-design/tokens/`
 | Token | Light | Dark | Usage |
 |-------|-------|------|-------|
 | `bg/canvas` | #FEFEFF | #171717 | Page background |
-| `bg/surface` | #F5F5F5 | #202021 | Cards, panels |
+| `bg/surface` | #F8F8F8 | #202021 | Cards, panels |
 | `bg/elevated` | #E5E5E5 | #404040 | Elevated surfaces, modals |
-| `bg/subtle` | #F5F5F5 | #202021 | Subtle section backgrounds |
+| `bg/subtle` | #F8F8F8 | #202021 | Subtle section backgrounds |
 
 ### Border
 
@@ -55,7 +55,7 @@ Source of truth: `LOCAL/elysium-design/tokens/`
 | Token | Light | Dark | Usage |
 |-------|-------|------|-------|
 | `status/positive` | #348352 | #84D3A2 | Success indicator |
-| `status/positive-bg` | #CAFFE8 | #1B3224 | Success badge background |
+| `status/positive-bg` | #A2F1C0 | #1B3224 | Success badge background |
 | `status/negative` | #E63535 | #EF4444 | Error indicator |
 | `status/negative-bg` | #FEE9E9 | #531313 | Error badge background |
 | `status/warning` | #E77828 | #FB954B | Warning indicator |
@@ -63,7 +63,7 @@ Source of truth: `LOCAL/elysium-design/tokens/`
 | `status/info` | #0B8DCD | #32B4F4 | Info indicator |
 | `status/info-bg` | #C7EBFC | #032638 | Info badge background |
 | `status/neutral` | #404040 | #DBDBDC | Neutral indicator |
-| `status/neutral-bg` | #F5F5F5 | #202021 | Neutral badge background |
+| `status/neutral-bg` | #F8F8F8 | #202021 | Neutral badge background |
 
 ### Chart Gradients
 

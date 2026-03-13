@@ -1,0 +1,67 @@
+{
+  "Text-light": {
+    "2xs": { "id": "S:d5330bc377fc1a4e9ebc5ff6757aecd74d11b6d6,", "fontFamily": "Inter", "fontStyle": "Light", "fontSize": 10, "lineHeight": { "unit": "PIXELS", "value": 18 } },
+    "xs":  { "id": "S:669539dc74f86d117021d9ee95922f9feb2a10cd,", "fontFamily": "Inter", "fontStyle": "Light", "fontSize": 12, "lineHeight": { "unit": "PIXELS", "value": 18 } },
+    "sm":  { "id": "S:c2e06d357871431ca065784051d317fe13852319,", "fontFamily": "Inter", "fontStyle": "Light", "fontSize": 14, "lineHeight": { "unit": "PIXELS", "value": 18 } },
+    "md":  { "id": "S:513944037af328013709c13ff8724d907c572cca,", "fontFamily": "Inter", "fontStyle": "Light", "fontSize": 16, "lineHeight": { "unit": "PIXELS", "value": 22 } },
+    "lg":  { "id": "S:7d6ac5aba2a4df4d35d5b38ddf6ab5bee3214d03,", "fontFamily": "Inter", "fontStyle": "Light", "fontSize": 18, "lineHeight": { "unit": "PIXELS", "value": 22 } },
+    "xl":  { "id": "S:402ce3a47320cca5882bcf3798d0ac526bcd0c37,", "fontFamily": "Inter", "fontStyle": "Light", "fontSize": 20, "lineHeight": { "unit": "PIXELS", "value": 24 } },
+    "2xl": { "id": "S:5ea935a855e4730ce9d9a89c9beb6764a6a655e1,", "fontFamily": "Inter", "fontStyle": "Light", "fontSize": 24, "lineHeight": { "unit": "AUTO" } },
+    "3xl": { "id": "S:eaaede3c589ca3901dc6153dbe68aab13043e909,", "fontFamily": "Serrif Condensed", "fontStyle": "Light", "fontSize": 30, "lineHeight": { "unit": "AUTO" } },
+    "4xl": { "id": "S:e6a0ebb8a7424caa725c8283e82ac211782ad29c,", "fontFamily": "Serrif Condensed", "fontStyle": "Light", "fontSize": 36, "lineHeight": { "unit": "AUTO" } },
+    "5xl": { "id": "S:f20bfcd2c07186b38b9d59056463142f2222fcee,", "fontFamily": "Inter", "fontStyle": "Light", "fontSize": 44, "lineHeight": { "unit": "AUTO" } },
+    "6xl": { "id": "S:1e0f7b4fd80bfe672dfb95ed17aac67e5340be48,", "fontFamily": "Serrif Condensed", "fontStyle": "Light", "fontSize": 48, "lineHeight": { "unit": "AUTO" } }
+  },
+  "Text-normal": {
+    "2xs": { "id": "S:e824b0510e9e79162bbfec7d861907fee6d393e4,", "fontFamily": "Inter", "fontStyle": "Regular", "fontSize": 10, "lineHeight": { "unit": "PIXELS", "value": 18 } },
+    "xs":  { "id": "S:dd3489889734e803ca7b930fde8714bb41e989fb,", "fontFamily": "Inter", "fontStyle": "Regular", "fontSize": 12, "lineHeight": { "unit": "PIXELS", "value": 18 } },
+    "sm":  { "id": "S:c74cd03cde02719fdba5565a52831b7c8c5ecad2,", "fontFamily": "Inter", "fontStyle": "Regular", "fontSize": 14, "lineHeight": { "unit": "PIXELS", "value": 18 } },
+    "md":  { "id": "S:49a550771eff52acc8a2bcdfa8df60fc23532cf0,", "fontFamily": "Inter", "fontStyle": "Regular", "fontSize": 16, "lineHeight": { "unit": "PIXELS", "value": 22 } },
+    "lg":  { "id": "S:4e2ce970dde7e7e254797289212d2f01bb3537bd,", "fontFamily": "Inter", "fontStyle": "Regular", "fontSize": 18, "lineHeight": { "unit": "PIXELS", "value": 22 } },
+    "xl":  { "id": "S:eef44f85b2b453d47679f6850add37eef14da330,", "fontFamily": "Inter", "fontStyle": "Regular", "fontSize": 20, "lineHeight": { "unit": "PIXELS", "value": 24 } },
+    "2xl": { "id": "S:6a2d4b574f4ad29ddb112842cdf993cd49b1348e,", "fontFamily": "Inter", "fontStyle": "Regular", "fontSize": 24, "lineHeight": { "unit": "AUTO" } },
+    "3xl": { "id": "S:b13a3eab18f3a3a13c109dcacea004a709fe2c87,", "fontFamily": "Serrif Condensed", "fontStyle": "Light", "fontSize": 30, "lineHeight": { "unit": "AUTO" } },
+    "4xl": { "id": "S:98356dff800e0cf4a259892a416ad2e4f42cbadf,", "fontFamily": "Serrif Condensed", "fontStyle": "Light", "fontSize": 36, "lineHeight": { "unit": "AUTO" } },
+    "5xl": { "id": "S:3e44725e128d8b8c52e597ccdc90a641eeb621f2,", "fontFamily": "Inter", "fontStyle": "Regular", "fontSize": 44, "lineHeight": { "unit": "AUTO" } },
+    "6xl": { "id": "S:832c96b8e8c5a174ecdb090c3ec9bcbcc2d9a002,", "fontFamily": "Serrif Condensed", "fontStyle": "Light", "fontSize": 48, "lineHeight": { "unit": "AUTO" } }
+  },
+  "Text-medium": {
+    "2xs": { "id": "S:969c392303669fb5014ac22779b5ca760b946f68,", "fontFamily": "Inter", "fontStyle": "Medium", "fontSize": 10, "lineHeight": { "unit": "PIXELS", "value": 18 } },
+    "xs":  { "id": "S:80607cd232a36ab685b09e9d4ee14fc1f4485d7f,", "fontFamily": "Inter", "fontStyle": "Medium", "fontSize": 12, "lineHeight": { "unit": "PIXELS", "value": 18 } },
+    "sm":  { "id": "S:60315d4603b77ae054bff85702b355528ce27865,", "fontFamily": "Inter", "fontStyle": "Medium", "fontSize": 14, "lineHeight": { "unit": "PIXELS", "value": 18 } },
+    "md":  { "id": "S:67f83b80350e29a061ae2fd9ac7b8b0049bfd680,", "fontFamily": "Inter", "fontStyle": "Medium", "fontSize": 16, "lineHeight": { "unit": "PIXELS", "value": 22 } },
+    "lg":  { "id": "S:719b470fa1764459c884a0bfa74a955d4d874eb8,", "fontFamily": "Inter", "fontStyle": "Medium", "fontSize": 18, "lineHeight": { "unit": "PIXELS", "value": 22 } },
+    "xl":  { "id": "S:d045c04bd7b7db42bd080899e4ed125294756760,", "fontFamily": "Inter", "fontStyle": "Medium", "fontSize": 20, "lineHeight": { "unit": "PIXELS", "value": 24 } },
+    "2xl": { "id": "S:7aceeaa9ccfedfb08d222b5b720a39904c71f1aa,", "fontFamily": "Inter", "fontStyle": "Medium", "fontSize": 24, "lineHeight": { "unit": "AUTO" } },
+    "3xl": { "id": "S:04a12bc40e4aba0527d9f5efc1a7b4579f4d0724,", "fontFamily": "Serrif Condensed", "fontStyle": "Light", "fontSize": 30, "lineHeight": { "unit": "AUTO" } },
+    "4xl": { "id": "S:2059fce8fdfbf7b7bc4aef2059dfdc20b4830c43,", "fontFamily": "Serrif Condensed", "fontStyle": "Light", "fontSize": 36, "lineHeight": { "unit": "AUTO" } },
+    "5xl": { "id": "S:8f76ee5c75198e7f1df74ed6dc733ee9234d659c,", "fontFamily": "Inter", "fontStyle": "Medium", "fontSize": 44, "lineHeight": { "unit": "AUTO" } },
+    "6xl": { "id": "S:3c478070dfb94910f092908f3cf789477840e7ea,", "fontFamily": "Serrif Condensed", "fontStyle": "Light", "fontSize": 48, "lineHeight": { "unit": "AUTO" } }
+  },
+  "Text-semibold": {
+    "2xs": { "id": "S:51b62931d184f4870d006482e19c533acfe62775,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "fontSize": 10, "lineHeight": { "unit": "PIXELS", "value": 18 } },
+    "xs":  { "id": "S:1d36fce3995c460d142f62ea564f2769493221d2,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "fontSize": 12, "lineHeight": { "unit": "PIXELS", "value": 18 } },
+    "sm":  { "id": "S:0997356c67e7d9e013964fa9db9417b89b96ddf9,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "fontSize": 14, "lineHeight": { "unit": "PIXELS", "value": 18 } },
+    "md":  { "id": "S:ee1579ac713e77906d265ed08a02658c965c1ee7,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "fontSize": 16, "lineHeight": { "unit": "PIXELS", "value": 22 } },
+    "lg":  { "id": "S:ffced74f878f0d678e56ab6582d0822279789ca2,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "fontSize": 18, "lineHeight": { "unit": "PIXELS", "value": 22 } },
+    "xl":  { "id": "S:355787289934b3b4ebb1337d2af2206b516ffd04,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "fontSize": 20, "lineHeight": { "unit": "PIXELS", "value": 24 } },
+    "2xl": { "id": "S:eee091a6c0b32c4d8ded1c3d690114e33e0f98ab,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "fontSize": 24, "lineHeight": { "unit": "AUTO" } },
+    "3xl": { "id": "S:71e0a38b077278e99df7175a5e4a0c470cd28d88,", "fontFamily": "Serrif Condensed", "fontStyle": "Light", "fontSize": 30, "lineHeight": { "unit": "AUTO" } },
+    "4xl": { "id": "S:e431570e1af6e18f3b432c742767d317b2cd3125,", "fontFamily": "Serrif Condensed", "fontStyle": "Light", "fontSize": 36, "lineHeight": { "unit": "AUTO" } },
+    "5xl": { "id": "S:73818f66fe308dc3d75ac92bc17cc24fd1a795c5,", "fontFamily": "Inter", "fontStyle": "Semi Bold", "fontSize": 44, "lineHeight": { "unit": "AUTO" } },
+    "6xl": { "id": "S:4f3438204cf0685dbe3d5263e1c1a892d942d1ac,", "fontFamily": "Serrif Condensed", "fontStyle": "Light", "fontSize": 48, "lineHeight": { "unit": "AUTO" } }
+  },
+  "Text-bold": {
+    "2xs": { "id": "S:ce9ebf220719ebe7b4bab8b46aee4fe8d96dd364,", "fontFamily": "Inter", "fontStyle": "Bold", "fontSize": 10, "lineHeight": { "unit": "PIXELS", "value": 18 } },
+    "xs":  { "id": "S:b40544aafa3ebb9cc5ca732b0aff1a1d714b9d8a,", "fontFamily": "Inter", "fontStyle": "Bold", "fontSize": 12, "lineHeight": { "unit": "PIXELS", "value": 18 } },
+    "sm":  { "id": "S:dfcd2348a582ec879ba60c327f84bcbd3dfbd88f,", "fontFamily": "Inter", "fontStyle": "Bold", "fontSize": 14, "lineHeight": { "unit": "PIXELS", "value": 18 } },
+    "md":  { "id": "S:764935e50579d83eadc2f368816bea87b82507b8,", "fontFamily": "Inter", "fontStyle": "Bold", "fontSize": 16, "lineHeight": { "unit": "PIXELS", "value": 22 } },
+    "lg":  { "id": "S:c91d8e23d4e86ea01cb3d77beb3fedf246667a9d,", "fontFamily": "Inter", "fontStyle": "Bold", "fontSize": 18, "lineHeight": { "unit": "PIXELS", "value": 22 } },
+    "xl":  { "id": "S:95acec40864da1949ab4500678563f0336bd24b0,", "fontFamily": "Inter", "fontStyle": "Bold", "fontSize": 20, "lineHeight": { "unit": "PIXELS", "value": 24 } },
+    "2xl": { "id": "S:e447872350f4d16e67f7676442e2923d3febffc3,", "fontFamily": "Inter", "fontStyle": "Bold", "fontSize": 24, "lineHeight": { "unit": "AUTO" } },
+    "3xl": { "id": "S:e3c66df8c09e8cfc1cf068790c23b09c20194592,", "fontFamily": "Serrif Condensed", "fontStyle": "Light", "fontSize": 30, "lineHeight": { "unit": "AUTO" } },
+    "4xl": { "id": "S:158f3026f7f54a9e3671d4ff9ac3a7deb580cd6f,", "fontFamily": "Serrif Condensed", "fontStyle": "Light", "fontSize": 36, "lineHeight": { "unit": "AUTO" } },
+    "5xl": { "id": "S:2a10f666d35136e23a066808bfb785376b184769,", "fontFamily": "Inter", "fontStyle": "Bold", "fontSize": 44, "lineHeight": { "unit": "AUTO" } },
+    "6xl": { "id": "S:548c3dc5f0d0bf6f166d33a9c09b9b28f6338c59,", "fontFamily": "Serrif Condensed", "fontStyle": "Light", "fontSize": 48, "lineHeight": { "unit": "AUTO" } }
+  }
+}
