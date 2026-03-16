@@ -9,14 +9,29 @@ A quick guide to get you up and running before Thursday.
 ### VS Code
 Download and install from [code.visualstudio.com](https://code.visualstudio.com/).
 
-### Node.js
-Install Node.js (v18+) from [nodejs.org](https://nodejs.org/). This is needed for the Figma MCP server.
+### Node.js (v18+)
+Node.js is needed for the Figma MCP server and Claude Code.
 
-Verify it's working by opening the terminal in VS Code (`` Ctrl+` `` or **Terminal → New Terminal** from the menu bar) and running:
+**Mac:**
+1. Open Terminal and install Homebrew (if you don't have it):
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+2. Then install Node.js:
+   ```bash
+   brew install node
+   ```
+
+**Windows:**
+1. Download the Windows installer (.msi) from [nodejs.org](https://nodejs.org/) — grab the **LTS** version
+2. Run the installer, accept the defaults, and click through to finish
+
+**Verify it's working** by opening the terminal in VS Code (`` Ctrl+` `` on Mac, `` Ctrl+` `` on Windows, or **Terminal → New Terminal** from the menu bar) and running:
 ```bash
 node --version
 npm --version
 ```
+You should see version numbers for both. If not, restart VS Code and try again.
 
 ### Claude Code (CLI)
 Install Claude Code globally:
