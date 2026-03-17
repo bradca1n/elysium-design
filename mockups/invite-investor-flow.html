@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1728">
+<title>Invite Investor — POD Crypto Fund | Elysium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS — Elysium Semantic (Light Mode)
+   Source: elysium-design/tokens/semantic/Light.tokens.json
+   ============================================================ */
+:root {
+  /* Background */
+  --bg-canvas: #FEFEFF;
+  --bg-surface: #F8F8F8;
+  --bg-elevated: #E5E5E5;
+  --bg-subtle: #F8F8F8;
+
+  /* Text Color */
+  --text-color-primary: #171717;
+  --text-color-secondary: #737373;
+  --text-color-muted: #A3A3A3;
+  --text-color-inverse: #FEFEFF;
+  --text-color-positive: #348352;
+  --text-color-negative: #EF4444;
+
+  /* Border */
+  --border-default: #E5E5E5;
+  --border-subtle: #E5E5E5;
+  --border-strong: #DBDBDC;
+  --border-positive: #348352;
+  --border-negative: #DC2626;
+
+  /* Button — Primary */
+  --button-primary-bg: #262627;
+  --button-primary-text: #F8F8F8;
+  --button-primary-border: #262627;
+  --button-primary-state-hover: #404040;
+  --button-primary-state-pressed: #262627;
+  --button-primary-bg-disabled: #E5E5E5;
+  --button-primary-text-disabled: #A3A3A3;
+
+  /* Button — Secondary */
+  --button-secondary-bg: #E5E5E5;
+  --button-secondary-text: #171717;
+  --button-secondary-border: #E5E5E5;
+  --button-secondary-state-hover: #DBDBDC;
+
+  /* Button — Outline */
+  --button-outline-bg: #FEFEFF;
+  --button-outline-text: #171717;
+  --button-outline-border: #E5E5E5;
+  --button-outline-border-hover: #D4D4D4;
+
+  /* Button — Ghost */
+  --button-ghost-text: #171717;
+  --button-ghost-state-hover: #737373;
+
+  /* Status */
+  --status-positive: #348352;
+  --status-positive-bg: #A2F1C0;
+  --status-negative: #E63535;
+  --status-negative-bg: #FEE2E2;
+  --status-warning: #E77828;
+  --status-warning-bg: #FFF4EC;
+  --status-info: #0B8DCD;
+  --status-info-bg: #C7EBFC;
+  --status-neutral: #404040;
+  --status-neutral-bg: #F8F8F8;
+
+  /* Spacing */
+  --space-0: 0px;
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-80: 80px;
+  --space-96: 96px;
+  --space-112: 112px;
+  --space-128: 128px;
+  --space-144: 144px;
+
+  /* Radius */
+  --radius-xs: 4px;
+  --radius-s: 6px;
+  --radius-m: 8px;
+  --radius-l: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 56px;
+  --radius-full: 999px;
+
+  /* Typography — Sizes */
+  --text-size-display-lg: 48px;
+  --text-size-display-md: 44px;
+  --text-size-heading-lg: 36px;
+  --text-size-heading-md: 30px;
+  --text-size-heading-sm: 24px;
+  --text-size-title-lg: 18px;
+  --text-size-title-md: 16px;
+  --text-size-title-sm: 14px;
+  --text-size-body-lg: 18px;
+  --text-size-body-md: 16px;
+  --text-size-body-sm: 14px;
+  --text-size-caption-md: 12px;
+  --text-size-caption-sm: 10px;
+  --text-size-label-lg: 14px;
+  --text-size-label-md: 12px;
+  --text-size-label-sm: 10px;
+
+  /* Font Weights */
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Line Heights */
+  --line-tight: 18px;
+  --line-normal: 22px;
+  --line-relaxed: 24px;
+
+  /* Z-Index (Layer) */
+  --layer-base: 0;
+  --layer-sticky: 10;
+  --layer-dropdown: 100;
+  --layer-popover: 200;
+  --layer-sheet: 300;
+  --layer-modal: 400;
+  --layer-toast: 500;
+  --layer-tooltip: 600;
+}
+
+/* Font: Serrif Condensed */
+@font-face {
+  font-family: 'Serrif Condensed';
+  src: url('fonts/SerrifCondensed-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================================
+   BASE RESET & GLOBALS
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-regular);
+  color: var(--text-color-primary);
+  background: var(--bg-canvas);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* ============================================================
+   REUSABLE COMPONENTS
+   ============================================================ */
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  height: 40px;
+  padding: 0 var(--space-16);
+  font-family: inherit;
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-medium);
+  border-radius: var(--radius-l);
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border: 1px solid var(--button-primary-border);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--button-primary-state-hover);
+}
+.btn-primary:disabled {
+  background: var(--button-primary-bg-disabled);
+  color: var(--button-primary-text-disabled);
+  border-color: var(--button-primary-bg-disabled);
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  background: var(--button-outline-bg);
+  color: var(--button-outline-text);
+  border: 1px solid var(--button-outline-border);
+}
+.btn-outline:hover {
+  border-color: var(--button-outline-border-hover);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--button-ghost-text);
+  border: none;
+  padding: 0;
+  height: auto;
+  font-weight: var(--weight-medium);
+}
+.btn-ghost:hover {
+  color: var(--button-ghost-state-hover);
+}
+
+.btn-full-width {
+  width: 100%;
+}
+
+.btn-icon-only {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 40px;
+  border: none;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-l);
+  cursor: pointer;
+  color: var(--text-color-primary);
+  transition: background-color 0.15s;
+}
+.btn-icon-only:hover {
+  background: var(--border-default);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-xs);
+  font-size: var(--text-size-label-md);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  width: fit-content;
+}
+.badge-active { background: var(--status-positive-bg); color: var(--status-positive); }
+.badge-pending { background: var(--status-warning-bg); color: var(--status-warning); }
+.badge-review { background: var(--status-info-bg); color: var(--status-info); }
+.badge-restricted { background: var(--status-negative-bg); color: var(--status-negative); }
+.badge-neutral { background: var(--status-neutral-bg); color: var(--status-neutral); }
+
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* Form Inputs */
+.input-field {
+  width: 100%;
+  height: 40px;
+  padding: 0 var(--space-16);
+  font-family: inherit;
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-primary);
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-m);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input-field::placeholder { color: var(--text-color-muted); }
+.input-field:focus {
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 2px rgba(38, 38, 39, 0.08);
+}
+
+textarea.input-field {
+  height: auto;
+  min-height: 80px;
+  padding: var(--space-8) var(--space-16);
+  resize: vertical;
+}
+
+/* Select */
+.select-field {
+  width: 100%;
+  height: 40px;
+  padding: 0 var(--space-32) 0 var(--space-16);
+  font-family: inherit;
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-primary);
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-m);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23737373' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.select-field:hover { border-color: var(--border-strong); }
+.select-field:focus {
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 2px rgba(38, 38, 39, 0.08);
+}
+
+/* Field Label */
+.field-label {
+  display: block;
+  font-size: var(--text-size-label-md);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-secondary);
+  margin-bottom: var(--space-4);
+}
+.field-label .required { color: var(--text-color-negative); }
+
+/* Section Label */
+.section-label {
+  font-size: var(--text-size-title-md);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+}
+
+/* Form Group */
+.form-group { margin-top: var(--space-16); }
+
+/* Form Row (2-column) */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-16);
+}
+
+/* Form Section */
+.form-section {
+  margin-bottom: var(--space-32);
+  padding-bottom: var(--space-32);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* Field hint */
+.field-hint {
+  display: block;
+  margin-top: var(--space-4);
+  font-size: var(--text-size-caption-md);
+  color: var(--text-color-muted);
+}
+
+/* Toggle Switch */
+.toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: var(--border-default);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: var(--bg-canvas);
+  border-radius: var(--radius-full);
+  transition: transform 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+.toggle.toggle-on { background: var(--button-primary-bg); }
+.toggle.toggle-on::after { transform: translateX(16px); }
+
+/* Toggle Row */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+}
+.toggle-row span {
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-primary);
+}
+
+/* Choice Pills */
+.choice-pills {
+  display: flex;
+  gap: var(--space-8);
+  width: fit-content;
+}
+.choice-pill {
+  padding: var(--space-8) var(--space-16);
+  font-family: inherit;
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-medium);
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-m);
+  background: var(--bg-canvas);
+  color: var(--text-color-secondary);
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+.choice-pill-active {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border-color: var(--button-primary-bg);
+}
+.choice-pill:not(.choice-pill-active):hover {
+  border-color: var(--border-strong);
+  color: var(--text-color-primary);
+}
+
+/* Status Pill Tabs */
+.status-tabs { display: flex; gap: var(--space-8); }
+.status-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: var(--text-size-label-md);
+  font-weight: var(--weight-medium);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+  border: 1px solid var(--border-default);
+  background: var(--bg-canvas);
+  color: var(--text-color-secondary);
+}
+.status-tab:hover {
+  border-color: var(--border-strong);
+  color: var(--text-color-primary);
+}
+.status-tab-active {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border-color: var(--button-primary-bg);
+}
+
+/* ============================================================
+   PAGE LAYOUT
+   ============================================================ */
+.page-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+}
+
+.page-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  gap: 144px;
+  padding: var(--space-24) var(--space-32) 0 var(--space-32);
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar {
+  width: 227px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0;
+  background: var(--bg-canvas);
+  overflow-y: auto;
+}
+
+.nav-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  padding: var(--space-8);
+  border-radius: var(--radius-l);
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-regular);
+  color: var(--text-color-primary);
+  cursor: pointer;
+  transition: background-color 0.15s;
+  text-decoration: none;
+}
+.nav-item:hover { background: var(--bg-surface); }
+.nav-item-selected {
+  background: var(--bg-surface);
+  font-weight: var(--weight-semibold);
+}
+
+.nav-item-icon {
+  width: 20px; height: 20px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-color-secondary);
+}
+
+.nav-item-chevron { margin-left: auto; color: var(--text-color-muted); }
+
+.nav-divider {
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  margin: var(--space-16) 0;
+}
+
+.fund-selector {
+  display: flex; align-items: center; gap: var(--space-8);
+  padding: var(--space-8) var(--space-16);
+  cursor: pointer; border-radius: var(--radius-s);
+  transition: background-color 0.15s;
+}
+.fund-selector:hover { background: var(--bg-surface); }
+
+.fund-icon {
+  width: 28px; height: 28px;
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle at 40% 40%, #f0abfc, #a78bfa, #818cf8);
+  flex-shrink: 0;
+}
+
+.fund-name {
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+  flex: 1;
+}
+
+.fund-nav-items {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-8);
+}
+
+.fund-nav-item {
+  display: flex; align-items: center;
+  padding: var(--space-8) var(--space-16);
+  border-radius: var(--radius-m);
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-secondary);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+  text-decoration: none;
+}
+.fund-nav-item:hover { background: var(--bg-surface); }
+.fund-nav-item-selected {
+  color: var(--text-color-primary);
+  font-weight: var(--weight-medium);
+}
+
+.nav-badge {
+  margin-left: auto;
+  font-size: var(--text-size-label-sm);
+  font-weight: var(--weight-semibold);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.nav-bottom { margin-top: auto; }
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-24) var(--space-32);
+  background: var(--bg-canvas);
+  flex-shrink: 0;
+}
+
+.navbar-logo { display: flex; align-items: center; gap: var(--space-8); }
+.navbar-logo-text {
+  font-size: 20px;
+  font-weight: var(--weight-bold);
+  color: var(--text-color-primary);
+  letter-spacing: -0.02em;
+}
+
+.navbar-right { display: flex; align-items: center; gap: var(--space-32); }
+
+.navbar-bell {
+  width: 20px; height: 20px;
+  color: var(--text-color-secondary); cursor: pointer;
+}
+
+.navbar-user { display: flex; align-items: center; gap: var(--space-8); cursor: pointer; }
+
+.navbar-avatar {
+  width: 36px; height: 36px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
+  border: 1px solid var(--border-default);
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--text-size-caption-md);
+  font-weight: var(--weight-semibold);
+  color: var(--text-color-secondary);
+  overflow: hidden;
+}
+
+.navbar-username {
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+}
+
+/* ============================================================
+   MAIN WRAPPER & CONTENT
+   ============================================================ */
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+.main-content {
+  flex: 1;
+  padding: 0;
+  background: var(--bg-canvas);
+  overflow-y: auto;
+}
+
+/* Page Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-32);
+}
+
+.fund-badge-row { display: flex; align-items: center; gap: var(--space-8); }
+.fund-badge { display: flex; align-items: center; gap: var(--space-16); }
+.fund-badge-icon {
+  width: 28px; height: 28px;
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle at 40% 40%, #f0abfc, #a78bfa, #818cf8);
+  flex-shrink: 0;
+}
+.fund-badge-text {
+  font-size: 18px;
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+}
+.breadcrumb-chevron { color: var(--text-color-muted); display: flex; align-items: center; }
+.button-wrapper { display: flex; align-items: center; gap: var(--space-8); }
+
+/* Metric heading */
+.metrics-heading {
+  font-family: 'Serrif Condensed', 'Inter', sans-serif;
+  font-size: 36px;
+  font-weight: 300;
+  color: var(--text-color-primary);
+  line-height: 1.2;
+}
+
+.body-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+/* ============================================================
+   SECTION HEADER (Title + action link)
+   ============================================================ */
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-16);
+}
+.section-header-title {
+  font-size: var(--text-size-title-md);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+}
+.section-header-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-secondary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.section-header-action:hover { color: var(--text-color-primary); }
+
+/* ============================================================
+   INVESTORS TABLE — Matches Figma Fund Overview table style
+   ============================================================ */
+table { width: 100%; border-collapse: collapse; }
+th {
+  text-align: left;
+  padding: var(--space-8) 0;
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-regular);
+  color: var(--text-color-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+th:last-child { text-align: right; }
+td {
+  padding: var(--space-8) 0;
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-primary);
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+td:last-child { text-align: right; }
+tr:last-child td { border-bottom: none; }
+.investor-name { font-weight: var(--weight-medium); color: var(--text-color-primary); }
+.investor-email { font-size: var(--text-size-caption-md); color: var(--text-color-secondary); }
+
+/* ============================================================
+   SIDEPEEK OVERLAY & PANEL
+   ============================================================ */
+.sidepeek-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: calc(var(--layer-sheet) - 1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.sidepeek-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sidepeek {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 660px;
+  background: var(--bg-canvas);
+  border-left: 1px solid var(--border-default);
+  z-index: var(--layer-sheet);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+.sidepeek.open {
+  transform: translateX(0);
+}
+
+.sidepeek-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-16) var(--space-32);
+  flex-shrink: 0;
+}
+
+.cancel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-8);
+  border: none;
+  background: var(--bg-surface);
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  font-family: inherit;
+  font-size: var(--text-size-caption-md);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+  transition: background-color 0.15s;
+}
+.cancel-btn:hover { background: var(--bg-elevated); }
+
+/* Step indicator in topbar */
+.step-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+.step-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border-default);
+  transition: all 0.2s ease;
+}
+.step-dot.active {
+  background: var(--button-primary-bg);
+  width: 24px;
+  border-radius: var(--radius-full);
+}
+.step-dot.completed { background: var(--status-positive); }
+
+.sidepeek-header {
+  padding: 0 var(--space-32);
+  padding-bottom: var(--space-32);
+}
+
+.sidepeek-title {
+  font-family: 'Serrif Condensed', Georgia, serif;
+  font-size: 36px;
+  font-weight: 300;
+  color: var(--text-color-primary);
+}
+
+.sidepeek-subtitle {
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-secondary);
+  margin-top: var(--space-4);
+}
+
+.sidepeek-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 var(--space-32) var(--space-32);
+}
+
+.sidepeek-footer {
+  padding: var(--space-24) var(--space-32);
+  flex-shrink: 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.footer-hint {
+  font-size: var(--text-size-caption-md);
+  color: var(--text-color-muted);
+  margin-bottom: var(--space-16);
+  text-align: center;
+}
+
+.footer-buttons {
+  display: flex;
+  gap: var(--space-8);
+}
+
+/* ============================================================
+   SIDEPEEK SCROLLBAR
+   ============================================================ */
+.sidepeek-body::-webkit-scrollbar { width: 6px; }
+.sidepeek-body::-webkit-scrollbar-track { background: transparent; }
+.sidepeek-body::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: var(--radius-full); }
+.sidepeek-body::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+/* ============================================================
+   VISIBILITY TOGGLE ROWS (Step 2)
+   ============================================================ */
+.visibility-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.visibility-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-8) 0;
+}
+
+.visibility-row-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.visibility-icon {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-m);
+  background: var(--bg-surface);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.visibility-icon svg { width: 16px; height: 16px; color: var(--text-color-secondary); }
+
+.visibility-text { display: flex; flex-direction: column; }
+.visibility-title {
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+}
+.visibility-desc {
+  font-size: var(--text-size-caption-md);
+  color: var(--text-color-muted);
+}
+
+.group-label {
+  font-size: var(--text-size-label-md);
+  font-weight: var(--weight-semibold);
+  color: var(--text-color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: var(--space-24);
+  margin-bottom: var(--space-8);
+}
+.group-label:first-child { margin-top: 0; }
+
+/* ============================================================
+   REVIEW SUMMARY (Step 3)
+   ============================================================ */
+.review-section { margin-bottom: var(--space-24); }
+.review-section-title {
+  font-size: var(--text-size-label-md);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-color-muted);
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.review-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--space-4) 0;
+  font-size: var(--text-size-body-sm);
+}
+.review-label { color: var(--text-color-secondary); }
+.review-value { font-weight: var(--weight-medium); text-align: right; max-width: 60%; }
+
+.review-tags { display: flex; flex-wrap: wrap; gap: var(--space-4); justify-content: flex-end; }
+.review-tag {
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  font-size: var(--text-size-label-md);
+  font-weight: var(--weight-medium);
+}
+.review-tag-visible { background: var(--status-positive-bg); color: var(--status-positive); }
+.review-tag-hidden { background: var(--status-negative-bg); color: var(--status-negative); }
+
+/* ============================================================
+   SUCCESS STATE (Step 4)
+   ============================================================ */
+.success-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-48) 0;
+}
+.success-icon {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: var(--status-positive-bg);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: var(--space-24);
+}
+.success-icon svg { width: 32px; height: 32px; color: var(--status-positive); }
+.success-title {
+  font-family: 'Serrif Condensed', Georgia, serif;
+  font-size: 30px; font-weight: 300;
+  margin-bottom: var(--space-8);
+}
+.success-desc {
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-secondary);
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+.invite-link-box {
+  margin-top: var(--space-24);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-8) var(--space-16);
+  background: var(--bg-surface);
+  border-radius: var(--radius-m);
+  border: 1px solid var(--border-default);
+}
+.invite-link-box input {
+  flex: 1; border: none; background: transparent;
+  font-family: 'Inter', monospace;
+  font-size: var(--text-size-caption-md);
+  color: var(--text-color-primary);
+  outline: none;
+}
+.invite-link-copy {
+  display: inline-flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-4) var(--space-8);
+  background: var(--bg-elevated); border: none;
+  border-radius: var(--radius-s); cursor: pointer;
+  font-family: inherit;
+  font-size: var(--text-size-caption-md);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+  transition: background 0.15s;
+}
+.invite-link-copy:hover { background: var(--border-default); }
+
+/* Step screens */
+.step-screen { display: none; }
+.step-screen.active { display: block; }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: var(--space-32);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: var(--space-8) var(--space-24);
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-medium);
+  border-radius: var(--radius-full);
+  z-index: var(--layer-toast);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
+.toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     PAGE LAYOUT
+     ============================================================ -->
+<div class="page-layout">
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-logo">
+      <span class="navbar-logo-text">Elysium</span>
+    </div>
+    <div class="navbar-right">
+      <svg class="navbar-bell" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <div class="navbar-user">
+        <div class="navbar-avatar">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="14" r="7" fill="#a78bfa"/><circle cx="18" cy="38" r="14" fill="#c4b5fd"/></svg>
+        </div>
+        <span class="navbar-username">@JerryQ102</span>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAGE BODY -->
+  <div class="page-body">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div>
+        <nav class="nav-section">
+          <a class="nav-item" href="#">
+            <span class="nav-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+            Home
+            <span class="nav-item-chevron"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </a>
+          <a class="nav-item" href="#">
+            <span class="nav-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+            Overview
+          </a>
+          <a class="nav-item" href="#">
+            <span class="nav-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+            Reports
+          </a>
+          <a class="nav-item" href="#">
+            <span class="nav-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+            Settings
+          </a>
+        </nav>
+
+        <hr class="nav-divider">
+
+        <!-- Fund Selector -->
+        <div class="fund-selector">
+          <div class="fund-icon"></div>
+          <span class="fund-name">POD Crypto Fund</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg>
+        </div>
+
+        <!-- Fund Sub-nav -->
+        <div class="fund-nav-items">
+          <a class="fund-nav-item" href="#">Overview</a>
+          <a class="fund-nav-item" href="#">NAV</a>
+          <a class="fund-nav-item" href="#">Performance &amp; Risk</a>
+          <a class="fund-nav-item" href="#">Register &amp; Dealings</a>
+          <a class="fund-nav-item" href="#">Order book &amp; Liquidity</a>
+          <a class="fund-nav-item" href="#">Fees</a>
+          <a class="fund-nav-item" href="#">Classes</a>
+          <a class="fund-nav-item fund-nav-item-selected" href="#">Investors <span class="nav-badge" style="background: var(--status-info-bg); color: var(--status-info);">12</span></a>
+        </div>
+      </div>
+
+      <div class="nav-bottom">
+        <a class="nav-item" href="#">
+          <span class="nav-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></span>
+          Support
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN WRAPPER -->
+    <div class="main-wrapper">
+      <main class="main-content">
+
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="fund-badge-row">
+            <div class="fund-badge">
+              <div class="fund-badge-icon"></div>
+              <span class="fund-badge-text">POD Crypto Fund</span>
+            </div>
+            <span class="breadcrumb-chevron">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </span>
+            <span class="fund-badge-text">Investors</span>
+          </div>
+          <div class="button-wrapper">
+            <button class="btn btn-primary" id="open-sidepeek-btn" onclick="openSidepeek()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+              Invite investor
+            </button>
+            <button class="btn-icon-only">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="body-content">
+          <h1 class="metrics-heading">Investors</h1>
+
+          <div class="status-tabs">
+            <button class="status-tab status-tab-active">All <span style="margin-left: 4px; opacity: 0.6;">12</span></button>
+            <button class="status-tab">Active <span style="margin-left: 4px; opacity: 0.6;">9</span></button>
+            <button class="status-tab">Pending <span style="margin-left: 4px; opacity: 0.6;">2</span></button>
+            <button class="status-tab">Review <span style="margin-left: 4px; opacity: 0.6;">1</span></button>
+          </div>
+
+          <!-- Investors Table -->
+          <table>
+            <thead>
+              <tr>
+                <th>Investor</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>KYC</th>
+                <th>Visibility</th>
+                <th>Joined</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="investor-name">Meridian Capital Partners</div><div class="investor-email">invest@meridiancap.com</div></td>
+                <td>Institution</td>
+                <td><span class="badge badge-active"><span class="badge-dot"></span> Active</span></td>
+                <td style="color: var(--text-color-positive);">Verified</td>
+                <td>Full Access</td>
+                <td>12 Jan 2026</td>
+              </tr>
+              <tr>
+                <td><div class="investor-name">Sarah Chen</div><div class="investor-email">s.chen@protonmail.com</div></td>
+                <td>Individual</td>
+                <td><span class="badge badge-active"><span class="badge-dot"></span> Active</span></td>
+                <td style="color: var(--text-color-positive);">Verified</td>
+                <td>Standard</td>
+                <td>28 Dec 2025</td>
+              </tr>
+              <tr>
+                <td><div class="investor-name">Northpoint Ventures LLC</div><div class="investor-email">ops@northpointvc.com</div></td>
+                <td>Institution</td>
+                <td><span class="badge badge-pending"><span class="badge-dot"></span> Pending KYC</span></td>
+                <td style="color: var(--text-color-muted);">Pending</td>
+                <td>Limited</td>
+                <td>10 Mar 2026</td>
+              </tr>
+              <tr>
+                <td><div class="investor-name">David Hartwell</div><div class="investor-email">d.hartwell@gmail.com</div></td>
+                <td>Individual</td>
+                <td><span class="badge badge-review"><span class="badge-dot"></span> Under Review</span></td>
+                <td style="color: var(--text-color-positive);">Verified</td>
+                <td>Standard</td>
+                <td>5 Mar 2026</td>
+              </tr>
+              <tr>
+                <td><div class="investor-name">Apex Family Office</div><div class="investor-email">admin@apexfamily.co</div></td>
+                <td>Institution</td>
+                <td><span class="badge badge-active"><span class="badge-dot"></span> Active</span></td>
+                <td style="color: var(--text-color-positive);">Verified</td>
+                <td>Full Access</td>
+                <td>18 Nov 2025</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SIDEPEEK OVERLAY
+     ============================================================ -->
+<div class="sidepeek-overlay" id="sidepeekOverlay" onclick="closeSidepeek()"></div>
+
+<!-- ============================================================
+     SIDEPEEK PANEL: Invite Investor Flow
+     ============================================================ -->
+<div class="sidepeek" id="sidepeek">
+
+  <!-- Topbar: Cancel + step dots -->
+  <div class="sidepeek-topbar">
+    <button class="cancel-btn" onclick="closeSidepeek()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      Cancel
+    </button>
+    <div class="step-indicator" id="stepIndicator">
+      <div class="step-dot active" data-step="1"></div>
+      <div class="step-dot" data-step="2"></div>
+      <div class="step-dot" data-step="3"></div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="sidepeek-header" id="sidepeekHeader">
+    <h2 class="sidepeek-title" id="sidepeekTitle">Invite investor</h2>
+    <p class="sidepeek-subtitle" id="sidepeekSubtitle">Enter investor details and set eligibility requirements.</p>
+  </div>
+
+  <!-- Body -->
+  <div class="sidepeek-body">
+
+    <!-- ==================== STEP 1: Investor Details ==================== -->
+    <div class="step-screen active" id="step1">
+
+      <div class="form-section">
+        <span class="section-label">Contact details</span>
+
+        <div class="form-row" style="margin-top: var(--space-16);">
+          <div class="form-group" style="margin-top: 0;">
+            <label class="field-label">First name <span class="required">*</span></label>
+            <input class="input-field" type="text" placeholder="e.g. Sarah">
+          </div>
+          <div class="form-group" style="margin-top: 0;">
+            <label class="field-label">Last name <span class="required">*</span></label>
+            <input class="input-field" type="text" placeholder="e.g. Chen">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="field-label">Email address <span class="required">*</span></label>
+          <input class="input-field" type="email" placeholder="investor@example.com">
+          <span class="field-hint">The invite link will be sent to this address</span>
+        </div>
+
+        <div class="form-row" style="margin-top: var(--space-16);">
+          <div class="form-group" style="margin-top: 0;">
+            <label class="field-label">Investor type <span class="required">*</span></label>
+            <select class="select-field">
+              <option value="">Select type...</option>
+              <option value="1">Individual</option>
+              <option value="2">Institution</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-top: 0;">
+            <label class="field-label">Jurisdiction</label>
+            <select class="select-field">
+              <option value="">Select...</option>
+              <option value="US">United States</option>
+              <option value="GB">United Kingdom</option>
+              <option value="SG">Singapore</option>
+              <option value="HK">Hong Kong</option>
+              <option value="CH">Switzerland</option>
+              <option value="KY">Cayman Islands</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="field-label">Share class</label>
+          <select class="select-field">
+            <option value="">All classes (default)</option>
+            <option value="A">Class A — Institutional</option>
+            <option value="B">Class B — Retail</option>
+            <option value="F">Class F — Founder</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <span class="section-label">Eligibility requirements</span>
+
+        <div class="form-group">
+          <div class="toggle-row">
+            <span>Require KYC verification</span>
+            <div class="toggle toggle-on" onclick="this.classList.toggle('toggle-on')"></div>
+          </div>
+          <span class="field-hint">Investor must complete identity verification</span>
+        </div>
+
+        <div class="form-group">
+          <div class="toggle-row">
+            <span>Accredited investor</span>
+            <div class="toggle toggle-on" onclick="this.classList.toggle('toggle-on')"></div>
+          </div>
+          <span class="field-hint">Must meet accredited investor standards</span>
+        </div>
+
+        <div class="form-group">
+          <div class="toggle-row">
+            <span>Qualified purchaser</span>
+            <div class="toggle" onclick="this.classList.toggle('toggle-on')"></div>
+          </div>
+          <span class="field-hint">$5M+ investment threshold requirement</span>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <span class="section-label">Personal note</span>
+        <div class="form-group">
+          <textarea class="input-field" placeholder="Optional message included in the invitation email..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 2: Visibility Permissions ==================== -->
+    <div class="step-screen" id="step2">
+
+      <div class="form-section">
+        <span class="section-label">Visibility preset</span>
+        <div class="choice-pills" style="margin-top: var(--space-16);">
+          <button class="choice-pill choice-pill-active" onclick="applyPreset('full', this)">Full Access</button>
+          <button class="choice-pill" onclick="applyPreset('standard', this)">Standard</button>
+          <button class="choice-pill" onclick="applyPreset('limited', this)">Limited</button>
+          <button class="choice-pill" onclick="applyPreset('custom', this)">Custom</button>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="group-label">Fund Information</div>
+        <div class="visibility-group">
+          <div class="visibility-row">
+            <div class="visibility-row-left">
+              <div class="visibility-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+              <div class="visibility-text">
+                <span class="visibility-title">Fund Overview</span>
+                <span class="visibility-desc">Name, strategy, fund type, base currency</span>
+              </div>
+            </div>
+            <div class="toggle toggle-on" data-key="fund-overview" onclick="this.classList.toggle('toggle-on'); updatePreset()"></div>
+          </div>
+          <div class="visibility-row">
+            <div class="visibility-row-left">
+              <div class="visibility-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+              <div class="visibility-text">
+                <span class="visibility-title">NAV &amp; Pricing</span>
+                <span class="visibility-desc">Current NAV per share and pricing history</span>
+              </div>
+            </div>
+            <div class="toggle toggle-on" data-key="nav-pricing" onclick="this.classList.toggle('toggle-on'); updatePreset()"></div>
+          </div>
+          <div class="visibility-row">
+            <div class="visibility-row-left">
+              <div class="visibility-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+              <div class="visibility-text">
+                <span class="visibility-title">Performance &amp; Returns</span>
+                <span class="visibility-desc">Historical returns, benchmarks, and charts</span>
+              </div>
+            </div>
+            <div class="toggle toggle-on" data-key="performance" onclick="this.classList.toggle('toggle-on'); updatePreset()"></div>
+          </div>
+          <div class="visibility-row">
+            <div class="visibility-row-left">
+              <div class="visibility-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+              <div class="visibility-text">
+                <span class="visibility-title">Portfolio Holdings</span>
+                <span class="visibility-desc">Positions, allocations, and asset breakdown</span>
+              </div>
+            </div>
+            <div class="toggle toggle-on" data-key="holdings" onclick="this.classList.toggle('toggle-on'); updatePreset()"></div>
+          </div>
+        </div>
+
+        <div class="group-label">Share Class &amp; Fees</div>
+        <div class="visibility-group">
+          <div class="visibility-row">
+            <div class="visibility-row-left">
+              <div class="visibility-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+              <div class="visibility-text">
+                <span class="visibility-title">Share Class Details</span>
+                <span class="visibility-desc">Structure, minimums, subscription terms</span>
+              </div>
+            </div>
+            <div class="toggle toggle-on" data-key="class-details" onclick="this.classList.toggle('toggle-on'); updatePreset()"></div>
+          </div>
+          <div class="visibility-row">
+            <div class="visibility-row-left">
+              <div class="visibility-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+              <div class="visibility-text">
+                <span class="visibility-title">Fee Schedule</span>
+                <span class="visibility-desc">Management fees, performance fees, expense ratios</span>
+              </div>
+            </div>
+            <div class="toggle toggle-on" data-key="fee-schedule" onclick="this.classList.toggle('toggle-on'); updatePreset()"></div>
+          </div>
+        </div>
+
+        <div class="group-label">Documents &amp; Activity</div>
+        <div class="visibility-group">
+          <div class="visibility-row">
+            <div class="visibility-row-left">
+              <div class="visibility-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
+              <div class="visibility-text">
+                <span class="visibility-title">Fund Documents</span>
+                <span class="visibility-desc">PPM, subscription agreements, legal docs</span>
+              </div>
+            </div>
+            <div class="toggle toggle-on" data-key="fund-documents" onclick="this.classList.toggle('toggle-on'); updatePreset()"></div>
+          </div>
+          <div class="visibility-row">
+            <div class="visibility-row-left">
+              <div class="visibility-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 118 2.83"/><path d="M22 12A10 10 0 0012 2v10z"/></svg></div>
+              <div class="visibility-text">
+                <span class="visibility-title">Investor Reports</span>
+                <span class="visibility-desc">Monthly/quarterly letters and statements</span>
+              </div>
+            </div>
+            <div class="toggle toggle-on" data-key="investor-reports" onclick="this.classList.toggle('toggle-on'); updatePreset()"></div>
+          </div>
+          <div class="visibility-row">
+            <div class="visibility-row-left">
+              <div class="visibility-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+              <div class="visibility-text">
+                <span class="visibility-title">Transaction History</span>
+                <span class="visibility-desc">Subscriptions, redemptions, transfers</span>
+              </div>
+            </div>
+            <div class="toggle toggle-on" data-key="transaction-history" onclick="this.classList.toggle('toggle-on'); updatePreset()"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <span class="section-label">Invite link expiry</span>
+        <div class="form-group">
+          <select class="select-field">
+            <option value="7">7 days</option>
+            <option value="14">14 days</option>
+            <option value="30" selected>30 days</option>
+            <option value="90">90 days</option>
+            <option value="never">Never expires</option>
+          </select>
+          <span class="field-hint">The invite link will expire after this period. You can always resend.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 3: Review & Send ==================== -->
+    <div class="step-screen" id="step3">
+      <div class="review-section">
+        <div class="review-section-title">Investor Details</div>
+        <div class="review-row"><span class="review-label">Name</span><span class="review-value">Sarah Chen</span></div>
+        <div class="review-row"><span class="review-label">Email</span><span class="review-value">s.chen@protonmail.com</span></div>
+        <div class="review-row"><span class="review-label">Type</span><span class="review-value">Individual</span></div>
+        <div class="review-row"><span class="review-label">Jurisdiction</span><span class="review-value">Singapore</span></div>
+        <div class="review-row"><span class="review-label">Share Class</span><span class="review-value">Class A — Institutional</span></div>
+      </div>
+
+      <div class="review-section">
+        <div class="review-section-title">Eligibility</div>
+        <div class="review-row"><span class="review-label">KYC Verification</span><span class="review-value" style="color: var(--text-color-positive);">Required</span></div>
+        <div class="review-row"><span class="review-label">Accredited Investor</span><span class="review-value" style="color: var(--text-color-positive);">Required</span></div>
+        <div class="review-row"><span class="review-label">Qualified Purchaser</span><span class="review-value" style="color: var(--text-color-muted);">Not required</span></div>
+      </div>
+
+      <div class="review-section">
+        <div class="review-section-title">Visibility Permissions</div>
+        <div class="review-row"><span class="review-label">Preset</span><span class="review-value">Full Access</span></div>
+        <div class="review-row" style="margin-top: var(--space-8);">
+          <span class="review-label">Visible sections</span>
+          <div class="review-tags">
+            <span class="review-tag review-tag-visible">Fund Overview</span>
+            <span class="review-tag review-tag-visible">NAV</span>
+            <span class="review-tag review-tag-visible">Performance</span>
+            <span class="review-tag review-tag-visible">Holdings</span>
+            <span class="review-tag review-tag-visible">Classes</span>
+            <span class="review-tag review-tag-visible">Fees</span>
+            <span class="review-tag review-tag-visible">Documents</span>
+            <span class="review-tag review-tag-visible">Reports</span>
+            <span class="review-tag review-tag-visible">Transactions</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-section">
+        <div class="review-section-title">Settings</div>
+        <div class="review-row"><span class="review-label">Link Expiry</span><span class="review-value">30 days</span></div>
+        <div class="review-row"><span class="review-label">Personal Note</span><span class="review-value" style="color: var(--text-color-muted);">None</span></div>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 4: Success ==================== -->
+    <div class="step-screen" id="step4">
+      <div class="success-state">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="success-title">Invitation sent</div>
+        <div class="success-desc">
+          An invitation has been sent to <strong>s.chen@protonmail.com</strong>.
+          They'll receive an email with a secure link to onboard to POD Crypto Fund.
+        </div>
+        <div class="invite-link-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-color-muted)" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+          <input type="text" value="https://app.elysium.fund/invite/inv_8f3k2m9x..." readonly>
+          <button class="invite-link-copy" onclick="this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy', 1500)">Copy</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="sidepeek-footer" id="sidepeekFooter">
+    <div class="footer-hint" id="footerHint">All fields marked * are required</div>
+    <div class="footer-buttons">
+      <button class="btn btn-outline" id="backBtn" onclick="prevStep()" style="display: none;">Back</button>
+      <button class="btn btn-primary btn-full-width" id="nextBtn" onclick="nextStep()">
+        Continue
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast">Invitation sent successfully</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+let currentStep = 1;
+const totalSteps = 3;
+
+function openSidepeek() {
+  document.getElementById('sidepeekOverlay').classList.add('open');
+  document.getElementById('sidepeek').classList.add('open');
+}
+
+function closeSidepeek() {
+  document.getElementById('sidepeekOverlay').classList.remove('open');
+  document.getElementById('sidepeek').classList.remove('open');
+  setTimeout(() => { currentStep = 1; updateStepUI(); }, 300);
+}
+
+function nextStep() {
+  if (currentStep < totalSteps) {
+    currentStep++;
+    updateStepUI();
+  } else {
+    // Send invitation — show success
+    currentStep = 4;
+    updateStepUI();
+    showToast();
+  }
+}
+
+function prevStep() {
+  if (currentStep > 1) {
+    currentStep--;
+    updateStepUI();
+  }
+}
+
+function updateStepUI() {
+  // Update step screens
+  document.querySelectorAll('.step-screen').forEach(s => s.classList.remove('active'));
+  const screen = document.getElementById('step' + currentStep);
+  if (screen) screen.classList.add('active');
+
+  // Update step dots
+  document.querySelectorAll('.step-dot').forEach((dot, i) => {
+    const num = i + 1;
+    dot.classList.remove('active', 'completed');
+    if (num === currentStep && currentStep <= totalSteps) dot.classList.add('active');
+    else if (num < currentStep) dot.classList.add('completed');
+  });
+
+  // Update header
+  const titles = {
+    1: ['Invite investor', 'Enter investor details and set eligibility requirements.'],
+    2: ['Visibility permissions', 'Control which fund details this investor can see.'],
+    3: ['Review invitation', 'Confirm the details below before sending.'],
+    4: ['', '']
+  };
+  document.getElementById('sidepeekTitle').textContent = titles[currentStep][0];
+  document.getElementById('sidepeekSubtitle').textContent = titles[currentStep][1];
+
+  // Show/hide header on success
+  document.getElementById('sidepeekHeader').style.display = currentStep === 4 ? 'none' : '';
+  document.getElementById('stepIndicator').style.display = currentStep === 4 ? 'none' : '';
+
+  // Update footer
+  const footer = document.getElementById('sidepeekFooter');
+  const backBtn = document.getElementById('backBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const hint = document.getElementById('footerHint');
+
+  if (currentStep === 4) {
+    // Success — replace footer
+    footer.innerHTML = `
+      <div class="footer-buttons">
+        <button class="btn btn-primary btn-full-width" onclick="closeSidepeek()">Done</button>
+        <button class="btn btn-outline" onclick="currentStep=1; updateStepUI();" style="white-space: nowrap;">Invite another</button>
+      </div>
+    `;
+  } else {
+    footer.innerHTML = `
+      <div class="footer-hint" id="footerHint"></div>
+      <div class="footer-buttons">
+        <button class="btn btn-outline" id="backBtn" onclick="prevStep()" style="${currentStep > 1 ? '' : 'display:none;'}">Back</button>
+        <button class="btn btn-primary btn-full-width" id="nextBtn" onclick="nextStep()"></button>
+      </div>
+    `;
+
+    const newHint = document.getElementById('footerHint');
+    const newNext = document.getElementById('nextBtn');
+
+    if (currentStep === totalSteps) {
+      newNext.innerHTML = 'Send invitation <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
+      newHint.textContent = 'Invitation will be sent via email';
+    } else if (currentStep === 1) {
+      newNext.innerHTML = 'Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>';
+      newHint.textContent = 'All fields marked * are required';
+    } else {
+      newNext.innerHTML = 'Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>';
+      newHint.textContent = 'Permissions can be changed after invitation';
+    }
+  }
+
+  // Scroll body to top
+  document.querySelector('.sidepeek-body').scrollTop = 0;
+}
+
+// Preset management
+const presets = {
+  full: ['fund-overview','nav-pricing','performance','holdings','class-details','fee-schedule','fund-documents','investor-reports','transaction-history'],
+  standard: ['fund-overview','nav-pricing','performance','class-details','fee-schedule','fund-documents'],
+  limited: ['fund-overview','nav-pricing','class-details'],
+  custom: null
+};
+
+function applyPreset(preset, btn) {
+  document.querySelectorAll('.choice-pill').forEach(p => p.classList.remove('choice-pill-active'));
+  btn.classList.add('choice-pill-active');
+  if (preset === 'custom') return;
+
+  const activeKeys = presets[preset];
+  document.querySelectorAll('.toggle[data-key]').forEach(toggle => {
+    if (activeKeys.includes(toggle.dataset.key)) {
+      toggle.classList.add('toggle-on');
+    } else {
+      toggle.classList.remove('toggle-on');
+    }
+  });
+}
+
+function updatePreset() {
+  const selected = Array.from(document.querySelectorAll('.toggle.toggle-on[data-key]')).map(t => t.dataset.key);
+  let matched = 'custom';
+  for (const [name, keys] of Object.entries(presets)) {
+    if (!keys) continue;
+    if (keys.length === selected.length && keys.every(k => selected.includes(k))) {
+      matched = name;
+      break;
+    }
+  }
+  document.querySelectorAll('.choice-pill').forEach(p => {
+    const label = p.textContent.trim().toLowerCase().replace(' ', '');
+    p.classList.toggle('choice-pill-active', label === matched.replace(' ', '') || (matched === 'full' && label === 'fullaccess'));
+  });
+  if (matched === 'custom') {
+    document.querySelectorAll('.choice-pill').forEach(p => {
+      p.classList.toggle('choice-pill-active', p.textContent.trim() === 'Custom');
+    });
+  }
+}
+
+function showToast() {
+  const toast = document.getElementById('toast');
+  toast.classList.add('visible');
+  setTimeout(() => toast.classList.remove('visible'), 3000);
+}
+</script>
+
+</body>
+</html>
