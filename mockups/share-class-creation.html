@@ -62,7 +62,7 @@
   --status-positive: #348352;
   --status-positive-bg: #A2F1C0;
   --status-negative: #E63535;
-  --status-negative-bg: #FEE9E9;
+  --status-negative-bg: #FEE2E2;
   --status-warning: #E77828;
   --status-warning-bg: #FFF4EC;
   --status-info: #0B8DCD;
@@ -185,9 +185,9 @@
   --button-ghost-state-hover: #A3A3A3;
 
   --status-positive: #84D3A2;
-  --status-positive-bg: #1B3224;
+  --status-positive-bg: #14532D;
   --status-negative: #EF4444;
-  --status-negative-bg: #531313;
+  --status-negative-bg: #7F1D1D;
   --status-warning: #FB954B;
   --status-warning-bg: #542D12;
   --status-info: #32B4F4;
@@ -233,6 +233,7 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
   height: 100vh;
+  height: 100dvh;
 }
 
 /* ============================================================
@@ -598,6 +599,7 @@ html, body {
   display: flex;
   flex: 1;
   min-height: 0;
+  overflow: hidden;
   gap: 144px;
   padding: var(--space-24) var(--space-32) 0 var(--space-32);
 }
@@ -749,6 +751,9 @@ html, body {
   align-items: center;
   gap: var(--space-8);
 }
+.navbar-logo-dark { display: none; }
+[data-theme="dark"] .navbar-logo-light { display: none; }
+[data-theme="dark"] .navbar-logo-dark { display: block; }
 .navbar-logo-icon {
   width: 32px;
   height: 32px;
@@ -806,7 +811,7 @@ html, body {
    ============================================================ */
 .main-content {
   flex: 1;
-  padding: 0;
+  padding: 0 var(--space-64) 0 0;
   background: var(--bg-canvas);
   overflow-y: auto;
 }
@@ -1210,7 +1215,8 @@ input[type="number"] {
   <!-- NAVBAR (full width, top) -->
   <header class="navbar">
     <div class="navbar-logo">
-      <img src="../assets/pod-logo.svg" alt="POD" height="36">
+      <img class="navbar-logo-light" src="../assets/pod-logo.svg" alt="POD" height="36">
+      <img class="navbar-logo-dark" src="../assets/pod-logo-white.svg" alt="POD" height="36">
     </div>
     <div class="navbar-right">
       <div class="toggle" id="theme-toggle" title="Toggle dark mode" style="cursor: pointer;"></div>
