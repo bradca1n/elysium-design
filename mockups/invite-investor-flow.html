@@ -1308,28 +1308,31 @@ tr:last-child td { border-bottom: none; }
       </div>
 
       <div class="form-section">
-        <span class="section-label">Characterisation</span>
+        <span class="section-label">Share class access</span>
+        <span class="field-hint" style="margin-top: 0; margin-bottom: var(--space-16);">Select which share classes this investor will be whitelisted for. Eligibility requirements, fee structures, and minimums are defined on each class.</span>
 
-        <div class="form-group">
-          <div class="toggle-row">
-            <span>Zero-fee rated</span>
-            <div class="toggle" onclick="this.classList.toggle('toggle-on')"></div>
-          </div>
-          <span class="field-hint">Investor is exempt from management and performance fees</span>
-        </div>
-
-        <div class="form-group">
-          <label class="field-label">Minimum subscription</label>
-          <input class="input-field" type="text" placeholder="e.g. 100,000 USD">
-          <span class="field-hint">Override the default class minimum for this investor</span>
-        </div>
-
-        <div class="form-group">
-          <div class="toggle-row">
-            <span>Qualified purchaser</span>
-            <div class="toggle" onclick="this.classList.toggle('toggle-on')"></div>
-          </div>
-          <span class="field-hint">$5M+ investment threshold requirement</span>
+        <div style="display: flex; flex-direction: column; gap: var(--space-8);">
+          <label style="display: flex; align-items: center; gap: var(--space-12); padding: var(--space-12); border: 1px solid var(--border-default); border-radius: var(--radius-m); cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--border-strong)'" onmouseout="this.style.borderColor='var(--border-default)'">
+            <input type="checkbox" checked style="width: 18px; height: 18px; accent-color: var(--button-primary-bg);">
+            <div style="flex: 1;">
+              <div style="font-size: var(--text-size-body-sm); font-weight: var(--weight-medium); color: var(--text-color-primary);">Class A — Institutional</div>
+              <div style="font-size: var(--text-size-caption-md); color: var(--text-color-muted);">Min. 500,000 USD &middot; Mgmt 1.5% &middot; Perf 20%</div>
+            </div>
+          </label>
+          <label style="display: flex; align-items: center; gap: var(--space-12); padding: var(--space-12); border: 1px solid var(--border-default); border-radius: var(--radius-m); cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--border-strong)'" onmouseout="this.style.borderColor='var(--border-default)'">
+            <input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--button-primary-bg);">
+            <div style="flex: 1;">
+              <div style="font-size: var(--text-size-body-sm); font-weight: var(--weight-medium); color: var(--text-color-primary);">Class B — Retail</div>
+              <div style="font-size: var(--text-size-caption-md); color: var(--text-color-muted);">Min. 10,000 USD &middot; Mgmt 2.0% &middot; Perf 20%</div>
+            </div>
+          </label>
+          <label style="display: flex; align-items: center; gap: var(--space-12); padding: var(--space-12); border: 1px solid var(--border-default); border-radius: var(--radius-m); cursor: pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--border-strong)'" onmouseout="this.style.borderColor='var(--border-default)'">
+            <input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--button-primary-bg);">
+            <div style="flex: 1;">
+              <div style="font-size: var(--text-size-body-sm); font-weight: var(--weight-medium); color: var(--text-color-primary);">Class F — Founder</div>
+              <div style="font-size: var(--text-size-caption-md); color: var(--text-color-muted);">Min. 0 USD &middot; Zero-fee &middot; Restricted</div>
+            </div>
+          </label>
         </div>
       </div>
 
@@ -1497,16 +1500,9 @@ tr:last-child td { border-bottom: none; }
       </div>
 
       <div class="review-section">
-        <div class="review-section-title">Characterisation</div>
-        <div class="review-row"><span class="review-label">Zero-fee rated</span><span class="review-value" style="color: var(--text-color-muted);">No</span></div>
-        <div class="review-row"><span class="review-label">Min. subscription</span><span class="review-value">100,000 USD</span></div>
-        <div class="review-row"><span class="review-label">Qualified Purchaser</span><span class="review-value" style="color: var(--text-color-muted);">No</span></div>
-      </div>
-
-      <div class="review-section">
-        <div class="review-section-title">Compliance</div>
-        <div class="review-row"><span class="review-label">KYC Verification</span><span class="review-value" style="color: var(--text-color-positive);">Required (automatic)</span></div>
-        <div class="review-row"><span class="review-label">Accredited Investor</span><span class="review-value" style="color: var(--text-color-positive);">Required (automatic)</span></div>
+        <div class="review-section-title">Share Class Access</div>
+        <div class="review-row"><span class="review-label">Class A — Institutional</span><span class="review-value" style="color: var(--text-color-positive);">Whitelisted</span></div>
+        <div class="review-row" style="padding-left: var(--space-16);"><span class="review-label" style="font-size: var(--text-size-caption-md);">Min. 500,000 USD &middot; Mgmt 1.5% &middot; Perf 20%</span></div>
       </div>
 
       <div class="review-section">
