@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Analyser — Is This a Good Investment?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== Design Tokens ===== */
+    :root {
+      --bg-canvas:           #fefeff;
+      --bg-surface:          #f5f5f5;
+      --bg-subtle:           #f5f5f5;
+      --text-primary:        #171717;
+      --text-secondary:      #737373;
+      --text-tertiary:       #a3a3a3;
+      --text-negative:       #ef4444;
+      --border-subtle:       #e5e5e5;
+      --status-positive:     #348352;
+      --status-positive-bg:  #caffe8;
+      --status-negative:     #e63535;
+      --status-negative-bg:  #fee9e9;
+      --status-warning:      #d97706;
+      --status-warning-bg:   #fef3c7;
+      --status-info:         #2563eb;
+      --status-info-bg:      #dbeafe;
+      --btn-primary-bg:      #262627;
+      --btn-primary-text:    #f5f5f5;
+      --btn-secondary-bg:    #e5e5e5;
+      --btn-secondary-text:  #171717;
+      --btn-ghost-text:      #171717;
+      --radius-xs:  4px;
+      --radius-s:   6px;
+      --radius-m:   8px;
+      --radius-l:   12px;
+      --radius-xl:  16px;
+      --radius-full: 999px;
+      /* Score colours */
+      --score-great:   #16a34a;
+      --score-good:    #348352;
+      --score-ok:      #d97706;
+      --score-risky:   #ea580c;
+      --score-danger:  #e63535;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ===== Layout ===== */
+    .layout { display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 32px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-canvas);
+      flex-shrink: 0;
+      height: 86px;
+    }
+    .navbar-left { display: flex; align-items: center; gap: 12px; }
+    .navbar-brand { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+    .navbar-tag {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      background: var(--status-info-bg);
+      color: var(--status-info);
+    }
+
+    /* Body */
+    .body-row { display: flex; flex: 1; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 259px;
+      flex-shrink: 0;
+      background: var(--bg-canvas);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px;
+      overflow-y: auto;
+    }
+    .sidebar-top { display: flex; flex-direction: column; gap: 4px; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      height: 40px;
+      padding: 8px 12px;
+      border-radius: var(--radius-l);
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      cursor: pointer;
+      background: var(--bg-canvas);
+      transition: background 0.15s;
+    }
+    .nav-item:hover { background: var(--bg-surface); }
+    .nav-item.active { background: var(--bg-surface); color: var(--text-primary); font-weight: 500; }
+    .nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    /* Main area */
+    .main-area { flex: 1; overflow-y: auto; }
+    .page-content { padding: 32px; max-width: 960px; }
+
+    .page-title {
+      font-size: 30px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+    .page-subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+    }
+
+    /* ===== Search ===== */
+    .search-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .search-input {
+      flex: 1;
+      height: 48px;
+      padding: 0 16px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-l);
+      font-size: 16px;
+      font-family: inherit;
+      color: var(--text-primary);
+      background: var(--bg-canvas);
+      outline: none;
+      transition: border 0.15s;
+    }
+    .search-input:focus { border-color: var(--text-primary); }
+    .search-input::placeholder { color: var(--text-tertiary); }
+    .btn-primary {
+      height: 48px;
+      padding: 0 24px;
+      border: none;
+      border-radius: var(--radius-l);
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-text);
+      font-size: 15px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Quick picks */
+    .quick-picks { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+    .quick-pick {
+      height: 32px;
+      padding: 0 12px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-canvas);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .quick-pick:hover { border-color: var(--text-primary); color: var(--text-primary); }
+
+    /* ===== Widget ===== */
+    .widget {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      margin-bottom: 16px;
+      background: var(--bg-canvas);
+    }
+    .widget-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .widget-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    /* ===== Score Ring ===== */
+    .score-section {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .score-ring-wrap {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      flex-shrink: 0;
+    }
+    .score-ring-wrap svg { width: 100%; height: 100%; }
+    .score-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    .score-number {
+      font-size: 42px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+    .score-label-text {
+      font-size: 14px;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+    .score-out-of {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+    .score-summary { flex: 1; }
+    .score-verdict {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+    .score-explanation {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ===== Metric Bars ===== */
+    .metric-bars { display: flex; flex-direction: column; gap: 16px; }
+    .metric-row { display: flex; flex-direction: column; gap: 6px; }
+    .metric-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .metric-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .metric-value {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .metric-track {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+    .metric-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.6s ease;
+    }
+    .metric-hint {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    /* Tooltip icon */
+    .info-tip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--bg-surface);
+      color: var(--text-tertiary);
+      font-size: 10px;
+      font-weight: 700;
+      cursor: help;
+      position: relative;
+    }
+    .info-tip:hover .tip-text { display: block; }
+    .tip-text {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-text);
+      font-size: 12px;
+      font-weight: 400;
+      padding: 8px 12px;
+      border-radius: var(--radius-m);
+      white-space: normal;
+      width: 220px;
+      line-height: 1.4;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* ===== Growth Chart ===== */
+    .chart-container {
+      width: 100%;
+      height: 200px;
+      position: relative;
+      margin-top: 8px;
+    }
+    .chart-container canvas { width: 100%; height: 100%; }
+
+    /* ===== Key Stats Grid ===== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .stat-card {
+      padding: 16px;
+      border-radius: var(--radius-l);
+      background: var(--bg-surface);
+    }
+    .stat-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .stat-value {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+    .stat-context {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+
+    /* ===== Badges ===== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .badge-positive { background: var(--status-positive-bg); color: var(--status-positive); }
+    .badge-negative { background: var(--status-negative-bg); color: var(--status-negative); }
+    .badge-warning  { background: var(--status-warning-bg);  color: var(--status-warning); }
+    .badge-info     { background: var(--status-info-bg);     color: var(--status-info); }
+
+    /* ===== Risk Scale ===== */
+    .risk-scale {
+      display: flex;
+      height: 12px;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin: 12px 0 8px;
+    }
+    .risk-seg { flex: 1; }
+    .risk-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+    .risk-pointer-wrap {
+      position: relative;
+      height: 20px;
+      margin-top: -4px;
+    }
+    .risk-pointer {
+      position: absolute;
+      transform: translateX(-50%);
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    /* ===== Jargon Buster ===== */
+    .jargon-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .jargon-item {
+      padding: 12px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-m);
+    }
+    .jargon-term {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .jargon-def {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* ===== Loading ===== */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(254,254,255,0.85);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .loading-overlay.active { display: flex; }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border-subtle);
+      border-top-color: var(--text-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+      text-align: center;
+      padding: 64px 24px;
+    }
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+    .empty-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .empty-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    /* ===== Results (hidden by default) ===== */
+    .results { display: none; }
+    .results.visible { display: block; }
+
+    /* ===== Comparison Table ===== */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .compare-table th {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .compare-table td {
+      font-size: 14px;
+      padding: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .ticker-cell {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ticker-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* ===== Disclaimer ===== */
+    .disclaimer {
+      margin-top: 24px;
+      padding: 16px;
+      border-radius: var(--radius-l);
+      background: var(--status-warning-bg);
+      font-size: 12px;
+      color: var(--status-warning);
+      line-height: 1.5;
+    }
+
+    /* ===== Responsive ===== */
+
+    /* Tablet */
+    @media (max-width: 1024px) {
+      .page-content { max-width: 100%; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .navbar { padding: 16px 20px; height: 64px; }
+      .navbar-brand { font-size: 18px; }
+      .page-content { padding: 20px 16px; }
+      .page-title { font-size: 24px; margin-bottom: 4px; }
+      .page-subtitle { font-size: 14px; margin-bottom: 20px; }
+
+      /* Stack search bar */
+      .search-bar { flex-direction: column; }
+      .search-input { font-size: 16px; /* prevents iOS zoom */ }
+      .btn-primary { width: 100%; }
+
+      /* Quick picks scroll horizontally */
+      .quick-picks { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; gap: 6px; }
+      .quick-pick { flex-shrink: 0; }
+
+      /* Score section stacks */
+      .score-section { flex-direction: column; align-items: center; gap: 20px; }
+      .score-ring-wrap { width: 160px; height: 160px; }
+      .score-number { font-size: 36px; }
+      .score-summary { text-align: center; }
+      .score-verdict { font-size: 18px; }
+      .score-explanation { font-size: 13px; }
+
+      /* Widget spacing */
+      .widget { padding: 16px; border-radius: var(--radius-l); }
+      .widget-title { font-size: 15px; }
+
+      /* Stats grid single column */
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .stat-card { padding: 12px; }
+      .stat-value { font-size: 17px; }
+      .stat-label { font-size: 11px; }
+
+      /* Jargon single column */
+      .jargon-grid { grid-template-columns: 1fr; gap: 8px; }
+
+      /* Comparison table scroll */
+      .compare-table { font-size: 13px; }
+      .compare-table th, .compare-table td { padding: 8px 6px; }
+
+      /* Metric bars */
+      .metric-name { font-size: 13px; }
+      .metric-value { font-size: 13px; }
+      .metric-hint { font-size: 11px; }
+
+      /* Risk scale labels */
+      .risk-labels { font-size: 9px; }
+
+      /* Tooltips on mobile — position better */
+      .tip-text { width: 180px; font-size: 11px; }
+    }
+
+    /* Small mobile */
+    @media (max-width: 380px) {
+      .page-content { padding: 16px 12px; }
+      .page-title { font-size: 20px; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .score-ring-wrap { width: 140px; height: 140px; }
+      .score-number { font-size: 32px; }
+    }
+
+    /* Touch-friendly: larger tap targets on mobile */
+    @media (pointer: coarse) {
+      .quick-pick { height: 36px; padding: 0 14px; font-size: 14px; }
+      .nav-item { height: 44px; }
+      .info-tip { width: 20px; height: 20px; font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-left">
+        <div class="navbar-brand">Elysium</div>
+        <span class="navbar-tag">Stock Analyser</span>
+      </div>
+    </nav>
+
+    <div class="body-row">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="nav-item active">
+            <div class="nav-icon">
+              <svg width="20" height="20" fill="none" viewBox="0 0 20 20"><path d="M3 14l4-5 3 3 7-9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            Analyse Stock
+          </div>
+          <div class="nav-item" onclick="document.getElementById('compare-section').scrollIntoView({behavior:'smooth'})">
+            <div class="nav-icon">
+              <svg width="20" height="20" fill="none" viewBox="0 0 20 20"><rect x="3" y="10" width="4" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="8" y="6" width="4" height="11" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="13" y="3" width="4" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+            </div>
+            Compare
+          </div>
+          <div class="nav-item" onclick="document.getElementById('learn-section').scrollIntoView({behavior:'smooth'})">
+            <div class="nav-icon">
+              <svg width="20" height="20" fill="none" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 7v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            Learn
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main class="main-area">
+        <div class="page-content">
+          <h1 class="page-title">Is this stock worth buying?</h1>
+          <p class="page-subtitle">Search any stock on Stake (US &amp; ASX) and get a plain-English breakdown of whether it's a good investment.</p>
+
+          <!-- Search -->
+          <div class="search-bar">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search by name or ticker — e.g. AAPL, Tesla, VDHG" autocomplete="off">
+            <button class="btn-primary" id="analyseBtn" onclick="analyseStock()">Analyse</button>
+          </div>
+          <div class="quick-picks">
+            <button class="quick-pick" onclick="quickPick('AAPL')">AAPL</button>
+            <button class="quick-pick" onclick="quickPick('TSLA')">TSLA</button>
+            <button class="quick-pick" onclick="quickPick('MSFT')">MSFT</button>
+            <button class="quick-pick" onclick="quickPick('NVDA')">NVDA</button>
+            <button class="quick-pick" onclick="quickPick('VOO')">VOO</button>
+            <button class="quick-pick" onclick="quickPick('VTI')">VTI</button>
+            <button class="quick-pick" onclick="quickPick('VDHG')">VDHG</button>
+          </div>
+
+          <!-- Empty state -->
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon">
+              <svg width="64" height="64" fill="none" viewBox="0 0 64 64"><path d="M12 44l12-16 10 10 18-24" stroke="#d4d4d4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="44" r="3" fill="#d4d4d4"/><circle cx="24" cy="28" r="3" fill="#d4d4d4"/><circle cx="34" cy="38" r="3" fill="#d4d4d4"/><circle cx="52" cy="14" r="3" fill="#d4d4d4"/></svg>
+            </div>
+            <div class="empty-title">Search for a stock to get started</div>
+            <div class="empty-desc">Try one of the popular picks above, or type any stock ticker available on Stake.</div>
+          </div>
+
+          <!-- Results -->
+          <div class="results" id="results">
+
+            <!-- Overall Score Widget -->
+            <div class="widget" id="scoreWidget">
+              <div class="widget-title" id="stockNameTitle">—</div>
+              <div class="widget-subtitle" id="stockExchange">—</div>
+
+              <div class="score-section">
+                <!-- Score Ring -->
+                <div class="score-ring-wrap">
+                  <svg viewBox="0 0 180 180">
+                    <circle cx="90" cy="90" r="78" fill="none" stroke="#f0f0f0" stroke-width="12" />
+                    <circle id="scoreArc" cx="90" cy="90" r="78" fill="none" stroke="var(--score-good)" stroke-width="12"
+                      stroke-linecap="round" stroke-dasharray="0 490" transform="rotate(-90 90 90)" />
+                  </svg>
+                  <div class="score-center">
+                    <div class="score-number" id="scoreNum">—</div>
+                    <div class="score-label-text" id="scoreLabel">—</div>
+                    <div class="score-out-of">out of 100</div>
+                  </div>
+                </div>
+
+                <!-- Verdict -->
+                <div class="score-summary">
+                  <div class="score-verdict" id="verdictTitle">—</div>
+                  <div class="score-explanation" id="verdictText">—</div>
+                </div>
+              </div>
+
+              <!-- Metric Bars -->
+              <div class="metric-bars">
+                <div class="metric-row">
+                  <div class="metric-header">
+                    <span class="metric-name">Growth (YoY)
+                      <span class="info-tip">?<span class="tip-text">Year-over-year price growth. How much the stock price has increased in the last 12 months.</span></span>
+                    </span>
+                    <span class="metric-value" id="growthValue">—</span>
+                  </div>
+                  <div class="metric-track"><div class="metric-fill" id="growthBar" style="width:0%; background:var(--score-good)"></div></div>
+                  <div class="metric-hint" id="growthHint">—</div>
+                </div>
+
+                <div class="metric-row">
+                  <div class="metric-header">
+                    <span class="metric-name">Risk Level
+                      <span class="info-tip">?<span class="tip-text">How much the price jumps around (volatility). Lower is calmer and more predictable.</span></span>
+                    </span>
+                    <span class="metric-value" id="riskValue">—</span>
+                  </div>
+                  <div class="metric-track"><div class="metric-fill" id="riskBar" style="width:0%; background:var(--score-ok)"></div></div>
+                  <div class="metric-hint" id="riskHint">—</div>
+                </div>
+
+                <div class="metric-row">
+                  <div class="metric-header">
+                    <span class="metric-name">Consistency
+                      <span class="info-tip">?<span class="tip-text">How steady the growth has been. A stock that grows slowly but steadily scores higher than one with wild swings.</span></span>
+                    </span>
+                    <span class="metric-value" id="consistencyValue">—</span>
+                  </div>
+                  <div class="metric-track"><div class="metric-fill" id="consistencyBar" style="width:0%; background:var(--score-good)"></div></div>
+                  <div class="metric-hint" id="consistencyHint">—</div>
+                </div>
+
+                <div class="metric-row">
+                  <div class="metric-header">
+                    <span class="metric-name">Value
+                      <span class="info-tip">?<span class="tip-text">Whether the stock is cheap or expensive compared to what the company earns. Based on the P/E ratio — lower means better value.</span></span>
+                    </span>
+                    <span class="metric-value" id="valueRating">—</span>
+                  </div>
+                  <div class="metric-track"><div class="metric-fill" id="valueBar" style="width:0%; background:var(--score-good)"></div></div>
+                  <div class="metric-hint" id="valueHint">—</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Risk Visual -->
+            <div class="widget">
+              <div class="widget-title">Risk Scale</div>
+              <div class="widget-subtitle">Where this stock sits on the risk spectrum</div>
+              <div class="risk-scale">
+                <div class="risk-seg" style="background: #16a34a;"></div>
+                <div class="risk-seg" style="background: #65a30d;"></div>
+                <div class="risk-seg" style="background: #d97706;"></div>
+                <div class="risk-seg" style="background: #ea580c;"></div>
+                <div class="risk-seg" style="background: #e63535;"></div>
+              </div>
+              <div class="risk-pointer-wrap">
+                <div class="risk-pointer" id="riskPointer" style="left: 50%;">&#9650;</div>
+              </div>
+              <div class="risk-labels">
+                <span>Very Safe</span>
+                <span>Low Risk</span>
+                <span>Moderate</span>
+                <span>High Risk</span>
+                <span>Very Risky</span>
+              </div>
+            </div>
+
+            <!-- Key Stats -->
+            <div class="widget">
+              <div class="widget-title">Key Numbers</div>
+              <div class="widget-subtitle">The important figures, explained simply</div>
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-label">Current Price</div>
+                  <div class="stat-value" id="statPrice">—</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">1 Year Return
+                    <span class="info-tip">?<span class="tip-text">If you invested $1,000 a year ago, how much would it be worth now?</span></span>
+                  </div>
+                  <div class="stat-value" id="stat1yr">—</div>
+                  <div class="stat-context" id="stat1yrCtx">—</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">5 Year Return
+                    <span class="info-tip">?<span class="tip-text">If you invested $1,000 five years ago, how much would it be worth now?</span></span>
+                  </div>
+                  <div class="stat-value" id="stat5yr">—</div>
+                  <div class="stat-context" id="stat5yrCtx">—</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Market Cap
+                    <span class="info-tip">?<span class="tip-text">The total value of all shares. Bigger = more established company, generally less risky.</span></span>
+                  </div>
+                  <div class="stat-value" id="statMcap">—</div>
+                  <div class="stat-context" id="statMcapCtx">—</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Dividend Yield
+                    <span class="info-tip">?<span class="tip-text">Cash the company pays you just for holding the stock, shown as a yearly %. Like interest on a savings account.</span></span>
+                  </div>
+                  <div class="stat-value" id="statDiv">—</div>
+                  <div class="stat-context" id="statDivCtx">—</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">P/E Ratio
+                    <span class="info-tip">?<span class="tip-text">Price-to-Earnings: how many years of profits you're paying for. Under 20 is usually good value, over 40 is expensive.</span></span>
+                  </div>
+                  <div class="stat-value" id="statPE">—</div>
+                  <div class="stat-context" id="statPEctx">—</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Growth Chart -->
+            <div class="widget">
+              <div class="widget-title">Growth Over Time</div>
+              <div class="widget-subtitle">What $1,000 invested would be worth today</div>
+              <div class="chart-container">
+                <canvas id="growthChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Comparison -->
+            <div class="widget" id="compare-section">
+              <div class="widget-title">How Does It Compare?</div>
+              <div class="widget-subtitle">Side-by-side with popular benchmarks</div>
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Stock / ETF</th>
+                    <th>1Y Return</th>
+                    <th>Risk</th>
+                    <th>Score</th>
+                  </tr>
+                </thead>
+                <tbody id="compareBody">
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Jargon Buster -->
+            <div class="widget" id="learn-section">
+              <div class="widget-title">Jargon Buster</div>
+              <div class="widget-subtitle">Plain-English explanations of investing terms</div>
+              <div class="jargon-grid">
+                <div class="jargon-item">
+                  <div class="jargon-term">ETF</div>
+                  <div class="jargon-def">A basket of many stocks bundled together. Less risky than buying a single stock because your money is spread out.</div>
+                </div>
+                <div class="jargon-item">
+                  <div class="jargon-term">Dividend</div>
+                  <div class="jargon-def">Cash a company pays to shareholders — like rent from owning part of a business. Usually paid quarterly.</div>
+                </div>
+                <div class="jargon-item">
+                  <div class="jargon-term">Market Cap</div>
+                  <div class="jargon-def">Total value of all a company's shares. &gt;$200B is "mega cap" (very large, usually safer).</div>
+                </div>
+                <div class="jargon-item">
+                  <div class="jargon-term">Volatility</div>
+                  <div class="jargon-def">How much a price swings up and down. High volatility = bigger potential gains but also bigger drops.</div>
+                </div>
+                <div class="jargon-item">
+                  <div class="jargon-term">P/E Ratio</div>
+                  <div class="jargon-def">Price divided by yearly earnings. If P/E is 25, you're paying $25 for every $1 the company earns.</div>
+                </div>
+                <div class="jargon-item">
+                  <div class="jargon-term">Bull / Bear Market</div>
+                  <div class="jargon-def">Bull = prices rising (optimistic). Bear = prices falling (pessimistic). Named after how each animal attacks.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="disclaimer">
+              <strong>Not financial advice.</strong> This tool uses historical data and simple scoring to help you learn. Past performance doesn't guarantee future results. Always do your own research or talk to a licensed financial adviser before investing real money.
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Loading overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div style="text-align:center;">
+      <div class="spinner"></div>
+      <div style="margin-top:16px; font-size:14px; color:var(--text-secondary);">Analysing stock data...</div>
+    </div>
+  </div>
+
+  <script>
+    // ======================================================================
+    // DEMO DATA — In production, replace with real API calls
+    // (Yahoo Finance, Alpha Vantage, or Financial Modeling Prep)
+    // ======================================================================
+    const STOCKS = {
+      AAPL: {
+        name: 'Apple Inc.',
+        ticker: 'AAPL',
+        exchange: 'NASDAQ — Available on Stake',
+        price: 198.50,
+        yoy: 18.2,
+        fiveYearReturn: 285,
+        volatility: 24,
+        pe: 31.5,
+        marketCap: 3080,
+        dividend: 0.55,
+        consistency: 78,
+        history: [1000, 1020, 980, 1050, 1120, 1080, 1150, 1100, 1200, 1160, 1220, 1182],
+      },
+      TSLA: {
+        name: 'Tesla Inc.',
+        ticker: 'TSLA',
+        exchange: 'NASDAQ — Available on Stake',
+        price: 175.30,
+        yoy: -8.5,
+        fiveYearReturn: 820,
+        volatility: 58,
+        pe: 62,
+        marketCap: 557,
+        dividend: 0,
+        consistency: 32,
+        history: [1000, 1150, 980, 1300, 1100, 850, 1050, 920, 1080, 950, 900, 915],
+      },
+      MSFT: {
+        name: 'Microsoft Corp.',
+        ticker: 'MSFT',
+        exchange: 'NASDAQ — Available on Stake',
+        price: 415.80,
+        yoy: 22.4,
+        fiveYearReturn: 310,
+        volatility: 22,
+        pe: 35.8,
+        marketCap: 3100,
+        dividend: 0.72,
+        consistency: 82,
+        history: [1000, 1030, 1060, 1090, 1075, 1110, 1130, 1155, 1180, 1195, 1210, 1224],
+      },
+      NVDA: {
+        name: 'NVIDIA Corp.',
+        ticker: 'NVDA',
+        exchange: 'NASDAQ — Available on Stake',
+        price: 875.40,
+        yoy: 195.0,
+        fiveYearReturn: 2800,
+        volatility: 48,
+        pe: 65,
+        marketCap: 2150,
+        dividend: 0.04,
+        consistency: 45,
+        history: [1000, 1100, 1250, 1400, 1350, 1600, 1800, 2100, 2000, 2400, 2700, 2950],
+      },
+      VOO: {
+        name: 'Vanguard S&P 500 ETF',
+        ticker: 'VOO',
+        exchange: 'NYSE — Available on Stake',
+        price: 480.20,
+        yoy: 24.8,
+        fiveYearReturn: 95,
+        volatility: 15,
+        pe: 22,
+        marketCap: 420,
+        dividend: 1.35,
+        consistency: 88,
+        history: [1000, 1015, 1035, 1055, 1070, 1090, 1105, 1125, 1140, 1160, 1190, 1248],
+      },
+      VTI: {
+        name: 'Vanguard Total Stock Market ETF',
+        ticker: 'VTI',
+        exchange: 'NYSE — Available on Stake',
+        price: 265.10,
+        yoy: 23.5,
+        fiveYearReturn: 88,
+        volatility: 16,
+        pe: 23,
+        marketCap: 380,
+        dividend: 1.40,
+        consistency: 86,
+        history: [1000, 1018, 1032, 1050, 1065, 1085, 1100, 1118, 1135, 1155, 1180, 1235],
+      },
+      VDHG: {
+        name: 'Vanguard Diversified High Growth ETF',
+        ticker: 'VDHG',
+        exchange: 'ASX — Available on Stake',
+        price: 68.40,
+        yoy: 15.2,
+        fiveYearReturn: 62,
+        volatility: 14,
+        pe: 20,
+        marketCap: 8.5,
+        dividend: 3.80,
+        consistency: 90,
+        history: [1000, 1010, 1025, 1035, 1050, 1060, 1075, 1090, 1100, 1115, 1130, 1152],
+      },
+    };
+
+    // ======================================================================
+    // Scoring engine
+    // ======================================================================
+    function calcScore(stock) {
+      // Growth score (0-30): YoY growth contribution
+      let growthScore;
+      if (stock.yoy < 0) growthScore = Math.max(0, 10 + stock.yoy * 0.3);
+      else if (stock.yoy <= 30) growthScore = 10 + (stock.yoy / 30) * 20;
+      else growthScore = 25 + Math.min(5, (stock.yoy - 30) / 50 * 5); // diminishing returns past 30%
+
+      // Risk score (0-30): lower volatility = better
+      let riskScore;
+      if (stock.volatility <= 15) riskScore = 30;
+      else if (stock.volatility <= 25) riskScore = 30 - ((stock.volatility - 15) / 10) * 10;
+      else if (stock.volatility <= 45) riskScore = 20 - ((stock.volatility - 25) / 20) * 15;
+      else riskScore = Math.max(0, 5 - ((stock.volatility - 45) / 20) * 5);
+
+      // Consistency score (0-25)
+      let consistencyScore = stock.consistency / 100 * 25;
+
+      // Value score (0-15): P/E ratio
+      let valueScore;
+      if (stock.pe <= 15) valueScore = 15;
+      else if (stock.pe <= 25) valueScore = 15 - ((stock.pe - 15) / 10) * 5;
+      else if (stock.pe <= 50) valueScore = 10 - ((stock.pe - 25) / 25) * 7;
+      else valueScore = Math.max(0, 3 - ((stock.pe - 50) / 30) * 3);
+
+      const total = Math.round(growthScore + riskScore + consistencyScore + valueScore);
+      return Math.min(100, Math.max(0, total));
+    }
+
+    function getScoreColor(score) {
+      if (score >= 75) return 'var(--score-great)';
+      if (score >= 60) return 'var(--score-good)';
+      if (score >= 45) return 'var(--score-ok)';
+      if (score >= 30) return 'var(--score-risky)';
+      return 'var(--score-danger)';
+    }
+
+    function getScoreLabel(score) {
+      if (score >= 75) return 'Great';
+      if (score >= 60) return 'Good';
+      if (score >= 45) return 'Okay';
+      if (score >= 30) return 'Risky';
+      return 'Very Risky';
+    }
+
+    function getVerdict(stock, score) {
+      if (score >= 75) return {
+        title: `${stock.ticker} looks like a strong investment`,
+        text: `It has solid year-over-year growth of ${stock.yoy}%, manageable risk, and consistent performance. This is the kind of stock that tends to reward patient investors. Good for building long-term wealth.`,
+      };
+      if (score >= 60) return {
+        title: `${stock.ticker} is a decent pick`,
+        text: `The numbers are mostly positive — ${stock.yoy > 0 ? `${stock.yoy}% growth last year` : 'some recent underperformance'} with reasonable risk levels. Not the absolute best on every metric, but a solid choice overall.`,
+      };
+      if (score >= 45) return {
+        title: `${stock.ticker} is a mixed bag`,
+        text: `There are some positives here, but also some caution flags. ${stock.volatility > 35 ? 'The price swings quite a lot, which means bigger potential gains but also bigger drops.' : ''} ${stock.pe > 40 ? 'It\'s trading at a premium price compared to what it earns.' : ''} Suitable if you understand the risks.`,
+      };
+      if (score >= 30) return {
+        title: `${stock.ticker} carries significant risk`,
+        text: `This one's not for the faint-hearted. ${stock.volatility > 40 ? 'High volatility means the price can swing dramatically day to day.' : ''} ${stock.yoy < 0 ? `It's actually down ${Math.abs(stock.yoy)}% over the last year.` : ''} Only consider this if you're comfortable potentially losing a chunk of your investment.`,
+      };
+      return {
+        title: `${stock.ticker} is very high risk`,
+        text: `The data suggests caution. Between high volatility, weak returns, and stretched valuation, this is a speculative bet rather than an investment. If you're new to investing, there are much safer options available.`,
+      };
+    }
+
+    function getRiskPercent(volatility) {
+      // Map volatility (0-80) to 0-100% for the scale
+      return Math.min(100, Math.max(0, (volatility / 70) * 100));
+    }
+
+    function formatMcap(b) {
+      if (b >= 1000) return `$${(b / 1000).toFixed(1)}T`;
+      if (b >= 1) return `$${b.toFixed(0)}B`;
+      return `$${(b * 1000).toFixed(0)}M`;
+    }
+
+    function mcapLabel(b) {
+      if (b >= 200) return 'Mega cap — very large, established';
+      if (b >= 10) return 'Large cap — big and stable';
+      if (b >= 2) return 'Mid cap — medium-sized';
+      return 'Small cap — higher risk, higher potential';
+    }
+
+    function peLabel(pe) {
+      if (pe <= 15) return 'Cheap — great value';
+      if (pe <= 25) return 'Fair value';
+      if (pe <= 40) return 'A bit pricey';
+      return 'Expensive — paying a premium for growth';
+    }
+
+    function divLabel(d) {
+      if (d <= 0) return 'No dividend — growth stock';
+      if (d < 1) return 'Small dividend';
+      if (d < 3) return 'Decent income';
+      return 'Strong dividend income';
+    }
+
+    // ======================================================================
+    // Rendering
+    // ======================================================================
+    function analyseStock() {
+      const input = document.getElementById('searchInput').value.trim().toUpperCase();
+      if (!input) return;
+
+      const stock = STOCKS[input];
+      if (!stock) {
+        alert(`"${input}" not found in demo data. Try: AAPL, TSLA, MSFT, NVDA, VOO, VTI, or VDHG`);
+        return;
+      }
+
+      // Show loading
+      document.getElementById('loadingOverlay').classList.add('active');
+      setTimeout(() => renderResults(stock), 800);
+    }
+
+    function quickPick(ticker) {
+      document.getElementById('searchInput').value = ticker;
+      analyseStock();
+    }
+
+    function renderResults(stock) {
+      const score = calcScore(stock);
+      const color = getScoreColor(score);
+      const label = getScoreLabel(score);
+      const verdict = getVerdict(stock, score);
+
+      // Hide empty, show results
+      document.getElementById('emptyState').style.display = 'none';
+      document.getElementById('results').classList.add('visible');
+
+      // Header
+      document.getElementById('stockNameTitle').textContent = `${stock.name} (${stock.ticker})`;
+      document.getElementById('stockExchange').textContent = stock.exchange;
+
+      // Score ring
+      const circumference = 2 * Math.PI * 78; // ~490
+      const dashLen = (score / 100) * circumference;
+      const arc = document.getElementById('scoreArc');
+      arc.style.stroke = color;
+      arc.setAttribute('stroke-dasharray', `${dashLen} ${circumference}`);
+      document.getElementById('scoreNum').textContent = score;
+      document.getElementById('scoreNum').style.color = color;
+      document.getElementById('scoreLabel').textContent = label;
+      document.getElementById('scoreLabel').style.color = color;
+
+      // Verdict
+      document.getElementById('verdictTitle').textContent = verdict.title;
+      document.getElementById('verdictText').textContent = verdict.text;
+
+      // Growth bar
+      const growthPct = Math.min(100, Math.max(0, (stock.yoy + 10) / 60 * 100));
+      document.getElementById('growthValue').textContent = `${stock.yoy > 0 ? '+' : ''}${stock.yoy}%`;
+      document.getElementById('growthValue').style.color = stock.yoy >= 0 ? 'var(--status-positive)' : 'var(--status-negative)';
+      document.getElementById('growthBar').style.width = growthPct + '%';
+      document.getElementById('growthBar').style.background = stock.yoy >= 10 ? 'var(--score-great)' : stock.yoy >= 0 ? 'var(--score-ok)' : 'var(--score-danger)';
+      document.getElementById('growthHint').textContent = stock.yoy >= 20 ? 'Strong growth — outperforming most stocks' : stock.yoy >= 10 ? 'Healthy growth' : stock.yoy >= 0 ? 'Modest growth' : 'Price has dropped — this can be temporary or a warning sign';
+
+      // Risk bar
+      const riskPct = Math.min(100, (stock.volatility / 70) * 100);
+      document.getElementById('riskValue').textContent = stock.volatility <= 18 ? 'Low' : stock.volatility <= 30 ? 'Medium' : stock.volatility <= 45 ? 'High' : 'Very High';
+      document.getElementById('riskValue').style.color = stock.volatility <= 18 ? 'var(--score-great)' : stock.volatility <= 30 ? 'var(--score-ok)' : 'var(--score-danger)';
+      document.getElementById('riskBar').style.width = riskPct + '%';
+      document.getElementById('riskBar').style.background = stock.volatility <= 18 ? 'var(--score-great)' : stock.volatility <= 30 ? 'var(--score-ok)' : 'var(--score-danger)';
+      document.getElementById('riskHint').textContent = stock.volatility <= 18 ? 'Calm price movement — good for peace of mind' : stock.volatility <= 30 ? 'Some ups and downs — normal for individual stocks' : 'Big price swings — could drop 20%+ in a bad month';
+
+      // Consistency bar
+      document.getElementById('consistencyValue').textContent = stock.consistency + '%';
+      document.getElementById('consistencyValue').style.color = stock.consistency >= 70 ? 'var(--score-great)' : stock.consistency >= 50 ? 'var(--score-ok)' : 'var(--score-danger)';
+      document.getElementById('consistencyBar').style.width = stock.consistency + '%';
+      document.getElementById('consistencyBar').style.background = stock.consistency >= 70 ? 'var(--score-great)' : stock.consistency >= 50 ? 'var(--score-ok)' : 'var(--score-danger)';
+      document.getElementById('consistencyHint').textContent = stock.consistency >= 70 ? 'Steady grower — the tortoise that wins the race' : stock.consistency >= 50 ? 'Somewhat unpredictable but not chaotic' : 'Very erratic — hard to predict what happens next';
+
+      // Value bar
+      const valPct = Math.min(100, Math.max(0, (1 - (stock.pe - 10) / 60) * 100));
+      document.getElementById('valueRating').textContent = stock.pe <= 20 ? 'Great' : stock.pe <= 30 ? 'Fair' : stock.pe <= 50 ? 'Pricey' : 'Expensive';
+      document.getElementById('valueRating').style.color = stock.pe <= 20 ? 'var(--score-great)' : stock.pe <= 30 ? 'var(--score-ok)' : 'var(--score-danger)';
+      document.getElementById('valueBar').style.width = Math.max(5, valPct) + '%';
+      document.getElementById('valueBar').style.background = stock.pe <= 20 ? 'var(--score-great)' : stock.pe <= 30 ? 'var(--score-ok)' : 'var(--score-danger)';
+      document.getElementById('valueHint').textContent = peLabel(stock.pe);
+
+      // Risk pointer
+      document.getElementById('riskPointer').style.left = getRiskPercent(stock.volatility) + '%';
+
+      // Key stats
+      document.getElementById('statPrice').textContent = `$${stock.price.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+      const oneYrVal = 1000 * (1 + stock.yoy / 100);
+      document.getElementById('stat1yr').textContent = `$${oneYrVal.toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+      document.getElementById('stat1yr').style.color = stock.yoy >= 0 ? 'var(--status-positive)' : 'var(--status-negative)';
+      document.getElementById('stat1yrCtx').textContent = `${stock.yoy >= 0 ? '+' : ''}$${Math.round(oneYrVal - 1000).toLocaleString()} ${stock.yoy >= 0 ? 'profit' : 'loss'} on $1,000`;
+
+      const fiveYrVal = 1000 * (1 + stock.fiveYearReturn / 100);
+      document.getElementById('stat5yr').textContent = `$${fiveYrVal.toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+      document.getElementById('stat5yr').style.color = 'var(--status-positive)';
+      document.getElementById('stat5yrCtx').textContent = `+$${Math.round(fiveYrVal - 1000).toLocaleString()} profit on $1,000`;
+
+      document.getElementById('statMcap').textContent = formatMcap(stock.marketCap);
+      document.getElementById('statMcapCtx').textContent = mcapLabel(stock.marketCap);
+
+      document.getElementById('statDiv').textContent = stock.dividend > 0 ? stock.dividend.toFixed(2) + '%' : 'None';
+      document.getElementById('statDivCtx').textContent = divLabel(stock.dividend);
+
+      document.getElementById('statPE').textContent = stock.pe.toFixed(1);
+      document.getElementById('statPEctx').textContent = peLabel(stock.pe);
+
+      // Growth chart (simple canvas)
+      drawChart(stock);
+
+      // Comparison table
+      renderComparison(stock);
+
+      // Hide loading
+      document.getElementById('loadingOverlay').classList.remove('active');
+
+      // Scroll to results
+      document.getElementById('scoreWidget').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ======================================================================
+    // Chart drawing (pure canvas, no dependencies)
+    // ======================================================================
+    function drawChart(stock) {
+      const canvas = document.getElementById('growthChart');
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = 200 * dpr;
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = '200px';
+      ctx.scale(dpr, dpr);
+
+      const w = rect.width;
+      const h = 200;
+      const data = stock.history;
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const pad = { top: 20, right: 20, bottom: 30, left: 50 };
+      const plotW = w - pad.left - pad.right;
+      const plotH = h - pad.top - pad.bottom;
+
+      const min = Math.min(...data) * 0.95;
+      const max = Math.max(...data) * 1.05;
+      const range = max - min || 1;
+
+      function x(i) { return pad.left + (i / (data.length - 1)) * plotW; }
+      function y(v) { return pad.top + plotH - ((v - min) / range) * plotH; }
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Grid lines
+      ctx.strokeStyle = '#f0f0f0';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const yy = pad.top + (plotH / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, yy);
+        ctx.lineTo(w - pad.right, yy);
+        ctx.stroke();
+
+        const val = max - (range / 4) * i;
+        ctx.fillStyle = '#a3a3a3';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'right';
+        ctx.fillText('$' + Math.round(val).toLocaleString(), pad.left - 8, yy + 4);
+      }
+
+      // X labels
+      ctx.fillStyle = '#a3a3a3';
+      ctx.font = '11px Inter';
+      ctx.textAlign = 'center';
+      data.forEach((_, i) => {
+        if (i % 2 === 0 || i === data.length - 1)
+          ctx.fillText(months[i], x(i), h - 8);
+      });
+
+      // Gradient fill
+      const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + plotH);
+      const score = calcScore(stock);
+      const lineColor = score >= 60 ? '#16a34a' : score >= 45 ? '#d97706' : '#e63535';
+      grad.addColorStop(0, lineColor + '25');
+      grad.addColorStop(1, lineColor + '02');
+
+      ctx.beginPath();
+      ctx.moveTo(x(0), y(data[0]));
+      data.forEach((v, i) => { if (i > 0) ctx.lineTo(x(i), y(v)); });
+      ctx.lineTo(x(data.length - 1), pad.top + plotH);
+      ctx.lineTo(x(0), pad.top + plotH);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Line
+      ctx.beginPath();
+      ctx.moveTo(x(0), y(data[0]));
+      data.forEach((v, i) => { if (i > 0) ctx.lineTo(x(i), y(v)); });
+      ctx.strokeStyle = lineColor;
+      ctx.lineWidth = 2.5;
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+
+      // End dot
+      const lastI = data.length - 1;
+      ctx.beginPath();
+      ctx.arc(x(lastI), y(data[lastI]), 5, 0, Math.PI * 2);
+      ctx.fillStyle = lineColor;
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // End label
+      ctx.fillStyle = lineColor;
+      ctx.font = 'bold 13px Inter';
+      ctx.textAlign = 'left';
+      ctx.fillText('$' + data[lastI].toLocaleString(), x(lastI) + 10, y(data[lastI]) + 4);
+    }
+
+    // ======================================================================
+    // Comparison table
+    // ======================================================================
+    function renderComparison(stock) {
+      const benchmarks = ['VOO', 'VTI', 'VDHG'];
+      const tickers = [stock.ticker, ...benchmarks.filter(t => t !== stock.ticker)];
+
+      const tbody = document.getElementById('compareBody');
+      tbody.innerHTML = '';
+
+      tickers.forEach(ticker => {
+        const s = STOCKS[ticker];
+        if (!s) return;
+        const sc = calcScore(s);
+        const tr = document.createElement('tr');
+        const isTarget = ticker === stock.ticker;
+        tr.innerHTML = `
+          <td><div class="ticker-cell">
+            <span class="ticker-dot" style="background:${getScoreColor(sc)}"></span>
+            <span>${s.ticker}${isTarget ? ' <small style="color:var(--text-tertiary);">(selected)</small>' : ''}</span>
+          </div></td>
+          <td style="color:${s.yoy >= 0 ? 'var(--status-positive)' : 'var(--status-negative)'}">
+            ${s.yoy >= 0 ? '+' : ''}${s.yoy}%
+          </td>
+          <td>${s.volatility <= 18 ? 'Low' : s.volatility <= 30 ? 'Med' : 'High'}</td>
+          <td><span class="badge ${sc >= 60 ? 'badge-positive' : sc >= 45 ? 'badge-warning' : 'badge-negative'}">${sc}/100</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Handle Enter key
+    document.getElementById('searchInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') analyseStock();
+    });
+
+    // Resize chart
+    window.addEventListener('resize', () => {
+      const input = document.getElementById('searchInput').value.trim().toUpperCase();
+      if (STOCKS[input]) drawChart(STOCKS[input]);
+    });
+  </script>
+</body>
+</html>
