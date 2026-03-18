@@ -1270,19 +1270,11 @@ tr:last-child td { border-bottom: none; }
           <input class="input-field" type="text" placeholder="e.g. Meridian Capital Partners">
         </div>
 
-        <div class="form-group">
-          <label class="field-label">Investor type <span class="required">*</span></label>
-          <select class="select-field">
-            <option value="">Select type...</option>
-            <option value="1">Individual</option>
-            <option value="2">Institution</option>
-          </select>
-        </div>
       </div>
 
       <div class="form-section">
-        <span class="section-label">Users</span>
-        <span class="field-hint" style="margin-top: 0; margin-bottom: var(--space-16);">Add one or more users who will have dashboard access for this investor.</span>
+        <span class="section-label">User details</span>
+        <span class="field-hint" style="margin-top: 0; margin-bottom: var(--space-16);">The individual who will have dashboard access for this investor.</span>
 
         <div class="form-row" style="margin-top: 0;">
           <div class="form-group" style="margin-top: 0;">
@@ -1301,10 +1293,6 @@ tr:last-child td { border-bottom: none; }
           <span class="field-hint">The invite link will be sent to this address</span>
         </div>
 
-        <button class="btn btn-outline" style="margin-top: var(--space-8); height: 36px; font-size: var(--text-size-caption-md);" onclick="event.preventDefault()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Add another user
-        </button>
       </div>
 
       <div class="form-section">
@@ -1485,11 +1473,10 @@ tr:last-child td { border-bottom: none; }
       <div class="review-section">
         <div class="review-section-title">Investor</div>
         <div class="review-row"><span class="review-label">Name</span><span class="review-value">Meridian Capital Partners</span></div>
-        <div class="review-row"><span class="review-label">Type</span><span class="review-value">Institution</span></div>
       </div>
 
       <div class="review-section">
-        <div class="review-section-title">Users</div>
+        <div class="review-section-title">User details</div>
         <div class="review-row"><span class="review-label">Sarah Chen</span><span class="review-value">s.chen@protonmail.com</span></div>
       </div>
 
@@ -1534,7 +1521,7 @@ tr:last-child td { border-bottom: none; }
         <div class="success-title">Invitation sent</div>
         <div class="success-desc">
           An invitation has been sent to <strong>Meridian Capital Partners</strong>.
-          All users will receive an email with a secure link to onboard to POD Crypto Fund.
+          They will receive an email with a secure link to onboard to POD Crypto Fund.
         </div>
         <div style="margin-top: var(--space-32); width: 100%; text-align: left;">
           <span class="field-label" style="margin-bottom: var(--space-4);">Invitation link</span>
@@ -1620,7 +1607,7 @@ function updateStepUI() {
 
   // Update header
   const titles = {
-    1: ['Invite investor', 'Set up the investor account and add users who will have dashboard access.'],
+    1: ['Invite investor', 'Set up the investor account and the individual who will have dashboard access.'],
     2: ['Visibility permissions', 'Control which fund details this investor can see.'],
     3: ['Review invitation', 'Confirm the details below before sending.'],
     4: ['', '']
