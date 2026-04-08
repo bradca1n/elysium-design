@@ -7,12 +7,13 @@
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
   <style>
     /* ===== Design Tokens ===== */
     :root {
       --bg-canvas:           #fefeff;
-      --bg-surface:          #f5f5f5;
-      --bg-subtle:           #f5f5f5;
+      --bg-surface:          #F8F8F8;
+      --bg-subtle:           #F8F8F8;
       --bg-elevated:         #e5e5e5;
       --text-primary:        #171717;
       --text-secondary:      #737373;
@@ -26,17 +27,17 @@
       --border-positive:     #348352;
       --border-negative:     #dc2626;
       --status-positive:     #348352;
-      --status-positive-bg:  #caffe8;
+      --status-positive-bg:  #CAFFE8;
       --status-negative:     #e63535;
-      --status-negative-bg:  #fee9e9;
+      --status-negative-bg:  #FEE2E2;
       --status-warning:      #e77828;
       --status-warning-bg:   #fff4ec;
       --status-info:         #0b8dcd;
       --status-info-bg:      #c7ebfc;
       --status-neutral:      #404040;
-      --status-neutral-bg:   #f5f5f5;
+      --status-neutral-bg:   #F8F8F8;
       --btn-primary-bg:      #262627;
-      --btn-primary-text:    #f5f5f5;
+      --btn-primary-text:    #F8F8F8;
       --btn-secondary-bg:    #e5e5e5;
       --btn-secondary-text:  #171717;
       --btn-ghost-text:      #171717;
@@ -60,16 +61,21 @@
       --space-64:  64px;
       --space-80:  80px;
       --space-96:  96px;
+      --space-112: 112px;
+      --space-128: 128px;
+      /* Fonts */
+      --font-body: 'Inter', sans-serif;
+      --font-display: 'Serrif Condensed', 'DM Serif Display', serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
       background: var(--bg-canvas);
       color: var(--text-primary);
       font-size: 14px;
-      line-height: 1.5;
+      line-height: 18px;
     }
 
     /* ===== Layout ===== */
@@ -87,145 +93,106 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: var(--space-24) var(--space-32);
-      border-bottom: 1px solid var(--border-subtle);
+      padding: var(--space-16) var(--space-24);
       background: var(--bg-canvas);
       flex-shrink: 0;
-      height: 86px;
     }
-    .navbar-left { display: flex; align-items: center; gap: var(--space-24); }
-    .navbar-logo {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: var(--text-primary);
-    }
-    .navbar-right { display: flex; align-items: center; gap: var(--space-32); }
-    .navbar-user { display: flex; align-items: center; gap: var(--space-8); cursor: pointer; }
-    .navbar-avatar {
-      width: 38px; height: 38px; border-radius: 50%;
-      background: var(--bg-elevated);
+    .navbar-left { display: flex; align-items: center; gap: var(--space-32); }
+    .navbar-close {
+      width: 32px; height: 32px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 600; color: var(--text-secondary);
+      border-radius: var(--radius-full);
+      background: var(--bg-subtle);
+      cursor: pointer;
+      color: var(--text-primary);
+      transition: all 0.15s ease;
     }
-    .navbar-username {
-      background: var(--bg-surface);
-      border-radius: var(--radius-xs);
-      padding: var(--space-4) var(--space-8);
-      font-size: 12px;
+    .navbar-close:hover { background: var(--bg-elevated); }
+    .navbar-close svg { width: 17px; height: 17px; }
+    .navbar-title {
+      font-size: 16px;
       font-weight: 500;
       color: var(--text-primary);
+      line-height: 22px;
     }
+    .navbar-right { display: flex; align-items: center; }
 
     /* ===== Body ===== */
-    .body-row { display: flex; flex: 1; overflow: hidden; }
+    .body-row { display: flex; flex: 1; overflow: hidden; gap: var(--space-112); }
 
-    /* ===== Stepper Sidebar ===== */
+    /* ===== Stepper Sidebar (Lovelight style) ===== */
     .stepper-sidebar {
       width: 320px;
       flex-shrink: 0;
       background: var(--bg-canvas);
-      border-right: 1px solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      padding: var(--space-32);
+      padding: var(--space-48) 0 var(--space-24) var(--space-80);
       overflow-y: auto;
     }
     .stepper-header {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      margin-bottom: var(--space-24);
-    }
-    .stepper-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
+      display: none;
     }
 
-    /* Stepper Item */
-    .stepper-item {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--space-16);
+    /* Step item */
+    .step-group {
       position: relative;
-      padding-bottom: var(--space-32);
     }
-    .stepper-item:last-child { padding-bottom: 0; }
+    .step-group-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      cursor: pointer;
+      border-radius: var(--radius-m);
+      font-weight: 400;
+      font-size: 14px;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+      user-select: none;
+      line-height: 18px;
+    }
+    .step-group-row:hover { background: var(--bg-subtle); }
+    .step-group.active .step-group-row {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    .step-group.completed .step-group-row { color: var(--text-secondary); }
 
-    /* Stepper line connector */
-    .stepper-item:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      left: 15px;
-      top: 34px;
-      bottom: 0;
-      width: 2px;
-      background: var(--border-subtle);
-    }
-    .stepper-item.completed:not(:last-child)::after {
-      background: var(--status-positive);
-    }
-    .stepper-item.active:not(:last-child)::after {
-      background: var(--border-subtle);
-    }
-
-    /* Stepper circle */
-    .stepper-circle {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
+    /* Step progress circle (Lovelight style) */
+    .step-progress {
+      width: 24px;
+      height: 24px;
       flex-shrink: 0;
+      position: relative;
+    }
+    .step-progress svg.ring { width: 24px; height: 24px; transform: rotate(-90deg); }
+    .step-progress .track { fill: none; stroke: var(--border-strong); stroke-width: 2; }
+    .step-progress .fill {
+      fill: none;
+      stroke: var(--btn-primary-bg);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.5s ease;
+    }
+    .step-progress .complete-check {
+      position: absolute;
+      inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
-      font-weight: 600;
-      position: relative;
-      z-index: 1;
-      transition: all 0.2s ease;
-    }
-    .stepper-item.pending .stepper-circle {
-      background: var(--bg-surface);
-      color: var(--text-muted);
-      border: 2px solid var(--border-subtle);
-    }
-    .stepper-item.active .stepper-circle {
       background: var(--btn-primary-bg);
-      color: var(--text-inverse);
-      border: 2px solid var(--btn-primary-bg);
-      box-shadow: 0 0 0 4px rgba(38, 38, 39, 0.12);
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.3s;
     }
-    .stepper-item.completed .stepper-circle {
-      background: var(--status-positive-bg);
-      color: var(--status-positive);
-      border: 2px solid var(--status-positive);
-    }
-    .stepper-circle .check-icon {
-      width: 16px; height: 16px;
-    }
+    .step-progress .complete-check svg { width: 12px; height: 12px; transform: none; }
+    .step-progress.done .complete-check { opacity: 1; }
+    .step-progress.done svg.ring { opacity: 0; }
 
-    /* Stepper text */
-    .stepper-content { flex: 1; padding-top: var(--space-4); }
-    .stepper-title {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-primary);
-      line-height: 1.4;
-    }
-    .stepper-item.pending .stepper-title { color: var(--text-muted); }
-    .stepper-item.active .stepper-title { color: var(--text-primary); font-weight: 600; }
-    .stepper-item.completed .stepper-title { color: var(--text-secondary); }
+    /* Active ring — keep track subtle, fill shows progress in accent */
+    .step-group.active .step-progress .track { stroke: var(--border-subtle); stroke-width: 2; }
 
-    .stepper-desc {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: var(--space-2);
-      line-height: 1.4;
-    }
-    .stepper-item.active .stepper-desc { color: var(--text-secondary); }
+    .step-connector { display: none; }
 
     /* ===== Main area ===== */
     .main-area {
@@ -239,8 +206,7 @@
       display: flex;
       flex-direction: column;
       max-width: 680px;
-      margin: 0 auto;
-      padding: var(--space-48) var(--space-32);
+      padding: var(--space-48) 0;
       width: 100%;
     }
 
@@ -260,18 +226,19 @@
 
     .step-heading {
       font-size: 30px;
-      font-weight: 600;
+      font-weight: 300;
+      font-family: var(--font-display);
       color: var(--text-primary);
-      letter-spacing: -0.5px;
-      line-height: 1.2;
-      margin-bottom: var(--space-8);
+      letter-spacing: 0;
+      line-height: 120%;
+      margin-bottom: var(--space-16);
     }
     .step-subheading {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 400;
       color: var(--text-secondary);
-      line-height: 1.5;
-      margin-bottom: var(--space-32);
+      line-height: 18px;
+      margin-bottom: var(--space-48);
     }
 
     /* Welcome features list */
@@ -300,17 +267,18 @@
     .feature-icon.green { background: var(--status-positive-bg); color: var(--status-positive); }
     .feature-icon.orange { background: var(--status-warning-bg); color: var(--status-warning); }
     .feature-text { flex: 1; }
-    .feature-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2); }
-    .feature-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
+    .feature-title { font-size: 14px; font-weight: 400; color: var(--text-primary); margin-bottom: var(--space-2); }
+    .feature-desc { font-size: 12px; color: var(--text-secondary); line-height: 18px; }
 
     /* Estimated time */
     .time-estimate {
       display: flex;
       align-items: center;
       gap: var(--space-8);
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-muted);
       margin-bottom: var(--space-32);
+      line-height: 18px;
     }
     .time-estimate svg { width: 16px; height: 16px; }
 
@@ -319,99 +287,92 @@
       margin-bottom: var(--space-24);
     }
     .form-label {
-      font-size: 14px;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-4);
+      display: block;
+      line-height: 18px;
+    }
+    .form-label.regular {
+      font-size: 16px;
       font-weight: 500;
       color: var(--text-primary);
-      margin-bottom: var(--space-8);
-      display: block;
+      line-height: 22px;
+      margin-bottom: var(--space-16);
     }
-    .form-label .required { color: var(--text-negative); }
+    .form-label .required { color: var(--text-negative); font-size: 12px; font-weight: 400; vertical-align: super; }
     .form-hint {
       font-size: 12px;
       color: var(--text-muted);
-      margin-top: var(--space-4);
+      margin-top: var(--space-8);
+      line-height: 18px;
     }
 
-    /* Card selection (for single-select options like current setup) */
+    /* Radio card (single-select) */
     .card-select-group {
       display: flex;
       flex-direction: column;
-      gap: var(--space-8);
+      gap: var(--space-16);
     }
     .card-select {
       display: flex;
       align-items: center;
       gap: var(--space-16);
-      padding: var(--space-16);
-      border: 2px solid var(--border-subtle);
+      padding: var(--space-24);
+      border: 2px solid transparent;
       border-radius: var(--radius-l);
       cursor: pointer;
       transition: all 0.15s ease;
-      background: var(--bg-canvas);
+      background: var(--bg-surface);
     }
     .card-select:hover {
       border-color: var(--border-strong);
-      background: var(--bg-subtle);
     }
     .card-select.selected {
-      border-color: var(--btn-primary-bg);
-      background: var(--bg-canvas);
+      border-color: var(--text-primary);
     }
-    .card-select-radio {
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      border: 2px solid var(--border-strong);
-      flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s ease;
-    }
-    .card-select.selected .card-select-radio {
-      border-color: var(--btn-primary-bg);
-    }
-    .card-select.selected .card-select-radio::after {
-      content: '';
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      background: var(--btn-primary-bg);
-    }
+    .card-select-radio { display: none; }
     .card-select-icon {
-      width: 40px; height: 40px;
-      border-radius: var(--radius-m);
-      background: var(--bg-surface);
+      width: 24px; height: 24px;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
-      font-size: 18px;
+      color: var(--text-secondary);
+      margin-left: auto;
     }
+    .card-select-icon svg { width: 24px; height: 24px; }
     .card-select-text { flex: 1; }
-    .card-select-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
-    .card-select-desc { font-size: 12px; color: var(--text-secondary); margin-top: var(--space-2); }
+    .card-select-title { font-size: 16px; font-weight: 500; color: var(--text-primary); line-height: 22px; }
+    .card-select-desc { font-size: 14px; font-weight: 400; color: var(--text-secondary); margin-top: var(--space-4); line-height: 18px; }
 
-    /* Pill select (for AUM ranges) */
+    /* Pill select — Md Outline */
     .pill-select-group {
       display: flex;
       flex-wrap: wrap;
       gap: var(--space-8);
     }
     .pill-select {
-      padding: var(--space-8) var(--space-16);
-      border: 2px solid var(--border-subtle);
-      border-radius: var(--radius-full);
+      padding: 8px 12px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-m);
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 400;
       color: var(--text-secondary);
       cursor: pointer;
       transition: all 0.15s ease;
-      background: var(--bg-canvas);
+      background: transparent;
       white-space: nowrap;
+      line-height: 18px;
     }
     .pill-select:hover {
-      border-color: var(--border-strong);
+      background: var(--bg-subtle);
       color: var(--text-primary);
     }
     .pill-select.selected {
-      border-color: var(--btn-primary-bg);
+      border: 1px solid var(--btn-primary-bg);
       background: var(--btn-primary-bg);
-      color: var(--text-inverse);
+      color: var(--btn-primary-text);
+      font-weight: 500;
     }
 
     /* Slider input */
@@ -430,7 +391,7 @@
       -webkit-appearance: none;
       appearance: none;
       height: 6px;
-      background: var(--bg-elevated);
+      background: linear-gradient(to right, var(--btn-primary-bg) 0%, var(--bg-elevated) 0%);
       border-radius: var(--radius-full);
       outline: none;
     }
@@ -445,45 +406,62 @@
       border: 3px solid var(--bg-canvas);
       box-shadow: 0 0 0 2px var(--btn-primary-bg);
     }
+    .slider-input::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--btn-primary-bg);
+      cursor: pointer;
+      border: 3px solid var(--bg-canvas);
+      box-shadow: 0 0 0 2px var(--btn-primary-bg);
+    }
+    .slider-input::-moz-range-progress {
+      background: var(--btn-primary-bg);
+      height: 6px;
+      border-radius: var(--radius-full);
+    }
     .slider-value {
       font-size: 16px;
       font-weight: 600;
       color: var(--text-primary);
       min-width: 48px;
       text-align: right;
+      line-height: 22px;
     }
 
-    /* Chip multi-select (for asset classes, investor regions) */
+    /* Filter tabs — Md Outline */
     .chip-group {
       display: flex;
       flex-wrap: wrap;
       gap: var(--space-8);
     }
     .chip {
-      padding: var(--space-8) var(--space-16);
-      border: 2px solid var(--border-subtle);
-      border-radius: var(--radius-full);
-      font-size: 13px;
-      font-weight: 500;
+      padding: 8px 12px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-m);
+      font-size: 14px;
+      font-weight: 400;
       color: var(--text-secondary);
       cursor: pointer;
       transition: all 0.15s ease;
-      background: var(--bg-canvas);
+      background: transparent;
       display: flex;
       align-items: center;
       gap: var(--space-4);
+      line-height: 18px;
     }
     .chip:hover {
-      border-color: var(--border-strong);
+      background: var(--bg-subtle);
       color: var(--text-primary);
     }
     .chip.selected {
       border-color: var(--btn-primary-bg);
-      background: var(--status-neutral-bg);
-      color: var(--text-primary);
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-text);
+      font-weight: 500;
     }
     .chip .chip-check {
-      width: 14px; height: 14px;
+      width: 12px; height: 12px;
       display: none;
     }
     .chip.selected .chip-check { display: block; }
@@ -491,19 +469,19 @@
     /* Text input */
     .text-input {
       width: 100%;
-      padding: var(--space-8) var(--space-16);
-      border: 2px solid var(--border-subtle);
+      padding: 0 var(--space-16);
+      border: 1px solid var(--border-default);
       border-radius: var(--radius-m);
       font-size: 14px;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
       color: var(--text-primary);
       background: var(--bg-canvas);
       outline: none;
       transition: border-color 0.15s ease;
-      height: 44px;
+      height: 36px;
     }
     .text-input:focus { border-color: var(--btn-primary-bg); }
-    .text-input::placeholder { color: var(--text-muted); }
+    .text-input::placeholder { color: var(--text-muted); opacity: 1; }
 
     /* Inline two-column form */
     .form-row {
@@ -533,27 +511,17 @@
       letter-spacing: 0.04em;
     }
 
-    /* Section divider with text */
+    /* Section divider */
     .section-divider {
-      display: flex;
-      align-items: center;
-      gap: var(--space-16);
-      margin: var(--space-32) 0;
-    }
-    .section-divider::before,
-    .section-divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border-subtle);
+      margin: var(--space-32) 0 var(--space-16);
+      padding-top: var(--space-32);
+      border-top: 1px solid var(--border-subtle);
     }
     .section-divider span {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      white-space: nowrap;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 22px;
     }
 
     /* ===== Buttons ===== */
@@ -561,9 +529,10 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: auto;
-      padding-top: var(--space-32);
-      border-top: 1px solid var(--border-subtle);
+      margin-top: var(--space-48);
+    }
+    .btn-row.left-only {
+      justify-content: flex-start;
     }
     .btn {
       display: inline-flex;
@@ -575,10 +544,11 @@
       border-radius: var(--radius-m);
       font-size: 14px;
       font-weight: 500;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
       cursor: pointer;
       border: none;
       transition: all 0.15s ease;
+      line-height: 18px;
     }
     .btn-primary {
       background: var(--btn-primary-bg);
@@ -599,91 +569,56 @@
     .btn-ghost:hover { color: var(--text-primary); }
     .btn svg { width: 16px; height: 16px; }
 
-    /* ===== Recommendation screen ===== */
-    .rec-section {
-      margin-bottom: var(--space-32);
-    }
-    .rec-section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: var(--space-16);
-    }
-    .rec-section-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-    .rec-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: var(--space-4) var(--space-8);
-      border-radius: var(--radius-full);
-      font-size: 11px;
-      font-weight: 500;
-    }
-    .rec-badge.auto {
-      background: var(--status-info-bg);
-      color: var(--status-info);
-    }
-    .rec-badge.editable {
-      background: var(--status-warning-bg);
-      color: var(--status-warning);
-    }
-
-    .rec-card {
-      border: 1px solid var(--border-subtle);
+    /* ===== Review card (order preview style) ===== */
+    .review-card {
+      background: var(--bg-surface);
       border-radius: var(--radius-l);
-      overflow: hidden;
+      padding: var(--space-24);
+      margin-bottom: var(--space-24);
     }
-    .rec-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--space-16);
+    .review-card-section {
+      padding-bottom: var(--space-16);
+      margin-bottom: var(--space-16);
       border-bottom: 1px solid var(--border-subtle);
     }
-    .rec-row:last-child { border-bottom: none; }
-    .rec-row-label {
-      font-size: 13px;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: var(--space-8);
+    .review-card-section:last-child {
+      padding-bottom: 0;
+      margin-bottom: 0;
+      border-bottom: none;
     }
-    .rec-row-value {
+    .review-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 6px 0;
+    }
+    .review-row-label {
       font-size: 14px;
       font-weight: 500;
+      color: var(--text-secondary);
+      line-height: 18px;
+    }
+    .review-row-value {
+      font-size: 14px;
+      font-weight: 400;
       color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: var(--space-8);
+      line-height: 18px;
+      text-align: right;
+      max-width: 60%;
     }
-    .rec-row-edit {
-      width: 28px; height: 28px;
-      border-radius: var(--radius-s);
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-canvas);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .rec-row-edit:hover { background: var(--bg-subtle); }
-    .rec-row-edit svg { width: 14px; height: 14px; color: var(--text-secondary); }
-
-    /* Derived tag */
-    .derived-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-4);
-      padding: 2px var(--space-8);
-      border-radius: var(--radius-full);
-      background: var(--status-positive-bg);
-      color: var(--status-positive);
-      font-size: 10px;
+    .review-row.highlight .review-row-label,
+    .review-row.highlight .review-row-value {
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      color: var(--text-primary);
+    }
+    .review-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 18px;
+      padding-top: var(--space-16);
+      margin-top: var(--space-16);
+      border-top: 1px solid var(--border-subtle);
+      line-height: 18px;
     }
 
     /* ===== Submitted screen ===== */
@@ -697,7 +632,8 @@
     .submitted-icon svg { width: 40px; height: 40px; color: var(--status-positive); }
     .submitted-heading {
       font-size: 30px;
-      font-weight: 600;
+      font-weight: 300;
+      font-family: var(--font-display);
       text-align: center;
       color: var(--text-primary);
       margin-bottom: var(--space-8);
@@ -706,7 +642,7 @@
       font-size: 16px;
       color: var(--text-secondary);
       text-align: center;
-      line-height: 1.5;
+      line-height: 22px;
       margin-bottom: var(--space-40);
       max-width: 460px;
       margin-left: auto;
@@ -720,7 +656,7 @@
     }
     .submitted-summary-title {
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 400;
       color: var(--text-primary);
       margin-bottom: var(--space-16);
     }
@@ -730,8 +666,8 @@
       justify-content: space-between;
       padding: var(--space-8) 0;
     }
-    .submitted-summary-label { font-size: 13px; color: var(--text-secondary); }
-    .submitted-summary-value { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+    .submitted-summary-label { font-size: 12px; color: var(--text-secondary); line-height: 18px; }
+    .submitted-summary-value { font-size: 12px; font-weight: 500; color: var(--text-primary); line-height: 18px; }
     .submitted-actions {
       display: flex;
       flex-direction: column;
@@ -739,17 +675,7 @@
       gap: var(--space-16);
     }
 
-    /* ===== Progress bar ===== */
-    .progress-bar-container {
-      height: 3px;
-      background: var(--bg-elevated);
-      flex-shrink: 0;
-    }
-    .progress-bar-fill {
-      height: 100%;
-      background: var(--btn-primary-bg);
-      transition: width 0.3s ease;
-    }
+    /* Progress bar removed — stepper handles progress visually */
 
     /* ===== Responsive ===== */
     @media (max-width: 1024px) {
@@ -760,45 +686,61 @@
     .fee-input-group {
       display: flex;
       align-items: center;
-      gap: var(--space-8);
+      position: relative;
     }
     .fee-input {
-      width: 80px;
-      height: 44px;
-      padding: var(--space-8) var(--space-16);
-      border: 2px solid var(--border-subtle);
+      width: 100%;
+      height: 36px;
+      padding: 0 var(--space-40) 0 var(--space-16);
+      border: 1px solid var(--border-default);
       border-radius: var(--radius-m);
       font-size: 14px;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
       color: var(--text-primary);
       background: var(--bg-canvas);
       outline: none;
-      text-align: right;
+      text-align: left;
     }
+    .fee-input::placeholder { color: var(--text-muted); opacity: 1; }
     .fee-input:focus { border-color: var(--btn-primary-bg); }
     .fee-suffix {
-      font-size: 14px;
-      color: var(--text-secondary);
-      font-weight: 500;
+      position: absolute;
+      right: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+      pointer-events: none;
+    }
+    .fee-input-group .fee-prefix {
+      position: absolute;
+      left: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+      pointer-events: none;
+    }
+    .fee-input.has-prefix {
+      padding-left: var(--space-24);
     }
 
-    /* Info callout */
+    /* Info callout — Alert Filled Muted */
     .info-callout {
       display: flex;
-      gap: var(--space-16);
-      padding: var(--space-16);
-      background: var(--status-info-bg);
-      border-radius: var(--radius-l);
+      gap: var(--space-8);
+      padding: 12px var(--space-16);
+      background: var(--bg-surface);
+      border-radius: var(--radius-m);
       margin-bottom: var(--space-24);
     }
     .info-callout-icon {
-      width: 20px; height: 20px; flex-shrink: 0;
-      color: var(--status-info);
+      width: 18px; height: 18px; flex-shrink: 0;
+      color: var(--text-secondary);
+      margin-top: 2px;
     }
     .info-callout-text {
-      font-size: 13px;
-      color: var(--text-primary);
-      line-height: 1.5;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 18px;
     }
   </style>
 </head>
@@ -807,81 +749,78 @@
     <!-- Navbar -->
     <nav class="navbar">
       <div class="navbar-left">
-        <div class="navbar-logo">Elysium</div>
+        <div class="navbar-close" onclick="if(currentStep>0) goToStep(currentStep-1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 19L8.5 12L15.5 5"/></svg>
+        </div>
+        <span class="navbar-title">Create a fund</span>
       </div>
       <div class="navbar-right">
-        <div class="navbar-user">
-          <div class="navbar-avatar">JD</div>
-          <span class="navbar-username">John Doe</span>
+        <div class="navbar-close" onclick="window.history.back()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7L7 17M7 7L17 17"/></svg>
         </div>
       </div>
     </nav>
 
-    <!-- Progress bar -->
-    <div class="progress-bar-container">
-      <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
-    </div>
-
     <div class="body-row">
       <!-- Stepper sidebar -->
-      <aside class="stepper-sidebar">
-        <div class="stepper-header">Fund Setup</div>
-        <div class="stepper-list" id="stepperList">
-          <div class="stepper-item active" data-step="0">
-            <div class="stepper-circle">1</div>
-            <div class="stepper-content">
-              <div class="stepper-title">Welcome</div>
-              <div class="stepper-desc">Overview of the process</div>
+      <aside class="stepper-sidebar" id="stepperSidebar">
+        <div class="step-group active" data-step="1">
+          <div class="step-group-row" onclick="goToStep(1)">
+            <div class="step-progress">
+              <svg class="ring" viewBox="0 0 24 24"><circle class="track" cx="12" cy="12" r="10"/><circle class="fill" cx="12" cy="12" r="10" stroke-dasharray="62.83" stroke-dashoffset="62.83"/></svg>
+              <div class="complete-check"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2"><polyline points="2,6 5,9 10,3"/></svg></div>
             </div>
+            Current Setup
           </div>
-          <div class="stepper-item pending" data-step="1">
-            <div class="stepper-circle">2</div>
-            <div class="stepper-content">
-              <div class="stepper-title">Current Setup</div>
-              <div class="stepper-desc">Your existing infrastructure</div>
+          <div class="step-connector"></div>
+        </div>
+        <div class="step-group" data-step="2">
+          <div class="step-group-row" onclick="goToStep(2)">
+            <div class="step-progress">
+              <svg class="ring" viewBox="0 0 24 24"><circle class="track" cx="12" cy="12" r="10"/><circle class="fill" cx="12" cy="12" r="10" stroke-dasharray="62.83" stroke-dashoffset="62.83"/></svg>
+              <div class="complete-check"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2"><polyline points="2,6 5,9 10,3"/></svg></div>
             </div>
+            Fund Size
           </div>
-          <div class="stepper-item pending" data-step="2">
-            <div class="stepper-circle">3</div>
-            <div class="stepper-content">
-              <div class="stepper-title">Fund Size</div>
-              <div class="stepper-desc">AUM and migration scope</div>
+          <div class="step-connector"></div>
+        </div>
+        <div class="step-group" data-step="3">
+          <div class="step-group-row" onclick="goToStep(3)">
+            <div class="step-progress">
+              <svg class="ring" viewBox="0 0 24 24"><circle class="track" cx="12" cy="12" r="10"/><circle class="fill" cx="12" cy="12" r="10" stroke-dasharray="62.83" stroke-dashoffset="62.83"/></svg>
+              <div class="complete-check"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2"><polyline points="2,6 5,9 10,3"/></svg></div>
             </div>
+            Strategy &amp; Assets
           </div>
-          <div class="stepper-item pending" data-step="3">
-            <div class="stepper-circle">4</div>
-            <div class="stepper-content">
-              <div class="stepper-title">Strategy & Assets</div>
-              <div class="stepper-desc">Investment approach</div>
+          <div class="step-connector"></div>
+        </div>
+        <div class="step-group" data-step="4">
+          <div class="step-group-row" onclick="goToStep(4)">
+            <div class="step-progress">
+              <svg class="ring" viewBox="0 0 24 24"><circle class="track" cx="12" cy="12" r="10"/><circle class="fill" cx="12" cy="12" r="10" stroke-dasharray="62.83" stroke-dashoffset="62.83"/></svg>
+              <div class="complete-check"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2"><polyline points="2,6 5,9 10,3"/></svg></div>
             </div>
+            Investor Profile
           </div>
-          <div class="stepper-item pending" data-step="4">
-            <div class="stepper-circle">5</div>
-            <div class="stepper-content">
-              <div class="stepper-title">Investor Profile</div>
-              <div class="stepper-desc">Who invests in your fund</div>
+          <div class="step-connector"></div>
+        </div>
+        <div class="step-group" data-step="5">
+          <div class="step-group-row" onclick="goToStep(5)">
+            <div class="step-progress">
+              <svg class="ring" viewBox="0 0 24 24"><circle class="track" cx="12" cy="12" r="10"/><circle class="fill" cx="12" cy="12" r="10" stroke-dasharray="62.83" stroke-dashoffset="62.83"/></svg>
+              <div class="complete-check"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2"><polyline points="2,6 5,9 10,3"/></svg></div>
             </div>
+            Share Class
           </div>
-          <div class="stepper-item pending" data-step="5">
-            <div class="stepper-circle">6</div>
-            <div class="stepper-content">
-              <div class="stepper-title">Share Class</div>
-              <div class="stepper-desc">Initial class configuration</div>
+          <div class="step-connector"></div>
+        </div>
+        <div class="step-group" data-step="6">
+          <div class="step-group-row" onclick="goToStep(6)">
+            <div class="step-progress">
+              <svg class="ring" viewBox="0 0 24 24"><circle class="track" cx="12" cy="12" r="10"/><circle class="fill" cx="12" cy="12" r="10" stroke-dasharray="62.83" stroke-dashoffset="62.83"/></svg>
+              <div class="complete-check"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2"><polyline points="2,6 5,9 10,3"/></svg></div>
             </div>
-          </div>
-          <div class="stepper-item pending" data-step="6">
-            <div class="stepper-circle">7</div>
-            <div class="stepper-content">
-              <div class="stepper-title">Review</div>
-              <div class="stepper-desc">Your recommended configuration</div>
-            </div>
-          </div>
-          <div class="stepper-item pending" data-step="7">
-            <div class="stepper-circle">8</div>
-            <div class="stepper-content">
-              <div class="stepper-title">Submit</div>
-              <div class="stepper-desc">Request a callback</div>
-            </div>
+            Review
           </div>
         </div>
       </aside>
@@ -890,69 +829,16 @@
       <main class="main-area">
         <div class="main-content">
 
-          <!-- STEP 0: Welcome -->
-          <div class="step-screen active" id="step-0">
-            <div class="welcome-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-            </div>
-            <h1 class="step-heading">Launch your fund on Elysium</h1>
-            <p class="step-subheading">We'll walk you through a few questions about your fund to generate a tailored configuration. This takes about 5 minutes.</p>
-
-            <div class="features-list">
-              <div class="feature-item">
-                <div class="feature-icon blue">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-                </div>
-                <div class="feature-text">
-                  <div class="feature-title">Answer a few questions</div>
-                  <div class="feature-desc">Tell us about your current setup, strategy, and investor base. We'll use this to recommend the best configuration.</div>
-                </div>
-              </div>
-              <div class="feature-item">
-                <div class="feature-icon green">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0110 10c0 5.523-4.477 10-10 10S2 17.523 2 12"/><path d="M12 6v6l4 2"/></svg>
-                </div>
-                <div class="feature-text">
-                  <div class="feature-title">Get a tailored recommendation</div>
-                  <div class="feature-desc">We'll generate a fund structure, share class design, and fee configuration based on your answers.</div>
-                </div>
-              </div>
-              <div class="feature-item">
-                <div class="feature-icon orange">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                </div>
-                <div class="feature-text">
-                  <div class="feature-title">Refine and submit</div>
-                  <div class="feature-desc">Review and adjust the recommendation, then submit. Our team will schedule a call to finalize your setup.</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="time-estimate">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              Estimated time: 5 minutes
-            </div>
-
-            <div class="btn-row" style="border-top: none; padding-top: 0;">
-              <div></div>
-              <button class="btn btn-primary" onclick="goToStep(1)">
-                Get started
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </button>
-            </div>
-          </div>
-
           <!-- STEP 1: Current Setup -->
-          <div class="step-screen" id="step-1">
+          <div class="step-screen active" id="step-1">
             <h1 class="step-heading">What's your current setup?</h1>
             <p class="step-subheading">Help us understand where you're starting from so we can recommend the right configuration.</p>
 
             <div class="form-group">
-              <label class="form-label">Select your current arrangement <span class="required">*</span></label>
               <div class="card-select-group">
-                <div class="card-select selected" onclick="selectCard(this)">
+                <div class="card-select" onclick="selectCard(this)">
                   <div class="card-select-radio"></div>
-                  <div class="card-select-icon">🏛</div>
+                  <div class="card-select-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9V17M9.5 9V17M14.5 9V17M19 9V17M3 18.6V19.4C3 19.96 3 20.24 3.109 20.454C3.205 20.642 3.358 20.795 3.546 20.891C3.76 21 4.04 21 4.6 21H19.4C19.96 21 20.24 21 20.454 20.891C20.642 20.795 20.795 20.642 20.891 20.454C21 20.24 21 19.96 21 19.4V18.6C21 18.04 21 17.76 20.891 17.546C20.795 17.358 20.642 17.205 20.454 17.109C20.24 17 19.96 17 19.4 17H4.6C4.04 17 3.76 17 3.546 17.109C3.358 17.205 3.205 17.358 3.109 17.546C3 17.76 3 18.04 3 18.6ZM11.653 3.077L4.253 4.722C3.806 4.821 3.582 4.871 3.415 4.991C3.268 5.097 3.153 5.241 3.081 5.408C3 5.597 3 5.826 3 6.283V7.4C3 7.96 3 8.24 3.109 8.454C3.205 8.642 3.358 8.795 3.546 8.891C3.76 9 4.04 9 4.6 9H19.4C19.96 9 20.24 9 20.454 8.891C20.642 8.795 20.795 8.642 20.891 8.454C21 8.24 21 7.96 21 7.4V6.283C21 5.826 21 5.597 20.919 5.408C20.847 5.241 20.732 5.097 20.585 4.991C20.418 4.871 20.194 4.821 19.747 4.722L12.347 3.077C12.218 3.048 12.153 3.034 12.087 3.028C12.029 3.023 11.971 3.023 11.913 3.028C11.847 3.034 11.782 3.048 11.653 3.077Z"/></svg></div>
                   <div class="card-select-text">
                     <div class="card-select-title">Regulated Fund</div>
                     <div class="card-select-desc">You already operate a regulated fund structure (UCITS, AIF, etc.)</div>
@@ -960,7 +846,7 @@
                 </div>
                 <div class="card-select" onclick="selectCard(this)">
                   <div class="card-select-radio"></div>
-                  <div class="card-select-icon">📋</div>
+                  <div class="card-select-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4C16.93 4 17.395 4 17.777 4.102C18.812 4.38 19.62 5.188 19.898 6.224C20 6.605 20 7.07 20 8V17.2C20 18.88 20 19.72 19.673 20.362C19.385 20.927 18.927 21.385 18.362 21.673C17.72 22 16.88 22 15.2 22H8.8C7.12 22 6.28 22 5.638 21.673C5.074 21.385 4.615 20.927 4.327 20.362C4 19.72 4 18.88 4 17.2V8C4 7.07 4 6.605 4.102 6.224C4.38 5.188 5.188 4.38 6.224 4.102C6.605 4 7.07 4 8 4M9.6 6H14.4C14.96 6 15.24 6 15.454 5.891C15.642 5.795 15.795 5.642 15.891 5.454C16 5.24 16 4.96 16 4.4V3.6C16 3.04 16 2.76 15.891 2.546C15.795 2.358 15.642 2.205 15.454 2.109C15.24 2 14.96 2 14.4 2H9.6C9.04 2 8.76 2 8.546 2.109C8.358 2.205 8.205 2.358 8.109 2.546C8 2.76 8 3.04 8 3.6V4.4C8 4.96 8 5.24 8.109 5.454C8.205 5.642 8.358 5.795 8.546 5.891C8.76 6 9.04 6 9.6 6Z"/></svg></div>
                   <div class="card-select-text">
                     <div class="card-select-title">Separately Managed Accounts (SMAs)</div>
                     <div class="card-select-desc">You manage individual accounts for clients with customized portfolios</div>
@@ -968,7 +854,7 @@
                 </div>
                 <div class="card-select" onclick="selectCard(this)">
                   <div class="card-select-radio"></div>
-                  <div class="card-select-icon">🏢</div>
+                  <div class="card-select-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 11H17.8C18.92 11 19.48 11 19.908 11.218C20.284 11.41 20.59 11.716 20.782 12.092C21 12.52 21 13.08 21 14.2V21M13 21V6.2C13 5.08 13 4.52 12.782 4.092C12.59 3.716 12.284 3.41 11.908 3.218C11.48 3 10.92 3 9.8 3H6.2C5.08 3 4.52 3 4.092 3.218C3.716 3.41 3.41 3.716 3.218 4.092C3 4.52 3 5.08 3 6.2V21M22 21H2M6.5 7H9.5M6.5 11H9.5M6.5 15H9.5"/></svg></div>
                   <div class="card-select-text">
                     <div class="card-select-title">Portfolio Manager at a Fund</div>
                     <div class="card-select-desc">You're a PM at an existing fund, preparing to launch your own pod or strategy</div>
@@ -976,7 +862,7 @@
                 </div>
                 <div class="card-select" onclick="selectCard(this)">
                   <div class="card-select-radio"></div>
-                  <div class="card-select-icon">🚀</div>
+                  <div class="card-select-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15L9 12M12 15C13.397 14.469 14.737 13.799 16 13M12 15V20C12 20 15.03 19.45 16 18C17.08 16.38 16 13 16 13M9 12C9.532 10.619 10.202 9.296 11 8.05C12.165 6.187 13.788 4.653 15.713 3.594C17.638 2.535 19.803 1.986 22 2C22 4.72 21.22 9.5 16 13M9 12H4C4 12 4.55 8.97 6 8C7.62 6.92 11 8 11 8M4.5 16.5C3 17.76 2.5 21.5 2.5 21.5C2.5 21.5 6.24 21 7.5 19.5C8.21 18.66 8.2 17.37 7.41 16.59C7.021 16.219 6.509 16.005 5.972 15.988C5.435 15.971 4.911 16.154 4.5 16.5Z"/></svg></div>
                   <div class="card-select-text">
                     <div class="card-select-title">Rolling Out / New Launch</div>
                     <div class="card-select-desc">You're starting from scratch — no existing fund infrastructure</div>
@@ -985,11 +871,7 @@
               </div>
             </div>
 
-            <div class="btn-row">
-              <button class="btn btn-ghost" onclick="goToStep(0)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back
-              </button>
+            <div class="btn-row left-only">
               <button class="btn btn-primary" onclick="goToStep(2)">
                 Continue
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -1003,11 +885,11 @@
             <p class="step-subheading">Your AUM helps us recommend the right fee structure and service tier.</p>
 
             <div class="form-group">
-              <label class="form-label">Current AUM <span class="required">*</span></label>
+              <label class="form-label regular">Current AUM <span class="required">*</span></label>
               <div class="pill-select-group">
                 <div class="pill-select" onclick="selectPill(this)">$0–5M</div>
                 <div class="pill-select" onclick="selectPill(this)">$5–10M</div>
-                <div class="pill-select selected" onclick="selectPill(this)">$10–25M</div>
+                <div class="pill-select" onclick="selectPill(this)">$10–25M</div>
                 <div class="pill-select" onclick="selectPill(this)">$25–50M</div>
                 <div class="pill-select" onclick="selectPill(this)">$50–100M</div>
                 <div class="pill-select" onclick="selectPill(this)">$100–250M</div>
@@ -1015,24 +897,20 @@
               </div>
             </div>
 
-            <div class="section-divider"><span>Migration</span></div>
+            <div class="section-divider"></div>
 
             <div class="form-group">
-              <label class="form-label">What portion of AUM will migrate to your Elysium pod?</label>
+              <label class="form-label regular">What portion of AUM will migrate to your Elysium pod?</label>
               <div class="slider-container">
                 <div class="slider-row">
-                  <input type="range" class="slider-input" min="0" max="100" value="75" oninput="this.nextElementSibling.textContent = this.value + '%'">
-                  <span class="slider-value">75%</span>
+                  <input type="range" class="slider-input" min="0" max="100" value="100" style="background: linear-gradient(to right, var(--btn-primary-bg) 100%, var(--bg-elevated) 100%)" oninput="this.nextElementSibling.textContent = this.value + '%'; this.style.background = 'linear-gradient(to right, var(--btn-primary-bg) ' + this.value + '%, var(--bg-elevated) ' + this.value + '%)'; markQuestion(2, 'migration')">
+                  <span class="slider-value">100%</span>
                 </div>
                 <div class="form-hint">Slide to estimate how much of your current AUM will be managed through Elysium</div>
               </div>
             </div>
 
-            <div class="btn-row">
-              <button class="btn btn-ghost" onclick="goToStep(1)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back
-              </button>
+            <div class="btn-row left-only">
               <button class="btn btn-primary" onclick="goToStep(3)">
                 Continue
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -1045,14 +923,15 @@
             <h1 class="step-heading">Strategy & asset classes</h1>
             <p class="step-subheading">Tell us about your investment approach so we can configure the right dealing cycle and pricing model.</p>
 
+
             <div class="form-group">
-              <label class="form-label">What asset classes do you trade? <span class="required">*</span></label>
+              <label class="form-label regular">What asset classes do you trade? <span class="required">*</span></label>
               <div class="chip-group">
-                <div class="chip selected" onclick="toggleChip(this)">
+                <div class="chip" onclick="toggleChip(this)">
                   <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
                   Crypto Spot
                 </div>
-                <div class="chip selected" onclick="toggleChip(this)">
+                <div class="chip" onclick="toggleChip(this)">
                   <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
                   Crypto Derivatives
                 </div>
@@ -1083,41 +962,34 @@
               </div>
             </div>
 
-            <div class="section-divider"><span>Strategy details</span></div>
+            <div class="section-divider"></div>
 
             <div class="form-group">
-              <label class="form-label">Describe your strategy <span class="required">*</span></label>
-              <div class="strategy-grid">
-                <div class="strategy-card">
-                  <div class="strategy-card-label">Trade frequency</div>
-                  <div class="pill-select-group" style="justify-content: center;">
-                    <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">Low</div>
-                    <div class="pill-select selected" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">Medium</div>
-                    <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">High</div>
-                  </div>
-                </div>
-                <div class="strategy-card">
-                  <div class="strategy-card-label">Gross exposure</div>
-                  <div class="fee-input-group" style="justify-content: center;">
-                    <input class="fee-input" type="text" value="150" style="width: 70px; text-align: center;">
-                    <span class="fee-suffix">%</span>
-                  </div>
-                </div>
-                <div class="strategy-card">
-                  <div class="strategy-card-label">Net exposure</div>
-                  <div class="fee-input-group" style="justify-content: center;">
-                    <input class="fee-input" type="text" value="80" style="width: 70px; text-align: center;">
-                    <span class="fee-suffix">%</span>
-                  </div>
-                </div>
+              <label class="form-label regular">Trade frequency</label>
+              <div class="pill-select-group">
+                <div class="pill-select" onclick="selectPillIn(this)">Low</div>
+                <div class="pill-select" onclick="selectPillIn(this)">Medium</div>
+                <div class="pill-select" onclick="selectPillIn(this)">High</div>
               </div>
             </div>
 
-            <div class="btn-row">
-              <button class="btn btn-ghost" onclick="goToStep(2)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back
-              </button>
+            <div class="form-group">
+              <label class="form-label regular">Gross exposure</label>
+              <div class="fee-input-group" style="max-width: 200px;">
+                <input class="fee-input" type="text" value="" placeholder="0" oninput="if(this.value) markQuestion(3, 'gross')">
+                <span class="fee-suffix">%</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label regular">Net exposure</label>
+              <div class="fee-input-group" style="max-width: 200px;">
+                <input class="fee-input" type="text" value="" placeholder="0" oninput="if(this.value) markQuestion(3, 'net')">
+                <span class="fee-suffix">%</span>
+              </div>
+            </div>
+
+            <div class="btn-row left-only">
               <button class="btn btn-primary" onclick="goToStep(4)">
                 Continue
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -1131,13 +1003,17 @@
             <p class="step-subheading">Where do your investors reside? This affects domicile selection and regulatory requirements.</p>
 
             <div class="form-group">
-              <label class="form-label">Investor regions (select all that apply)</label>
+              <label class="form-label regular">Investor regions (select all that apply)</label>
               <div class="chip-group">
-                <div class="chip selected" onclick="toggleChip(this)">
+                <div class="chip" onclick="toggleAllRegions(this)">
+                  <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                  All regions
+                </div>
+                <div class="chip" onclick="toggleChip(this)">
                   <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
                   United States
                 </div>
-                <div class="chip selected" onclick="toggleChip(this)">
+                <div class="chip" onclick="toggleChip(this)">
                   <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
                   European Union
                 </div>
@@ -1157,10 +1033,14 @@
                   <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
                   Latin America
                 </div>
-                <div class="chip" onclick="toggleChip(this)">
+                <div class="chip" onclick="toggleOther(this)">
                   <svg class="chip-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
                   Other
                 </div>
+              </div>
+              <div class="form-group" id="otherRegionField" style="display: none; margin-top: var(--space-16);">
+                <label class="form-label">Specify region</label>
+                <input class="text-input" type="text" placeholder="Enter region name" oninput="if(this.value) markQuestion(4, 'other-region')">
               </div>
             </div>
 
@@ -1171,11 +1051,7 @@
               </div>
             </div>
 
-            <div class="btn-row">
-              <button class="btn btn-ghost" onclick="goToStep(3)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back
-              </button>
+            <div class="btn-row left-only">
               <button class="btn btn-primary" onclick="goToStep(5)">
                 Continue
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -1189,323 +1065,131 @@
             <p class="step-subheading">Configure your first share class. You can add more classes later.</p>
 
             <div class="form-group">
-              <label class="form-label">Availability <span class="required">*</span></label>
+              <label class="form-label regular">Who can invest? <span class="required">*</span></label>
               <div class="card-select-group">
-                <div class="card-select selected" onclick="selectCard(this)">
+                <div class="card-select" onclick="selectCard(this)">
                   <div class="card-select-radio"></div>
                   <div class="card-select-text">
                     <div class="card-select-title">Manager only</div>
-                    <div class="card-select-desc">Seed class — only the manager can invest initially</div>
+                    <div class="card-select-desc">Seed capital — only you can invest at launch</div>
                   </div>
                 </div>
                 <div class="card-select" onclick="selectCard(this)">
                   <div class="card-select-radio"></div>
                   <div class="card-select-text">
                     <div class="card-select-title">Invite only</div>
-                    <div class="card-select-desc">Restricted to pre-approved investors</div>
+                    <div class="card-select-desc">Restricted to investors you individually approve</div>
                   </div>
                 </div>
                 <div class="card-select" onclick="selectCard(this)">
                   <div class="card-select-radio"></div>
                   <div class="card-select-text">
-                    <div class="card-select-title">AUM threshold</div>
-                    <div class="card-select-desc">Open to investors meeting a minimum investment</div>
+                    <div class="card-select-title">Minimum investment</div>
+                    <div class="card-select-desc">Open to anyone who meets a minimum commitment</div>
                   </div>
                 </div>
                 <div class="card-select" onclick="selectCard(this)">
                   <div class="card-select-radio"></div>
                   <div class="card-select-text">
                     <div class="card-select-title">Open</div>
-                    <div class="card-select-desc">Available to all eligible investors</div>
+                    <div class="card-select-desc">Available to all eligible investors — no restrictions</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="section-divider"><span>Fees</span></div>
+            <div class="section-divider"></div>
 
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Management fee</label>
-                <div class="fee-input-group">
-                  <input class="fee-input" type="text" value="1.50" style="width: 100%;">
-                  <span class="fee-suffix">% p.a.</span>
-                </div>
-                <div class="form-hint">Annual rate, accrued daily</div>
+            <div class="form-group">
+              <label class="form-label regular">Dealing frequency</label>
+              <div class="pill-select-group">
+                <div class="pill-select pill-sm" onclick="selectPillIn(this)">Daily</div>
+                <div class="pill-select pill-sm" onclick="selectPillIn(this)">Weekly</div>
+                <div class="pill-select pill-sm" onclick="selectPillIn(this)">Monthly</div>
               </div>
-              <div class="form-group">
-                <label class="form-label">Performance fee</label>
-                <div class="fee-input-group">
-                  <input class="fee-input" type="text" value="20.00" style="width: 100%;">
-                  <span class="fee-suffix">%</span>
-                </div>
-                <div class="form-hint">Of profits above HWM</div>
-              </div>
+              <div class="form-hint">How often subscriptions and redemptions are processed</div>
             </div>
 
-            <div class="section-divider"><span>Terms</span></div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Lock-up period</label>
-                <div class="pill-select-group">
-                  <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">None</div>
-                  <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">3 months</div>
-                  <div class="pill-select selected" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">6 months</div>
-                  <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">1 year</div>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Redemption notice</label>
-                <div class="pill-select-group">
-                  <div class="pill-select selected" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">1 day</div>
-                  <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">7 days</div>
-                  <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">30 days</div>
-                  <div class="pill-select" onclick="selectPillIn(this)" style="font-size: 12px; padding: 6px 12px;">90 days</div>
-                </div>
+            <div class="form-group">
+              <label class="form-label regular">Lock-up period</label>
+              <div class="pill-select-group">
+                <div class="pill-select pill-sm" onclick="selectPillIn(this)">None</div>
+                <div class="pill-select pill-sm" onclick="selectPillIn(this)">3 months</div>
+                <div class="pill-select pill-sm" onclick="selectPillIn(this)">6 months</div>
+                <div class="pill-select pill-sm" onclick="selectPillIn(this)">1 year</div>
               </div>
             </div>
 
             <div class="form-group">
-              <label class="form-label">Minimum subscription</label>
-              <div class="fee-input-group">
-                <span class="fee-suffix">$</span>
-                <input class="fee-input" type="text" value="0" style="width: 160px; text-align: left;" placeholder="No minimum">
+              <label class="form-label regular">Redemption notice</label>
+              <div class="pill-select-group">
+                <div class="pill-select pill-sm" onclick="selectPillIn(this)">1 day</div>
+                <div class="pill-select pill-sm" onclick="selectPillIn(this)">7 days</div>
+                <div class="pill-select pill-sm" onclick="selectPillIn(this)">30 days</div>
+                <div class="pill-select pill-sm" onclick="selectPillIn(this)">90 days</div>
               </div>
-              <div class="form-hint">Leave at 0 for no minimum</div>
             </div>
 
-            <div class="btn-row">
-              <button class="btn btn-ghost" onclick="goToStep(4)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back
-              </button>
+            <div class="form-group">
+              <label class="form-label regular">Currency</label>
+              <div class="pill-select-group">
+                <div class="pill-select pill-sm" onclick="selectPillIn(this)">USD</div>
+                <div class="pill-select pill-sm" onclick="selectPillIn(this)">EUR</div>
+                <div class="pill-select pill-sm" onclick="selectPillIn(this)">GBP</div>
+                <div class="pill-select pill-sm" onclick="selectPillIn(this)">USDC</div>
+              </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label regular">Management fee</label>
+                <div class="fee-input-group">
+                  <input class="fee-input" type="text" value="" placeholder="1.50">
+                  <span class="fee-suffix">%</span>
+                </div>
+                <div class="form-hint">Annual rate, accrued daily. Typical: 1–2%</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label regular">Performance fee</label>
+                <div class="fee-input-group">
+                  <input class="fee-input" type="text" value="" placeholder="20.00">
+                  <span class="fee-suffix">%</span>
+                </div>
+                <div class="form-hint">Of profits above high-water mark. Typical: 15–20%</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label regular">Minimum investment</label>
+              <div class="fee-input-group" style="max-width: 200px;">
+                <span class="fee-prefix">$</span>
+                <input class="fee-input has-prefix" type="text" value="" placeholder="0">
+              </div>
+              <div class="form-hint">Leave empty for no minimum</div>
+            </div>
+
+            <div class="btn-row left-only">
               <button class="btn btn-primary" onclick="goToStep(6)">
-                Generate recommendation
+                Continue
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </button>
             </div>
           </div>
 
-          <!-- STEP 6: Recommendation -->
+          <!-- STEP 6: Review -->
           <div class="step-screen" id="step-6">
-            <div style="display: flex; align-items: center; gap: var(--space-8); margin-bottom: var(--space-8);">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--status-positive)" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
-              <span style="font-size: 14px; font-weight: 600; color: var(--status-positive);">Recommendation ready</span>
-            </div>
-            <h1 class="step-heading">Your recommended fund configuration</h1>
-            <p class="step-subheading">Based on your answers, here's our suggested setup. Edit any value before submitting.</p>
+            <h1 class="step-heading">Review your selections</h1>
+            <p class="step-subheading">Please check the details below before submitting for approval.</p>
 
-            <!-- Fund Structure -->
-            <div class="rec-section">
-              <div class="rec-section-header">
-                <div class="rec-section-title">Fund Structure</div>
-                <span class="rec-badge auto">Auto-derived</span>
-              </div>
-              <div class="rec-card">
-                <div class="rec-row">
-                  <span class="rec-row-label">Domicile</span>
-                  <span class="rec-row-value">
-                    Cayman Islands (SPC)
-                    <span class="derived-tag">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2a10 10 0 0110 10 10 10 0 01-10 10A10 10 0 012 12 10 10 0 0112 2z"/><path d="M12 6v6l4 2"/></svg>
-                      Derived
-                    </span>
-                  </span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Structure type</span>
-                  <span class="rec-row-value">Segregated Portfolio Company</span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Administrator</span>
-                  <span class="rec-row-value">Elysium (Irish-licensed)</span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Reporting currency</span>
-                  <span class="rec-row-value">
-                    USD
-                    <button class="rec-row-edit" title="Edit">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                  </span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Rationale</span>
-                  <span class="rec-row-value" style="font-size: 13px; font-weight: 400; color: var(--text-secondary); max-width: 380px; text-align: right;">
-                    US + EU investors → Cayman SPC with check-the-box. Tax-neutral. Standard cross-border arrangement with Irish admin.
-                  </span>
-                </div>
-              </div>
+            <div id="reviewContent">
+              <!-- Dynamically populated on goToStep(6) -->
             </div>
 
-            <!-- Dealing & Pricing -->
-            <div class="rec-section">
-              <div class="rec-section-header">
-                <div class="rec-section-title">Dealing & Pricing</div>
-                <span class="rec-badge auto">Auto-derived</span>
-              </div>
-              <div class="rec-card">
-                <div class="rec-row">
-                  <span class="rec-row-label">NAV frequency</span>
-                  <span class="rec-row-value">
-                    Daily
-                    <span class="derived-tag">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2a10 10 0 0110 10 10 10 0 01-10 10A10 10 0 012 12 10 10 0 0112 2z"/><path d="M12 6v6l4 2"/></svg>
-                      Derived
-                    </span>
-                    <button class="rec-row-edit" title="Edit">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                  </span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Dealing cycle</span>
-                  <span class="rec-row-value">Daily (T+1 settlement)</span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Pricing source</span>
-                  <span class="rec-row-value">Haruko PMS (auto-feed)</span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Anti-dilution</span>
-                  <span class="rec-row-value">
-                    Swing pricing (±25bps)
-                    <button class="rec-row-edit" title="Edit">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Share Class -->
-            <div class="rec-section">
-              <div class="rec-section-header">
-                <div class="rec-section-title">Share Class: Seed (Class S)</div>
-                <span class="rec-badge editable">Editable</span>
-              </div>
-              <div class="rec-card">
-                <div class="rec-row">
-                  <span class="rec-row-label">Availability</span>
-                  <span class="rec-row-value">
-                    Manager only
-                    <button class="rec-row-edit" title="Edit">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                  </span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Management fee</span>
-                  <span class="rec-row-value">
-                    1.50% p.a.
-                    <button class="rec-row-edit" title="Edit">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                  </span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Performance fee</span>
-                  <span class="rec-row-value">
-                    20.00% (HWM)
-                    <button class="rec-row-edit" title="Edit">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                  </span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Crystallization</span>
-                  <span class="rec-row-value">
-                    Annual
-                    <button class="rec-row-edit" title="Edit">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                  </span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Lock-up</span>
-                  <span class="rec-row-value">
-                    6 months
-                    <button class="rec-row-edit" title="Edit">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                  </span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Redemption notice</span>
-                  <span class="rec-row-value">
-                    1 day
-                    <button class="rec-row-edit" title="Edit">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                  </span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Minimum subscription</span>
-                  <span class="rec-row-value">
-                    No minimum
-                    <button class="rec-row-edit" title="Edit">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                  </span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Denomination currency</span>
-                  <span class="rec-row-value">
-                    USD
-                    <button class="rec-row-edit" title="Edit">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Regulatory -->
-            <div class="rec-section">
-              <div class="rec-section-header">
-                <div class="rec-section-title">Regulatory & Compliance</div>
-                <span class="rec-badge auto">Auto-derived</span>
-              </div>
-              <div class="rec-card">
-                <div class="rec-row">
-                  <span class="rec-row-label">KYC/AML tier</span>
-                  <span class="rec-row-value">
-                    Enhanced (accredited investors)
-                    <span class="derived-tag">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2a10 10 0 0110 10 10 10 0 01-10 10A10 10 0 012 12 10 10 0 0112 2z"/><path d="M12 6v6l4 2"/></svg>
-                      Derived
-                    </span>
-                  </span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Investor eligibility</span>
-                  <span class="rec-row-value">Accredited / Professional only</span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">FATCA/CRS</span>
-                  <span class="rec-row-value">Required (US + EU investors)</span>
-                </div>
-                <div class="rec-row">
-                  <span class="rec-row-label">Equalization method</span>
-                  <span class="rec-row-value">
-                    Series-based (on-chain)
-                    <span class="derived-tag">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2a10 10 0 0110 10 10 10 0 01-10 10A10 10 0 012 12 10 10 0 0112 2z"/><path d="M12 6v6l4 2"/></svg>
-                      Derived
-                    </span>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div class="btn-row">
-              <button class="btn btn-ghost" onclick="goToStep(5)">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                Back
-              </button>
+            <div class="btn-row left-only">
               <button class="btn btn-primary" onclick="goToStep(7)">
-                Submit & request callback
+                Submit for approval
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </button>
             </div>
@@ -1566,38 +1250,89 @@
   </div>
 
   <script>
-    const totalSteps = 8; // 0-7
-    let currentStep = 0;
+    const totalSteps = 7;
+    let currentStep = 1;
+    const CIRCUMFERENCE = 62.83;
+
+    // Questions per step and completion tracking
+    const stepQuestions = {
+      1: { total: 1, completed: new Set() },  // Current Setup — 1 (arrangement)
+      2: { total: 2, completed: new Set() },  // Fund Size — 2 (AUM, migration)
+      3: { total: 4, completed: new Set() },  // Strategy — 4 (assets, frequency, gross, net)
+      4: { total: 1, completed: new Set() },  // Investor Profile — 1 (regions)
+      5: { total: 6, completed: new Set() },  // Share Class — 6 (who, dealing, lockup, redemption, currency, fees)
+      6: { total: 0, completed: new Set() },  // Review — no questions
+    };
+
+    function markQuestion(step, questionId) {
+      if (stepQuestions[step]) {
+        stepQuestions[step].completed.add(questionId);
+        updateStepperRing(step);
+      }
+    }
+
+    function updateStepperRing(step) {
+      const group = document.querySelector(`.step-group[data-step="${step}"]`);
+      if (!group) return;
+      const fillCircle = group.querySelector('.fill');
+      if (!fillCircle) return;
+
+      const q = stepQuestions[step];
+      if (q.total === 0) return;
+
+      const pct = Math.min(q.completed.size / q.total, 1);
+      const offset = CIRCUMFERENCE * (1 - pct);
+      fillCircle.style.strokeDashoffset = offset;
+    }
 
     function goToStep(step) {
-      // Hide current
       document.getElementById('step-' + currentStep).classList.remove('active');
-      // Show new
       currentStep = step;
       document.getElementById('step-' + currentStep).classList.add('active');
 
       // Update stepper
-      const items = document.querySelectorAll('.stepper-item');
-      items.forEach((item, i) => {
-        const s = parseInt(item.dataset.step);
-        item.classList.remove('active', 'completed', 'pending');
+      document.querySelectorAll('.step-group').forEach((group) => {
+        const s = parseInt(group.dataset.step);
+        const progress = group.querySelector('.step-progress');
+        const fillCircle = progress.querySelector('.fill');
+
+        group.classList.remove('active', 'completed');
+        progress.classList.remove('done');
+
         if (s < step) {
-          item.classList.add('completed');
-          item.querySelector('.stepper-circle').innerHTML = '<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>';
+          // Only mark completed if all questions answered (or step has no questions)
+          const q = stepQuestions[s];
+          const isComplete = !q || q.total === 0 || q.completed.size >= q.total;
+          if (isComplete) {
+            group.classList.add('completed');
+            progress.classList.add('done');
+            if (fillCircle) fillCircle.style.strokeDashoffset = '0';
+          } else {
+            // Visited but incomplete — show partial ring
+            const pct = Math.min(q.completed.size / q.total, 1);
+            const offset = CIRCUMFERENCE * (1 - pct);
+            if (fillCircle) fillCircle.style.strokeDashoffset = offset;
+          }
         } else if (s === step) {
-          item.classList.add('active');
-          item.querySelector('.stepper-circle').textContent = s + 1;
+          // Active step — show partial ring from tracked progress
+          group.classList.add('active');
+          const q = stepQuestions[s];
+          if (q && q.total > 0) {
+            const pct = Math.min(q.completed.size / q.total, 1);
+            const offset = CIRCUMFERENCE * (1 - pct);
+            if (fillCircle) fillCircle.style.strokeDashoffset = offset;
+          } else {
+            if (fillCircle) fillCircle.style.strokeDashoffset = CIRCUMFERENCE;
+          }
         } else {
-          item.classList.add('pending');
-          item.querySelector('.stepper-circle').textContent = s + 1;
+          // Pending — empty ring
+          if (fillCircle) fillCircle.style.strokeDashoffset = CIRCUMFERENCE;
         }
       });
 
-      // Update progress bar
-      const progress = step === 7 ? 100 : (step / (totalSteps - 2)) * 100;
-      document.getElementById('progressBar').style.width = progress + '%';
+      // Build review if navigating to step 6
+      if (step === 6) buildReview();
 
-      // Scroll to top
       document.querySelector('.main-area').scrollTop = 0;
     }
 
@@ -1605,23 +1340,199 @@
       const group = el.closest('.card-select-group');
       group.querySelectorAll('.card-select').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
+      // Track as answered
+      const stepScreen = el.closest('.step-screen');
+      if (stepScreen) markQuestion(currentStep, 'card-select');
     }
 
     function selectPill(el) {
       const group = el.closest('.pill-select-group');
       group.querySelectorAll('.pill-select').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
+      // Track — use parent form-group label as ID
+      const formGroup = el.closest('.form-group');
+      const label = formGroup?.querySelector('.form-label')?.textContent?.trim() || 'pill';
+      markQuestion(currentStep, label);
     }
 
     function selectPillIn(el) {
       const group = el.closest('.pill-select-group');
       group.querySelectorAll('.pill-select').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
+      const formGroup = el.closest('.form-group') || el.closest('.strategy-card');
+      const label = formGroup?.querySelector('.form-label, .strategy-card-label')?.textContent?.trim() || 'pill-in';
+      markQuestion(currentStep, label);
     }
 
     function toggleChip(el) {
       el.classList.toggle('selected');
+      // If a specific region is toggled, deselect "All regions"
+      const chipGroup = el.closest('.chip-group');
+      const allChip = chipGroup.querySelector('.chip:first-child');
+      if (allChip && allChip.textContent.includes('All regions') && allChip !== el) {
+        allChip.classList.remove('selected');
+      }
+      const formGroup = el.closest('.form-group');
+      const label = formGroup?.querySelector('.form-label')?.textContent?.trim() || 'chips';
+      const anySelected = chipGroup.querySelector('.chip.selected');
+      if (anySelected) markQuestion(currentStep, label);
     }
+
+    function toggleAllRegions(el) {
+      const chipGroup = el.closest('.chip-group');
+      const isSelected = el.classList.toggle('selected');
+      // Select or deselect all region chips (not "Other")
+      chipGroup.querySelectorAll('.chip').forEach(chip => {
+        if (chip.textContent.includes('Other')) return;
+        if (isSelected) {
+          chip.classList.add('selected');
+        } else {
+          chip.classList.remove('selected');
+        }
+      });
+      const formGroup = el.closest('.form-group');
+      const label = formGroup?.querySelector('.form-label')?.textContent?.trim() || 'chips';
+      if (isSelected) markQuestion(currentStep, label);
+    }
+
+    function toggleOther(el) {
+      el.classList.toggle('selected');
+      const otherField = document.getElementById('otherRegionField');
+      if (el.classList.contains('selected')) {
+        otherField.style.display = 'block';
+      } else {
+        otherField.style.display = 'none';
+      }
+      const formGroup = el.closest('.form-group');
+      const label = formGroup?.querySelector('.form-label')?.textContent?.trim() || 'chips';
+      const anySelected = el.closest('.chip-group').querySelector('.chip.selected');
+      if (anySelected) markQuestion(currentStep, label);
+    }
+
+    function buildReview() {
+      // Gather selections from each step
+      function getSelected(stepId, selector) {
+        const screen = document.getElementById('step-' + stepId);
+        if (!screen) return '—';
+        const el = screen.querySelector(selector);
+        return el ? el.textContent.trim() : '—';
+      }
+      function getSelectedCards(stepId) {
+        const screen = document.getElementById('step-' + stepId);
+        if (!screen) return '—';
+        const sel = screen.querySelector('.card-select.selected .card-select-title');
+        return sel ? sel.textContent.trim() : '—';
+      }
+      function getSelectedPills(stepId) {
+        const screen = document.getElementById('step-' + stepId);
+        if (!screen) return '—';
+        const sel = screen.querySelector('.pill-select-group .pill-select.selected');
+        return sel ? sel.textContent.trim() : '—';
+      }
+      function getSelectedChips(stepId) {
+        const screen = document.getElementById('step-' + stepId);
+        if (!screen) return '—';
+        const chips = screen.querySelectorAll('.chip.selected');
+        if (chips.length === 0) return '—';
+        return Array.from(chips).map(c => c.textContent.replace('✓','').trim()).join(', ');
+      }
+      function getInputVal(stepId, idx) {
+        const screen = document.getElementById('step-' + stepId);
+        if (!screen) return '—';
+        const inputs = screen.querySelectorAll('.fee-input');
+        return inputs[idx] && inputs[idx].value ? inputs[idx].value : '—';
+      }
+      function getSliderVal(stepId) {
+        const screen = document.getElementById('step-' + stepId);
+        if (!screen) return '—';
+        const slider = screen.querySelector('.slider-input');
+        return slider ? slider.value + '%' : '—';
+      }
+      function getPillInGroup(stepId, groupIdx) {
+        const screen = document.getElementById('step-' + stepId);
+        if (!screen) return '—';
+        const groups = screen.querySelectorAll('.pill-select-group');
+        if (!groups[groupIdx]) return '—';
+        const sel = groups[groupIdx].querySelector('.pill-select.selected');
+        return sel ? sel.textContent.trim() : '—';
+      }
+
+      const sections = [
+        {
+          title: 'Current Setup',
+          step: 1,
+          rows: [
+            ['Arrangement', getSelectedCards(1)],
+          ]
+        },
+        {
+          title: 'Fund Size',
+          step: 2,
+          rows: [
+            ['Current AUM', getSelectedPills(2)],
+            ['Migration portion', getSliderVal(2)],
+          ]
+        },
+        {
+          title: 'Strategy & Assets',
+          step: 3,
+          rows: [
+            ['Asset classes', getSelectedChips(3)],
+            ['Trade frequency', getPillInGroup(3, 0)],
+            ['Gross exposure', getInputVal(3, 0) !== '—' ? getInputVal(3, 0) + '%' : '—'],
+            ['Net exposure', getInputVal(3, 1) !== '—' ? getInputVal(3, 1) + '%' : '—'],
+          ]
+        },
+        {
+          title: 'Investor Profile',
+          step: 4,
+          rows: [
+            ['Investor regions', getSelectedChips(4)],
+          ]
+        },
+        {
+          title: 'Share Class',
+          step: 5,
+          rows: [
+            ['Who can invest', getSelectedCards(5)],
+            ['Dealing frequency', getPillInGroup(5, 0)],
+            ['Lock-up period', getPillInGroup(5, 1)],
+            ['Redemption notice', getPillInGroup(5, 2)],
+            ['Currency', getPillInGroup(5, 3)],
+            ['Management fee', getInputVal(5, 0) !== '—' ? getInputVal(5, 0) + '% p.a.' : '—'],
+            ['Performance fee', getInputVal(5, 1) !== '—' ? getInputVal(5, 1) + '%' : '—'],
+            ['Minimum investment', getInputVal(5, 2) !== '—' && getInputVal(5, 2) !== '' ? '$' + getInputVal(5, 2) : '—'],
+          ]
+        },
+      ];
+
+      let html = '<div class="review-card">';
+      sections.forEach((section) => {
+        html += '<div class="review-card-section">';
+        section.rows.forEach(([label, value], j) => {
+          if (j === 0) {
+            // First row is the section highlight with section title as label
+            html += `<div class="review-row highlight">
+              <span class="review-row-label">${label}</span>
+              <span class="review-row-value">${value}</span>
+            </div>`;
+          } else {
+            html += `<div class="review-row">
+              <span class="review-row-label">${label}</span>
+              <span class="review-row-value">${value}</span>
+            </div>`;
+          }
+        });
+        html += '</div>';
+      });
+      html += '<div class="review-note">By submitting, you confirm these details are correct. Our team will review and reach out within 1–2 business days.</div>';
+      html += '</div>';
+
+      document.getElementById('reviewContent').innerHTML = html;
+    }
+
+    // Initialize — start at step 1
+    goToStep(1);
   </script>
 </body>
 </html>
