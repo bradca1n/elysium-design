@@ -1,0 +1,103 @@
+# Daily UI/UX Design Tasks
+
+**Date:** 03-18-2026 
+**Project:** Elysium  
+**Focus area:** Product Demo
+**Main outcome needed today:**  
+
+---
+
+## Top priorities
+1. [ ] Review elysium-design/prompts/component-naming-audit.md and suggest priority updates.
+2. [ ] Review the KYC wireframe/flow. Using our component library and if necessary the gluestack-ui-pro library and our design tokens and font styles let's create high fidelity Onboarding KYC screens. I'm including a reference here https://www.are.na/elysium/onboarding-wcfqeg9gt5i that gives you additional context around what we're trying to design, you can reference this for UX copy, spacing. You will need to review and define the order of this reference as they are not currently int the correct order. 
+3. [ ] Find the easiest to implement iphone 16 mockp plugin. I want to create a frame within the component sections that mocks up the component in the device, this is another layer of documentation for anyone reading throught the components to get context on usage of the component.
+4. [ ] Replace screenshots in our flows pages with actual screens we use. 
+
+---
+
+## Active design problems
+### Problem 1
+- **Area:** 
+- **Context:** 
+- **Constraint:** 
+- **What good looks like:** 
+
+### Problem 2
+- **Area:** 
+- **Context:** 
+- **Constraint:** 
+- **What good looks like:** 
+
+### Problem 3
+- **Area:**
+- **Context:** 
+- **Constraint:** 
+- **What good looks like:** 
+
+---
+
+## Work areas
+
+### Figma File
+- [ ] https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+
+### Pages
+- [ ] Widgets > Investor App: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+- [ ] Widgets > Manager OS: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69417
+
+### Components
+- [ ] Global: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69298
+- [ ] Investor App (mobile): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69296
+- [ ] Manager OS (desktop): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69297 
+
+### UX writing / product copy
+- [ ] 
+- [ ] 
+
+---
+
+## Review checklist
+- [ ] User goal is clear
+- [ ] Primary action is clear
+- [ ] Edge cases covered
+- [ ] Empty / loading / error / success states considered
+- [ ] Consistent with design system
+- [ ] Realistic for engineering handoff
+- [ ] Mobile / responsive behaviour considered
+
+---
+
+## Claude session notes
+**Context to give Claude:**  
+- 
+- 
+- 
+
+**What I want back from Claude:**  
+- 
+- 
+- 
+
+---
+
+## Notes
+- 
+- 
+- 
+
+---
+
+## End of day
+### Done
+- 
+- 
+- 
+
+### Carry forward
+- 
+- 
+- 
+
+### Last task
+- [ ] Run the skill in `elysium-design/skills/daily-summary`
+- [ ] Output the daily summary into `elysium-design/daily-summary`

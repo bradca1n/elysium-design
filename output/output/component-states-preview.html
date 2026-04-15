@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Component States — Fund Overview</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+<style>
+  /* ── Design Tokens ─────────────────────────────────────── */
+  :root {
+    --text-primary:     #171717;
+    --text-secondary:   #737373;
+    --text-muted:       #a3a3a3;
+    --text-positive:    #348352;
+    --text-negative:    #ef4444;
+    --text-inverse:     #fefeff;
+
+    --bg-canvas:        #fefeff;
+    --bg-surface:       #f5f5f5;
+    --bg-subtle:        #f5f5f5;
+
+    --border-subtle:    #e5e5e5;
+    --border-default:   #e5e5e5;
+    --border-strong:    #dbdbdc;
+
+    --status-positive:    #348352;
+    --status-positive-bg: #caffe8;
+    --status-negative:    #e63535;
+    --status-negative-bg: #fee9e9;
+    --status-neutral:     #404040;
+    --status-neutral-bg:  #f5f5f5;
+
+    --btn-primary-bg:   #262627;
+    --btn-primary-text: #f5f5f5;
+    --btn-secondary-bg: #e5e5e5;
+    --btn-secondary-text: #171717;
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+
+    --font-2xs: 10px;
+    --font-xs:  12px;
+    --font-sm:  14px;
+    --font-md:  16px;
+    --font-lg:  18px;
+    --font-2xl: 24px;
+
+    --skeleton-base:    #ebebeb;
+    --skeleton-shimmer: #f5f5f5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #f0f0f0;
+    color: var(--text-primary);
+    padding: var(--space-8);
+  }
+
+  /* ── Layout ─────────────────────────────────────────────── */
+  h1 {
+    font-size: var(--font-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+  }
+  .subtitle {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-8);
+  }
+
+  .component-section {
+    margin-bottom: var(--space-8);
+  }
+  .component-section h2 {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .states-row {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .state-card {
+    background: white;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .state-label {
+    font-size: var(--font-2xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    background: var(--bg-surface);
+  }
+  .state-label.default  { border-left: 3px solid #737373; }
+  .state-label.loading  { border-left: 3px solid #3b82f6; }
+  .state-label.empty    { border-left: 3px solid #f59e0b; }
+  .state-label.error    { border-left: 3px solid var(--status-negative); }
+
+  .state-body { padding: var(--space-4); }
+
+  /* ── Widget: Total Value ─────────────────────────────────── */
+  .widget-total {
+    width: 339px;
+  }
+  .widget-total .state-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    height: 118px;
+    justify-content: center;
+  }
+  .total-label {
+    font-size: var(--font-xs);
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .total-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+  }
+  .total-delta {
+    font-size: var(--font-xs);
+    color: var(--text-positive);
+    font-weight: 500;
+  }
+
+  /* ── Widget: Summary Sm ──────────────────────────────────── */
+  .widget-summary { width: 340px; }
+  .widget-summary .state-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: var(--font-xs);
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .key { color: var(--text-secondary); }
+  .summary-row .val { color: var(--text-primary); font-weight: 500; }
+
+  /* ── Widget: PerfCard ────────────────────────────────────── */
+  .widget-perfcard { width: 540px; }
+  .widget-perfcard .state-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .perf-row {
+    display: flex;
+    gap: var(--space-2);
+  }
+  .perf-cell {
+    flex: 1;
+    background: var(--bg-surface);
+    border-radius: var(--radius-sm);
+    padding: var(--space-2) var(--space-3);
+  }
+  .perf-cell .pc-label { font-size: var(--font-2xs); color: var(--text-muted); margin-bottom: 2px; }
+  .perf-cell .pc-value { font-size: var(--font-sm); font-weight: 500; color: var(--text-primary); }
+  .perf-cell.positive { background: var(--status-positive-bg); }
+  .perf-cell.positive .pc-value { color: var(--status-positive); }
+  .perf-cell.negative { background: var(--status-negative-bg); }
+  .perf-cell.negative .pc-value { color: var(--status-negative); }
+
+  /* ── Skeleton shimmer ────────────────────────────────────── */
+  @keyframes shimmer {
+    0%   { background-position: -600px 0; }
+    100% { background-position: 600px 0; }
+  }
+  .skel {
+    background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-shimmer) 50%, var(--skeleton-base) 75%);
+    background-size: 1200px 100%;
+    animation: shimmer 1.4s infinite linear;
+    border-radius: var(--radius-sm);
+  }
+  .skel-h-sm  { height: 12px; }
+  .skel-h-md  { height: 18px; }
+  .skel-h-lg  { height: 28px; }
+  .skel-w-full { width: 100%; }
+  .skel-w-60  { width: 60%; }
+  .skel-w-40  { width: 40%; }
+  .skel-w-30  { width: 30%; }
+
+  /* ── Empty state ─────────────────────────────────────────── */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-6) 0;
+  }
+  .empty-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .empty-title { font-size: var(--font-sm); font-weight: 500; color: var(--text-secondary); }
+  .empty-sub   { font-size: var(--font-xs); color: var(--text-muted); text-align: center; max-width: 200px; }
+
+  /* ── Error state ─────────────────────────────────────────── */
+  .error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-6) 0;
+  }
+  .error-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--status-negative-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .error-title { font-size: var(--font-sm); font-weight: 500; color: var(--status-negative); }
+  .error-sub   { font-size: var(--font-xs); color: var(--text-muted); text-align: center; max-width: 200px; }
+  .retry-btn {
+    margin-top: var(--space-1);
+    padding: 6px 14px;
+    background: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'Inter', sans-serif;
+    font-size: var(--font-xs);
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  /* ── Widget: Asset Table ─────────────────────────────────── */
+  .widget-table { width: 560px; }
+  .widget-table .state-body { padding: 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-xs);
+  }
+  thead th {
+    text-align: left;
+    padding: 8px var(--space-4);
+    color: var(--text-muted);
+    font-weight: 500;
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    font-size: var(--font-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  tbody td {
+    padding: 10px var(--space-4);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-subtle);
+    font-weight: 400;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  .td-positive { color: var(--text-positive); font-weight: 500; }
+  .td-negative { color: var(--text-negative); font-weight: 500; }
+  .dot {
+    display: inline-block; width: 6px; height: 6px;
+    border-radius: 50%; margin-right: 6px; vertical-align: middle;
+  }
+  .dot-btc { background: #f7931a; }
+  .dot-eth { background: #627eea; }
+  .dot-xrp { background: #00aae4; }
+
+  .table-empty {
+    padding: var(--space-8) var(--space-4);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: var(--font-sm);
+  }
+
+  /* ── Token reference strip ───────────────────────────────── */
+  .token-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-8);
+    padding: var(--space-4);
+    background: white;
+    border-radius: var(--radius-md);
+  }
+  .token-strip h3 {
+    width: 100%;
+    font-size: var(--font-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: var(--space-2);
+  }
+  .token-chip {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: var(--bg-surface);
+    border-radius: var(--radius-sm);
+    padding: 4px 10px;
+    font-size: var(--font-2xs);
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .token-swatch {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.08);
+    flex-shrink: 0;
+  }
+
+  /* page title area */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: var(--space-8);
+  }
+  .badge {
+    font-size: var(--font-2xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 4px 10px;
+    border-radius: 99px;
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>Component States — Fund Overview</h1>
+    <p class="subtitle">Product Foundations · Manager Dashboard · All widgets · 4 states each</p>
+  </div>
+  <span class="badge">Design Handoff</span>
+</div>
+
+
+<!-- ══ 1. Widget: Total Value ══════════════════════════════════ -->
+<div class="component-section">
+  <h2>Widget — Total Value</h2>
+  <div class="states-row">
+
+    <!-- Default -->
+    <div class="state-card widget-total">
+      <div class="state-label default">Default</div>
+      <div class="state-body">
+        <div class="total-label">Total AUM</div>
+        <div class="total-value">$47,460,000</div>
+        <div class="total-delta">↑ +2.4% last 30 days</div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="state-card widget-total">
+      <div class="state-label loading">Loading</div>
+      <div class="state-body" style="gap:10px;">
+        <div class="skel skel-h-sm skel-w-30"></div>
+        <div class="skel skel-h-lg skel-w-60"></div>
+        <div class="skel skel-h-sm skel-w-40"></div>
+      </div>
+    </div>
+
+    <!-- Empty -->
+    <div class="state-card widget-total">
+      <div class="state-label empty">Empty / No Data</div>
+      <div class="state-body">
+        <div class="empty-state">
+          <div class="empty-icon">—</div>
+          <div class="empty-title">No value available</div>
+          <div class="empty-sub">AUM data hasn't been calculated yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div class="state-card widget-total">
+      <div class="state-label error">Error</div>
+      <div class="state-body">
+        <div class="error-state">
+          <div class="error-icon">!</div>
+          <div class="error-title">Failed to load</div>
+          <div class="error-sub">Could not fetch fund value.</div>
+          <button class="retry-btn">Retry</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══ 2. Widget: Summary Sm ═══════════════════════════════════ -->
+<div class="component-section">
+  <h2>Widget — Summary Sm (Status block)</h2>
+  <div class="states-row">
+
+    <!-- Default -->
+    <div class="state-card widget-summary">
+      <div class="state-label default">Default</div>
+      <div class="state-body">
+        <div class="summary-row"><span class="key">Status</span><span class="val" style="color:var(--status-positive)">● Open</span></div>
+        <div class="summary-row"><span class="key">Last NAV</span><span class="val">Sun 1 Feb, 17:00 UTC</span></div>
+        <div class="summary-row"><span class="key">Next NAV</span><span class="val">Sun 8 Feb, 17:00 UTC</span></div>
+        <div class="summary-row"><span class="key">Settlement</span><span class="val">Mon 9 Feb, 2026</span></div>
+        <div class="summary-row"><span class="key">Frequency</span><span class="val">Weekly</span></div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="state-card widget-summary">
+      <div class="state-label loading">Loading</div>
+      <div class="state-body">
+        <div class="summary-row" style="border-bottom:1px solid var(--border-subtle);padding:12px 0;">
+          <div class="skel skel-h-sm skel-w-30"></div>
+          <div class="skel skel-h-sm skel-w-40"></div>
+        </div>
+        <div class="summary-row" style="border-bottom:1px solid var(--border-subtle);padding:12px 0;">
+          <div class="skel skel-h-sm skel-w-30"></div>
+          <div class="skel skel-h-sm skel-w-60"></div>
+        </div>
+        <div class="summary-row" style="border-bottom:1px solid var(--border-subtle);padding:12px 0;">
+          <div class="skel skel-h-sm skel-w-30"></div>
+          <div class="skel skel-h-sm skel-w-60"></div>
+        </div>
+        <div class="summary-row" style="border-bottom:1px solid var(--border-subtle);padding:12px 0;">
+          <div class="skel skel-h-sm skel-w-40"></div>
+          <div class="skel skel-h-sm skel-w-40"></div>
+        </div>
+        <div class="summary-row" style="padding:12px 0;">
+          <div class="skel skel-h-sm skel-w-30"></div>
+          <div class="skel skel-h-sm skel-w-30"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty -->
+    <div class="state-card widget-summary">
+      <div class="state-label empty">Empty / No Data</div>
+      <div class="state-body">
+        <div class="empty-state">
+          <div class="empty-icon">–</div>
+          <div class="empty-title">No fund details</div>
+          <div class="empty-sub">Fund metadata not configured.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div class="state-card widget-summary">
+      <div class="state-label error">Error</div>
+      <div class="state-body">
+        <div class="error-state">
+          <div class="error-icon">!</div>
+          <div class="error-title">Failed to load</div>
+          <div class="error-sub">Could not retrieve fund details.</div>
+          <button class="retry-btn">Retry</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══ 3. Widget: PerfCards Grid ══════════════════════════════ -->
+<div class="component-section">
+  <h2>Widget — Performance Cards Grid</h2>
+  <div class="states-row">
+
+    <!-- Default -->
+    <div class="state-card widget-perfcard">
+      <div class="state-label default">Default</div>
+      <div class="state-body">
+        <div class="perf-row">
+          <div class="perf-cell negative"><div class="pc-label">1M</div><div class="pc-value">–6.2%</div></div>
+          <div class="perf-cell positive"><div class="pc-label">3M</div><div class="pc-value">+3.8%</div></div>
+          <div class="perf-cell positive"><div class="pc-label">6M</div><div class="pc-value">+13.4%</div></div>
+        </div>
+        <div class="perf-row">
+          <div class="perf-cell positive"><div class="pc-label">YTD</div><div class="pc-value">+11.2%</div></div>
+          <div class="perf-cell positive"><div class="pc-label">1Y</div><div class="pc-value">+40.7%</div></div>
+          <div class="perf-cell positive"><div class="pc-label">ALL</div><div class="pc-value">+143.7%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="state-card widget-perfcard">
+      <div class="state-label loading">Loading</div>
+      <div class="state-body">
+        <div class="perf-row">
+          <div class="perf-cell"><div class="skel skel-h-sm skel-w-30" style="margin-bottom:6px;"></div><div class="skel skel-h-md skel-w-60"></div></div>
+          <div class="perf-cell"><div class="skel skel-h-sm skel-w-30" style="margin-bottom:6px;"></div><div class="skel skel-h-md skel-w-60"></div></div>
+          <div class="perf-cell"><div class="skel skel-h-sm skel-w-30" style="margin-bottom:6px;"></div><div class="skel skel-h-md skel-w-60"></div></div>
+        </div>
+        <div class="perf-row">
+          <div class="perf-cell"><div class="skel skel-h-sm skel-w-30" style="margin-bottom:6px;"></div><div class="skel skel-h-md skel-w-60"></div></div>
+          <div class="perf-cell"><div class="skel skel-h-sm skel-w-30" style="margin-bottom:6px;"></div><div class="skel skel-h-md skel-w-60"></div></div>
+          <div class="perf-cell"><div class="skel skel-h-sm skel-w-30" style="margin-bottom:6px;"></div><div class="skel skel-h-md skel-w-60"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty -->
+    <div class="state-card widget-perfcard">
+      <div class="state-label empty">Empty / No Data</div>
+      <div class="state-body">
+        <div class="empty-state">
+          <div class="empty-icon">–</div>
+          <div class="empty-title">No performance data</div>
+          <div class="empty-sub">Performance periods will appear once fund history is available.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div class="state-card widget-perfcard">
+      <div class="state-label error">Error</div>
+      <div class="state-body">
+        <div class="error-state">
+          <div class="error-icon">!</div>
+          <div class="error-title">Failed to load</div>
+          <div class="error-sub">Performance data could not be retrieved.</div>
+          <button class="retry-btn">Retry</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══ 4. Widget: Asset Table ══════════════════════════════════ -->
+<div class="component-section">
+  <h2>Widget — Asset Table</h2>
+  <div class="states-row">
+
+    <!-- Default -->
+    <div class="state-card widget-table">
+      <div class="state-label default">Default</div>
+      <div class="state-body">
+        <table>
+          <thead>
+            <tr>
+              <th></th><th>Symbol</th><th>Balance</th><th>Price</th><th>Value</th><th>Allocation</th><th>Change 24h</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="dot dot-btc"></span></td><td>BTC</td><td>32.40</td><td>$69,743,860</td><td>$22,240,800</td><td>46.9%</td><td class="td-positive">+2.1%</td></tr>
+            <tr><td><span class="dot dot-eth"></span></td><td>ETH</td><td>1,893.09</td><td>$2,570,020</td><td>$2,270,000</td><td>—</td><td class="td-negative">–1.3%</td></tr>
+            <tr><td><span class="dot dot-xrp"></span></td><td>XRP</td><td>1,064,009.55</td><td>$4.02</td><td>$8,109,001</td><td>1,650,000</td><td class="td-positive">+1.5%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="state-card widget-table">
+      <div class="state-label loading">Loading</div>
+      <div class="state-body">
+        <table>
+          <thead><tr><th></th><th>Symbol</th><th>Balance</th><th>Price</th><th>Value</th><th>Allocation</th><th>Change 24h</th></tr></thead>
+          <tbody>
+            <tr><td colspan="7" style="padding:10px 16px;"><div class="skel skel-h-sm skel-w-full" style="margin-bottom:8px;"></div></td></tr>
+            <tr><td colspan="7" style="padding:10px 16px;"><div class="skel skel-h-sm skel-w-full" style="margin-bottom:8px;"></div></td></tr>
+            <tr><td colspan="7" style="padding:10px 16px;"><div class="skel skel-h-sm skel-w-full"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Empty -->
+    <div class="state-card widget-table">
+      <div class="state-label empty">Empty / No Assets</div>
+      <div class="state-body">
+        <table>
+          <thead><tr><th></th><th>Symbol</th><th>Balance</th><th>Price</th><th>Value</th><th>Allocation</th><th>Change 24h</th></tr></thead>
+          <tbody><tr><td colspan="7"><div class="table-empty">No assets in this fund yet.</div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div class="state-card widget-table">
+      <div class="state-label error">Error</div>
+      <div class="state-body">
+        <table>
+          <thead><tr><th></th><th>Symbol</th><th>Balance</th><th>Price</th><th>Value</th><th>Allocation</th><th>Change 24h</th></tr></thead>
+          <tbody>
+            <tr><td colspan="7">
+              <div class="error-state" style="padding: var(--space-4) 0;">
+                <div class="error-icon">!</div>
+                <div class="error-title">Failed to load assets</div>
+                <div class="error-sub">Asset data is unavailable.</div>
+                <button class="retry-btn">Retry</button>
+              </div>
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══ Token Reference ═════════════════════════════════════════ -->
+<div class="token-strip">
+  <h3>Design Tokens used on this page</h3>
+  <div class="token-chip"><div class="token-swatch" style="background:#171717;"></div>text/primary</div>
+  <div class="token-chip"><div class="token-swatch" style="background:#737373;"></div>text/secondary</div>
+  <div class="token-chip"><div class="token-swatch" style="background:#a3a3a3;"></div>text/muted</div>
+  <div class="token-chip"><div class="token-swatch" style="background:#348352;"></div>text/positive</div>
+  <div class="token-chip"><div class="token-swatch" style="background:#ef4444;"></div>text/negative</div>
+  <div class="token-chip"><div class="token-swatch" style="background:#fefeff;border:1px solid #e5e5e5;"></div>bg/canvas</div>
+  <div class="token-chip"><div class="token-swatch" style="background:#f5f5f5;"></div>bg/surface</div>
+  <div class="token-chip"><div class="token-swatch" style="background:#caffe8;"></div>status/positive-bg</div>
+  <div class="token-chip"><div class="token-swatch" style="background:#fee9e9;"></div>status/negative-bg</div>
+  <div class="token-chip"><div class="token-swatch" style="background:#e5e5e5;"></div>border/default</div>
+  <div class="token-chip"><div class="token-swatch" style="background:#262627;"></div>btn/primary/bg</div>
+  <div class="token-chip"><div class="token-swatch" style="background:#e5e5e5;"></div>btn/secondary/bg</div>
+</div>
+
+</body>
+</html>

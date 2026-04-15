@@ -55,9 +55,9 @@ Source of truth: `LOCAL/elysium-design/tokens/`
 | Token | Light | Dark | Usage |
 |-------|-------|------|-------|
 | `status/positive` | #348352 | #84D3A2 | Success indicator |
-| `status/positive-bg` | #A2F1C0 | #1B3224 | Success badge background |
+| `status/positive-bg` | #A2F1C0 | #14532D | Success badge background |
 | `status/negative` | #E63535 | #EF4444 | Error indicator |
-| `status/negative-bg` | #FEE9E9 | #531313 | Error badge background |
+| `status/negative-bg` | #FEE2E2 | #7F1D1D | Error badge background |
 | `status/warning` | #E77828 | #FB954B | Warning indicator |
 | `status/warning-bg` | #FFF4EC | #542D12 | Warning badge background |
 | `status/info` | #0B8DCD | #32B4F4 | Info indicator |

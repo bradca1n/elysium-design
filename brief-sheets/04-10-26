@@ -1,0 +1,106 @@
+# Daily UI/UX Design Tasks
+
+**Date:** 04-10-26
+**Project:** Elysium  
+**Focus area:**  
+**Main outcome needed today:**  
+
+---
+
+## Top priorities
+1. [ ] Update the input and formcontrol/select in storybook with the changes made here.https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=638-114374&t=N83dkBfNbhDcH7hJ-11
+2. [ ] Update the token .json files with the new tokens created in the product demo figma file: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69298&t=N83dkBfNbhDcH7hJ-1
+3. [ ] Intial state for the home/protfolio page (https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=961-2503&t=nepSg1Ey9XLfNZNz-11) for the investor app. This will have a block of intial steps still needing completion before the account can actively invest, for example ID verification (KYC). We will use a similar pattern as the Moon Pay initial home dashboard here: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=961-2729&t=nepSg1Ey9XLfNZNz-11. 
+4. [ ] please clean up any text elements that are using the gluestack-ui v2.0 'Text-normal' text style 2xl. It should be swap to the matching text style we've created in this file. and remove the gluestack text style. 
+5. [ ] Check that all components in the product demo file  have spacing tokens bound. bound to the nearest space token, e.g. 7px > Space 8 
+6. [ ] Ensure all icons in the components are using the icons from the iconography page. 
+
+
+---
+
+## Active design problems
+### Problem 1
+- **Area:** 
+- **Context:** 
+- **Constraint:** 
+- **What good looks like:** 
+
+### Problem 2
+- **Area:** 
+- **Context:** 
+- **Constraint:** 
+- **What good looks like:** 
+
+### Problem 3
+- **Area:**
+- **Context:** 
+- **Constraint:** 
+- **What good looks like:** 
+
+---
+
+## Work areas
+
+### Figma File
+- [ ] https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+
+### Pages
+- [ ] Widgets > Investor App: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+- [ ] Widgets > Manager OS: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69417
+
+### Components
+- [ ] Global: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69298
+- [ ] Investor App (mobile): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69296
+- [ ] Manager OS (desktop): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69297 
+
+### UX writing / product copy
+- [ ] 
+- [ ] 
+
+---
+
+## Review checklist
+- [ ] User goal is clear
+- [ ] Primary action is clear
+- [ ] Edge cases covered
+- [ ] Empty / loading / error / success states considered
+- [ ] Consistent with design system
+- [ ] Realistic for engineering handoff
+- [ ] Mobile / responsive behaviour considered
+
+---
+
+## Claude session notes
+**Context to give Claude:**  
+- 
+- 
+- 
+
+**What I want back from Claude:**  
+- 
+- 
+- 
+
+---
+
+## Notes
+- 
+- 
+- 
+
+---
+
+## End of day
+### Done
+- 
+- 
+- 
+
+### Carry forward
+- 
+- 
+- 
+
+### Last task
+- [ ] Run the skill in `elysium-design/skills/daily-summary`
+- [ ] Output the daily summary into `elysium-design/daily-summary`

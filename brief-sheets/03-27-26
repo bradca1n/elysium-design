@@ -1,0 +1,107 @@
+# Daily UI/UX Design Tasks
+
+**Date:** 03/27/2026 
+**Project:** Elysium  
+**Focus area:**  
+**Main outcome needed today:**  
+
+---
+
+## Top priorities
+1. [ ] Fix table (http://localhost:6007/?path=/story/molecules-shareclassinvestorstable--default) to match the newly updated storybook tables. 
+2. [ ] Share class fee's panel. http://localhost:6007/?path=/story/molecules-shareclassfees--default, should match the figma design here: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=551-64939&t=fsE75HpzQii52Q39-11
+3. [ ] Share class dealings widget needs visual improvement to match the figma design: http://localhost:6007/?path=/docs/molecules-shareclassdealingstatus--docs, Figma: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=424-24333&t=fsE75HpzQii52Q39-11
+4. [ ] Share class config molecule http://localhost:6007/?path=/story/molecules-shareclassconfig--default, should match the figma file: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=557-95428&t=fsE75HpzQii52Q39-11
+5. Update status-bg positive, dark mode token. I have changed to success 950. Make sure this is reflected across storybook instances also. 
+6. [ ] Can we please update the filter tabs on the investor table in storybook to match the filter tab component in figma: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=551-64418&t=GWdOR6Si1swRhrRY-11
+7. [ ] We need to make sure the dynamic data/value in the Class details table have the text-primary token applied. This should be consistent across molecules that are related to the key-value row or status list row in figma. 
+8. [ ] Should we be adding navigation to the storybook? https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=638-114414&t=GWdOR6Si1swRhrRY-11
+ 
+---
+
+## Active design problems
+### Problem 1
+- **Area:** 
+- **Context:** 
+- **Constraint:** 
+- **What good looks like:** 
+
+### Problem 2
+- **Area:** 
+- **Context:** 
+- **Constraint:** 
+- **What good looks like:** 
+
+### Problem 3
+- **Area:**
+- **Context:** 
+- **Constraint:** 
+- **What good looks like:** 
+
+---
+
+## Work areas
+
+### Figma File
+- [ ] https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+
+### Pages
+- [ ] Widgets > Investor App: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+- [ ] Widgets > Manager OS: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69417
+
+### Components
+- [ ] Global: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69298
+- [ ] Investor App (mobile): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69296
+- [ ] Manager OS (desktop): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69297 
+
+### UX writing / product copy
+- [ ] 
+- [ ] 
+
+---
+
+## Review checklist
+- [ ] User goal is clear
+- [ ] Primary action is clear
+- [ ] Edge cases covered
+- [ ] Empty / loading / error / success states considered
+- [ ] Consistent with design system
+- [ ] Realistic for engineering handoff
+- [ ] Mobile / responsive behaviour considered
+
+---
+
+## Claude session notes
+**Context to give Claude:**  
+- 
+- 
+- 
+
+**What I want back from Claude:**  
+- 
+- 
+- 
+
+---
+
+## Notes
+- 
+- 
+- 
+
+---
+
+## End of day
+### Done
+- 
+- 
+- 
+
+### Carry forward
+- 
+- 
+- 
+
+### Last task
+- [ ] Run the skill in `elysium-design/skills/daily-summary`
+- [ ] Output the daily summary into `elysium-design/daily-summary`

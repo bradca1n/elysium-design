@@ -1,0 +1,87 @@
+# Daily UI/UX Design Tasks
+
+**Important** 
+Please add a check e.g [✅] and cross out the task line when completed directly in this file.
+
+**Date:** 03-16-26
+**Project:** Elysium  
+**Focus area:** Product Demo
+**Main outcome needed today:**  
+
+1. General tidy up of the Product Demo figma file. Component and Widget organisation, token audit.
+2. Finalise screens required for the product demo
+3. Review Figma file to see where the potential holes are, so we can develope a list of screens/components we will need to build tomorrow. 
+
+## Top priorities
+1. [✅] ~~Table Tokens~~
+2. [✅] ~~Table components — Added: hover row state (bound to table/row-bg-hover token), sort indicators (Asc/Desc for Left/Right headers), checkbox cells (header, body unchecked, body checked at 52px width), and Pagination component (result count + page controls, token-bound). Total: 13 cell variants, 3 row variants, 1 pagination component.~~
+3. [✅] ~~Button components — placeholder icon swapped to 553:77196 on all sm/md/lg variants. Border width bound: xs→thin (1px), sm/md/lg→medium (1.5px). Note: 24 pre-existing duplicate variant names in component set need cleanup.~~
+4. [✅] ~~Update the buttons in the 'Modal' and 'AlertDialog' components to be using the button in our global component page. Both now use Outlined (Cancel) and Solid (Confirm) instances from global Button.~~
+5. [✅] ~~Organise the WIDGET pages — both Investor App and Manager OS now wrapped in sections with Library Headers, matching component page pattern.~~
+6. [ ] I would like to have a conversation around Modal and Sheet components and setting them up to be a base component with figmas new 'slots' feature for different body content. *(Requires Brad — conversation item)*
+7. [✅] ~~Push the side sheet design to the Share Class Creation page in Figma. Created 660px side sheet with 7 form sections (Identity, Income Treatment, Currency & Hedging, Fees, Dealing & Liquidity, Voting Rights, Advanced) using global Button instances in footer.~~
+8. [✅] ~~Button instance migration — 93 instances swapped across 9 pages (Investor App, Manager OS, Subscribe, Portfolio, Dashboard, Fund Overview, Share Class Detail, Share Class Creation, Liquidity). 1 third-party button on Fund Creation left as-is. All mapped: Solid→Primary, Outlined→Outline, Ghost→Ghost, Linked→Ghost, xl→lg.~~
+9. [✅] ~~Table cell instance migration — All raw Table Cell frames replaced with component instances. Manager OS widgets (Table, Asset Table, Summary Lg) + Dashboard instances all updated. 0 raw frames remaining.~~
+
+
+## Work areas
+
+### Figma File
+- [ ] https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+
+### Pages
+- [ ] Widgets > Investor App: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+- [ ] Widgets > Manager OS: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69417
+- [ ] Share Class Creation: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=61-2471
+
+
+### Components
+- [ ] Global: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69298
+- [ ] Investor App (mobile): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69296
+- [ ] Manager OS (desktop): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69297 
+
+### UX writing / product copy
+- [ ] 
+- [ ] 
+
+
+## Review checklist
+- [ ] User goal is clear
+- [ ] Primary action is clear
+- [ ] Edge cases covered
+- [ ] Empty / loading / error / success states considered
+- [ ] Consistent with design system
+- [ ] Realistic for engineering handoff
+- [ ] Mobile / responsive behaviour considered
+- [ ] Components are built in the correct page, relative to its use case.
+---
+
+## Claude session notes
+**Context to give Claude:**  
+- In future review the last 7 days 'Daily summary files' 
+- 
+- 
+
+**What I want back from Claude:**  
+- All outputs should be in Figma today. 
+- 
+- 
+
+---
+
+## Notes
+- 
+- 
+- 
+
+---
+
+## End of day
+
+### Carry forward
+- #6: Modal/Sheet slots conversation — Brad wants to discuss using Figma's new 'slots' feature for different body content
+
+
+### Last task
+- [ ] Run the skill in `elysium-design/skills/daily-summary`
+- [ ] Output the daily summary into `elysium-design/daily-summary`

@@ -151,7 +151,7 @@ All tokens from `elysium-design/tokens/`. Semantic Light mode values:
 | `status/positive` | #348352 |
 | `status/positive-bg` | #A2F1C0 |
 | `status/negative` | #E63535 |
-| `status/negative-bg` | #FEE9E9 |
+| `status/negative-bg` | #FEE2E2 |
 | `status/neutral` | #404040 |
 | `status/neutral-bg` | #F8F8F8 |
 

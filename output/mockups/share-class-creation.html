@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1728">
+<title>Share Classes — POD Crypto Fund | Elysium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS — Elysium Semantic (Light Mode)
+   Source: elysium-design/tokens/semantic/Light.tokens.json
+   ============================================================ */
+:root {
+  /* Background */
+  --bg-canvas: #FEFEFF;
+  --bg-surface: #F8F8F8;
+  --bg-elevated: #E5E5E5;
+  --bg-subtle: #F8F8F8;
+
+  /* Text Color */
+  --text-color-primary: #171717;
+  --text-color-secondary: #737373;
+  --text-color-muted: #A3A3A3;
+  --text-color-inverse: #FEFEFF;
+  --text-color-positive: #348352;
+  --text-color-negative: #EF4444;
+
+  /* Border */
+  --border-default: #E5E5E5;
+  --border-subtle: #E5E5E5;
+  --border-strong: #DBDBDC;
+  --border-positive: #348352;
+  --border-negative: #DC2626;
+
+  /* Button — Primary */
+  --button-primary-bg: #262627;
+  --button-primary-text: #F8F8F8;
+  --button-primary-border: #262627;
+  --button-primary-state-hover: #404040;
+  --button-primary-state-pressed: #262627;
+  --button-primary-bg-disabled: #E5E5E5;
+  --button-primary-text-disabled: #A3A3A3;
+
+  /* Button — Secondary */
+  --button-secondary-bg: #E5E5E5;
+  --button-secondary-text: #171717;
+  --button-secondary-border: #E5E5E5;
+  --button-secondary-state-hover: #DBDBDC;
+
+  /* Button — Outline */
+  --button-outline-bg: #FEFEFF;
+  --button-outline-text: #171717;
+  --button-outline-border: #E5E5E5;
+  --button-outline-border-hover: #D4D4D4;
+
+  /* Button — Ghost */
+  --button-ghost-text: #171717;
+  --button-ghost-state-hover: #737373;
+
+  /* Status */
+  --status-positive: #348352;
+  --status-positive-bg: #A2F1C0;
+  --status-negative: #E63535;
+  --status-negative-bg: #FEE2E2;
+  --status-warning: #E77828;
+  --status-warning-bg: #FFF4EC;
+  --status-info: #0B8DCD;
+  --status-info-bg: #C7EBFC;
+  --status-neutral: #404040;
+  --status-neutral-bg: #F8F8F8;
+
+  /* Spacing */
+  --space-0: 0px;
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-80: 80px;
+  --space-96: 96px;
+  --space-112: 112px;
+  --space-128: 128px;
+  --space-144: 144px;
+
+  /* Radius */
+  --radius-xs: 4px;
+  --radius-s: 6px;
+  --radius-m: 8px;
+  --radius-l: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 56px;
+  --radius-full: 999px;
+
+  /* Typography — Sizes */
+  --text-size-display-lg: 48px;
+  --text-size-display-md: 44px;
+  --text-size-heading-lg: 36px;
+  --text-size-heading-md: 30px;
+  --text-size-heading-sm: 24px;
+  --text-size-title-lg: 18px;
+  --text-size-title-md: 16px;
+  --text-size-title-sm: 14px;
+  --text-size-body-lg: 18px;
+  --text-size-body-md: 16px;
+  --text-size-body-sm: 14px;
+  --text-size-caption-md: 12px;
+  --text-size-caption-sm: 10px;
+  --text-size-label-lg: 14px;
+  --text-size-label-md: 12px;
+  --text-size-label-sm: 10px;
+  --text-size-data-lg: 48px;
+  --text-size-data-md: 24px;
+  --text-size-data-sm: 14px;
+
+  /* Font Weights */
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Line Heights */
+  --line-tight: 18px;
+  --line-normal: 22px;
+  --line-relaxed: 24px;
+
+  /* Z-Index (Layer) */
+  --layer-base: 0;
+  --layer-sticky: 10;
+  --layer-dropdown: 100;
+  --layer-popover: 200;
+  --layer-sheet: 300;
+  --layer-modal: 400;
+  --layer-toast: 500;
+  --layer-tooltip: 600;
+}
+
+/* ============================================================
+   DARK MODE — Elysium Semantic (Dark)
+   Source: elysium-design/tokens/semantic/Dark.tokens.json
+   ============================================================ */
+[data-theme="dark"] {
+  --bg-canvas: #171717;
+  --bg-surface: #202021;
+  --bg-elevated: #404040;
+  --bg-subtle: #202021;
+
+  --text-color-primary: #FEFEFF;
+  --text-color-secondary: #8C8C8C;
+  --text-color-muted: #737373;
+  --text-color-inverse: #171717;
+  --text-color-positive: #84D3A2;
+  --text-color-negative: #EF4444;
+
+  --border-default: #404040;
+  --border-subtle: #262627;
+  --border-strong: #737373;
+  --border-positive: #84D3A2;
+  --border-negative: #EF4444;
+
+  --button-primary-bg: #F5F5F5;
+  --button-primary-text: #171717;
+  --button-primary-border: #F5F5F5;
+  --button-primary-state-hover: #DBDBDC;
+  --button-primary-state-pressed: #F5F5F5;
+  --button-primary-bg-disabled: #404040;
+  --button-primary-text-disabled: #171717;
+
+  --button-secondary-bg: #404040;
+  --button-secondary-text: #F5F5F5;
+  --button-secondary-border: #525252;
+  --button-secondary-state-hover: #404040;
+
+  --button-outline-bg: #171717;
+  --button-outline-text: #F5F5F5;
+  --button-outline-border: #404040;
+  --button-outline-border-hover: #8C8C8C;
+
+  --button-ghost-text: #F5F5F5;
+  --button-ghost-state-hover: #A3A3A3;
+
+  --status-positive: #84D3A2;
+  --status-positive-bg: #14532D;
+  --status-negative: #EF4444;
+  --status-negative-bg: #7F1D1D;
+  --status-warning: #FB954B;
+  --status-warning-bg: #542D12;
+  --status-info: #32B4F4;
+  --status-info-bg: #032638;
+  --status-neutral: #DBDBDC;
+  --status-neutral-bg: #202021;
+}
+
+[data-theme="dark"] .sidepeek {
+  border-left: none;
+}
+
+[data-theme="dark"] .sidepeek-overlay {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Font: Serrif Condensed */
+@font-face {
+  font-family: 'Serrif Condensed';
+  src: url('fonts/SerrifCondensed-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================================
+   BASE RESET & GLOBALS
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-regular);
+  color: var(--text-color-primary);
+  background: var(--bg-canvas);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* ============================================================
+   REUSABLE COMPONENTS
+   ============================================================ */
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  height: 40px;
+  padding: 0 var(--space-16);
+  font-family: inherit;
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-medium);
+  border-radius: var(--radius-l);
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border: 1px solid var(--button-primary-border);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--button-primary-state-hover);
+}
+.btn-primary:disabled {
+  background: var(--button-primary-bg-disabled);
+  color: var(--button-primary-text-disabled);
+  border-color: var(--button-primary-bg-disabled);
+  cursor: not-allowed;
+}
+.btn-primary:active:not(:disabled) {
+  background: var(--button-primary-state-pressed);
+}
+
+.btn-outline {
+  background: var(--button-outline-bg);
+  color: var(--button-outline-text);
+  border: 1px solid var(--button-outline-border);
+}
+.btn-outline:hover {
+  border-color: var(--button-outline-border-hover);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--button-ghost-text);
+  border: none;
+  padding: 0;
+  height: auto;
+  font-weight: var(--weight-medium);
+}
+.btn-ghost:hover {
+  color: var(--button-ghost-state-hover);
+}
+
+.btn-full-width {
+  width: 100%;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-xs);
+  font-size: var(--text-size-label-md);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  align-self: flex-start;
+  width: fit-content;
+}
+.badge-active {
+  background: var(--status-positive-bg);
+  color: var(--status-positive);
+}
+.badge-draft {
+  background: var(--status-neutral-bg);
+  color: var(--status-neutral);
+}
+.badge-closed {
+  background: var(--status-negative-bg);
+  color: var(--status-negative);
+}
+
+/* Form Inputs */
+.input-field {
+  width: 100%;
+  height: 40px;
+  padding: 0 var(--space-16);
+  font-family: inherit;
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-primary);
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-m);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input-field::placeholder {
+  color: var(--text-color-muted);
+}
+.input-field:focus {
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 2px rgba(38, 38, 39, 0.08);
+}
+.input-field:disabled {
+  background: var(--bg-surface);
+  color: var(--text-color-muted);
+  cursor: not-allowed;
+}
+
+/* Select */
+.select-field {
+  width: 100%;
+  height: 40px;
+  padding: 0 var(--space-32) 0 var(--space-16);
+  font-family: inherit;
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-primary);
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-m);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23737373' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.select-field:hover {
+  border-color: var(--border-strong);
+}
+.select-field:focus {
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 2px rgba(38, 38, 39, 0.08);
+}
+.select-field:disabled {
+  background: var(--bg-surface);
+  color: var(--text-color-muted);
+  cursor: not-allowed;
+}
+
+/* Field Label */
+.field-label {
+  display: block;
+  font-size: var(--text-size-label-md);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-secondary);
+  margin-bottom: var(--space-4);
+}
+
+/* Section Label */
+.section-label {
+  font-size: var(--text-size-title-md);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+}
+
+/* Form Group */
+.form-group {
+  margin-top: var(--space-16);
+}
+
+/* Form Row (2-column) */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-16);
+}
+
+/* Form Section */
+.form-section {
+  margin-bottom: var(--space-32);
+  padding-bottom: var(--space-32);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* Input with suffix (%) */
+.input-with-suffix {
+  position: relative;
+}
+.input-with-suffix .input-field {
+  padding-right: var(--space-32);
+}
+.input-suffix {
+  position: absolute;
+  right: var(--space-16);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-muted);
+  pointer-events: none;
+}
+
+/* Input with prefix ($) */
+.input-with-prefix {
+  position: relative;
+}
+.input-with-prefix .input-field {
+  padding-left: var(--space-32);
+}
+.input-prefix {
+  position: absolute;
+  left: var(--space-16);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-muted);
+  pointer-events: none;
+}
+
+/* Input with unit dropdown */
+.input-with-unit {
+  display: flex;
+  gap: var(--space-8);
+}
+.input-with-unit .input-field {
+  flex: 1;
+}
+.input-with-unit .select-field {
+  width: 110px;
+  flex-shrink: 0;
+}
+
+/* Field hint */
+.field-hint {
+  display: block;
+  margin-top: var(--space-4);
+  font-size: var(--text-size-caption-md);
+  color: var(--text-color-muted);
+}
+
+/* Toggle Switch */
+.toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: var(--border-default);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: var(--bg-canvas);
+  border-radius: var(--radius-full);
+  transition: transform 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+.toggle.toggle-on {
+  background: var(--button-primary-bg);
+}
+.toggle.toggle-on::after {
+  transform: translateX(16px);
+}
+
+/* Toggle Row */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+}
+.toggle-row span {
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-primary);
+}
+
+/* Choice Pills */
+.choice-pills {
+  display: flex;
+  gap: var(--space-8);
+  width: fit-content;
+}
+.choice-pill {
+  padding: var(--space-8) var(--space-16);
+  font-family: inherit;
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-medium);
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-m);
+  background: var(--bg-canvas);
+  color: var(--text-color-secondary);
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+.choice-pill-active {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border-color: var(--button-primary-bg);
+}
+.choice-pill:not(.choice-pill-active):hover {
+  border-color: var(--border-strong);
+  color: var(--text-color-primary);
+}
+
+/* Tabs */
+.tab {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-8) var(--space-16);
+  font-family: inherit;
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-regular);
+  color: var(--text-color-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+.tab:hover {
+  background: var(--bg-surface);
+}
+.tab-active {
+  background: var(--bg-surface);
+  color: var(--text-color-primary);
+  font-weight: var(--weight-medium);
+}
+
+/* Conditional (hidden) */
+.conditional {
+  display: none;
+}
+.conditional.visible {
+  display: block;
+}
+
+/* ============================================================
+   PAGE LAYOUT
+   ============================================================ */
+.page-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+}
+
+.page-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  gap: 144px;
+  padding: var(--space-24) var(--space-32) 0 var(--space-32);
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar {
+  width: 227px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0;
+  background: var(--bg-canvas);
+  overflow-y: auto;
+}
+
+.nav-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  padding: var(--space-8);
+  border-radius: var(--radius-l);
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-regular);
+  color: var(--text-color-primary);
+  cursor: pointer;
+  transition: background-color 0.15s;
+  text-decoration: none;
+}
+.nav-item:hover {
+  background: var(--bg-surface);
+}
+.nav-item-selected {
+  background: var(--bg-surface);
+  font-weight: var(--weight-semibold);
+}
+
+.nav-item-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color-secondary);
+}
+
+.nav-item-chevron {
+  margin-left: auto;
+  color: var(--text-color-muted);
+}
+
+.nav-divider {
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  margin: var(--space-16) 0;
+}
+
+.fund-selector {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-8) var(--space-16);
+  cursor: pointer;
+  border-radius: var(--radius-s);
+  transition: background-color 0.15s;
+}
+.fund-selector:hover {
+  background: var(--bg-surface);
+}
+
+.fund-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle at 40% 40%, #f0abfc, #a78bfa, #818cf8);
+  flex-shrink: 0;
+}
+
+.fund-name {
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+  flex: 1;
+}
+
+.fund-nav-items {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-8);
+}
+
+.fund-nav-item {
+  display: flex;
+  align-items: center;
+  padding: var(--space-8) var(--space-16);
+  border-radius: var(--radius-m);
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-secondary);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+  text-decoration: none;
+}
+.fund-nav-item:hover {
+  background: var(--bg-surface);
+}
+.fund-nav-item-selected {
+  color: var(--text-color-primary);
+  font-weight: var(--weight-medium);
+}
+
+.nav-bottom {
+  margin-top: auto;
+}
+
+/* ============================================================
+   MAIN WRAPPER
+   ============================================================ */
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-24) var(--space-32);
+  background: var(--bg-canvas);
+  flex-shrink: 0;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+.navbar-logo-dark { display: none; }
+[data-theme="dark"] .navbar-logo-light { display: none; }
+[data-theme="dark"] .navbar-logo-dark { display: block; }
+.navbar-logo-icon {
+  width: 32px;
+  height: 32px;
+}
+.navbar-logo-text {
+  font-size: 20px;
+  font-weight: var(--weight-bold);
+  color: var(--text-color-primary);
+  letter-spacing: -0.02em;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-32);
+}
+
+.navbar-bell {
+  width: 20px;
+  height: 20px;
+  color: var(--text-color-secondary);
+  cursor: pointer;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  cursor: pointer;
+}
+
+.navbar-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
+  border: 1px solid var(--border-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-size-caption-md);
+  font-weight: var(--weight-semibold);
+  color: var(--text-color-secondary);
+  overflow: hidden;
+}
+
+.navbar-username {
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+}
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+.main-content {
+  flex: 1;
+  padding: 0 var(--space-64) 0 0;
+  background: var(--bg-canvas);
+  overflow-y: auto;
+}
+
+/* Page Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-32);
+}
+
+.fund-badge-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.fund-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.fund-badge-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: radial-gradient(circle at 40% 40%, #f0abfc, #a78bfa, #818cf8);
+  flex-shrink: 0;
+}
+
+.fund-badge-text {
+  font-size: 18px;
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+}
+
+.breadcrumb-chevron {
+  color: var(--text-color-muted);
+  display: flex;
+  align-items: center;
+}
+
+.button-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.btn-icon-only {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 40px;
+  border: none;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-l);
+  cursor: pointer;
+  color: var(--text-color-primary);
+  transition: background-color 0.15s;
+}
+.btn-icon-only:hover {
+  background: var(--border-default);
+}
+
+/* Metrics / Heading area */
+.metrics-heading {
+  font-family: 'Serrif Condensed', 'Inter', sans-serif;
+  font-size: 36px;
+  font-weight: 300;
+  color: var(--text-color-primary);
+  line-height: 1.2;
+}
+
+.metrics-subtitle {
+  font-size: 16px;
+  font-weight: var(--weight-medium);
+  color: var(--text-color-positive);
+}
+
+.metric-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-32);
+}
+
+/* Status Pill Tabs */
+.status-tabs {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.status-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: var(--text-size-label-md);
+  font-weight: var(--weight-medium);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+  border: 1px solid var(--border-default);
+  background: var(--bg-canvas);
+  color: var(--text-color-secondary);
+}
+.status-tab:hover {
+  border-color: var(--border-strong);
+  color: var(--text-color-primary);
+}
+.status-tab-active {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border-color: var(--button-primary-bg);
+}
+.status-tab-active:hover {
+  background: var(--button-primary-state-hover);
+  border-color: var(--button-primary-state-hover);
+  color: var(--button-primary-text);
+}
+
+/* Body content spacing */
+.body-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+/* ============================================================
+   CLASS CARDS GRID
+   ============================================================ */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-16);
+}
+
+.class-card {
+  position: relative;
+  background: var(--bg-surface);
+  border: none;
+  border-radius: var(--radius-l);
+  padding: var(--space-24);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.card-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: 0 var(--space-8);
+  height: 32px;
+  border: none;
+  background: var(--bg-elevated);
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  font-family: inherit;
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+  transition: opacity 0.15s, background-color 0.15s;
+  flex-shrink: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.class-card:hover .card-edit-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+.card-edit-btn:hover {
+  background: var(--border-default);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+}
+
+.card-price-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.card-nav {
+  font-size: var(--text-size-heading-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+}
+
+.card-aum {
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-secondary);
+}
+
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-label {
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-secondary);
+}
+
+.detail-value {
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-primary);
+  font-weight: var(--weight-medium);
+}
+
+/* ============================================================
+   SIDEPEEK OVERLAY & PANEL
+   ============================================================ */
+.sidepeek-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: calc(var(--layer-sheet) - 1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.sidepeek-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sidepeek {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 660px;
+  background: var(--bg-canvas);
+  border-left: 1px solid var(--border-default);
+  z-index: var(--layer-sheet);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+.sidepeek.open {
+  transform: translateX(0);
+}
+
+.sidepeek-topbar {
+  padding: var(--space-16) var(--space-32);
+  flex-shrink: 0;
+}
+
+.sidepeek-header {
+  padding-bottom: var(--space-32);
+}
+
+.sidepeek-title {
+  font-family: 'Serrif Condensed', Georgia, serif;
+  font-size: 36px;
+  font-weight: 300;
+  color: var(--text-color-primary);
+}
+
+.sidepeek-subtitle {
+  font-size: var(--text-size-body-sm);
+  color: var(--text-color-secondary);
+  margin-top: var(--space-4);
+}
+
+.cancel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-8);
+  border: none;
+  background: var(--bg-surface);
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  font-family: inherit;
+  font-size: var(--text-size-caption-md);
+  font-weight: var(--weight-medium);
+  color: var(--text-color-primary);
+  transition: background-color 0.15s;
+}
+.cancel-btn:hover {
+  background: var(--bg-elevated);
+}
+
+.sidepeek-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-32);
+}
+
+.sidepeek-footer {
+  padding: var(--space-32);
+  flex-shrink: 0;
+}
+
+.footer-hint {
+  font-size: var(--text-size-caption-md);
+  color: var(--text-color-muted);
+  margin-bottom: var(--space-16);
+  text-align: center;
+}
+
+
+/* ============================================================
+   SCROLLBAR STYLING
+   ============================================================ */
+.sidepeek-body::-webkit-scrollbar {
+  width: 6px;
+}
+.sidepeek-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidepeek-body::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: var(--radius-full);
+}
+.sidepeek-body::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+/* Button loading spinner */
+.btn-loading {
+  pointer-events: none;
+  opacity: 0.85;
+}
+.btn-loading .btn-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: var(--radius-full);
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: var(--space-32);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: var(--space-8) var(--space-24);
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  font-size: var(--text-size-body-sm);
+  font-weight: var(--weight-medium);
+  border-radius: var(--radius-full);
+  z-index: var(--layer-toast);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
+.toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Number input — hide spinner arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     PAGE LAYOUT
+     ============================================================ -->
+<div class="page-layout">
+
+  <!-- NAVBAR (full width, top) -->
+  <header class="navbar">
+    <div class="navbar-logo">
+      <img class="navbar-logo-light" src="../assets/pod-logo.svg" alt="POD" height="36">
+      <img class="navbar-logo-dark" src="../assets/pod-logo-white.svg" alt="POD" height="36">
+    </div>
+    <div class="navbar-right">
+      <div class="toggle" id="theme-toggle" title="Toggle dark mode" style="cursor: pointer;"></div>
+      <svg class="navbar-bell" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <div class="navbar-user">
+        <div class="navbar-avatar">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="14" r="7" fill="#a78bfa"/><circle cx="18" cy="38" r="14" fill="#c4b5fd"/></svg>
+        </div>
+        <span class="navbar-username">@JerryQ102</span>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAGE BODY (sidebar + main content) -->
+  <div class="page-body">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div>
+      <!-- Top-level nav -->
+      <nav class="nav-section">
+        <a class="nav-item" href="#">
+          <span class="nav-item-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </span>
+          Home
+          <span class="nav-item-chevron">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </span>
+        </a>
+        <a class="nav-item" href="#">
+          <span class="nav-item-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </span>
+          Overview
+        </a>
+        <a class="nav-item" href="#">
+          <span class="nav-item-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </span>
+          Reports
+        </a>
+        <a class="nav-item" href="#">
+          <span class="nav-item-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </span>
+          Communication
+        </a>
+        <a class="nav-item" href="#">
+          <span class="nav-item-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </span>
+          Settings
+        </a>
+      </nav>
+
+      <hr class="nav-divider">
+
+      <!-- Fund Selector -->
+      <div class="fund-selector">
+        <div class="fund-icon"></div>
+        <span class="fund-name">POD Crypto Fund</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg>
+      </div>
+
+      <!-- Fund Sub-nav -->
+      <div class="fund-nav-items">
+        <a class="fund-nav-item" href="#">Overview</a>
+        <a class="fund-nav-item" href="#">NAV</a>
+        <a class="fund-nav-item" href="#">Performance &amp; Risk</a>
+        <a class="fund-nav-item" href="#">Register &amp; Dealings</a>
+        <a class="fund-nav-item" href="#">Order book &amp; Liquidity</a>
+        <a class="fund-nav-item" href="#">Fees</a>
+        <a class="fund-nav-item fund-nav-item-selected" href="#">Classes</a>
+        <a class="fund-nav-item" href="#">Investors</a>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="nav-bottom">
+      <a class="nav-item" href="#">
+        <span class="nav-item-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+        </span>
+        Support
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <div class="main-wrapper">
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="fund-badge-row">
+          <div class="fund-badge">
+            <div class="fund-badge-icon"></div>
+            <span class="fund-badge-text">POD Crypto Fund</span>
+          </div>
+          <span class="breadcrumb-chevron">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </span>
+          <span class="fund-badge-text">Liquidity</span>
+        </div>
+        <div class="button-wrapper">
+          <button class="btn btn-primary" id="open-sidepeek-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Create new class
+          </button>
+          <button class="btn-icon-only">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Body Content -->
+      <div class="body-content">
+
+        <!-- Metric Row: Heading + subtitle + tabs -->
+        <div class="metric-row">
+          <h1 class="metrics-heading">Share classes</h1>
+          <div class="status-tabs">
+            <button class="status-tab status-tab-active">All</button>
+            <button class="status-tab">Active</button>
+            <button class="status-tab">Closed</button>
+            <button class="status-tab">Draft</button>
+          </div>
+        </div>
+
+      <!-- Cards Grid -->
+      <div class="cards-grid">
+
+        <!-- Card 1: Class A -->
+        <div class="class-card" data-class='{"name":"Class A","tier":"Retail","income":"accumulation","currency":"USD","hedging":"unhedged","mgmt":"1.50","perf":"4","sub":"0","red":"0","minInvest":"10000","lockup":"0","lockupUnit":"Months","notice":"30","noticeUnit":"Days","dealing":"Daily","voting":true,"hwm":"Per class","dilution":false,"swing":"","gates":""}'>
+          <div class="card-header">
+            <span class="card-title">Class A</span>
+            <button class="card-edit-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</button>
+          </div>
+          <span class="badge badge-active">Active</span>
+          <div class="card-price-container"><div class="card-nav">1,050.20 USD</div>
+          <div class="card-aum">10,050,200 USD</div></div>
+          <div class="card-details">
+            <div class="detail-item"><div class="detail-label">Management</div><div class="detail-value">1.50%</div></div>
+            <div class="detail-item"><div class="detail-label">Performance</div><div class="detail-value">4%</div></div>
+            <div class="detail-item"><div class="detail-label">Currency</div><div class="detail-value">USD</div></div>
+
+            <div class="detail-item"><div class="detail-label">Income</div><div class="detail-value">Accumulation</div></div>
+          </div>
+        </div>
+
+        <!-- Card 2: Class A Dist -->
+        <div class="class-card" data-class='{"name":"Class A Dist","tier":"Retail","income":"distribution","distFreq":"Quarterly","currency":"USD","hedging":"unhedged","mgmt":"1.50","perf":"4","sub":"0","red":"0","minInvest":"10000","lockup":"0","lockupUnit":"Months","notice":"30","noticeUnit":"Days","dealing":"Daily","voting":true,"hwm":"Per class","dilution":false,"swing":"","gates":""}'>
+          <div class="card-header">
+            <span class="card-title">Class A Dist</span>
+            <button class="card-edit-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</button>
+          </div>
+          <span class="badge badge-active">Active</span>
+          <div class="card-price-container"><div class="card-nav">1,048.75 USD</div>
+          <div class="card-aum">8,250,000 USD</div></div>
+          <div class="card-details">
+            <div class="detail-item"><div class="detail-label">Management</div><div class="detail-value">1.50%</div></div>
+            <div class="detail-item"><div class="detail-label">Performance</div><div class="detail-value">4%</div></div>
+            <div class="detail-item"><div class="detail-label">Currency</div><div class="detail-value">USD</div></div>
+
+            <div class="detail-item"><div class="detail-label">Income</div><div class="detail-value">Distribution</div></div>
+          </div>
+        </div>
+
+        <!-- Card 3: Class I -->
+        <div class="class-card" data-class='{"name":"Class I","tier":"Institutional","income":"accumulation","currency":"USD","hedging":"unhedged","mgmt":"0.75","perf":"10","sub":"0","red":"0","minInvest":"1000000","lockup":"12","lockupUnit":"Months","notice":"90","noticeUnit":"Days","dealing":"Monthly","voting":true,"hwm":"Per class","dilution":false,"swing":"","gates":""}'>
+          <div class="card-header">
+            <span class="card-title">Class I</span>
+            <button class="card-edit-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</button>
+          </div>
+          <span class="badge badge-active">Active</span>
+          <div class="card-price-container"><div class="card-nav">10,050.20 USD</div>
+          <div class="card-aum">45,200,000 USD</div></div>
+          <div class="card-details">
+            <div class="detail-item"><div class="detail-label">Management</div><div class="detail-value">0.75%</div></div>
+            <div class="detail-item"><div class="detail-label">Performance</div><div class="detail-value">10%</div></div>
+            <div class="detail-item"><div class="detail-label">Currency</div><div class="detail-value">USD</div></div>
+
+            <div class="detail-item"><div class="detail-label">Income</div><div class="detail-value">Accumulation</div></div>
+          </div>
+        </div>
+
+        <!-- Card 4: Class I EUR-H -->
+        <div class="class-card" data-class='{"name":"Class I EUR-H","tier":"Institutional","income":"accumulation","currency":"EUR","hedging":"passive","mgmt":"0.75","perf":"10","sub":"0","red":"0","minInvest":"1000000","lockup":"12","lockupUnit":"Months","notice":"90","noticeUnit":"Days","dealing":"Monthly","voting":true,"hwm":"Per class","dilution":false,"swing":"","gates":""}'>
+          <div class="card-header">
+            <span class="card-title">Class I EUR-H</span>
+            <button class="card-edit-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</button>
+          </div>
+          <span class="badge badge-active">Active</span>
+          <div class="card-price-container"><div class="card-nav">9,845.30 EUR</div>
+          <div class="card-aum">12,500,000 EUR</div></div>
+          <div class="card-details">
+            <div class="detail-item"><div class="detail-label">Management</div><div class="detail-value">0.75%</div></div>
+            <div class="detail-item"><div class="detail-label">Performance</div><div class="detail-value">10%</div></div>
+            <div class="detail-item"><div class="detail-label">Currency</div><div class="detail-value">EUR (Hedged)</div></div>
+
+            <div class="detail-item"><div class="detail-label">Income</div><div class="detail-value">Accumulation</div></div>
+          </div>
+        </div>
+
+        <!-- Card 5: Class S (Closed) -->
+        <div class="class-card" data-class='{"name":"Class S","tier":"Seed","income":"accumulation","currency":"USD","hedging":"unhedged","mgmt":"0.25","perf":"0","sub":"0","red":"0","minInvest":"500000","lockup":"24","lockupUnit":"Months","notice":"90","noticeUnit":"Days","dealing":"Monthly","voting":false,"hwm":"Per class","dilution":false,"swing":"","gates":""}'>
+          <div class="card-header">
+            <span class="card-title">Class S</span>
+            <button class="card-edit-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</button>
+          </div>
+          <span class="badge badge-closed">Closed</span>
+          <div class="card-price-container"><div class="card-nav">1,000.00 USD</div>
+          <div class="card-aum">500,000 USD</div></div>
+          <div class="card-details">
+            <div class="detail-item"><div class="detail-label">Management</div><div class="detail-value">0.25%</div></div>
+            <div class="detail-item"><div class="detail-label">Performance</div><div class="detail-value">0%</div></div>
+            <div class="detail-item"><div class="detail-label">Currency</div><div class="detail-value">USD</div></div>
+
+            <div class="detail-item"><div class="detail-label">Income</div><div class="detail-value">Accumulation</div></div>
+          </div>
+        </div>
+
+        <!-- Card 6: Class Z (Draft) -->
+        <div class="class-card" data-class='{"name":"Class Z","tier":"Platform","income":"accumulation","currency":"GBP","hedging":"unhedged","mgmt":"0.50","perf":"0","sub":"0","red":"0","minInvest":"0","lockup":"0","lockupUnit":"Months","notice":"0","noticeUnit":"Days","dealing":"","voting":true,"hwm":"Per class","dilution":false,"swing":"","gates":""}'>
+          <div class="card-header">
+            <span class="card-title">Class Z</span>
+            <button class="card-edit-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</button>
+          </div>
+          <span class="badge badge-draft">Draft</span>
+          <div class="card-price-container"><div class="card-nav" style="color: var(--text-color-muted);">— GBP</div>
+          <div class="card-aum">— GBP</div></div>
+          <div class="card-details">
+            <div class="detail-item"><div class="detail-label">Management</div><div class="detail-value">0.50%</div></div>
+            <div class="detail-item"><div class="detail-label">Performance</div><div class="detail-value">0%</div></div>
+            <div class="detail-item"><div class="detail-label">Currency</div><div class="detail-value">GBP</div></div>
+
+            <div class="detail-item"><div class="detail-label">Income</div><div class="detail-value">Accumulation</div></div>
+          </div>
+        </div>
+
+      </div>
+
+      </div>
+    </main>
+  </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SIDEPEEK OVERLAY
+     ============================================================ -->
+<div class="sidepeek-overlay" id="sidepeek-overlay"></div>
+
+<!-- ============================================================
+     SIDEPEEK PANEL
+     ============================================================ -->
+<div class="sidepeek" id="sidepeek">
+
+  <!-- Sticky top bar -->
+  <div class="sidepeek-topbar">
+    <button class="cancel-btn" id="close-sidepeek-btn" aria-label="Cancel">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      Cancel
+    </button>
+  </div>
+
+  <!-- Scrollable Body -->
+  <div class="sidepeek-body">
+
+    <!-- Header (scrolls with content) -->
+    <div class="sidepeek-header">
+      <h2 class="sidepeek-title">Add Share Class</h2>
+      <p class="sidepeek-subtitle">Define the terms for a new share class in this fund.</p>
+    </div>
+
+    <!-- Section 1: Identity -->
+    <div class="form-section">
+      <div class="section-label">Identity</div>
+      <div class="form-group">
+        <label class="field-label">Class name</label>
+        <input class="input-field" type="text" placeholder="e.g. Class A Acc USD">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Fee tier</label>
+        <select class="select-field">
+          <option value="" disabled selected>Select fee tier</option>
+          <option>Retail</option>
+          <option>Institutional</option>
+          <option>Seed</option>
+          <option>Platform</option>
+          <option>Bundled</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="field-label">Income treatment</label>
+        <div class="choice-pills" id="income-treatment">
+          <button class="choice-pill choice-pill-active" data-value="accumulation">Accumulation</button>
+          <button class="choice-pill" data-value="distribution">Distribution</button>
+        </div>
+      </div>
+      <div class="form-group conditional" id="distribution-frequency">
+        <label class="field-label">Distribution frequency</label>
+        <select class="select-field">
+          <option value="" disabled selected>Select frequency</option>
+          <option>Monthly</option>
+          <option>Quarterly</option>
+          <option>Semi-annual</option>
+          <option>Annual</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Section 2: Currency & Hedging -->
+    <div class="form-section">
+      <div class="section-label">Currency &amp; Hedging</div>
+      <div class="form-group">
+        <label class="field-label">Denomination currency</label>
+        <select class="select-field" id="currency-select">
+          <option value="USD" selected>USD — US Dollar</option>
+          <option value="EUR">EUR — Euro</option>
+          <option value="GBP">GBP — British Pound</option>
+          <option value="CHF">CHF — Swiss Franc</option>
+          <option value="JPY">JPY — Japanese Yen</option>
+          <option value="AUD">AUD — Australian Dollar</option>
+          <option value="CAD">CAD — Canadian Dollar</option>
+          <option value="SGD">SGD — Singapore Dollar</option>
+          <option value="HKD">HKD — Hong Kong Dollar</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="field-label">FX hedging model</label>
+        <select class="select-field" id="fx-hedging">
+          <option value="unhedged" selected>Unhedged</option>
+          <option value="passive">Passive</option>
+          <option value="active">Active</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Section 3: Fees -->
+    <div class="form-section">
+      <div class="section-label">Fees</div>
+      <div class="form-row" style="margin-top: var(--space-16);">
+        <div class="form-group" style="margin-top: 0;">
+          <label class="field-label">Management fee</label>
+          <div class="input-with-suffix">
+            <input class="input-field" type="number" step="0.01" min="0" placeholder="0.00">
+            <span class="input-suffix">%</span>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 0;">
+          <label class="field-label">Performance fee</label>
+          <div class="input-with-suffix">
+            <input class="input-field" type="number" step="0.01" min="0" placeholder="0.00">
+            <span class="input-suffix">%</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-row" style="margin-top: var(--space-16);">
+        <div class="form-group" style="margin-top: 0;">
+          <label class="field-label">Subscription fee</label>
+          <div class="input-with-suffix">
+            <input class="input-field" type="number" step="0.01" min="0" placeholder="0.00">
+            <span class="input-suffix">%</span>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 0;">
+          <label class="field-label">Redemption fee</label>
+          <div class="input-with-suffix">
+            <input class="input-field" type="number" step="0.01" min="0" placeholder="0.00">
+            <span class="input-suffix">%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Dealing & Liquidity -->
+    <div class="form-section">
+      <div class="section-label">Dealing &amp; Liquidity</div>
+      <div class="form-group">
+        <label class="field-label">Minimum investment</label>
+        <div class="input-with-prefix">
+          <span class="input-prefix" id="currency-prefix">$</span>
+          <input class="input-field" type="number" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="form-row" style="margin-top: var(--space-16);">
+        <div class="form-group" style="margin-top: 0;">
+          <label class="field-label">Lock-up period</label>
+          <div class="input-with-unit">
+            <input class="input-field" type="number" min="0" placeholder="0">
+            <select class="select-field">
+              <option>Days</option>
+              <option selected>Months</option>
+              <option>Years</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 0;">
+          <label class="field-label">Notice period</label>
+          <div class="input-with-unit">
+            <input class="input-field" type="number" min="0" placeholder="0">
+            <select class="select-field">
+              <option selected>Days</option>
+              <option>Months</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">Dealing schedule</label>
+        <select class="select-field">
+          <option value="" disabled selected>Select schedule</option>
+          <option>Daily</option>
+          <option>Weekly</option>
+          <option>Monthly</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="field-label">Voting rights</label>
+        <div class="toggle-row">
+          <span>Shareholders can vote</span>
+          <div class="toggle toggle-on" id="voting-toggle"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 5: Advanced -->
+    <div class="form-section">
+      <div class="section-label">Advanced</div>
+      <div class="form-group">
+        <label class="field-label">High water mark scope</label>
+        <select class="select-field">
+          <option selected>Per class</option>
+          <option>Per dealing</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="field-label">Dilution adjustment</label>
+        <div class="toggle-row">
+          <span>Enable dilution adjustment</span>
+          <div class="toggle" id="dilution-toggle"></div>
+        </div>
+      </div>
+      <div class="form-group conditional" id="swing-pricing">
+        <label class="field-label">Swing pricing threshold</label>
+        <div class="input-with-suffix">
+          <input class="input-field" type="number" step="0.01" min="0" placeholder="0.00">
+          <span class="input-suffix">%</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">Redemption gates</label>
+        <div class="input-with-suffix">
+          <input class="input-field" type="number" step="0.01" min="0" placeholder="0.00">
+          <span class="input-suffix">%</span>
+        </div>
+        <span class="field-hint">Max % of NAV per dealing day</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="sidepeek-footer">
+    <div id="create-footer" style="display: flex; gap: var(--space-8);">
+      <button class="btn btn-outline" style="flex: 1;" id="save-draft-btn">Save Draft</button>
+      <button class="btn btn-primary" style="flex: 1;" id="create-class-btn" disabled>Create Class</button>
+    </div>
+    <div id="edit-footer" style="display: none;">
+      <button class="btn btn-primary btn-full-width" id="save-changes-btn" disabled>Save Changes</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ============================================================
+     JAVASCRIPT — Interactions
+     ============================================================ -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  // --- Currency symbols (shared) ---
+  var currencySymbols = {
+    USD: '$', EUR: '\u20AC', GBP: '\u00A3', CHF: 'CHF', JPY: '\u00A5',
+    AUD: 'A$', CAD: 'C$', SGD: 'S$', HKD: 'HK$'
+  };
+
+  // --- Mode state ---
+  var editMode = false;
+  var sidepeekTitle = document.querySelector('.sidepeek-title');
+  var sidepeekSubtitle = document.querySelector('.sidepeek-subtitle');
+  var createFooter = document.getElementById('create-footer');
+  var editFooter = document.getElementById('edit-footer');
+  var saveChangesBtn = document.getElementById('save-changes-btn');
+
+  // --- Sidepeek open/close ---
+  var sidepeek = document.getElementById('sidepeek');
+  var overlay = document.getElementById('sidepeek-overlay');
+  var openBtn = document.getElementById('open-sidepeek-btn');
+  var closeBtn = document.getElementById('close-sidepeek-btn');
+
+  function resetForm() {
+    sidepeek.querySelectorAll('input.input-field').forEach(function (i) { i.value = ''; });
+    sidepeek.querySelectorAll('select.select-field').forEach(function (s) { s.selectedIndex = 0; s.disabled = false; });
+    // Reset income treatment pills
+    var allPills = document.querySelectorAll('#income-treatment .choice-pill');
+    allPills.forEach(function (p) { p.classList.remove('choice-pill-active'); });
+    allPills[0].classList.add('choice-pill-active');
+    document.getElementById('distribution-frequency').classList.remove('visible');
+    // Reset toggles
+    var vt = document.getElementById('voting-toggle');
+    vt.classList.add('toggle-on');
+    var dt = document.getElementById('dilution-toggle');
+    dt.classList.remove('toggle-on');
+    document.getElementById('swing-pricing').classList.remove('visible');
+    // Reset currency
+    document.getElementById('currency-select').value = 'USD';
+    document.getElementById('fx-hedging').value = 'unhedged';
+    document.getElementById('fx-hedging').disabled = true;
+    document.getElementById('currency-prefix').textContent = '$';
+  }
+
+  function openCreateMode() {
+    editMode = false;
+    resetForm();
+    sidepeekTitle.textContent = 'Add Share Class';
+    sidepeekSubtitle.textContent = 'Define the terms for a new share class in this fund.';
+    createFooter.style.display = 'flex';
+    editFooter.style.display = 'none';
+    sidepeek.classList.add('open');
+    overlay.classList.add('open');
+    checkFormComplete();
+  }
+
+  function openEditMode(data) {
+    editMode = true;
+    resetForm();
+    sidepeekTitle.textContent = 'Edit Share Class';
+    sidepeekSubtitle.textContent = 'Update the terms for ' + data.name + '.';
+    createFooter.style.display = 'none';
+    editFooter.style.display = 'block';
+    saveChangesBtn.disabled = true;
+
+    // Populate fields
+    var inputs = sidepeek.querySelectorAll('input.input-field');
+    inputs[0].value = data.name; // Class name
+    // Fee tier
+    var tierSelect = sidepeek.querySelectorAll('select.select-field')[0];
+    for (var i = 0; i < tierSelect.options.length; i++) {
+      if (tierSelect.options[i].text === data.tier) { tierSelect.selectedIndex = i; break; }
+    }
+    // Income treatment
+    var allPills = document.querySelectorAll('#income-treatment .choice-pill');
+    allPills.forEach(function (p) { p.classList.remove('choice-pill-active'); });
+    allPills.forEach(function (p) {
+      if (p.dataset.value === data.income) p.classList.add('choice-pill-active');
+    });
+    // Distribution frequency
+    if (data.income === 'distribution') {
+      var distEl = document.getElementById('distribution-frequency');
+      distEl.classList.add('visible');
+      var distSelect = distEl.querySelector('select');
+      for (var i = 0; i < distSelect.options.length; i++) {
+        if (distSelect.options[i].text === data.distFreq) { distSelect.selectedIndex = i; break; }
+      }
+    }
+    // Currency
+    document.getElementById('currency-select').value = data.currency;
+    document.getElementById('currency-prefix').textContent = currencySymbols[data.currency] || data.currency;
+    // FX hedging
+    var fxH = document.getElementById('fx-hedging');
+    if (data.currency === 'USD') { fxH.value = 'unhedged'; fxH.disabled = true; }
+    else { fxH.disabled = false; fxH.value = data.hedging; }
+    // Fees
+    inputs[1].value = data.mgmt;
+    inputs[2].value = data.perf;
+    inputs[3].value = data.sub;
+    inputs[4].value = data.red;
+    // Minimum investment
+    inputs[5].value = data.minInvest;
+    // Lock-up
+    inputs[6].value = data.lockup;
+    var lockupUnitSelect = inputs[6].closest('.input-with-unit').querySelector('select');
+    for (var i = 0; i < lockupUnitSelect.options.length; i++) {
+      if (lockupUnitSelect.options[i].text === data.lockupUnit) { lockupUnitSelect.selectedIndex = i; break; }
+    }
+    // Notice
+    inputs[7].value = data.notice;
+    var noticeUnitSelect = inputs[7].closest('.input-with-unit').querySelector('select');
+    for (var i = 0; i < noticeUnitSelect.options.length; i++) {
+      if (noticeUnitSelect.options[i].text === data.noticeUnit) { noticeUnitSelect.selectedIndex = i; break; }
+    }
+    // Dealing schedule
+    var dealingSelect = sidepeek.querySelector('#swing-pricing').closest('.form-section').querySelectorAll('select.select-field');
+    // Find the dealing schedule select (in section 4)
+    var allSelects = sidepeek.querySelectorAll('select.select-field');
+    for (var i = 0; i < allSelects.length; i++) {
+      var opts = allSelects[i];
+      for (var j = 0; j < opts.options.length; j++) {
+        if (opts.options[j].text === data.dealing) { opts.selectedIndex = j; break; }
+      }
+    }
+    // Voting
+    var vt = document.getElementById('voting-toggle');
+    if (data.voting) vt.classList.add('toggle-on'); else vt.classList.remove('toggle-on');
+    // HWM
+    var hwmSelect = document.getElementById('swing-pricing').closest('.form-section').querySelector('select');
+    if (hwmSelect) {
+      for (var i = 0; i < hwmSelect.options.length; i++) {
+        if (hwmSelect.options[i].text === data.hwm) { hwmSelect.selectedIndex = i; break; }
+      }
+    }
+    // Dilution
+    var dt = document.getElementById('dilution-toggle');
+    if (data.dilution) { dt.classList.add('toggle-on'); document.getElementById('swing-pricing').classList.add('visible'); }
+    // Swing & Gates
+    inputs[8] && (inputs[8].value = data.swing);
+    inputs[9] && (inputs[9].value = data.gates);
+
+    sidepeek.classList.add('open');
+    overlay.classList.add('open');
+
+    // Track changes for Save Changes button
+    setTimeout(trackEditChanges, 100);
+  }
+
+  function trackEditChanges() {
+    var allInputs = sidepeek.querySelectorAll('input.input-field, select.select-field');
+    var snapshot = {};
+    allInputs.forEach(function (el, i) { snapshot[i] = el.value; });
+
+    function onFieldChange() {
+      var changed = false;
+      allInputs.forEach(function (el, i) {
+        if (el.value !== snapshot[i]) changed = true;
+      });
+      saveChangesBtn.disabled = !changed;
+    }
+    allInputs.forEach(function (el) {
+      el.addEventListener('input', onFieldChange);
+      el.addEventListener('change', onFieldChange);
+    });
+  }
+
+  function closeSidepeek() {
+    sidepeek.classList.remove('open');
+    overlay.classList.remove('open');
+  }
+
+  openBtn.addEventListener('click', openCreateMode);
+  closeBtn.addEventListener('click', closeSidepeek);
+  overlay.addEventListener('click', closeSidepeek);
+
+  // Auto-open if ?create=true
+  if (new URLSearchParams(window.location.search).get('create') === 'true') {
+    openSidepeek();
+  }
+
+  // --- Income treatment segmented control ---
+  var pills = document.querySelectorAll('#income-treatment .choice-pill');
+  var distFreq = document.getElementById('distribution-frequency');
+
+  pills.forEach(function (pill) {
+    pill.addEventListener('click', function () {
+      pills.forEach(function (p) { p.classList.remove('choice-pill-active'); });
+      pill.classList.add('choice-pill-active');
+
+      if (pill.dataset.value === 'distribution') {
+        distFreq.classList.add('visible');
+      } else {
+        distFreq.classList.remove('visible');
+      }
+    });
+  });
+
+  // --- Currency → FX hedging ---
+  var currencySelect = document.getElementById('currency-select');
+  var fxHedging = document.getElementById('fx-hedging');
+  var currencyPrefix = document.getElementById('currency-prefix');
+
+  currencySelect.addEventListener('change', function () {
+    var val = currencySelect.value;
+    // Fund base currency is USD
+    if (val === 'USD') {
+      fxHedging.value = 'unhedged';
+      fxHedging.disabled = true;
+    } else {
+      fxHedging.disabled = false;
+    }
+    // Update currency prefix
+    currencyPrefix.textContent = currencySymbols[val] || val;
+  });
+
+  // --- Dilution toggle → swing pricing ---
+  var dilutionToggle = document.getElementById('dilution-toggle');
+  var swingPricing = document.getElementById('swing-pricing');
+
+  dilutionToggle.addEventListener('click', function () {
+    dilutionToggle.classList.toggle('toggle-on');
+    if (dilutionToggle.classList.contains('toggle-on')) {
+      swingPricing.classList.add('visible');
+    } else {
+      swingPricing.classList.remove('visible');
+    }
+  });
+
+  // --- Voting rights toggle ---
+  var votingToggle = document.getElementById('voting-toggle');
+  votingToggle.addEventListener('click', function () {
+    votingToggle.classList.toggle('toggle-on');
+  });
+
+  // --- Edit buttons on cards ---
+  document.querySelectorAll('.card-edit-btn').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var card = btn.closest('.class-card');
+      var data = JSON.parse(card.dataset.class);
+      openEditMode(data);
+    });
+  });
+
+  // --- Save changes ---
+  saveChangesBtn.addEventListener('click', function () {
+    if (saveChangesBtn.disabled) return;
+    setLoading(saveChangesBtn, 'Saving\u2026');
+    setTimeout(function () {
+      clearLoading(saveChangesBtn);
+      closeSidepeek();
+      showToast('Changes saved');
+    }, 5000);
+  });
+
+  // --- Theme toggle ---
+  var themeToggle = document.getElementById('theme-toggle');
+  themeToggle.addEventListener('click', function () {
+    themeToggle.classList.toggle('toggle-on');
+    if (themeToggle.classList.contains('toggle-on')) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+  });
+
+  // --- Status tab switching ---
+  var tabs = document.querySelectorAll('.status-tabs .tab');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.classList.remove('tab-active'); });
+      tab.classList.add('tab-active');
+    });
+  });
+
+  // --- Form validation → enable Create Class ---
+  var createBtn = document.getElementById('create-class-btn');
+  var saveDraftBtn = document.getElementById('save-draft-btn');
+  var formInputs = sidepeek.querySelectorAll('input.input-field, select.select-field');
+  var toast = document.getElementById('toast');
+
+  function checkFormComplete() {
+    var allFilled = true;
+    formInputs.forEach(function (input) {
+      // Skip conditional fields that are hidden
+      var parent = input.closest('.conditional');
+      if (parent && !parent.classList.contains('visible')) return;
+      // Skip disabled fields
+      if (input.disabled) return;
+
+      if (input.tagName === 'SELECT') {
+        if (!input.value || input.selectedOptions[0].disabled) allFilled = false;
+      } else {
+        if (!input.value.trim()) allFilled = false;
+      }
+    });
+    createBtn.disabled = !allFilled;
+  }
+
+  formInputs.forEach(function (input) {
+    input.addEventListener('input', checkFormComplete);
+    input.addEventListener('change', checkFormComplete);
+  });
+
+  // --- Toast helper ---
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('visible');
+    setTimeout(function () {
+      toast.classList.remove('visible');
+    }, 3000);
+  }
+
+  // --- Button loading + action ---
+  function setLoading(btn, text) {
+    btn.dataset.originalText = btn.textContent;
+    btn.innerHTML = '<span class="btn-spinner"></span>' + text;
+    btn.classList.add('btn-loading');
+  }
+
+  function clearLoading(btn) {
+    btn.textContent = btn.dataset.originalText;
+    btn.classList.remove('btn-loading');
+  }
+
+  saveDraftBtn.addEventListener('click', function () {
+    setLoading(saveDraftBtn, 'Saving\u2026');
+    setTimeout(function () {
+      clearLoading(saveDraftBtn);
+      closeSidepeek();
+      showToast('Draft saved');
+    }, 5000);
+  });
+
+  createBtn.addEventListener('click', function () {
+    if (createBtn.disabled) return;
+    setLoading(createBtn, 'Creating\u2026');
+    setTimeout(function () {
+      clearLoading(createBtn);
+      closeSidepeek();
+      showToast('New share class now active');
+    }, 5000);
+  });
+
+});
+</script>
+
+</body>
+</html>

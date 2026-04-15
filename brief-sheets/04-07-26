@@ -1,0 +1,117 @@
+# Daily UI/UX Design Tasks
+
+**Date:** 04/07/2026  
+**Project:** Elysium  
+**Focus area:** KYC Screens, Storybook components, Manager onboarding flow. 
+**Main outcome needed today:** Finalise Investor onboarding and Manager onboarding. 
+
+---
+
+## Top priorities
+1. [ ] (Terminal 1) Build and design the KYC screens, Use the KAST and Revolut screens to help determine what screens we need to build, the flow, and the screen layouts.
+2. [ ] (Terminal 1) Check the storybook components against the components we've built and do another audit to see where we need to improve. 
+3. [ ] (Terminal 2) I'll be working in second terminal to work through changes to the fund creation screens. 
+
+---
+
+## Active design problems
+### Problem 1
+- **Area:** https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=600-16351
+- **Context:** KYC page in Figma
+- **Constraint:** 
+- **What good looks like:** 
+
+### Problem 2
+- **Area:** http://localhost:6007/
+- **Context:** Storybook
+- **Constraint:** 
+- **What good looks like:** 
+
+### Problem 3
+- **Area:**
+- **Context:** 
+- **Constraint:** 
+- **What good looks like:** 
+
+---
+
+## Work areas
+
+### Figma File
+- [ ] https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+
+### Pages
+- [ ] Investor > KYC / Onboarding (WIP) : https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=600-16351
+- [ ] MANAGER > Onboarding: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=889-4682
+
+### Components
+- [ ] Global: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69298
+- [ ] Investor App (mobile): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69296
+- [ ] Manager OS (desktop): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69297 
+
+### UX writing / product copy
+- [ ] 
+- [ ] 
+
+---
+
+## Review checklist
+- [ ] User goal is clear
+- [ ] Primary action is clear
+- [ ] Edge cases covered
+- [ ] Empty / loading / error / success states considered
+- [ ] Consistent with design system
+- [ ] Realistic for engineering handoff
+- [ ] Mobile / responsive behaviour considered
+
+---
+
+## Claude session notes
+**Context to give Claude:**  
+- 
+- 
+- 
+
+**What I want back from Claude:**  
+- 
+- 
+- 
+
+---
+
+## Notes
+- 
+- 
+- 
+
+---
+
+## End of day
+### Done
+- KYC flow fully designed: 36+ screens across 5 sections (Onboarding, Verification, Document Capture, Entity, Status)
+- Researched KAST and Revolut KYC flows, built minimal dark-mode design direction
+- Created new components: Capture Button, Person Card, Upload Card, Search Result Item, Radio Card (improved with illustration slot + filled dot)
+- Created new design tokens: bg/glass (semi-transparent surfaces), text color/filled (input values on glass bg), brand scale (teal 0-950)
+- Added Filled state to FormControl/Input and FormControl/Select (all variants/sizes)
+- Input labels updated to normal/xs across all variants
+- Rounded Select restyled to Fill appearance (bg/glass, no stroke)
+- Gradient system: primary (title screens) + secondary (form screens) with teal accent
+- All screens: design tokens bound (colours, text styles, space tokens), dark mode set
+- Phone number screen: split input with country code selector + flag
+- Address screens: search dropdown with results + manual entry form (both personal and entity)
+- Proof of Address upload screen added
+- Verify Identity screens rebuilt with glass tile checklist (icon circles)
+- Terms & Consent rebuilt with checkboxes + text links
+- Screen flow ordering fixed, all back/close buttons aligned consistently
+- Action Row component updated with left icon toggle + instance swap
+- Page reorganised into typed sections (Reference, Wireframes, Onboarding, Verification, Document Capture, Entity, Status)
+
+### Carry forward
+- Priority 2: Storybook component audit (not started)
+- Entity screens still in original style — rebuild in minimal dark style
+- Illustrations for Radio Card tiles (Personal, Organisation, Passport) — Brad creating separately
+- Should-have screens: expanded manual address form variants, country search list, phone number error state, entity documents uploaded state
+
+### Last task
+- [ ] Run the skill in `elysium-design/skills/daily-summary`
+- [ ] Output the daily summary into `elysium-design/daily-summary`

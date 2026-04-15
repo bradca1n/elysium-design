@@ -1,0 +1,91 @@
+# Daily UI/UX Design Tasks
+
+**Important**
+Please add a check e.g [✅] and cross out the task line when completed directly in this file.
+
+**Date:** 03-17-26
+**Project:** Elysium
+**Focus area:** Component migration & screen finalisation
+**Main outcome needed today:**
+
+1. Modal/Sheet slots conversation
+2. Share class creation import
+3. Review Figma file for gaps — build a list of screens/components needed for the product demo
+
+## Top priorities
+
+### Carried forward from 04-16-26
+1. [✅] ~~Modal/Sheet slots conversation — discuss using Figma's new 'slots' feature for base Modal and Sheet components with swappable body content. Built 4-variant component set (Mobile Modal, Desktop Modal, Mobile Sheet, Desktop Sheet) with slot architecture on Global > Modal & Sheet section. All token-bound, global Button instances for Cancel/Confirm.~~
+
+### New priorities
+2. [✅] ~~Share Class creation side sheet — rebuilt with new FormControl / Input and FormControl / Select components (gluestack-ui-pro pattern). All fields use component instances with toggleable labels and hints. Token-bound, text styles linked, zero hardcoded values.~~
+3. [✅] ~~Scan and check the design for possible component matches — rebuilt Input (48 variants) and Select (48 variants) as FormControl components matching gluestack-ui-pro. Created Toggle component. All form fields in Share Class form now use component instances. Memory updated for future imports.~~
+4. [✅] ~~Write flow diagrams on the Flows pages using Flow Container component with screen screenshots. Investor App: 3 flows (Log in, View & subscribe, Add cash). Manager OS: 4 flows (Log in, Invite investor, Check Fund & share classes, Add new share class). All using real screen screenshots, greyed wireframe placeholders for missing screens.~~
+
+
+
+## Work areas
+
+### Figma File
+- [ ] https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+
+### Pages
+- [ ] Widgets > Investor App: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+- [ ] Widgets > Manager OS: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69417
+- [ ] Share Class Creation: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=61-2471
+- [ ] Flow, Investor App:https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=594-249
+- [ ] Flow, Manager OS: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=594-250
+
+### Components
+- [ ] Global: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69298
+- [ ] Investor App (mobile): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69296
+- [ ] Manager OS (desktop): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69297
+
+### UX writing / product copy
+- [ ]
+- [ ]
+
+
+## Review checklist
+- [ ] User goal is clear
+- [ ] Primary action is clear
+- [ ] Edge cases covered
+- [ ] Empty / loading / error / success states considered
+- [ ] Consistent with design system
+- [ ] Realistic for engineering handoff
+- [ ] Mobile / responsive behaviour considered
+- [ ] Components are built in the correct page, relative to its use case.
+---
+
+## Claude session notes
+**Context to give Claude:**
+- Review the last 7 days 'Daily summary files'
+-
+-
+
+**What I want back from Claude:**
+- All outputs should be in Figma
+-
+-
+
+---
+
+## Notes
+-
+-
+-
+
+---
+
+## End of day
+
+### Carry forward
+Claude to add items that we didn't get too here:
+-
+-
+-
+
+
+### Last task
+- [ ] Run the skill in `elysium-design/skills/daily-summary`
+- [ ] Output the daily summary into `elysium-design/daily-summary`

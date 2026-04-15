@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elysium Design System — Proposed Organization</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: #fafafa; color: #171717; line-height: 1.5; }
+
+  .header { background: #171717; color: white; padding: 48px 64px; }
+  .header h1 { font-size: 32px; font-weight: 600; margin-bottom: 8px; }
+  .header p { font-size: 16px; color: #a3a3a3; max-width: 640px; }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 48px 64px; }
+
+  .section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #a3a3a3; margin-bottom: 24px; border-bottom: 1px solid #e5e5e5; padding-bottom: 12px; }
+
+  .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-bottom: 64px; }
+  .comparison-col h2 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .comparison-col .subtitle { font-size: 13px; color: #a3a3a3; margin-bottom: 20px; }
+
+  .page-block { background: white; border: 1px solid #e5e5e5; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  .page-block h3 { font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .page-block h3 .tag { font-size: 10px; background: #f0fdf4; color: #166534; padding: 2px 8px; border-radius: 99px; font-weight: 500; }
+  .page-block h3 .tag.blue { background: #eff6ff; color: #1e40af; }
+  .page-block h3 .tag.purple { background: #faf5ff; color: #7c3aed; }
+  .page-block h3 .tag.amber { background: #fffbeb; color: #92400e; }
+
+  .section-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .section-chip { font-size: 12px; background: #f5f5f5; border: 1px solid #e5e5e5; padding: 4px 10px; border-radius: 6px; color: #525252; }
+  .section-chip.new { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+  .section-chip.moved { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
+  .section-chip.removed { background: #fef2f2; border-color: #fecaca; color: #991b1b; text-decoration: line-through; }
+
+  /* Proposed structure - full width */
+  .proposed-full { margin-bottom: 64px; }
+  .proposed-full h2 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+  .proposed-full .subtitle { font-size: 14px; color: #737373; margin-bottom: 32px; }
+
+  .figma-page-group { margin-bottom: 40px; }
+  .figma-page-group .group-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #a3a3a3; margin-bottom: 12px; }
+
+  .figma-pages { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+
+  .figma-page { background: white; border: 1px solid #e5e5e5; border-radius: 12px; overflow: hidden; }
+  .figma-page .page-header { padding: 16px 20px 12px; border-bottom: 1px solid #f5f5f5; }
+  .figma-page .page-header h4 { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .figma-page .page-header h4 .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .figma-page .page-header h4 .dot.green { background: #22c55e; }
+  .figma-page .page-header h4 .dot.blue { background: #3b82f6; }
+  .figma-page .page-header h4 .dot.purple { background: #8b5cf6; }
+  .figma-page .page-header h4 .dot.amber { background: #f59e0b; }
+  .figma-page .page-header h4 .dot.gray { background: #a3a3a3; }
+  .figma-page .page-body { padding: 16px 20px; }
+
+  .category { margin-bottom: 16px; }
+  .category:last-child { margin-bottom: 0; }
+  .category-name { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #a3a3a3; margin-bottom: 6px; }
+  .component-list { display: flex; flex-wrap: wrap; gap: 4px; }
+  .component { font-size: 11px; background: #f9fafb; border: 1px solid #e5e7eb; padding: 3px 8px; border-radius: 4px; color: #374151; }
+  .component.highlight { background: #f0fdf4; border-color: #86efac; }
+
+  /* Bridge section */
+  .bridge { background: #171717; color: white; padding: 48px 64px; margin: 48px 0; border-radius: 16px; }
+  .bridge h2 { font-size: 24px; font-weight: 600; margin-bottom: 24px; }
+  .pipeline { display: flex; align-items: center; gap: 0; flex-wrap: wrap; justify-content: center; }
+  .pipeline-step { background: #262626; border: 1px solid #404040; border-radius: 10px; padding: 16px 20px; text-align: center; min-width: 160px; }
+  .pipeline-step .step-label { font-size: 11px; color: #a3a3a3; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .pipeline-step .step-name { font-size: 14px; font-weight: 600; }
+  .pipeline-arrow { font-size: 20px; color: #525252; padding: 0 8px; }
+
+  /* Widget vs Component */
+  .distinction { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 48px; }
+  .distinction-card { background: white; border: 1px solid #e5e5e5; border-radius: 12px; padding: 24px; }
+  .distinction-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .distinction-card .card-sub { font-size: 13px; color: #737373; margin-bottom: 16px; }
+  .distinction-card ul { list-style: none; padding: 0; }
+  .distinction-card li { font-size: 13px; padding: 6px 0; border-bottom: 1px solid #f5f5f5; display: flex; align-items: center; gap: 8px; }
+  .distinction-card li:last-child { border-bottom: none; }
+  .distinction-card li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .distinction-card.components li::before { background: #22c55e; }
+  .distinction-card.widgets li::before { background: #8b5cf6; }
+
+  .legend { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  .legend-item { font-size: 12px; display: flex; align-items: center; gap: 6px; }
+  .legend-swatch { width: 12px; height: 12px; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Elysium Design System</h1>
+  <p>Proposed component library reorganization — functional grouping with clear component/widget separation</p>
+</div>
+
+<div class="container">
+
+  <!-- Component vs Widget distinction -->
+  <div class="section-title">The Core Principle</div>
+
+  <div class="distinction">
+    <div class="distinction-card components">
+      <h3>Components</h3>
+      <div class="card-sub">Reusable building blocks — product-agnostic, mapped 1:1 to Storybook</div>
+      <ul>
+        <li>Button, Input, Select, Checkbox, Radio</li>
+        <li>Modal & Sheet, Toast, Alert, Badge</li>
+        <li>Table, Key-Value Row, Data Field</li>
+        <li>Top Nav Bar, Tabs, Bottom Nav</li>
+        <li>Social Button, OTP Digit, Radio Card</li>
+      </ul>
+    </div>
+    <div class="distinction-card widgets">
+      <h3>Widgets</h3>
+      <div class="card-sub">Product-specific compositions — built from components, called throughout the product</div>
+      <ul>
+        <li>Portfolio Value (Chart + KPI + Values)</li>
+        <li>Fund Holdings (Table + Holding Tiles)</li>
+        <li>Order Summary (Key-Value Rows + Badge)</li>
+        <li>Share Class Card (Data Fields + Badge)</li>
+        <li>Dashboard Summary (KPI Tiles + Charts)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Proposed Structure -->
+  <div class="section-title">Proposed Figma File Structure</div>
+
+  <div class="proposed-full">
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-swatch" style="background:#e5e5e5;"></div> Foundations (unchanged)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#22c55e;"></div> Global Components</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#3b82f6;"></div> Platform Components</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#8b5cf6;"></div> Widgets</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#f59e0b;"></div> Screens / Flows</div>
+    </div>
+
+    <!-- Foundations -->
+    <div class="figma-page-group">
+      <div class="group-label">— Foundations (no change)</div>
+      <div class="figma-pages">
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot gray"></span> Colour &bull; Shadow &bull; Typography &bull; Iconography</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">Design tokens</span>
+              <span class="component">Variable collections</span>
+              <span class="component">Text styles</span>
+              <span class="component">Icon library</span>
+              <span class="component">Social icons</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Components -->
+    <div class="figma-page-group">
+      <div class="group-label">— Components: Global (shared across platforms)</div>
+      <div class="figma-pages">
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot green"></span> Actions</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">Button</span>
+              <span class="component">Social Button</span>
+              <span class="component">Button Circle</span>
+              <span class="component">Grouped Buttons</span>
+              <span class="component">Filter Tab</span>
+            </div>
+          </div>
+        </div>
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot green"></span> Data Input</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">FormControl / Input</span>
+              <span class="component">FormControl / Select</span>
+              <span class="component">Radio Card</span>
+              <span class="component">OTP Digit</span>
+              <span class="component">Country Code</span>
+              <span class="component">Checkbox</span>
+            </div>
+          </div>
+        </div>
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot green"></span> Data Display</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">Table</span>
+              <span class="component">Table Row</span>
+              <span class="component">Table Cell</span>
+              <span class="component">Table Pagination</span>
+              <span class="component">Key-Value Row</span>
+              <span class="component">Status List Row</span>
+              <span class="component">KPI Tile</span>
+              <span class="component">Step Indicator</span>
+            </div>
+          </div>
+        </div>
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot green"></span> Feedback</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">Alert</span>
+              <span class="component">Alert Dialog</span>
+              <span class="component">Toast</span>
+              <span class="component">Badge</span>
+              <span class="component">Status Badge</span>
+              <span class="component">Quantity Badge</span>
+            </div>
+          </div>
+        </div>
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot green"></span> Overlays</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">Modal & Sheet</span>
+              <span class="component">Accordion</span>
+              <span class="component">Modal</span>
+              <span class="component">Slot Placeholder</span>
+            </div>
+          </div>
+        </div>
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot green"></span> Content & Layout</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">Illustrations</span>
+              <span class="component">Logo</span>
+              <span class="component">Checklist Item</span>
+              <span class="component">Address Row</span>
+              <span class="component">Step Item</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Platform Components -->
+    <div class="figma-page-group">
+      <div class="group-label">— Components: Investor App (mobile-specific)</div>
+      <div class="figma-pages">
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot blue"></span> Navigation</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">Top Nav Bar</span>
+              <span class="component">Bottom Nav</span>
+              <span class="component">Top Nav</span>
+              <span class="component">Top Nav, Fund Detail</span>
+              <span class="component">Tabs</span>
+            </div>
+          </div>
+        </div>
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot blue"></span> Data Display</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">Chart</span>
+              <span class="component">Fund Details</span>
+              <span class="component">Holding Tile</span>
+              <span class="component">Class Tile</span>
+              <span class="component">Order Tile Row</span>
+              <span class="component">Data Field</span>
+              <span class="component">Values</span>
+              <span class="component">Risk Indicator</span>
+              <span class="component">Order Summary</span>
+            </div>
+          </div>
+        </div>
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot blue"></span> Layout</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">Sheet</span>
+              <span class="component">Sheet Header</span>
+              <span class="component">Screen Header</span>
+              <span class="component">Footer</span>
+              <span class="component">Keyboard Numeric</span>
+              <span class="component">Vertical Scroll Container</span>
+              <span class="component">Action Row</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="figma-page-group">
+      <div class="group-label">— Components: Manager OS (desktop-specific)</div>
+      <div class="figma-pages">
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot blue"></span> Navigation</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">Navbar</span>
+              <span class="component">Left Hand Navigation</span>
+              <span class="component">Nav Item</span>
+              <span class="component">Breadcrumb</span>
+              <span class="component">Sub-Nav Item</span>
+              <span class="component">Sidebar Nav Item</span>
+              <span class="component">Fund Selector</span>
+              <span class="component">Fund List Dropdown</span>
+            </div>
+          </div>
+        </div>
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot blue"></span> Data Display</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">Performance Card</span>
+              <span class="component">Share Class Card</span>
+              <span class="component">Orders Overview Card</span>
+              <span class="component">Order Row</span>
+              <span class="component">News Row</span>
+              <span class="component">Fund Badge</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Widgets -->
+    <div class="figma-page-group">
+      <div class="group-label">— Widgets (product-specific compositions)</div>
+      <div class="figma-pages">
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot purple"></span> Investor App Widgets</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">Portfolio Value</span>
+              <span class="component">Performance</span>
+              <span class="component">Orders, Pending</span>
+              <span class="component">Cards</span>
+              <span class="component">Banner</span>
+              <span class="component">Funds, Holdings</span>
+              <span class="component">Description</span>
+              <span class="component">Tab</span>
+            </div>
+          </div>
+        </div>
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot purple"></span> Manager OS Widgets</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">Summary Sm</span>
+              <span class="component">Total Value</span>
+              <span class="component">Summary Lg</span>
+              <span class="component">Funds</span>
+              <span class="component">Fund Details</span>
+              <span class="component">Table</span>
+              <span class="component">Asset Table</span>
+              <span class="component">Share Classes</span>
+            </div>
+          </div>
+        </div>
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot purple"></span> Slots (Modal/Sheet body content)</h4></div>
+          <div class="page-body">
+            <div class="category">
+              <div class="category-name">Transactions</div>
+              <div class="component-list">
+                <span class="component">Order Processing</span>
+                <span class="component">Top Up</span>
+                <span class="component">Bank Transfer</span>
+                <span class="component">Send Stablecoins</span>
+                <span class="component">Amount Input</span>
+                <span class="component">Confirm Transfer</span>
+              </div>
+            </div>
+            <div class="category">
+              <div class="category-name">Auth</div>
+              <div class="component-list">
+                <span class="component">Login Main</span>
+                <span class="component">Login Email</span>
+                <span class="component">2FA</span>
+                <span class="component">Sign Up</span>
+                <span class="component">Terms</span>
+                <span class="component">OTP</span>
+              </div>
+            </div>
+            <div class="category">
+              <div class="category-name">Onboarding</div>
+              <div class="component-list">
+                <span class="component">Invite Investor Details</span>
+                <span class="component">Invite Investor Visibility</span>
+                <span class="component">Invite Investor Review</span>
+                <span class="component">Invite Investor Confirmation</span>
+                <span class="component">Share Class Form</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screens -->
+    <div class="figma-page-group">
+      <div class="group-label">— Screens & Flows (no change to current structure)</div>
+      <div class="figma-pages">
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot amber"></span> Investor Screens</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">Log in</span>
+              <span class="component">KYC</span>
+              <span class="component">Portfolio</span>
+              <span class="component">Fund Detail</span>
+              <span class="component">Subscribe</span>
+            </div>
+          </div>
+        </div>
+        <div class="figma-page">
+          <div class="page-header"><h4><span class="dot amber"></span> Manager Screens</h4></div>
+          <div class="page-body">
+            <div class="component-list">
+              <span class="component">Dashboard</span>
+              <span class="component">Fund Overview</span>
+              <span class="component">Invite Investor</span>
+              <span class="component">Share Class</span>
+              <span class="component">Liquidity</span>
+              <span class="component">Fund Creation</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bridge -->
+  <div class="bridge">
+    <h2>Figma ↔ Code Bridge</h2>
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="step-label">Design</div>
+        <div class="step-name">Figma Variables</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <div class="step-label">Token Pipeline</div>
+        <div class="step-name">Tokens Studio / Style Dictionary</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <div class="step-label">Code Tokens</div>
+        <div class="step-name">CSS / Tailwind</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <div class="step-label">Components</div>
+        <div class="step-name">Storybook</div>
+      </div>
+      <div class="pipeline-arrow">↔</div>
+      <div class="pipeline-step">
+        <div class="step-label">Bridge</div>
+        <div class="step-name">Figma Code Connect</div>
+      </div>
+    </div>
+    <p style="text-align:center; margin-top:24px; font-size:13px; color:#a3a3a3;">Each Figma component maps to a Storybook story via Code Connect.<br>Dev Mode shows real imports and props, not generated CSS.</p>
+  </div>
+
+  <!-- Key decisions -->
+  <div class="section-title">Key Decisions For Discussion</div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:48px;">
+    <div class="distinction-card">
+      <h3>1. Section Grouping</h3>
+      <div class="card-sub">Currently: one section per component. Proposed: group by function (Actions, Data Input, etc.) with multiple components per section.</div>
+    </div>
+    <div class="distinction-card">
+      <h3>2. Global vs Platform</h3>
+      <div class="card-sub">Components used across both apps (Button, Input, Modal) stay on Global. Platform-specific (Bottom Nav, Navbar) stay on their app page.</div>
+    </div>
+    <div class="distinction-card">
+      <h3>3. Slots as Widgets</h3>
+      <div class="card-sub">Slot components are essentially widgets for Modal/Sheet body content. Keep them grouped by domain (Transactions, Auth, Onboarding).</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

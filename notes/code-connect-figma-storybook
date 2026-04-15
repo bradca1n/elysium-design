@@ -1,0 +1,27 @@
+ Code Connect bridges them regardless of naming — it maps by
+  component URL, not category name.
+
+  Token pipeline (the other half of the bridge)
+
+  Figma Variables (Semantic/Fixed/Primitives)
+      ↓  Tokens Studio plugin or Style Dictionary
+  CSS Custom Properties / Tailwind config
+      ↓
+  Storybook components consume tokens
+
+  This means when you update a color token in Figma, it flows to
+  code. Your dev should set up Tokens Studio (Figma plugin) →
+  export to JSON → Style Dictionary → generates CSS/Tailwind
+  tokens that Storybook components import.
+
+  What you need from your dev
+
+  1. What framework exactly? (React Native Web via Vite based on
+  the config)
+  2. Can they share the full component list from their Storybook
+  sidebar?
+  3. Are they already using design tokens or hardcoding values?
+
+  Once I have their component inventory, I can map it against our
+  Figma components and identify which Code Connect files need to
+  be created. Want me to draft that mapping?

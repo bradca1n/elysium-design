@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class A — Share Class Detail</title>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== Design Tokens ===== */
+    :root {
+      --bg-canvas:           #fefeff;
+      --bg-surface:          #f5f5f5;
+      --bg-subtle:           #f5f5f5;
+      --text-primary:        #171717;
+      --text-secondary:      #737373;
+      --text-negative:       #ef4444;
+      --border-subtle:       #e5e5e5;
+      --status-positive:     #348352;
+      --status-positive-bg:  #caffe8;
+      --status-negative:     #e63535;
+      --status-negative-bg:  #fee9e9;
+      --btn-primary-bg:      #262627;
+      --btn-primary-text:    #f5f5f5;
+      --btn-secondary-bg:    #e5e5e5;
+      --btn-secondary-text:  #171717;
+      --btn-ghost-text:      #171717;
+      --radius-xs:  4px;
+      --radius-s:   6px;
+      --radius-m:   8px;
+      --radius-l:   12px;
+      --radius-xl:  16px;
+      --radius-full: 999px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ===== Layout ===== */
+    .layout { display: flex; flex-direction: column; height: 100vh; }
+
+    /* Capture mode — unfold full page height for Figma export */
+    body.capture-mode,
+    body.capture-mode html { height: auto !important; overflow: visible !important; }
+    body.capture-mode .layout { height: auto !important; min-height: 100vh; }
+    body.capture-mode .body-row { overflow: visible !important; height: auto !important; }
+    body.capture-mode .sidebar { height: auto !important; overflow: visible !important; }
+    body.capture-mode .main-area { overflow: visible !important; height: auto !important; }
+
+    /* Navbar — full width */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 32px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-canvas);
+      flex-shrink: 0;
+      height: 86px;
+    }
+    .navbar-logo img { height: 30px; display: block; }
+    .navbar-right { display: flex; align-items: center; gap: 32px; }
+    .navbar-bell { width: 21px; height: 21px; cursor: pointer; }
+    .navbar-user { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .navbar-avatar { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; }
+    .navbar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .navbar-username {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xs);
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 18px;
+    }
+    .navbar-chevron { width: 16px; height: 16px; opacity: 0.4; transform: rotate(180deg); }
+
+    /* Body row */
+    .body-row { display: flex; flex: 1; overflow: hidden; }
+
+    /* ===== Left sidebar ===== */
+    .sidebar {
+      width: 259px;
+      flex-shrink: 0;
+      background: var(--bg-canvas);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px;
+      overflow-y: auto;
+    }
+    /* Top section: all nav content */
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    /* Top nav items group — 4px gap between items */
+    .nav-items-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      height: 40px;
+      padding: 8px;
+      border-radius: var(--radius-l);
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      cursor: pointer;
+      background: var(--bg-canvas);
+    }
+    .nav-item img.nav-icon {
+      width: 20px; height: 20px;
+      object-fit: contain; flex-shrink: 0;
+      display: block;
+    }
+    .nav-chevron { margin-left: auto; width: 16px; height: 16px; object-fit: contain; opacity: 0.5; }
+
+    .nav-divider { height: 1px; background: var(--border-subtle); }
+
+    .fund-selector {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 40px;
+      padding: 8px 12px;
+      border-radius: var(--radius-s);
+      cursor: pointer;
+    }
+    .fund-selector-left { display: flex; align-items: center; gap: 10px; }
+    .fund-selector-icon { width: 23px; height: 23px; border-radius: 9px; overflow: hidden; flex-shrink: 0; }
+    .fund-selector-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .fund-selector-name { font-size: 16px; font-weight: 400; color: var(--text-primary); white-space: nowrap; }
+    .fund-selector-chevron { width: 16px; height: 16px; object-fit: contain; flex-shrink: 0; }
+
+    .nav-subitems { display: flex; flex-direction: column; }
+    .nav-subitem {
+      height: 40px;
+      padding: 8px 8px 8px 40px;
+      border-radius: var(--radius-l);
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      cursor: pointer;
+      background: var(--bg-canvas);
+      display: flex;
+      align-items: center;
+    }
+    .nav-subitem.active { background: var(--bg-surface); color: var(--text-primary); font-weight: 500; }
+
+    /* Support sits at the bottom of the sidebar */
+    .nav-support {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      height: 40px;
+      padding: 8px;
+      border-radius: var(--radius-l);
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .nav-support img.nav-icon { width: 20px; height: 20px; object-fit: contain; display: block; flex-shrink: 0; }
+
+    /* ===== Main area ===== */
+    .main-area { flex: 1; overflow-y: auto; }
+    .page-content { padding: 32px; }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      cursor: pointer;
+    }
+    .breadcrumb-icon { width: 19px; height: 19px; border-radius: 7px; overflow: hidden; }
+    .breadcrumb-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Page header */
+    .page-title {
+      font-size: 30px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .page-subtitle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .page-nav-amount { font-size: 36px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.8px; }
+    .page-nav-label { font-size: 18px; font-weight: 500; color: var(--text-secondary); margin-left: 10px; }
+    .page-actions { display: flex; align-items: center; gap: 8px; }
+
+    .badge-active {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--status-positive-bg);
+      color: var(--status-positive);
+    }
+
+    .btn-icon-outline {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-l);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-canvas);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .btn-icon-outline img { width: 16px; height: 16px; }
+
+    /* ===== Two-column layout ===== */
+    .content-columns { display: flex; gap: 32px; align-items: flex-start; }
+    .content-main { flex: 1; min-width: 0; }
+    .content-sidebar { width: 340px; flex-shrink: 0; }
+
+    /* Widget */
+    .widget {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      margin-bottom: 16px;
+      background: var(--bg-canvas);
+    }
+
+    /* Chart tabs row */
+    .chart-tabs-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    /* Type tabs */
+    .type-tabs { display: flex; gap: 4px; }
+    .type-tab {
+      height: 32px;
+      padding: 0 8px;
+      border-radius: var(--radius-m);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: var(--btn-secondary-bg);
+      color: var(--btn-secondary-text);
+      line-height: 18px;
+    }
+    .type-tab.active { background: var(--btn-primary-bg); color: var(--btn-primary-text); }
+
+    /* Period tabs */
+    .period-tabs { display: flex; gap: 4px; }
+    .period-tab {
+      height: 32px;
+      min-width: 44px;
+      padding: 0 8px;
+      border-radius: var(--radius-m);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--btn-ghost-text);
+      line-height: 18px;
+    }
+    .period-tab.active { background: var(--btn-primary-bg); color: var(--btn-primary-text); }
+
+    /* Chart headline */
+    .chart-big-num { font-size: 48px; font-weight: 500; color: var(--text-primary); line-height: 1; letter-spacing: -1px; }
+    .chart-sub { font-size: 14px; color: var(--text-secondary); margin-top: 6px; }
+    .chart-area { margin-top: 16px; }
+    .chart-area img { width: 100%; height: auto; display: block; }
+
+    /* Performance cards */
+    .perf-rows { display: flex; flex-direction: column; gap: 8px; }
+    .perf-row { display: flex; gap: 8px; }
+    .perf-card {
+      flex: 1;
+      height: 53px;
+      border-radius: var(--radius-xl);
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .perf-card.positive { background: var(--status-positive-bg); }
+    .perf-card.negative { background: var(--status-negative-bg); }
+    .perf-card-label { font-size: 14px; font-weight: 400; }
+    .perf-card.positive .perf-card-label { color: var(--status-positive); }
+    .perf-card.negative .perf-card-label { color: var(--status-negative); }
+    .perf-card-value { font-size: 14px; font-weight: 500; }
+    .perf-card.positive .perf-card-value { color: var(--status-positive); }
+    .perf-card.negative .perf-card-value { color: var(--status-negative); }
+
+    /* Content tabs */
+    .content-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-subtle);
+      margin: 8px 0 24px;
+    }
+    .content-tab {
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      white-space: nowrap;
+    }
+    .content-tab.active { color: var(--text-primary); font-weight: 500; border-bottom-color: var(--text-primary); }
+
+    /* Investors section */
+    .section-heading { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; }
+
+    .investors-stats {
+      display: flex;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-l);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .investor-stat { flex: 1; padding: 12px 16px; border-right: 1px solid var(--border-subtle); }
+    .investor-stat:last-child { border-right: none; }
+    .investor-stat-label { font-size: 12px; font-weight: 400; color: var(--text-secondary); margin-bottom: 4px; }
+    .investor-stat-value { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+    /* Data table */
+    .table-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .table-title { font-size: 18px; font-weight: 500; color: var(--text-primary); line-height: 22px; }
+    .btn-view-all {
+      height: 32px;
+      padding: 0 8px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-m);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-primary);
+      background: transparent;
+      cursor: pointer;
+      line-height: 18px;
+    }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      line-height: 18px;
+      padding: 0 32px 16px 0;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .data-table th:last-child { padding-right: 0; text-align: right; }
+    .data-table td {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 18px;
+      padding: 11px 32px 11px 0;
+      border-top: 1px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+    .data-table td:last-child { padding-right: 0; text-align: right; }
+    .tbl-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 6px;
+      border-radius: var(--radius-xs);
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 18px;
+    }
+    .tbl-badge-active   { background: var(--status-positive-bg); color: var(--status-positive); }
+    .tbl-badge-pending  { background: var(--bg-subtle); color: #404040; }
+    .tbl-badge-settled  { background: var(--status-positive-bg); color: var(--status-positive); }
+    .col-positive { color: var(--status-positive); }
+    .col-negative { color: var(--status-negative); }
+
+    /* Audit trail table */
+    .audit-scroll { overflow-x: auto; }
+    .audit-table { min-width: 860px; }
+    .audit-table th:last-child, .audit-table td:last-child { text-align: left; padding-right: 0; }
+    .audit-table th, .audit-table td { white-space: nowrap; }
+
+    /* ===== Tab panels ===== */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Config tab */
+    .config-section { margin-bottom: 32px; }
+    .config-section-title {
+      font-size: 12px; font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin-bottom: 0; padding-bottom: 8px;
+    }
+    .config-row {
+      display: flex;
+      align-items: baseline;
+      padding: 11px 0;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .config-label {
+      font-size: 14px; font-weight: 400;
+      color: var(--text-secondary);
+      width: 42%; flex-shrink: 0;
+    }
+    .config-value {
+      font-size: 14px; font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    /* Fees tab */
+    .fee-detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .fee-detail-card {
+      background: var(--bg-surface);
+      border-radius: var(--radius-l);
+      padding: 16px;
+    }
+    .fee-detail-label { font-size: 12px; font-weight: 400; color: var(--text-secondary); margin-bottom: 4px; }
+    .fee-detail-value { font-size: 24px; font-weight: 500; color: var(--text-primary); line-height: 1; }
+    .fee-detail-sub { font-size: 12px; font-weight: 400; color: var(--text-secondary); margin-top: 4px; }
+    .fee-section-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin: 24px 0 16px; }
+    .fee-params-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+    .fee-params-table td { font-size: 14px; padding: 11px 0; border-top: 1px solid var(--border-subtle); }
+    .fee-params-table td:first-child { color: var(--text-secondary); font-weight: 400; width: 50%; }
+    .fee-params-table td:last-child { color: var(--text-primary); font-weight: 500; text-align: right; }
+
+    /* Adjustments tab */
+    .adj-filter-row { display: flex; gap: 8px; margin-bottom: 24px; }
+    .adj-filter-btn {
+      height: 32px; padding: 0 12px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      font-size: 12px; font-weight: 400;
+      color: var(--text-secondary); background: transparent; cursor: pointer;
+    }
+    .adj-filter-btn.active {
+      background: var(--btn-primary-bg); color: var(--btn-primary-text);
+      border-color: var(--btn-primary-bg); font-weight: 500;
+    }
+
+    /* Audit trail tab */
+    .audit-filter-row { display: flex; gap: 8px; margin-bottom: 24px; align-items: center; }
+    .audit-search {
+      flex: 1; height: 36px; padding: 0 12px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-m);
+      font-size: 13px; font-family: 'Inter', sans-serif;
+      color: var(--text-primary); background: var(--bg-surface);
+      outline: none;
+    }
+    .audit-date-btn {
+      height: 36px; padding: 0 12px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-m);
+      font-size: 13px; color: var(--text-secondary);
+      background: transparent; cursor: pointer; white-space: nowrap;
+    }
+
+    /* ===== Right sidebar ===== */
+    .sidebar-section { margin-bottom: 32px; }
+    .sidebar-section-title { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 16px; line-height: 18px; }
+
+    /* Key stats 2×2 */
+    .key-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 32px; }
+    .key-stat { background: var(--bg-subtle); border-radius: var(--radius-xl); padding: 16px; }
+    .key-stat-value { font-size: 24px; font-weight: 500; color: var(--text-primary); line-height: 1; margin-bottom: 6px; }
+    .key-stat-label { font-size: 12px; font-weight: 400; color: var(--text-secondary); line-height: 18px; }
+
+    /* Fees */
+    .fees-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .fee-tile { background: var(--bg-subtle); border-radius: var(--radius-xl); padding: 16px; }
+    .fee-value { font-size: 24px; font-weight: 500; color: var(--text-primary); line-height: 1; margin-bottom: 6px; }
+    .fee-label { font-size: 12px; font-weight: 400; color: var(--text-secondary); line-height: 18px; }
+
+    /* Active orders */
+    .orders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .order-tile { background: var(--bg-subtle); border-radius: var(--radius-xl); padding: 16px; text-align: center; }
+    .order-count { font-size: 24px; font-weight: 500; color: var(--text-primary); line-height: 1; margin-bottom: 8px; }
+    .order-label { font-size: 12px; font-weight: 400; color: var(--text-secondary); line-height: 18px; }
+
+    /* Status rows */
+    .status-rows { display: flex; flex-direction: column; gap: 8px; }
+    .status-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .status-label { font-size: 14px; font-weight: 400; color: var(--text-secondary); line-height: 18px; white-space: nowrap; }
+    .status-value { font-size: 14px; font-weight: 500; color: var(--text-primary); text-align: right; line-height: 18px; }
+    .status-value.open { color: var(--status-positive); }
+    .status-value.negative { color: var(--text-negative); }
+
+    .row-divider { height: 1px; background: var(--border-subtle); margin: 4px 0; }
+
+    /* View link */
+    .view-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 32px;
+      padding: 0 8px;
+      border-radius: var(--radius-m);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--btn-ghost-text);
+      cursor: pointer;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ===== Navbar ===== -->
+  <nav class="navbar">
+    <div class="navbar-logo">
+      <img src="https://www.figma.com/api/mcp/asset/4974ac4d-7cfb-4d52-8535-0f5b9fc0cf49" alt="POD">
+    </div>
+    <div class="navbar-right">
+      <img class="navbar-bell" src="https://www.figma.com/api/mcp/asset/474733ca-16a6-44e1-ae27-d4e9dda8ded9" alt="Notifications">
+      <div class="navbar-user">
+        <div class="navbar-avatar">
+          <img src="https://www.figma.com/api/mcp/asset/b56b7c51-6ac7-4c8c-a134-79becec1bea7" alt="Avatar">
+        </div>
+        <span class="navbar-username">@timo20</span>
+        <img class="navbar-chevron" src="https://www.figma.com/api/mcp/asset/98d7059b-fc4b-4409-9056-e33195959ea8" alt="">
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== Body row ===== -->
+  <div class="body-row">
+
+    <!-- Left sidebar -->
+    <aside class="sidebar">
+
+      <!-- Top: all nav content -->
+      <div class="sidebar-top">
+
+        <!-- Top-level nav items (gap: 4px) -->
+        <div class="nav-items-group">
+          <div class="nav-item">
+            <img class="nav-icon" src="https://www.figma.com/api/mcp/asset/5b83f6f9-e21b-4699-abbb-1749313e1538" alt="">
+            Home
+            <img class="nav-chevron" src="https://www.figma.com/api/mcp/asset/53fe0e3c-4651-498a-9ff2-629b069ecccd" alt="">
+          </div>
+          <div class="nav-item">
+            <img class="nav-icon" src="https://www.figma.com/api/mcp/asset/c3c545b4-e9b8-41d2-8dfd-7a138314853c" alt="">
+            Reports
+          </div>
+          <div class="nav-item">
+            <img class="nav-icon" src="https://www.figma.com/api/mcp/asset/1925a258-cb98-4699-b86c-ff0c17a720b8" alt="">
+            Communication
+          </div>
+          <div class="nav-item">
+            <img class="nav-icon" src="https://www.figma.com/api/mcp/asset/7eb608ac-ef3b-4e88-9c86-8682d979307c" alt="">
+            Settings
+          </div>
+        </div>
+
+        <div class="nav-divider"></div>
+
+        <!-- Fund selector -->
+        <div class="fund-selector">
+          <div class="fund-selector-left">
+            <div class="fund-selector-icon">
+              <img src="https://www.figma.com/api/mcp/asset/42d12c41-b074-4adf-8124-aef9bc13ba61" alt="">
+            </div>
+            <span class="fund-selector-name">POD Crypto Fund</span>
+          </div>
+          <img class="fund-selector-chevron" src="https://www.figma.com/api/mcp/asset/0cb794a5-c496-40d9-964d-b8c7f1f96231" alt="">
+        </div>
+
+        <!-- Sub-items -->
+        <div class="nav-subitems">
+          <div class="nav-subitem">Overview</div>
+          <div class="nav-subitem">NAV</div>
+          <div class="nav-subitem">Performance &amp; Risk</div>
+          <div class="nav-subitem">Register &amp; Dealings</div>
+          <div class="nav-subitem">Order book &amp; Liquidity</div>
+          <div class="nav-subitem">Fees</div>
+          <div class="nav-subitem active">Classes</div>
+          <div class="nav-subitem">Investors</div>
+        </div>
+
+      </div><!-- /sidebar-top -->
+
+      <!-- Bottom: support -->
+      <div class="nav-support">
+        <img class="nav-icon" src="https://www.figma.com/api/mcp/asset/3bc86944-f53e-4698-9668-e060d9e70b8a" alt="">
+        Support
+      </div>
+
+    </aside>
+
+    <!-- Main scrollable area -->
+    <main class="main-area">
+      <div class="page-content">
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+          <span>←</span>
+          <div class="breadcrumb-icon">
+            <img src="https://www.figma.com/api/mcp/asset/603ab998-de7f-4713-b056-96146c443e47" alt="">
+          </div>
+          <span>POD Crypto Fund</span>
+        </div>
+
+        <!-- Page header -->
+        <h1 class="page-title">Class A</h1>
+        <div class="page-subtitle-row">
+          <div>
+            <span class="page-nav-amount">USD $10,050,200</span>
+            <span class="page-nav-label">NAV</span>
+          </div>
+          <div class="page-actions">
+            <span class="badge-active">Active</span>
+            <div class="btn-icon-outline">
+              <img src="https://www.figma.com/api/mcp/asset/8a1d5530-4cd6-43c2-ba9d-4ef56f3b4eff" alt="More">
+            </div>
+          </div>
+        </div>
+
+        <!-- Two-column content -->
+        <div class="content-columns">
+
+          <!-- Main column -->
+          <div class="content-main">
+
+            <!-- Performance chart -->
+            <div class="widget">
+              <div class="chart-tabs-row">
+                <div class="type-tabs">
+                  <button class="type-tab">NAV $</button>
+                  <button class="type-tab active">NAV %</button>
+                  <button class="type-tab">Vs Hurdle</button>
+                  <button class="type-tab">Vs Fund</button>
+                </div>
+                <div class="period-tabs">
+                  <button class="period-tab">1M</button>
+                  <button class="period-tab active">3M</button>
+                  <button class="period-tab">YTD</button>
+                  <button class="period-tab">1Y</button>
+                  <button class="period-tab">ALL</button>
+                </div>
+              </div>
+
+              <div class="chart-big-num">121.4</div>
+              <div class="chart-sub">+18.1% above hurdle</div>
+
+              <div class="chart-area">
+                <img src="https://www.figma.com/api/mcp/asset/4bed2e64-4c3c-4346-b328-8cc7fffe2b0d" alt="Performance chart">
+              </div>
+            </div>
+
+            <!-- Performance cards -->
+            <div class="widget">
+              <div class="perf-rows">
+                <div class="perf-row">
+                  <div class="perf-card positive">
+                    <span class="perf-card-label">1W</span>
+                    <span class="perf-card-value">+0.5%</span>
+                  </div>
+                  <div class="perf-card positive">
+                    <span class="perf-card-label">1M</span>
+                    <span class="perf-card-value">+3.1%</span>
+                  </div>
+                  <div class="perf-card positive">
+                    <span class="perf-card-label">3M</span>
+                    <span class="perf-card-value">+12.8%</span>
+                  </div>
+                </div>
+                <div class="perf-row">
+                  <div class="perf-card positive">
+                    <span class="perf-card-label">YTD</span>
+                    <span class="perf-card-value">+18.6%</span>
+                  </div>
+                  <div class="perf-card positive">
+                    <span class="perf-card-label">1Y</span>
+                    <span class="perf-card-value">+42.5%</span>
+                  </div>
+                  <div class="perf-card positive">
+                    <span class="perf-card-label">ALL</span>
+                    <span class="perf-card-value">+42.5%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Content tabs -->
+            <div class="content-tabs">
+              <div class="content-tab" data-tab="configuration">Configuration</div>
+              <div class="content-tab active" data-tab="investors">Investors</div>
+              <div class="content-tab" data-tab="fees">Fees</div>
+              <div class="content-tab" data-tab="adjustments">Adjustments</div>
+              <div class="content-tab" data-tab="audit">Audit Trail</div>
+            </div>
+
+            <!-- ===== CONFIGURATION TAB ===== -->
+            <div class="tab-panel" id="tab-configuration">
+
+              <div class="config-section">
+                <p class="config-section-title">Class Identity</p>
+                <div class="config-row"><span class="config-label">Class name</span><span class="config-value">Class A</span></div>
+                <div class="config-row"><span class="config-label">Class type</span><span class="config-value">Retail (A)</span></div>
+                <div class="config-row"><span class="config-label">Denomination currency</span><span class="config-value">USD</span></div>
+                <div class="config-row"><span class="config-label">Income treatment</span><span class="config-value">Accumulation</span></div>
+                <div class="config-row"><span class="config-label">Class created</span><span class="config-value">14 Jan 2024</span></div>
+              </div>
+
+              <div class="config-section">
+                <p class="config-section-title">Subscriptions &amp; Redemptions</p>
+                <div class="config-row"><span class="config-label">Minimum subscription</span><span class="config-value">$100,000</span></div>
+                <div class="config-row"><span class="config-label">Minimum additional</span><span class="config-value">$10,000</span></div>
+                <div class="config-row"><span class="config-label">Minimum holding</span><span class="config-value">$50,000</span></div>
+                <div class="config-row"><span class="config-label">Lock-up period</span><span class="config-value">12 months</span></div>
+                <div class="config-row"><span class="config-label">Notice period</span><span class="config-value">30 days</span></div>
+                <div class="config-row"><span class="config-label">Redemption gate</span><span class="config-value">10% of NAV</span></div>
+              </div>
+
+              <div class="config-section">
+                <p class="config-section-title">FX &amp; Settlement</p>
+                <div class="config-row"><span class="config-label">FX hedging model</span><span class="config-value">Passive (standard)</span></div>
+                <div class="config-row"><span class="config-label">Hedge tolerance</span><span class="config-value">98–102% of NAV</span></div>
+                <div class="config-row"><span class="config-label">Settlement currency</span><span class="config-value">USD</span></div>
+                <div class="config-row"><span class="config-label">Dealing frequency</span><span class="config-value">Monthly</span></div>
+              </div>
+
+              <div class="config-section">
+                <p class="config-section-title">Governance</p>
+                <div class="config-row"><span class="config-label">Voting rights</span><span class="config-value">Yes — 1 vote / share</span></div>
+                <div class="config-row"><span class="config-label">High water mark scope</span><span class="config-value">Per class</span></div>
+                <div class="config-row"><span class="config-label">Dilution adjustment</span><span class="config-value">Swing pricing enabled</span></div>
+              </div>
+
+            </div>
+
+            <!-- ===== INVESTORS TAB ===== -->
+            <div class="tab-panel active" id="tab-investors">
+              <div class="table-header-row">
+                <span class="table-title">Class A investors</span>
+                <button class="btn-view-all">View all</button>
+              </div>
+
+              <div class="investors-stats">
+                <div class="investor-stat">
+                  <div class="investor-stat-label">Total investors</div>
+                  <div class="investor-stat-value">80</div>
+                </div>
+                <div class="investor-stat">
+                  <div class="investor-stat-label">Largest investor</div>
+                  <div class="investor-stat-value">18.4%</div>
+                </div>
+                <div class="investor-stat">
+                  <div class="investor-stat-label">Av. Size</div>
+                  <div class="investor-stat-value">$125,600</div>
+                </div>
+                <div class="investor-stat">
+                  <div class="investor-stat-label">Concentration (Top 5)</div>
+                  <div class="investor-stat-value">42%</div>
+                </div>
+              </div>
+
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Investor</th>
+                    <th>Type</th>
+                    <th>Units Held</th>
+                    <th>NAV Value</th>
+                    <th>Ownership</th>
+                    <th>Avg Price</th>
+                    <th>Unrealised P/L</th>
+                    <th>Net Flow</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Falcon Capital</td>
+                    <td>Fund</td>
+                    <td>18,249.22</td>
+                    <td>$2,335,044</td>
+                    <td>22.0%</td>
+                    <td>$102.40</td>
+                    <td class="col-positive">+$346,611</td>
+                    <td class="col-positive">+$1,200,000</td>
+                    <td><span class="tbl-badge tbl-badge-active">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td>Aurora Ventures</td>
+                    <td>Family Office</td>
+                    <td>12,664.18</td>
+                    <td>$1,565,123</td>
+                    <td>15.6%</td>
+                    <td>$98.10</td>
+                    <td class="col-positive">+$298,420</td>
+                    <td class="col-positive">+$850,000</td>
+                    <td><span class="tbl-badge tbl-badge-active">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td>Atlas Digital</td>
+                    <td>Individual</td>
+                    <td>9,442.55</td>
+                    <td>$1,147,388</td>
+                    <td>11.4%</td>
+                    <td>$110.20</td>
+                    <td class="col-positive">+$183,220</td>
+                    <td class="col-positive">+$400,000</td>
+                    <td><span class="tbl-badge tbl-badge-active">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td>Nova Partners</td>
+                    <td>Individual</td>
+                    <td>7,115.88</td>
+                    <td>$876,908</td>
+                    <td>8.7%</td>
+                    <td>$101.20</td>
+                    <td class="col-positive">+$2,882</td>
+                    <td class="col-positive">+$350,000</td>
+                    <td><span class="tbl-badge tbl-badge-active">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td>Meridian Asset Mgmt</td>
+                    <td>Fund</td>
+                    <td>6,762.33</td>
+                    <td>$823,340</td>
+                    <td>8.2%</td>
+                    <td>$94.80</td>
+                    <td class="col-negative">-$178,032</td>
+                    <td class="col-positive">+$650,000</td>
+                    <td><span class="tbl-badge tbl-badge-active">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td>Private Investor #614</td>
+                    <td>Individual</td>
+                    <td>4,220.88</td>
+                    <td>$513,908</td>
+                    <td>5.1%</td>
+                    <td>$101.20</td>
+                    <td class="col-positive">+$86,064</td>
+                    <td class="col-positive">+$300,000</td>
+                    <td><span class="tbl-badge tbl-badge-active">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td>Zenith Capital</td>
+                    <td>Family Office</td>
+                    <td>3,610.55</td>
+                    <td>$463,702</td>
+                    <td>4.6%</td>
+                    <td>$118.50</td>
+                    <td class="col-positive">+$11,280</td>
+                    <td class="col-positive">+$180,000</td>
+                    <td><span class="tbl-badge tbl-badge-active">Active</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div><!-- /tab-investors -->
+
+            <!-- ===== FEES TAB ===== -->
+            <div class="tab-panel" id="tab-fees">
+              <p class="fee-section-title" style="margin-top:0">Management Fee</p>
+              <div class="fee-detail-grid">
+                <div class="fee-detail-card">
+                  <div class="fee-detail-label">Annual rate</div>
+                  <div class="fee-detail-value">1.50%</div>
+                  <div class="fee-detail-sub">NAV-based · Daily accrual (÷ 365)</div>
+                </div>
+                <div class="fee-detail-card">
+                  <div class="fee-detail-label">Accrued this period</div>
+                  <div class="fee-detail-value">$12,560</div>
+                  <div class="fee-detail-sub">38 days · Unpaid</div>
+                </div>
+                <div class="fee-detail-card">
+                  <div class="fee-detail-label">Year-to-date paid</div>
+                  <div class="fee-detail-value">$38,240</div>
+                  <div class="fee-detail-sub">Paid to manager quarterly</div>
+                </div>
+                <div class="fee-detail-card">
+                  <div class="fee-detail-label">Daily accrual rate</div>
+                  <div class="fee-detail-value">$413</div>
+                  <div class="fee-detail-sub">Based on current NAV $10.05M</div>
+                </div>
+              </div>
+
+              <p class="fee-section-title">Performance Fee</p>
+              <table class="fee-params-table">
+                <tbody>
+                  <tr><td>Rate</td><td>20% of outperformance</td></tr>
+                  <tr><td>Hurdle type</td><td>Hard hurdle</td></tr>
+                  <tr><td>Hurdle rate</td><td>8.00% p.a.</td></tr>
+                  <tr><td>High water mark</td><td>$121.40 per unit</td></tr>
+                  <tr><td>HWM scope</td><td>Per class</td></tr>
+                  <tr><td>Crystallization</td><td>Annual (31 Dec)</td></tr>
+                  <tr><td>Equalization method</td><td>Series / equalisation shares</td></tr>
+                  <tr><td>Clawback</td><td>No</td></tr>
+                  <tr><td>Accrued this period</td><td class="col-positive">+$84,200</td></tr>
+                </tbody>
+              </table>
+
+              <p class="fee-section-title">Fund Expenses — Class A Allocation</p>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Expense</th>
+                    <th>Annual Rate (bps)</th>
+                    <th>Class Allocation</th>
+                    <th>YTD Amount</th>
+                    <th>Frequency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Administration</td>
+                    <td>8 bps</td>
+                    <td>Pro-rata by NAV</td>
+                    <td>$8,040</td>
+                    <td>Monthly</td>
+                  </tr>
+                  <tr>
+                    <td>Custody</td>
+                    <td>5 bps</td>
+                    <td>Pro-rata by NAV</td>
+                    <td>$5,025</td>
+                    <td>Monthly</td>
+                  </tr>
+                  <tr>
+                    <td>Audit</td>
+                    <td>—</td>
+                    <td>Pro-rata by NAV</td>
+                    <td>$3,200</td>
+                    <td>Annual</td>
+                  </tr>
+                  <tr>
+                    <td>Legal &amp; compliance</td>
+                    <td>—</td>
+                    <td>Pro-rata by NAV</td>
+                    <td>$1,800</td>
+                    <td>As incurred</td>
+                  </tr>
+                  <tr>
+                    <td>FX hedging costs</td>
+                    <td>—</td>
+                    <td>Class-specific</td>
+                    <td>$6,400</td>
+                    <td>Per deal</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="fee-detail-grid" style="margin-top:24px">
+                <div class="fee-detail-card">
+                  <div class="fee-detail-label">Total Expense Ratio (TER)</div>
+                  <div class="fee-detail-value">1.74%</div>
+                  <div class="fee-detail-sub">Mgmt + fund expenses (excl. perf fee)</div>
+                </div>
+                <div class="fee-detail-card">
+                  <div class="fee-detail-label">Ongoing Charges Figure (OCF)</div>
+                  <div class="fee-detail-value">1.74%</div>
+                  <div class="fee-detail-sub">Per UCITS KIID methodology</div>
+                </div>
+              </div>
+            </div><!-- /tab-fees -->
+
+            <!-- ===== ADJUSTMENTS TAB ===== -->
+            <div class="tab-panel" id="tab-adjustments">
+              <div class="adj-filter-row">
+                <button class="adj-filter-btn active">All</button>
+                <button class="adj-filter-btn">Equalization</button>
+                <button class="adj-filter-btn">FX Hedging</button>
+                <button class="adj-filter-btn">Expense Allocation</button>
+                <button class="adj-filter-btn">Income</button>
+              </div>
+
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Per Unit Impact</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>28 Feb 2026</td>
+                    <td>FX Hedging</td>
+                    <td>EUR forward settlement — Feb roll</td>
+                    <td class="col-negative">-$6,400</td>
+                    <td class="col-negative">-$0.077</td>
+                    <td><span class="tbl-badge tbl-badge-settled">Settled</span></td>
+                  </tr>
+                  <tr>
+                    <td>28 Feb 2026</td>
+                    <td>Expense Allocation</td>
+                    <td>Admin fee — Feb accrual</td>
+                    <td class="col-negative">-$1,340</td>
+                    <td class="col-negative">-$0.016</td>
+                    <td><span class="tbl-badge tbl-badge-settled">Settled</span></td>
+                  </tr>
+                  <tr>
+                    <td>28 Feb 2026</td>
+                    <td>Expense Allocation</td>
+                    <td>Custody fee — Feb accrual</td>
+                    <td class="col-negative">-$838</td>
+                    <td class="col-negative">-$0.010</td>
+                    <td><span class="tbl-badge tbl-badge-settled">Settled</span></td>
+                  </tr>
+                  <tr>
+                    <td>31 Jan 2026</td>
+                    <td>Equalization</td>
+                    <td>Series 4 equalisation credit — new subscriptions</td>
+                    <td class="col-positive">+$18,420</td>
+                    <td>—</td>
+                    <td><span class="tbl-badge tbl-badge-settled">Settled</span></td>
+                  </tr>
+                  <tr>
+                    <td>31 Jan 2026</td>
+                    <td>Income</td>
+                    <td>Dividend income — reinvested (Acc class)</td>
+                    <td class="col-positive">+$24,600</td>
+                    <td class="col-positive">+$0.297</td>
+                    <td><span class="tbl-badge tbl-badge-settled">Settled</span></td>
+                  </tr>
+                  <tr>
+                    <td>31 Jan 2026</td>
+                    <td>FX Hedging</td>
+                    <td>EUR forward settlement — Jan roll</td>
+                    <td class="col-negative">-$5,920</td>
+                    <td class="col-negative">-$0.072</td>
+                    <td><span class="tbl-badge tbl-badge-settled">Settled</span></td>
+                  </tr>
+                  <tr>
+                    <td>31 Dec 2025</td>
+                    <td>Equalization</td>
+                    <td>Performance fee equalisation — crystallization</td>
+                    <td class="col-negative">-$84,200</td>
+                    <td class="col-negative">-$1.017</td>
+                    <td><span class="tbl-badge tbl-badge-settled">Settled</span></td>
+                  </tr>
+                  <tr>
+                    <td>31 Dec 2025</td>
+                    <td>Expense Allocation</td>
+                    <td>Annual audit fee allocation</td>
+                    <td class="col-negative">-$3,200</td>
+                    <td class="col-negative">-$0.039</td>
+                    <td><span class="tbl-badge tbl-badge-settled">Settled</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div><!-- /tab-adjustments -->
+
+            <!-- ===== AUDIT TRAIL TAB ===== -->
+            <div class="tab-panel" id="tab-audit">
+              <div class="audit-filter-row">
+                <input class="audit-search" type="text" placeholder="Search changes...">
+                <button class="audit-date-btn">Mar 2026</button>
+                <button class="btn-view-all">Export CSV</button>
+              </div>
+
+              <div class="audit-scroll">
+              <table class="data-table audit-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Actor</th>
+                    <th>Role</th>
+                    <th>Field / Action</th>
+                    <th>Previous value</th>
+                    <th>New value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="color:var(--text-secondary);font-size:12px">11 Mar 2026, 09:14</td>
+                    <td>Sarah Chen</td>
+                    <td>Fund Admin</td>
+                    <td>NAV per unit</td>
+                    <td>$120.88</td>
+                    <td class="col-positive">$121.40</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-secondary);font-size:12px">10 Mar 2026, 16:42</td>
+                    <td>System</td>
+                    <td>FX Updater</td>
+                    <td>FX rate (EUR/USD)</td>
+                    <td>1.0821</td>
+                    <td>1.0847</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-secondary);font-size:12px">07 Mar 2026, 11:30</td>
+                    <td>James Riordan</td>
+                    <td>Fund Manager</td>
+                    <td>Redemption gate</td>
+                    <td>15% of NAV</td>
+                    <td>10% of NAV</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-secondary);font-size:12px">05 Mar 2026, 14:05</td>
+                    <td>Sarah Chen</td>
+                    <td>Fund Admin</td>
+                    <td>Management fee accrual</td>
+                    <td>$11,920</td>
+                    <td>$12,560</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-secondary);font-size:12px">03 Mar 2026, 09:00</td>
+                    <td>System</td>
+                    <td>Transfer Agent</td>
+                    <td>Subscription confirmed — Falcon Capital</td>
+                    <td colspan="2">+4,200 units @ $121.05 · $508,410</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-secondary);font-size:12px">28 Feb 2026, 17:00</td>
+                    <td>System</td>
+                    <td>NAV Engine</td>
+                    <td>Month-end NAV published</td>
+                    <td>$119.66</td>
+                    <td>$120.88</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-secondary);font-size:12px">28 Feb 2026, 16:55</td>
+                    <td>System</td>
+                    <td>NAV Engine</td>
+                    <td>FX hedge settlement applied</td>
+                    <td colspan="2">costAllocationDilution updated · -$6,400</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-secondary);font-size:12px">20 Feb 2026, 10:18</td>
+                    <td>James Riordan</td>
+                    <td>Fund Manager</td>
+                    <td>Minimum subscription</td>
+                    <td>$50,000</td>
+                    <td>$100,000</td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--text-secondary);font-size:12px">14 Jan 2026, 09:00</td>
+                    <td>System</td>
+                    <td>Admin</td>
+                    <td>Class A created</td>
+                    <td colspan="2">Initial configuration · USD · Accumulation · 1.50% mgmt fee</td>
+                  </tr>
+                </tbody>
+              </table>
+              </div><!-- /audit-scroll -->
+            </div><!-- /tab-audit -->
+
+          </div><!-- /content-main -->
+
+          <!-- Right sidebar -->
+          <div class="content-sidebar">
+
+            <!-- Key stats 2×2 -->
+            <div class="key-stats-grid">
+              <div class="key-stat">
+                <div class="key-stat-value">$121.40</div>
+                <div class="key-stat-label">Unit price</div>
+              </div>
+              <div class="key-stat">
+                <div class="key-stat-value">82,820.11</div>
+                <div class="key-stat-label">Units</div>
+              </div>
+              <div class="key-stat">
+                <div class="key-stat-value">21.2%</div>
+                <div class="key-stat-label">Share of fund</div>
+              </div>
+              <div class="key-stat">
+                <div class="key-stat-value">80</div>
+                <div class="key-stat-label">Investors</div>
+              </div>
+            </div>
+
+            <!-- Fees -->
+            <div class="sidebar-section">
+              <div class="sidebar-section-title">Fees</div>
+              <div class="fees-grid">
+                <div class="fee-tile">
+                  <div class="fee-value">4.50%</div>
+                  <div class="fee-label">Management</div>
+                </div>
+                <div class="fee-tile">
+                  <div class="fee-value">20%</div>
+                  <div class="fee-label">Performance</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active orders -->
+            <div class="sidebar-section">
+              <div class="sidebar-section-title">Active orders (Class A)</div>
+              <div class="orders-grid">
+                <div class="order-tile">
+                  <div class="order-count">5</div>
+                  <div class="order-label">Subscriptions</div>
+                </div>
+                <div class="order-tile">
+                  <div class="order-count">2</div>
+                  <div class="order-label">Redemptions</div>
+                </div>
+              </div>
+              <div class="view-link">View order book →</div>
+            </div>
+
+            <!-- Dealing status -->
+            <div class="sidebar-section">
+              <div class="sidebar-section-title">Dealing status (Class A)</div>
+              <div class="status-rows">
+                <div class="status-row">
+                  <span class="status-label">Dealing window</span>
+                  <span class="status-value open">Open</span>
+                </div>
+                <div class="status-row">
+                  <span class="status-label">Cutoff</span>
+                  <span class="status-value">Sun 7 Feb, 17:00 UTC</span>
+                </div>
+                <div class="status-row">
+                  <span class="status-label">Closes in</span>
+                  <span class="status-value">1 day 4 hours</span>
+                </div>
+                <div class="row-divider"></div>
+                <div class="status-row">
+                  <span class="status-label">Next dealing</span>
+                  <span class="status-value">Mon 8 Feb, 17:00 UTC</span>
+                </div>
+                <div class="status-row">
+                  <span class="status-label">Settlement</span>
+                  <span class="status-value">Mon 8 Feb, 2026</span>
+                </div>
+                <div class="row-divider"></div>
+                <div class="status-row">
+                  <span class="status-label">Last NAV</span>
+                  <span class="status-value">Mon 1 Feb, 17:00 UTC</span>
+                </div>
+                <div class="status-row">
+                  <span class="status-label">Frequency</span>
+                  <span class="status-value">Weekly</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Activity -->
+            <div class="sidebar-section">
+              <div class="sidebar-section-title">Activity</div>
+              <div class="status-rows">
+                <div class="status-row">
+                  <span class="status-label">Subscriptions</span>
+                  <span class="status-value">3,200,800 USD</span>
+                </div>
+                <div class="status-row">
+                  <span class="status-label">Redemptions</span>
+                  <span class="status-value">4,200,800 USD</span>
+                </div>
+                <div class="status-row">
+                  <span class="status-label">Net Flow</span>
+                  <span class="status-value negative">- 1,000,000 USD</span>
+                </div>
+                <div class="row-divider"></div>
+                <div class="status-row">
+                  <span class="status-label">Units issued</span>
+                  <span class="status-value">26,367.80</span>
+                </div>
+                <div class="status-row">
+                  <span class="status-label">Units redeemed</span>
+                  <span class="status-value">34,611.23</span>
+                </div>
+                <div class="status-row">
+                  <span class="status-label">Net units</span>
+                  <span class="status-value negative">-8,243.43</span>
+                </div>
+              </div>
+              <div class="view-link">View full activity →</div>
+            </div>
+
+          </div><!-- /content-sidebar -->
+
+        </div><!-- /content-columns -->
+      </div><!-- /page-content -->
+    </main>
+
+  </div><!-- /body-row -->
+</div><!-- /layout -->
+
+<script>
+  function activateTab(tabId) {
+    document.querySelectorAll('.content-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+    var tab = document.querySelector('.content-tab[data-tab="' + tabId + '"]');
+    var panel = document.getElementById('tab-' + tabId);
+    if (tab) tab.classList.add('active');
+    if (panel) panel.classList.add('active');
+  }
+
+  document.querySelectorAll('.content-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var tabId = this.getAttribute('data-tab');
+      activateTab(tabId);
+      history.replaceState(null, '', '#' + tabId);
+    });
+  });
+
+  // Activate tab from ?tab= query param on load (hash is reserved for Figma capture)
+  var tabParam = new URLSearchParams(window.location.search).get('tab');
+  if (tabParam && document.querySelector('.content-tab[data-tab="' + tabParam + '"]')) {
+    activateTab(tabParam);
+  }
+
+  // Apply capture mode when Figma capture script is active — unfolds full page height
+  if (window.location.hash.indexOf('figmacapture=') !== -1) {
+    document.body.classList.add('capture-mode');
+    document.documentElement.style.height = 'auto';
+    document.documentElement.style.overflow = 'visible';
+  }
+</script>
+</body>
+</html>

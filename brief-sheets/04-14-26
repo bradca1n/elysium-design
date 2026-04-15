@@ -1,0 +1,149 @@
+# Daily UI/UX Design Tasks
+
+**Date:** 04-14-26
+**Project:** Elysium
+**Focus area:**
+**Main outcome needed today:**
+
+---
+
+## Top priorities
+
+### 1. Manager app — login + basic account sign-up flow
+- [ ] **Goal:** build the entry point for MPanager OS — login screen and a basic account sign-up flow
+- **Figma:** none linked yet — check if a Manager Log-in / Sign-up page exists or needs creating
+- **Styling / pattern source:** **Mobile Investor App KYC / Onboarding** page (`600:16351`) — match its visual language (layout, inputs, step progression, buttons). Investor `Log in` page (`334:1032`) may also be useful as a flow reference.
+- **Scope:** login (email + password, SSO placeholder?), sign-up (email, name, password, org details? — confirm fields), post-sign-up landing → feeds into priority #2 empty states
+- **Open:** is this for a single-tenant manager seat, or does sign-up create a new org? Org creation fields TBD.
+
+### 2. Manager app — initial/empty state screens
+- [ ] **Goal:** design the first-run state for Manager OS when the user has joined but has no data yet
+- **Figma:** https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=340-92 (node `340:92`)
+- **Scope:** empty state for each main Manager screen (dashboard, funds, investors, etc. — confirm list from the frame)
+- **Pattern reference:** mirror the Investor App empty-state approach from 04-10 (onboarding checklist + pending items before active use unlocks)
+
+### 3. Manager app — fund subsidiary pages
+- [ ] **Goal:** rebuild / reconfigure existing Manager pages to support the new fund-subsidiary model
+- **Figma:** https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=346-5724 (node `346:5724`)
+- **Scope:** audit which Manager pages are affected (likely Funds list, Fund detail, Cost allocation, NAV — confirm from the frame), reconcile information architecture with the new subsidiary hierarchy. See here for context on what we need to show: https://docs.google.com/document/d/1Z_Qvr6hqhsen4iGY23cWo4UOrAmAT-etX2rbuTllTVo/edit?usp=sharing
+- **Dependency:** affects #2's empty states — the empty state needs to know what subsidiary-aware shells look like
+
+### 4. Dropdown menus (account + notifications)
+- [ ] **Goal:** build two header dropdowns for the Manager app
+- **Account/actions dropdown** — Figma: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=341-8931 (node `341:8931`)
+- **Notifications dropdown** — Figma: *⚠️ same URL provided as above (node `341:8931`) — please confirm the correct node for this one*
+- **Scope:** both dropdowns need default + scrolling states; notifications also needs empty / unread / read states
+
+### 5. Brief #6 follow-up — icon strategy
+- [ ] Pick a direction: A (build size-variant wrappers in iconography, ~100 components), B (leave gluestack `as=*Icon` in place), C (swap one and diff the breakage — my cheap-first recommendation)
+
+### 6. Walkthrough helper / AI sidekick
+- [ ] **Goal:** build a first-session walkthrough that orients new users — where to find key areas/data and where they can take action
+- **Figma:** none yet (greenfield)
+- **Scope:** decide the form first — guided coach-marks vs. an AI sidekick panel. If AI sidekick, decide whether it's conversational (chat) or contextual (step-by-step tooltips triggered by location)
+- **Open:** investor vs manager? Both? Start with manager since empty-state work is adjacent to #2
+
+---
+
+## Carryover from 04-13
+
+- [ ] Pre-existing mismatch flagged during Input/Select sync: code's `outline` variant uses `rounded-xl` (12px) but Figma spec is `rounded-lg` (8px). Decide whether to sweep.
+- [ ] Desktop portfolio dark-mode — "leave this for now" on the element-parity pass; revisit later
+- [ ] Icon strategy — see priority #1 above
+
+---
+
+## Active design problems
+### Problem 1
+- **Area:**
+- **Context:**
+- **Constraint:**
+- **What good looks like:**
+
+### Problem 2
+- **Area:**
+- **Context:**
+- **Constraint:**
+- **What good looks like:**
+
+### Problem 3
+- **Area:**
+- **Context:**
+- **Constraint:**
+- **What good looks like:**
+
+---
+
+## Work areas
+
+### Figma File
+- [ ] https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+
+### Pages
+- [ ] Widgets > Investor App: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+- [ ] Widgets > Manager OS: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69417
+
+### Components
+- [ ] Global: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69298
+- [ ] Investor App (mobile): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69296
+- [ ] Manager OS (desktop): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69297
+
+### UX writing / product copy
+- [ ]
+- [ ]
+
+---
+
+## Review checklist
+- [ ] User goal is clear
+- [ ] Primary action is clear
+- [ ] Edge cases covered
+- [ ] Empty / loading / error / success states considered
+- [ ] Consistent with design system
+- [ ] Realistic for engineering handoff
+- [ ] Mobile / responsive behaviour considered
+
+---
+
+## Claude session notes
+**Context to give Claude:**
+-
+-
+-
+
+**What I want back from Claude:**
+-
+-
+-
+
+---
+
+## Notes
+
+### Investigation context for priority #3 (Manager app — fund subsidiary pages)
+- Node `346:5724` is the **Manager OS Navigation sidebar** (INSTANCE, 227×920), not a dedicated subsidiary page. It introduces the subsidiary model through the sidebar structure:
+  - Top wrapper (172px): global Nav Items (likely Dashboard, Support, etc.)
+  - Divider line
+  - **Fund Selector** (master `341:9945`, 227×40) — displays current fund name (sample shows "POD Crypto Fund"), chevron-up, chevron-selector-vertical. Triggers the Fund List Dropdown.
+  - **Per-fund nav wrapper** (240px): 8 Nav Items — `Overview`, `NAV & Collateral`, `Share registry`, `Distribution`, `Economics`, `Benchmarking`, `Classes`, `Investors`
+  - **Fund List Dropdown** (master `365:18112`, 275×170) — list of Fund Nav Items + "Add new fund" button
+- Existing Manager pages in the Figma file: `Dashboard` (340:92), `Fund Overview` (61:2472), `Invite Investor` (602:39939), `Share Class Detail` (394:20687), `Share Class Creation` (61:2471), `Liquidity` (341:8441), `Fund Creation` (889:4682)
+- Reconfiguration question: the 8 sidebar items (`Overview`, `NAV & Collateral`, `Share registry`, `Distribution`, `Economics`, `Benchmarking`, `Classes`, `Investors`) don't map 1:1 to existing pages. The new IA needs: Overview, NAV & Collateral, Share registry, Distribution, Economics, Benchmarking (all likely new), plus Classes (= current Share Class pages) and Investors (= current Invite Investor + new investor list)
+- Next step when returning to #3: confirm which of the 8 items are already built vs new; decide whether `Fund Overview`/`Liquidity` map onto `Overview`/`NAV & Collateral` or get retired
+
+---
+
+## End of day
+### Done
+-
+-
+-
+
+### Carry forward
+-
+-
+-
+
+### Last task
+- [ ] Run the skill in `elysium-design/skills/daily-summary`
+- [ ] Output the daily summary into `elysium-design/daily-summary`

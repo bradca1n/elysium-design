@@ -1,0 +1,144 @@
+Good, I have the project context. Today's brief has 4 distinct tasks that span conversation, Figma execution, and design thinking. Let me work through   
+  them.                                                                                                                                                    
+                                                                                                                                                           
+  Before I dive into clarifying questions — some of today's topics will involve visual content (mockups, layout comparisons for the modal/sheet slots, flow
+   diagrams). Would you like me to use a browser-based visual companion to show you mockups and diagrams as we go? This feature is still new and can be    
+  token-intensive. Want to try it? (Requires opening a local URL)                                                                                          
+                                                                                                                                                           
+✻ Worked for 1m 26s                                                                                                                                        
+                                                                                                                                                       
+❯ Does it use the same amount of tokens if we just use the Figma bridge we have to do these directly in Figma?                                             
+                                                                                                                
+⏺ Good point — working directly in Figma via the bridge is better here. We skip the extra companion layer, you see results in your actual design file, and 
+  it's no more token-intensive than our normal workflow.                                                                                                   
+                                                                                                                                                           
+  Let's skip the visual companion and work directly in Figma.                                                                                              
+                                                                                                                                                           
+  Now, let me take the tasks in order. Task 1 is the Modal/Sheet slots conversation — this one needs your input. Let me start there:                       
+                                                                                                                                                           
+  Figma recently introduced slots in components, which let you define swappable content regions inside a base component. For Modal and Sheet, this means:  
+                  
+  Current state: You likely have separate Modal/Sheet variants for each use case (or raw frames duplicated per screen), which means updating shared chrome 
+  (header bar, close button, footer buttons, overlay) requires touching every instance.
+                                                                                                                                                           
+  With slots, the approach would be:                                                                                                                       
+  
+  - Base Modal component — fixed chrome (overlay, container, header with title + close, footer with action buttons), with a body slot that accepts any     
+  content         
+  - Base Sheet component — same idea (slide-in panel, header, footer), body slot swappable                                                                 
+  - Content for each use case (e.g. "Create Share Class form", "Confirm Action", "Filter Panel") lives as separate slot content components that plug into  
+  the body                                                                                                                                                 
+                                                                                                                                                           
+  The key trade-off:                                                                                                                                       
+                  
+  - A) Slots approach — One base component, swap body content per instance. Clean, DRY, easy to update chrome globally. But requires discipline — every    
+  body variant needs to be a separate component.
+  - B) Variant approach — Multiple variants in a component set (one per use case). Simpler to browse in the assets panel, but chrome updates require       
+  touching every variant.                                                                                                                                  
+  - C) Hybrid — Base with slots for custom content, plus a few pre-built "preset" variants for common patterns (confirmation dialog, form sheet).
+                                                                                                                                                           
+  I'd recommend A (pure slots) since you're building a product demo with many different modal/sheet contents — it keeps the base components lean and lets  
+  you compose freely.                                                                                                                                      
+                                                                                                                                                           
+  What's your thinking — do any of these match what you had in mind, or do you want to explore a different direction?                                      
+   
+❯ A, for sure                                                                                                                                              
+                                                                                   
+⏺ Great. A few quick questions to nail down the spec before we build:                                                                                      
+                                                                                                                                                           
+  For the base Modal — what sizes do you need? For example:                                                                                                
+  - a) Small (400px) for confirmations, Medium (560px) for forms, Large (720px) for complex content                                                        
+  - b) Just one default size, content determines height                                                                                                    
+  - c) Something else?                                                                                                                                     
+                                                                                                                                                           
+❯ We should design the modals and sheets to be responsive for all mobile breakpoints. I am using an iphone 16 so best to use that as the base for me to    
+test. Desktop app will have a centred modal and also a side sheet (same size as we have for the share class creation side sheet, use that as the base).    
+                                                                                                                                                           
+⏺ Clear. So the spec shapes up as:                                                                                                                         
+                                                                                                                                                           
+  Modal:                                                                                                                                                   
+  - Mobile (iPhone 16 — 393×852): Full-width bottom sheet style, or full-screen overlay?                                                                   
+  - Desktop: Centred overlay, single responsive width                                                                                                      
+                                                                                                                                                           
+  Sheet:                                                                                                                                                   
+  - Mobile: Full-screen slide-up (since 660px side panel won't fit)
+  - Desktop: 660px right-side panel (matching existing Share Class creation sheet)                                                                         
+                                                                                  
+  Quick clarification on mobile Modal — should it be:                                                                                                      
+  - a) Bottom sheet style — slides up from bottom, partial height, content determines height                                                               
+  - b) Full-screen takeover — fills the viewport with a back/close button at top                                                                           
+  - c) Centred card — smaller centered overlay like desktop but scaled down                                                                                
+                                                                                                                                                           
+❯ Mobile (iPhone 16 — 393×852): Full-width bottom sheet style, or full-screen overlay?  - Let's do both.                                                   
+                                                                                                                                                           
+⏺ Got it — mobile gets both a bottom sheet modal and a full-screen overlay modal. That covers confirmations/quick actions (bottom sheet) and complex forms 
+  (full-screen).                                                                                                                                           
+                                                                                                                                                           
+  Next question: What chrome elements should be shared across all base components?                                                                         
+                                                                                                                                                           
+  Here's what I'm assuming — correct anything:                                                                                                             
+                                                                                                                                                           
+  - Header: Title text (left-aligned) + close/dismiss icon (right-aligned)                                                                                 
+  - Footer: Action buttons using global Button component (Cancel = Outline, Confirm = Primary)
+  - Overlay/scrim: Semi-transparent background behind modal/sheet                                                                                          
+                                                                                                                                                           
+  Anything to add or change? For example, do any variants need a subtitle, description line, or step indicator in the header?                              
+                                                                                                                                                           
+❯ Mobile should be:   - a) Bottom sheet style — slides up from bottom, partial height, content determines height                                           
+                                                                                                                
+⏺ Noted — mobile modal is bottom sheet style only (not both). Partial height, content-driven.                                                              
+                                                                                                                                                           
+  And on the chrome elements — does the header/footer/overlay setup I described look right, or any changes?                                                
+                                                                                                                                                           
+❯ Yes that looks great                                                                                                                                     
+                                                                                                                                                           
+⏺ Last question: For the body slot itself — any constraints?                                                                                               
+                                                                                                                                                           
+  - a) Completely freeform — slot accepts anything, no padding/scrolling built in                                                                          
+  - b) Slot has built-in padding (e.g. space/16 or space/24) and vertical scroll when content overflows                                                    
+  - c) Slot has padding, scroll, and a max-height cap (so the modal doesn't grow beyond viewport)                                                          
+                                                                                                                                                           
+  I'd recommend b — built-in padding keeps content consistent without every slot component needing to manage its own, and scroll handles overflow          
+  naturally.                                                                                                                                               
+                                                                                                                                                           
+❯ B                                                                                                                                                        
+                                                                                                                                  
+⏺ Good. Here's the complete design spec for your approval:                                                                                                 
+                                                                                                                                                           
+  ---                                                                                                                                                      
+  Modal & Sheet Base Components — Slot Architecture                                                                                                        
+                                                                                                                                                           
+  Components to build (4 total)                                                                                                                            
+                                                                                                                                                           
+  ┌──────────────────────┬──────────────────┬──────────────────────────────────────────────────────────────────┐                                           
+  │      Component       │     Platform     │                            Behaviour                             │                                           
+  ├──────────────────────┼──────────────────┼──────────────────────────────────────────────────────────────────┤                                           
+  │ Modal / Bottom Sheet │ Mobile (393×852) │ Slides up from bottom, partial height, content determines height │
+  ├──────────────────────┼──────────────────┼──────────────────────────────────────────────────────────────────┤
+  │ Modal / Centred      │ Desktop          │ Centred overlay, responsive width                                │                                           
+  ├──────────────────────┼──────────────────┼──────────────────────────────────────────────────────────────────┤                                           
+  │ Sheet / Full Screen  │ Mobile (393×852) │ Full-screen slide-up with back/close at top                      │                                           
+  ├──────────────────────┼──────────────────┼──────────────────────────────────────────────────────────────────┤                                           
+  │ Sheet / Side Panel   │ Desktop          │ 660px right-side panel (matches existing Share Class creation)   │
+  └──────────────────────┴──────────────────┴──────────────────────────────────────────────────────────────────┘                                           
+                  
+  Shared chrome (all 4)                                                                                                                                    
+                  
+  - Header: Title (left) + close icon (right)                                                                                                              
+  - Footer: Cancel (Outline) + Confirm (Primary) — global Button instances
+  - Overlay/scrim: Semi-transparent backdrop (desktop modal + desktop sheet)                                                                               
+  - Body slot: Swappable content region with built-in space/24 padding and vertical scroll on overflow                                                     
+                                                                                                                                                           
+  Slot setup                                                                                                                                               
+                                                                                                                                                           
+  - Body content is a separate component that plugs into the slot                                                                                          
+  - Base components own all chrome; slot content only handles its own internal layout
+  - Existing Share Class creation form becomes the first slot content component                                                                            
+                                                                                                                                                           
+  Token binding                                                                                                                                            
+                                                                                                                                                           
+  - All spacing, radius, colors bound to design tokens (no raw values)                                                                                     
+  - Buttons are global Button component instances
+                                                                                                                                                           
+  ---             
+  Does this look right? Anything to add or revise before I write it up as a spec doc and move to planning?   

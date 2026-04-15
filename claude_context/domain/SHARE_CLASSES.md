@@ -1,4 +1,4 @@
-# Share Classes & Multi-Currency
+Okay # Share Classes & Multi-Currency
 
 <!-- ~3000 tokens -->
 **Last Updated:** 2026-02-10

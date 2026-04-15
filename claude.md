@@ -29,6 +29,7 @@ Skills MUST be invoked via the `Skill` tool — not described in text. Describin
 | `verification-before-completion` | **Before claiming done** — run tests, verify output, check all files |
 | `canvas-design` | **Before claiming done** — Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create original visual designs, never copying existing artists' work to avoid copyright violations. |
 | `writing-plans` | **Before implementation** — creates a reviewable plan with phases, tool/MCP/skill assignments, agent structure |
+| `design-system-builder` | **For Figma design system work** — creating components, organizing pages, binding tokens, auditing consistency, building widgets. Use when adding to or modifying the Figma component library. |
 
 **Required workflow chain** for non-trivial tasks (each step = actual `Skill` tool call):
 ```
