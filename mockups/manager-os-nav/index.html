@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manager OS · POD Crypto Fund</title>
+<meta name="viewport" content="width=1400">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<style>
+  :root {
+    --bg-canvas: #FFFFFF;
+    --bg-surface: #FAF9F7;
+    --bg-card: #FFFFFF;
+    --bg-subtle: #F2F0EC;
+    --ink-1: #15151A;
+    --ink-2: #5A5A63;
+    --ink-3: #8A8A92;
+    --line-1: #E7E5E0;
+    --line-2: #D9D6D0;
+    --accent-plum: #6F4FA0;
+    --accent-plum-soft: #D9C9EC;
+    --green-50: #EEF5EE;
+    --green-200: #C6E1C6;
+    --green-300: #9ECCA0;
+    --green-400: #72B578;
+    --green-500: #4E9E56;
+    --green-600: #3A8544;
+    --green-700: #2B6734;
+    --pos: #2B6734;
+    --neg: #A14133;
+    --info-bg: #EEF3F9;
+    --info-border: #D2DFEC;
+    --info-fg: #345B85;
+    --glass-bg: rgba(0,0,0,0.03);
+    --glass-border: rgba(0,0,0,0.06);
+  }
+  .dark {
+    --bg-canvas: #15151A;
+    --bg-surface: #1C1C22;
+    --bg-card: #22222A;
+    --bg-subtle: #2B2B34;
+    --ink-1: #F2F0EC;
+    --ink-2: #B4B2AD;
+    --ink-3: #84828B;
+    --line-1: #2E2E36;
+    --line-2: #3A3A44;
+    --green-50: #1F2C22;
+    --green-200: #2B4530;
+    --green-300: #4E7F53;
+    --green-400: #72B578;
+    --green-500: #8ECC93;
+    --green-600: #A9DBAE;
+    --green-700: #C9E9CD;
+    --pos: #9CD1A1;
+    --neg: #E29E94;
+    --info-bg: #1E2936;
+    --info-border: #34475C;
+    --info-fg: #9EBCDF;
+    --glass-bg: rgba(255,255,255,0.05);
+    --glass-border: rgba(255,255,255,0.08);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-canvas);
+    color: var(--ink-1);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+  button { font-family: inherit; }
+  input, select { font-family: inherit; outline: none; }
+  input:focus, select:focus { border-color: var(--ink-1) !important; box-shadow: 0 0 0 3px var(--bg-card); }
+  table td, table th { vertical-align: middle; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 6px; border: 2px solid var(--bg-canvas); }
+  ::-webkit-scrollbar-track { background: var(--bg-canvas); }
+
+  /* ─── Page-load micro-interactions ─── */
+  @keyframes pageRise {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes navFade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes navSlideIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes kpiCount {
+    from { opacity: 0; transform: translateY(12px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes barGrow {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+  @keyframes donutDraw {
+    from { stroke-dashoffset: var(--dash-full, 600); }
+    to   { stroke-dashoffset: var(--dash-final, 0); }
+  }
+  @keyframes rowSlide {
+    from { opacity: 0; transform: translateX(-8px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Stagger children of page root on mount */
+  [data-page] > *:not(.no-page-anim) {
+    animation: pageRise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  [data-page] > *:nth-child(1) { animation-delay: 0.00s; }
+  [data-page] > *:nth-child(2) { animation-delay: 0.05s; }
+  [data-page] > *:nth-child(3) { animation-delay: 0.10s; }
+  [data-page] > *:nth-child(4) { animation-delay: 0.15s; }
+  [data-page] > *:nth-child(5) { animation-delay: 0.20s; }
+  [data-page] > *:nth-child(6) { animation-delay: 0.25s; }
+  [data-page] > *:nth-child(7) { animation-delay: 0.30s; }
+  [data-page] > *:nth-child(n+8) { animation-delay: 0.35s; }
+
+  /* KPI tiles: subtle count-up rise */
+  [data-kpi-grid] > * {
+    animation: kpiCount 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  [data-kpi-grid] > *:nth-child(1) { animation-delay: 0.10s; }
+  [data-kpi-grid] > *:nth-child(2) { animation-delay: 0.18s; }
+  [data-kpi-grid] > *:nth-child(3) { animation-delay: 0.26s; }
+  [data-kpi-grid] > *:nth-child(4) { animation-delay: 0.34s; }
+
+  /* Allocation/progress bars */
+  [data-bar-fill] {
+    transform-origin: left center;
+    animation: barGrow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.35s;
+  }
+
+  /* Table rows */
+  [data-row] {
+    animation: rowSlide 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  [data-row]:nth-child(1) { animation-delay: 0.30s; }
+  [data-row]:nth-child(2) { animation-delay: 0.36s; }
+  [data-row]:nth-child(3) { animation-delay: 0.42s; }
+  [data-row]:nth-child(4) { animation-delay: 0.48s; }
+  [data-row]:nth-child(5) { animation-delay: 0.54s; }
+  [data-row]:nth-child(6) { animation-delay: 0.60s; }
+  [data-row]:nth-child(7) { animation-delay: 0.66s; }
+  [data-row]:nth-child(n+8) { animation-delay: 0.72s; }
+
+  /* Donut chart arc draw */
+  [data-donut-arc] {
+    stroke-dasharray: var(--dash-total, 600);
+    stroke-dashoffset: var(--dash-total, 600);
+    animation: donutDraw 1.0s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  [data-donut-arc]:nth-child(1) { animation-delay: 0.20s; }
+  [data-donut-arc]:nth-child(2) { animation-delay: 0.28s; }
+  [data-donut-arc]:nth-child(3) { animation-delay: 0.36s; }
+  [data-donut-arc]:nth-child(4) { animation-delay: 0.44s; }
+  [data-donut-arc]:nth-child(5) { animation-delay: 0.52s; }
+
+  /* Sidebar items enter */
+  [data-sidebar-item] {
+    animation: navSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Respect reduced-motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    [data-page] > *, [data-kpi-grid] > *, [data-bar-fill],
+    [data-row], [data-donut-arc], [data-sidebar-item] {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      stroke-dashoffset: 0 !important;
+    }
+  }
+
+  /* Tweaks panel */
+  .tweaks-panel {
+    position: fixed; bottom: 20px; right: 20px; width: 300px;
+    background: var(--bg-canvas); border: 1px solid var(--line-1);
+    border-radius: 14px; box-shadow: 0 18px 48px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.06);
+    padding: 18px 18px 16px; z-index: 90;
+    font-size: 13px;
+  }
+  .tweaks-panel h4 { margin: 0 0 12px; font-size: 13px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+  .tweaks-panel .row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-top: 1px solid var(--line-1); }
+  .tweaks-panel .row:first-of-type { border-top: none; }
+  .tweaks-panel label { color: var(--ink-2); }
+  .swatches { display: flex; gap: 6px; }
+  .swatches button { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line-2); cursor: pointer; padding: 0; }
+  .swatches button.active { border-color: var(--ink-1); transform: scale(1.08); }
+  .tweak-select { height: 28px; border-radius: 6px; border: 1px solid var(--line-2); background: var(--bg-canvas); color: var(--ink-1); padding: 0 8px; font-size: 12px; }
+  .comments { max-width: 1200px; margin: 0 auto; padding: 48px 40px 96px; border-top: 1px solid var(--line-1); background: var(--bg-canvas); font-family: 'Inter', sans-serif; }
+  .comments h2 { font-size: 22px; font-weight: 600; margin: 0 0 6px; color: var(--ink-1); letter-spacing: -0.01em; }
+  .comments .comments-sub { font-size: 13px; color: var(--ink-2); margin-bottom: 28px; }
+</style>
+
+<script type="application/json" id="__tweaks">
+{
+  "dark": false,
+  "accent": "plum",
+  "density": "comfortable",
+  "view": "nav"
+}
+</script>
+</head>
+<body>
+<div id="root"></div>
+
+<div class="comments">
+  <h2>Comments</h2>
+  <div class="comments-sub">Sign in with GitHub to leave feedback on this design.</div>
+  <script src="https://giscus.app/client.js"
+          data-repo="bradca1n/elysium-design"
+          data-repo-id="R_kgDORi_KEA"
+          data-category="General"
+          data-category-id="DIC_kwDORi_KEM4C7aes"
+          data-mapping="pathname"
+          data-strict="0"
+          data-reactions-enabled="1"
+          data-emit-metadata="0"
+          data-input-position="top"
+          data-theme="light"
+          data-lang="en"
+          crossorigin="anonymous"
+          async>
+  </script>
+</div>
+
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel" src="views-nav.jsx"></script>
+<script type="text/babel" src="views-other.jsx"></script>
+<script type="text/babel" src="views-pnl-bs.jsx"></script>
+<script type="text/babel" src="views-economics.jsx"></script>
+
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "dark": false,
+  "accent": "plum",
+  "density": "comfortable"
+}/*EDITMODE-END*/;
+
+function App() {
+  const [route, setRoute] = React.useState(() => localStorage.getItem('mos.route') || 'nav');
+  const [showTweaks, setShowTweaks] = React.useState(false);
+  const [tweaks, setTweaks] = React.useState(TWEAK_DEFAULTS);
+
+  React.useEffect(() => { localStorage.setItem('mos.route', route); }, [route]);
+
+  React.useEffect(() => {
+    // Only control dark mode if user hasn't set an explicit theme in the account menu
+    if (!localStorage.getItem('mos.theme')) document.body.classList.toggle('dark', tweaks.dark);
+    const accents = {
+      plum: ['#6F4FA0', '#D9C9EC', 'linear-gradient(135deg,#D9C9EC,#BBA3DC)'],
+      sage: ['#3A8544', '#C6E1C6', 'linear-gradient(135deg,#C6E1C6,#9ECCA0)'],
+      oxblood: ['#8B2F3C', '#EAC9CE', 'linear-gradient(135deg,#EAC9CE,#D29AA3)'],
+      slate: ['#4A5668', '#CBD1DA', 'linear-gradient(135deg,#CBD1DA,#A7B0BE)'],
+    };
+    const [fg, soft, grad] = accents[tweaks.accent] || accents.plum;
+    document.documentElement.style.setProperty('--accent-plum', fg);
+    document.documentElement.style.setProperty('--accent-plum-soft', soft);
+    document.documentElement.style.setProperty('--accent-grad', grad);
+  }, [tweaks]);
+
+  // Tweaks host protocol
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      if (!e.data || typeof e.data !== 'object') return;
+      if (e.data.type === '__activate_edit_mode') setShowTweaks(true);
+      if (e.data.type === '__deactivate_edit_mode') setShowTweaks(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  const setTweak = (k, v) => {
+    setTweaks(t => {
+      const next = { ...t, [k]: v };
+      window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [k]: v } }, '*');
+      return next;
+    });
+  };
+
+  let view;
+  if (route === 'order-book') view = <OrderBookView onNav={setRoute}/>;
+  else if (route === 'collateral') view = <CollateralView onNav={setRoute}/>;
+  else if (route === 'share-register') view = <ShareRegisterView onNav={setRoute}/>;
+  else if (route === 'reconciliation') view = <ReconciliationView onNav={setRoute}/>;
+  else if (route === 'pnl') view = <ProfitLossView onNav={setRoute}/>;
+  else if (route === 'balance-sheet') view = <BalanceSheetView onNav={setRoute}/>;
+  else if (route === 'economics') view = <EconomicsView onNav={setRoute}/>;
+  else view = <NavView onNav={setRoute} showTweaks={showTweaks}/>;
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',minHeight:'100vh',background:'var(--bg-canvas)'}}>
+      <div style={{position:'sticky',top:0,zIndex:30,background:'var(--bg-canvas)'}}>
+        <Navbar route={route} onNav={setRoute}/>
+      </div>
+      <div style={{display:'flex',flex:1,minHeight:0}}>
+        <Sidebar route={route} onNav={setRoute}/>
+        <main style={{flex:1,minWidth:0,background:'var(--bg-canvas)'}}>
+          <div key={route}>{view}</div>
+        </main>
+      </div>
+      {showTweaks && (
+        <div className="tweaks-panel">
+          <h4>Tweaks
+            <button onClick={()=>setShowTweaks(false)} style={{background:'transparent',border:'none',color:'var(--ink-3)',cursor:'pointer',fontSize:16,padding:0,lineHeight:1}}>×</button>
+          </h4>
+          <div className="row">
+            <label>Dark mode</label>
+            <button onClick={()=>setTweak('dark', !tweaks.dark)} style={{
+              width:36,height:20,borderRadius:10,border:'none',cursor:'pointer',padding:0,
+              background: tweaks.dark ? 'var(--ink-1)' : 'var(--line-2)',
+              position:'relative'}}>
+              <span style={{position:'absolute',top:2,left:tweaks.dark?18:2,width:16,height:16,borderRadius:'50%',background:'#fff',transition:'left 0.15s'}}/>
+            </button>
+          </div>
+          <div className="row">
+            <label>Accent</label>
+            <div className="swatches">
+              {[['plum','#6F4FA0'],['sage','#3A8544'],['oxblood','#8B2F3C'],['slate','#4A5668']].map(([k,c]) => (
+                <button key={k} onClick={()=>setTweak('accent', k)} className={tweaks.accent===k?'active':''} style={{background:c}}/>
+              ))}
+            </div>
+          </div>
+          <div className="row">
+            <label>Density</label>
+            <select className="tweak-select" value={tweaks.density} onChange={e=>setTweak('density', e.target.value)}>
+              <option value="comfortable">Comfortable</option>
+              <option value="compact">Compact</option>
+            </select>
+          </div>
+          <div className="row">
+            <label>Jump to</label>
+            <select className="tweak-select" value={route} onChange={e=>setRoute(e.target.value)}>
+              <option value="nav">NAV</option>
+              <option value="order-book">Order book</option>
+              <option value="collateral">Move collateral</option>
+              <option value="share-register">Share register</option>
+              <option value="reconciliation">Reconciliation</option>
+              <option value="pnl">Profit & Loss</option>
+              <option value="balance-sheet">Balance Sheet</option>
+            </select>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
