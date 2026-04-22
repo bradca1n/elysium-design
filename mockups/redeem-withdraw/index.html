@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Redeem & Withdraw — Wireframes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #f2f2f0;
+    font-family: 'Inter', sans-serif;
+    color: #1a1a1a;
+    min-height: 100vh;
+  }
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(242, 242, 240, 0.95);
+    backdrop-filter: blur(6px);
+    border-bottom: 1.5px solid #2a2a2a;
+    padding: 14px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .header h1 {
+    font-family: 'Inter', sans-serif;
+    font-size: 30px; font-weight: 700;
+    margin: 0; color: #1a1a1a;
+  }
+  .header .sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; color: #666;
+    margin-top: -2px;
+  }
+  .controls {
+    display: flex; gap: 10px; align-items: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+  }
+  .segmented {
+    display: inline-flex;
+    border: 1.5px solid #2a2a2a;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    user-select: none;
+  }
+  .segmented .seg {
+    padding: 5px 14px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    color: #2a2a2a;
+    background: transparent;
+    transition: background 0.12s;
+  }
+  .segmented .seg + .seg { border-left: 1.5px solid #2a2a2a; }
+  .segmented .seg:hover { background: #e8e8e6; }
+  .segmented .seg.active { background: #1a1a1a; color: #fff; }
+  .segmented .seg.active.edge { background: #f4a261; color: #fff; }
+  .segmented .seg .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #ccc;
+  }
+  .segmented .seg.active .dot { background: #fff; }
+
+  .tabs {
+    display: inline-flex;
+    border: 1.5px solid #2a2a2a;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    user-select: none;
+  }
+  .tab {
+    padding: 5px 14px;
+    cursor: pointer;
+    color: #2a2a2a;
+    background: transparent;
+    transition: background 0.12s;
+  }
+  .tab + .tab { border-left: 1.5px solid #2a2a2a; }
+  .tab:hover { background: #e8e8e6; }
+  .tab.active { background: #1a1a1a; color: #fff; }
+
+  .canvas {
+    padding: 40px 48px 120px;
+    overflow-x: auto;
+  }
+  .legend {
+    display: flex; gap: 18px; margin-bottom: 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; color: #444;
+    flex-wrap: wrap;
+  }
+  .legend .swatch {
+    display: inline-block; width: 14px; height: 14px;
+    border-radius: 3px; vertical-align: middle;
+    margin-right: 5px;
+  }
+  .intro {
+    max-width: 620px;
+    margin-bottom: 30px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+  }
+  .intro b { font-weight: 700; }
+  .section-divider {
+    margin: 24px 0 0;
+    border-top: 1.5px dashed #aaa;
+    padding-top: 14px;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel" src="flows.jsx"></script>
+
+<script type="text/babel">
+  const TWEAKS = /*EDITMODE-BEGIN*/{
+    "edgeCase": false,
+    "activeView": "all"
+  }/*EDITMODE-END*/;
+
+  function App() {
+    const [edge, setEdge] = React.useState(false);
+    const [view, setView] = React.useState('all'); // all | redeem | withdraw
+
+    // Persist playback position
+    React.useEffect(() => {
+      const saved = localStorage.getItem('wf_state');
+      if (saved) {
+        try {
+          const s = JSON.parse(saved);
+          if (typeof s.edge === 'boolean') setEdge(s.edge);
+          if (s.view) setView(s.view);
+        } catch (e) {}
+      }
+    }, []);
+    React.useEffect(() => {
+      localStorage.setItem('wf_state', JSON.stringify({ edge, view }));
+    }, [edge, view]);
+
+    const showRedeem = view === 'all' || view === 'redeem';
+    const showWithdraw = view === 'all' || view === 'withdraw';
+
+    return (
+      <>
+        <div className="header">
+          <div>
+            <h1>Redeem & Withdraw — wireframes</h1>
+            <div className="sub">mutual fund · ios · 4 flow variations · sketchy low-fi</div>
+          </div>
+          <div className="controls">
+            <div className="tabs">
+              <div className={`tab ${view === 'all' ? 'active' : ''}`} onClick={() => setView('all')}>All flows</div>
+              <div className={`tab ${view === 'redeem' ? 'active' : ''}`} onClick={() => setView('redeem')}>Redeem</div>
+              <div className={`tab ${view === 'withdraw' ? 'active' : ''}`} onClick={() => setView('withdraw')}>Withdraw</div>
+            </div>
+            <div className="segmented" role="group" aria-label="State">
+              <div
+                className={`seg ${!edge ? 'active' : ''}`}
+                onClick={() => setEdge(false)}
+              >
+                <span className="dot"/>
+                Happy path
+              </div>
+              <div
+                className={`seg edge ${edge ? 'active' : ''}`}
+                onClick={() => setEdge(true)}
+              >
+                <span className="dot"/>
+                Edge cases
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="canvas">
+          <div className="intro">
+            <b>Context.</b> Mutual fund app, iOS.
+            <b> Redeem</b> sells units → cash wallet (OTP-gated).
+            <b> Withdraw</b> moves cash wallet → linked bank account (multi-sig gated, daily limit).
+            Toggle <b>Edge cases ON</b> to see warning / failure / limit-breach states layered onto the same screens.
+          </div>
+
+          <div className="legend">
+            <span><span className="swatch" style={{background:'#fecaca'}}/>Redeem</span>
+            <span><span className="swatch" style={{background:'#bae6fd'}}/>Withdraw</span>
+            <span><span className="swatch" style={{background:'#f4a261'}}/>Edge-case / warning</span>
+            <span><span className="swatch" style={{background:'#8ab97f'}}/>Success</span>
+            <span><span className="swatch" style={{background:'#1a1a1a'}}/>Primary action</span>
+          </div>
+
+          {showRedeem && <>
+            <RedeemV1 edge={edge}/>
+            <RedeemV2 edge={edge}/>
+          </>}
+
+          {showRedeem && showWithdraw && <div className="section-divider"/>}
+
+          {showWithdraw && <>
+            <WithdrawV3 edge={edge}/>
+            <WithdrawV4 edge={edge}/>
+          </>}
+        </div>
+      </>
+    );
+  }
+
+  // ─── Tweaks (toolbar integration) ───
+  (function setupTweaks() {
+    let panelEl = null;
+    function show() {
+      if (panelEl) { panelEl.style.display = 'block'; return; }
+      panelEl = document.createElement('div');
+      panelEl.style.cssText = `
+        position: fixed; bottom: 20px; right: 20px; z-index: 200;
+        background: #fff; border: 1.5px solid #2a2a2a; border-radius: 12px;
+        padding: 14px 16px; font-family: 'Inter', sans-serif;
+        box-shadow: 3px 4px 0 rgba(0,0,0,0.08);
+        width: 220px;
+      `;
+      panelEl.innerHTML = `
+        <div style="font-family:'Inter',sans-serif;font-size:20px;font-weight:700;margin-bottom:10px;border-bottom:1px dashed #ccc;padding-bottom:6px;">Tweaks</div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:10px;cursor:pointer;">
+          <input type="checkbox" id="tw-edge"/> Edge cases ON
+        </label>
+        <div style="font-size:11px;color:#666;font-family:'Inter',sans-serif;margin-bottom:6px;">VIEW</div>
+        <select id="tw-view" style="width:100%;padding:5px;font-family:'Inter',sans-serif;font-size:13px;border:1.5px solid #999;border-radius:6px;">
+          <option value="all">All flows</option>
+          <option value="redeem">Redeem only</option>
+          <option value="withdraw">Withdraw only</option>
+        </select>
+      `;
+      document.body.appendChild(panelEl);
+      const saved = JSON.parse(localStorage.getItem('wf_state') || '{}');
+      panelEl.querySelector('#tw-edge').checked = !!saved.edge;
+      panelEl.querySelector('#tw-view').value = saved.view || 'all';
+      panelEl.querySelector('#tw-edge').addEventListener('change', (e) => {
+        const v = e.target.checked;
+        const cur = JSON.parse(localStorage.getItem('wf_state') || '{}');
+        cur.edge = v;
+        localStorage.setItem('wf_state', JSON.stringify(cur));
+        window.parent.postMessage({type: '__edit_mode_set_keys', edits: {edgeCase: v}}, '*');
+        window.dispatchEvent(new Event('wf_refresh'));
+      });
+      panelEl.querySelector('#tw-view').addEventListener('change', (e) => {
+        const v = e.target.value;
+        const cur = JSON.parse(localStorage.getItem('wf_state') || '{}');
+        cur.view = v;
+        localStorage.setItem('wf_state', JSON.stringify(cur));
+        window.parent.postMessage({type: '__edit_mode_set_keys', edits: {activeView: v}}, '*');
+        window.dispatchEvent(new Event('wf_refresh'));
+      });
+    }
+    function hide() { if (panelEl) panelEl.style.display = 'none'; }
+    window.addEventListener('message', (e) => {
+      if (e.data?.type === '__activate_edit_mode') show();
+      if (e.data?.type === '__deactivate_edit_mode') hide();
+    });
+    window.parent.postMessage({type: '__edit_mode_available'}, '*');
+  })();
+
+  // Force re-render when tweaks change state via localStorage (panel → app)
+  function AppWrapper() {
+    const [tick, setTick] = React.useState(0);
+    React.useEffect(() => {
+      const h = () => setTick(t => t + 1);
+      window.addEventListener('wf_refresh', h);
+      return () => window.removeEventListener('wf_refresh', h);
+    }, []);
+    return <App key={tick}/>;
+  }
+
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(<AppWrapper/>);
+</script>
+</body>
+</html>
