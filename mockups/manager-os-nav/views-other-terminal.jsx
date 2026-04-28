@@ -334,26 +334,26 @@ function CollateralView({ onNav }) {
           <button onClick={()=>onNav('order-book')} style={btnOutline}>View full order book</button>
         </div>
 
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(280px, 1fr))',gap:16}}>
-          <div style={{background:'#DEF3E4',borderRadius:10,padding:'18px 22px'}}>
-            <div style={{fontSize:12,color:'var(--green-700)',fontWeight:500,marginBottom:6}}>Pending Subscriptions</div>
-            <div style={{fontSize:28,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',color:'var(--green-700)'}}>+$150,000</div>
-            <div style={{fontSize:12,color:'var(--green-700)',marginTop:4,opacity:0.8}}>5 orders</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(4, 1fr)',gap:16}} data-kpi-grid>
+          <div>
+            <div>Pending Subscriptions</div>
+            <div style={{fontSize:26,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>+$150,000</div>
+            <div style={{fontSize:11.5}}>5 orders</div>
           </div>
-          <div style={{background:'#FADEDE',borderRadius:10,padding:'18px 22px'}}>
-            <div style={{fontSize:12,color:'#A33434',fontWeight:500,marginBottom:6}}>Pending Redemptions</div>
-            <div style={{fontSize:28,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',color:'#A33434'}}>−$320,000</div>
-            <div style={{fontSize:12,color:'#A33434',marginTop:4,opacity:0.8}}>2 orders</div>
+          <div>
+            <div>Pending Redemptions</div>
+            <div style={{fontSize:26,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',color:'var(--neg)'}}>−$320,000</div>
+            <div style={{fontSize:11.5}}>2 orders</div>
           </div>
-          <div style={{background:'var(--glass-bg)',borderRadius:10,padding:'18px 22px'}}>
-            <div style={{fontSize:12,color:'var(--ink-2)',fontWeight:500,marginBottom:6}}>Projected post-dealing cash</div>
-            <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums'}}>$2,476,000</div>
-            <div style={{fontSize:12,color:'var(--ink-3)',marginTop:4}}>after settlement Mon 8 Feb</div>
+          <div>
+            <div>Projected post-dealing cash</div>
+            <div style={{fontSize:26,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums'}}>$2,476,000</div>
+            <div style={{fontSize:11.5}}>after settlement Mon 8 Feb</div>
           </div>
-          <div style={{background:'var(--glass-bg)',borderRadius:10,padding:'18px 22px'}}>
-            <div style={{fontSize:12,color:'var(--ink-2)',fontWeight:500,marginBottom:6}}>Net cash required</div>
-            <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums'}}>$170,000</div>
-            <div style={{fontSize:12,color:'var(--ink-3)',marginTop:4}}>outflow at settlement</div>
+          <div>
+            <div>Net cash required</div>
+            <div style={{fontSize:26,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums'}}>$170,000</div>
+            <div style={{fontSize:11.5}}>outflow at settlement</div>
           </div>
         </div>
       </section>
