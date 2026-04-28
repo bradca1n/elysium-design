@@ -42,7 +42,7 @@ function OrderBookView({ onNav }) {
         ].map((k,i) => (
           <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'16px 20px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
-            <div style={{fontSize:34,fontWeight:500,letterSpacing:'-0.075em',fontVariantNumeric:'tabular-nums',color:k.pos?'var(--pos)':'var(--ink-1)'}}>{k.v}</div>
+            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',color:k.pos?'var(--pos)':'var(--ink-1)'}}>{k.v}</div>
             <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
           </div>
         ))}
@@ -357,7 +357,7 @@ function CollateralView({ onNav }) {
 
         <div style={{background:'var(--glass-bg)',borderRadius:10,padding:'18px 22px',marginBottom:16}}>
           <div style={{fontSize:12,color:'var(--ink-2)',fontWeight:500,marginBottom:6}}>Queued order amount</div>
-          <div style={{fontSize:34,fontWeight:500,letterSpacing:'-0.075em',fontVariantNumeric:'tabular-nums'}}>$4.50M</div>
+          <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>$4.50M</div>
           <div style={{fontSize:12,color:'var(--ink-3)',marginTop:4}}>5 orders</div>
         </div>
 
@@ -762,7 +762,7 @@ function ShareRegisterView({ onNav }) {
         {blended.map((k,i) => (
           <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'14px 18px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
-            <div style={{fontSize:34,fontWeight:500,letterSpacing:'-0.075em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
+            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
             <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
           </div>
         ))}
@@ -1059,7 +1059,7 @@ function ReconciliationView({ onNav }) {
         ].map((k,i) => (
           <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'16px 20px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
-            <div style={{fontSize:34,fontWeight:500,letterSpacing:'-0.075em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
+            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
             <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
           </div>
         ))}
