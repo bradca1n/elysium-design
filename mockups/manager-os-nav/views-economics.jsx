@@ -79,8 +79,8 @@ function EconomicsView({ onNav }) {
         <KpiCard l="Expenses · YTD"         v="$117,720"  s="Custody fees across 4 venues" neg/>
       </div>
 
-      {/* ===== 1. Fees earned ===== */}
-      <SectionHeadE n="1" title="Fees earned" desc="Management and performance fees accrued to the manager. Split between cash withdrawn and fees kept invested alongside LPs."/>
+      {/* ===== Fees earned ===== */}
+      <SectionHeadE title="Fees earned" desc="Management and performance fees accrued to the manager. Split between cash withdrawn and fees kept invested alongside LPs."/>
 
       {/* Timeline chart */}
       <div style={{background:'var(--bg-card)',border:'1px solid var(--line-1)',borderRadius:12,padding:'20px 24px',marginBottom:32}}>
@@ -97,10 +97,9 @@ function EconomicsView({ onNav }) {
         <FeeBars data={series}/>
       </div>
 
-      {/* a. Available for withdrawal + b. Invested */}
+      {/* Available for withdrawal + Invested */}
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:40}}>
         <SubCard
-          label="a."
           title="Available for withdrawal"
           amount="$118,400"
           sub="Swept to Operating · Citi 4451 after each month-end"
@@ -123,7 +122,6 @@ function EconomicsView({ onNav }) {
         </SubCard>
 
         <SubCard
-          label="b."
           title="Invested in the fund"
           amount="$711,763"
           sub="Manager fees re-subscribed to the fund. Locked, compounds with NAV."
@@ -152,11 +150,10 @@ function EconomicsView({ onNav }) {
         </SubCard>
       </div>
 
-      {/* ===== 2. Expenses paid ===== */}
-      <SectionHeadE n="2" title="Expenses paid" desc="Fund expenses charged against NAV. Custody fees are paid monthly from the Operating account and allocated pro-rata across classes."/>
+      {/* ===== Expenses paid ===== */}
+      <SectionHeadE title="Expenses paid" desc="Fund expenses charged against NAV. Custody fees are paid monthly from the Operating account and allocated pro-rata across classes."/>
 
       <SubCard
-        label="a."
         title="Custody fees"
         amount="$117,720"
         sub="Paid YTD across 4 custody partners · Self-custody is free"
@@ -211,29 +208,23 @@ function KpiCard({ l, v, s, neg }) {
   );
 }
 
-function SectionHeadE({ n, title, desc }) {
+function SectionHeadE({ title, desc }) {
   return (
-    <div style={{display:'flex',alignItems:'flex-start',gap:14,marginBottom:18}}>
-      <div style={{width:28,height:28,borderRadius:8,background:'var(--bg-card)',border:'1px solid var(--line-1)',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:13,fontWeight:600,color:'var(--ink-1)',flexShrink:0,fontVariantNumeric:'tabular-nums',marginTop:2}}>{n}</div>
-      <div style={{minWidth:0}}>
-        <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',color:'var(--ink-1)'}}>{title}</div>
-        <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4,maxWidth:640}}>{desc}</div>
-      </div>
+    <div style={{marginBottom:18}}>
+      <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',color:'var(--ink-1)'}}>{title}</div>
+      <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4,maxWidth:640}}>{desc}</div>
     </div>
   );
 }
 
-function SubCard({ label, title, amount, sub, action, children }) {
+function SubCard({ title, amount, sub, action, children }) {
   return (
     <div style={{background:'var(--bg-card)',border:'1px solid var(--line-1)',borderRadius:12,padding:'20px 24px',display:'flex',flexDirection:'column',minWidth:0}}>
       <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:16,marginBottom:16}}>
-        <div style={{display:'flex',alignItems:'flex-start',gap:10,minWidth:0}}>
-          <span style={{fontSize:12,fontWeight:600,color:'var(--ink-3)',fontVariantNumeric:'tabular-nums',marginTop:6,flexShrink:0}}>{label}</span>
-          <div style={{minWidth:0}}>
-            <div style={{fontSize:14,fontWeight:500,color:'var(--ink-2)'}}>{title}</div>
-            <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)',marginTop:4}}>{amount}</div>
-            <div style={{fontSize:12,color:'var(--ink-3)',marginTop:6,maxWidth:360}}>{sub}</div>
-          </div>
+        <div style={{minWidth:0}}>
+          <div style={{fontSize:14,fontWeight:500,color:'var(--ink-2)'}}>{title}</div>
+          <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)',marginTop:4}}>{amount}</div>
+          <div style={{fontSize:12,color:'var(--ink-3)',marginTop:6,maxWidth:360}}>{sub}</div>
         </div>
         {action && (
           <button style={{
