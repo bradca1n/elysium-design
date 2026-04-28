@@ -202,7 +202,7 @@ function KpiCard({ l, v, s, neg }) {
   return (
     <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'14px 18px'}}>
       <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{l}</div>
-      <div style={{fontSize:22,fontWeight:600,letterSpacing:'-0.01em',fontVariantNumeric:'tabular-nums',color: neg?'var(--ink-1)':'var(--ink-1)'}}>{v}</div>
+      <div style={{fontSize:26,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',color: neg?'var(--ink-1)':'var(--ink-1)'}}>{v}</div>
       <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{s}</div>
     </div>
   );
@@ -222,7 +222,7 @@ function SubCard({ title, amount, sub, action, children }) {
     <div style={{background:'var(--bg-card)',border:'1px solid var(--line-1)',borderRadius:12,padding:'20px 24px',display:'flex',flexDirection:'column',minWidth:0}}>
       <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:16,marginBottom:16}}>
         <div style={{minWidth:0}}>
-          <div style={{fontSize:28,fontWeight:600,letterSpacing:'-0.02em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)',lineHeight:1.1}}>{amount}</div>
+          <div style={{fontSize:28,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)',lineHeight:1.1}}>{amount}</div>
           <div style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',marginTop:24}}>{title}</div>
           <div style={{fontSize:12.5,color:'var(--ink-2)',marginTop:4,maxWidth:360}}>{sub}</div>
         </div>

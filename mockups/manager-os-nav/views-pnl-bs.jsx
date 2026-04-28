@@ -12,28 +12,24 @@ function ProfitLossView({ onNav }) {
   return (
     <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
       {/* Head */}
-      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 20px',gap:24}}>
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 16px',gap:24}}>
         <div>
-          <div style={{fontSize:28,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)',display:'flex',alignItems:'baseline',gap:12}}>
-            Profit &amp; Loss
-            <span style={{fontSize:12,fontWeight:500,color:'var(--ink-2)'}}>Period {range} · close of 07 Feb 16:00 UTC · base USD</span>
-          </div>
+          <div style={{fontSize:28,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>Profit &amp; Loss</div>
+          <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Close of 07 Feb 16:00 UTC · base USD</div>
         </div>
-        <div style={{display:'flex',gap:8,alignItems:'center'}}>
-          <div style={{display:'inline-flex',background:'var(--bg-subtle)',borderRadius:8,padding:2}}>
-            {['MTD','QTD','YTD','ITD'].map(r => (
-              <button key={r} onClick={()=>setRange(r)} style={{
-                height:28,padding:'0 12px',border:'none',borderRadius:6,cursor:'pointer',fontFamily:'inherit',fontSize:12,fontWeight:500,
-                background: range===r?'var(--bg-canvas)':'transparent',
-                color: range===r?'var(--ink-1)':'var(--ink-2)',
-                boxShadow: range===r?'0 1px 2px rgba(0,0,0,0.06)':'none',
-              }}>{r}</button>
-            ))}
-          </div>
+        <div style={{display:'flex',gap:8,alignItems:'center',flexShrink:0}}>
           <button style={pbBtnOutline}><Icon.download style={{width:13,height:13}}/> Export</button>
           <button style={pbBtnPrimary}>Lock period</button>
         </div>
       </div>
+
+      {/* Filter row */}
+      <FilterBar
+        range={range}
+        setRange={setRange}
+        ranges={['MTD','QTD','YTD','ITD']}
+        chips={['Spot + derivatives','All venues']}
+      />
 
       {/* KPIs */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:28}}>
@@ -250,7 +246,7 @@ function FeesExpenses() {
         ].map((k,i) => (
           <div key={i} style={{background:'var(--glass-bg)',borderRadius:10,padding:'16px 20px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
-            <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
+            <div style={{fontSize:26,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
             <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
           </div>
         ))}
@@ -489,6 +485,47 @@ function BalanceSheetView({ onNav }) {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function FilterBar({ range, setRange, ranges, chips = [] }) {
+  const [activeChips, setActiveChips] = _pb1(chips);
+  const removeChip = (c) => setActiveChips(cs => cs.filter(x => x !== c));
+  const divider = <div style={{width:1,height:24,background:'var(--line-1)',flexShrink:0}}/>;
+  return (
+    <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:28,flexWrap:'wrap'}}>
+      <div style={{display:'inline-flex',background:'var(--bg-subtle)',borderRadius:999,padding:4}}>
+        {ranges.map(r => (
+          <button key={r} onClick={()=>setRange(r)} style={{
+            height:32,padding:'0 18px',border:'none',borderRadius:999,cursor:'pointer',fontFamily:'inherit',fontSize:13,fontWeight:500,
+            background: range===r?'var(--bg-canvas)':'transparent',
+            color: range===r?'var(--ink-1)':'var(--ink-3)',
+            boxShadow: range===r?'0 1px 2px rgba(0,0,0,0.08)':'none',
+            transition:'background 0.15s, color 0.15s',
+          }}>{r}</button>
+        ))}
+      </div>
+      {activeChips.length > 0 && divider}
+      {activeChips.map(c => (
+        <button key={c} onClick={()=>removeChip(c)} style={{
+          display:'inline-flex',alignItems:'center',gap:8,height:32,padding:'0 14px',
+          border:'none',background:'var(--bg-subtle)',borderRadius:999,
+          color:'var(--ink-1)',fontSize:13,fontWeight:500,cursor:'pointer',fontFamily:'inherit',
+        }}>
+          {c}
+          <Icon.x style={{width:11,height:11,color:'var(--ink-3)'}}/>
+        </button>
+      ))}
+      {divider}
+      <button style={{
+        display:'inline-flex',alignItems:'center',gap:8,height:32,padding:'0 14px',
+        border:'1px solid var(--line-2)',background:'var(--bg-canvas)',borderRadius:999,
+        color:'var(--ink-1)',fontSize:13,fontWeight:500,cursor:'pointer',fontFamily:'inherit',
+      }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='var(--bg-canvas)'}>
+        <Icon.plus style={{width:13,height:13}}/>
+        Filter
+      </button>
     </div>
   );
 }
