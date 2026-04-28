@@ -335,26 +335,10 @@ function CollateralView({ onNav }) {
         </div>
 
         <div style={{display:'grid',gridTemplateColumns:'repeat(4, 1fr)',gap:16}} data-kpi-grid>
-          <div>
-            <div>Pending Subscriptions</div>
-            <div style={{fontSize:26,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>+$150,000</div>
-            <div style={{fontSize:11.5}}>5 orders</div>
-          </div>
-          <div>
-            <div>Pending Redemptions</div>
-            <div style={{fontSize:26,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',color:'var(--neg)'}}>−$320,000</div>
-            <div style={{fontSize:11.5}}>2 orders</div>
-          </div>
-          <div>
-            <div>Projected post-dealing cash</div>
-            <div style={{fontSize:26,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums'}}>$2,476,000</div>
-            <div style={{fontSize:11.5}}>after settlement Mon 8 Feb</div>
-          </div>
-          <div>
-            <div>Net cash required</div>
-            <div style={{fontSize:26,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums'}}>$170,000</div>
-            <div style={{fontSize:11.5}}>outflow at settlement</div>
-          </div>
+          <Kpi l="Pending subscriptions" v="+$150,000" s="5 orders" pos/>
+          <Kpi l="Pending redemptions" v="−$320,000" s="2 orders" neg/>
+          <Kpi l="Projected post-dealing cash" v="$2,476,000" s="after settlement Mon 8 Feb"/>
+          <Kpi l="Net cash required" v="$170,000" s="outflow at settlement"/>
         </div>
       </section>
 

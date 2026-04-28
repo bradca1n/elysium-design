@@ -182,6 +182,29 @@ function Donut({ slices, total, label = 'NAV' }) {
 }
 
 /* ─────────────────────────── CHROME ─────────────────────────── */
+function NextDealingCountdown() {
+  const targetRef = React.useRef(null);
+  if (targetRef.current === null) {
+    const initialMs = (3 * 24 * 3600 + 14 * 3600 + 22 * 60) * 1000;
+    targetRef.current = Date.now() + initialMs;
+  }
+  const [, setTick] = React.useState(0);
+  React.useEffect(() => {
+    const id = setInterval(() => setTick(t => t + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const remaining = Math.max(0, targetRef.current - Date.now());
+  const days = Math.floor(remaining / 86_400_000);
+  const hours = Math.floor((remaining % 86_400_000) / 3_600_000);
+  const mins = Math.floor((remaining % 3_600_000) / 60_000);
+  const pad = n => String(n).padStart(2, '0');
+  return (
+    <span style={{fontSize:12.5,color:'var(--ink-2)',whiteSpace:'nowrap',fontVariantNumeric:'tabular-nums'}}>
+      Next dealing · {pad(days)}d {pad(hours)}h {pad(mins)}m
+    </span>
+  );
+}
+
 function Navbar({ onNav, route }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
   React.useEffect(() => {
@@ -223,9 +246,7 @@ function Navbar({ onNav, route }) {
         )}
       </div>
       <div style={{display:'flex',alignItems:'center',gap:14}}>
-        {inFund && (
-          <span style={{fontSize:12.5,color:'var(--ink-3)',whiteSpace:'nowrap',fontVariantNumeric:'tabular-nums'}}>Next dealing · 03d 14h 22m</span>
-        )}
+        {inFund && <NextDealingCountdown/>}
         <button style={{
           display: 'inline-flex', alignItems: 'center', gap: 8,
           height: 32, padding: '0 12px', borderRadius: 8,
