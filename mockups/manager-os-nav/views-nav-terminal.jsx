@@ -267,7 +267,7 @@ function Kpi({ l, v, s, pos, neg }) {
   return (
     <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'16px 20px'}}>
       <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{l}</div>
-      <div style={{fontSize:26,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',color: pos?'var(--pos)': neg?'var(--neg)':'var(--ink-1)'}}>{v}</div>
+      <div style={{fontSize:34,fontWeight:500,letterSpacing:'-0.075em',fontVariantNumeric:'tabular-nums',color: pos?'var(--pos)': neg?'var(--neg)':'var(--ink-1)'}}>{v}</div>
       <div style={{fontSize:11.5,color:'var(--ink-2)',marginTop:6}}>{s}</div>
     </div>
   );

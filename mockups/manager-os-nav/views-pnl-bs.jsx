@@ -41,7 +41,7 @@ function ProfitLossView({ onNav }) {
         ].map((k,i) => (
           <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'16px 20px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
-            <div style={{fontSize:26,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',color: k.pos?'var(--pos)':'var(--ink-1)'}}>{k.v}</div>
+            <div style={{fontSize:34,fontWeight:500,letterSpacing:'-0.075em',fontVariantNumeric:'tabular-nums',color: k.pos?'var(--pos)':'var(--ink-1)'}}>{k.v}</div>
             <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
           </div>
         ))}
@@ -246,7 +246,7 @@ function FeesExpenses() {
         ].map((k,i) => (
           <div key={i} style={{background:'var(--glass-bg)',borderRadius:10,padding:'16px 20px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
-            <div style={{fontSize:26,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
+            <div style={{fontSize:34,fontWeight:500,letterSpacing:'-0.075em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
             <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
           </div>
         ))}
@@ -306,7 +306,7 @@ function Attribution() {
       <div style={{border:'1px solid var(--line-1)',borderRadius:12,padding:'20px 24px'}}>
         <div style={{fontSize:13,fontWeight:600,marginBottom:16,color:'var(--ink-1)'}}>vs benchmark (CCI 30)</div>
         <div style={{display:'flex',alignItems:'baseline',gap:12,marginBottom:20}}>
-          <div style={{fontSize:28,fontWeight:600,letterSpacing:'-0.015em',color:'var(--pos)',fontVariantNumeric:'tabular-nums'}}>+1.82%</div>
+          <div style={{fontSize:34,fontWeight:500,letterSpacing:'-0.075em',color:'var(--pos)',fontVariantNumeric:'tabular-nums'}}>+1.82%</div>
           <div style={{fontSize:13,color:'var(--ink-2)'}}>excess return, period</div>
         </div>
         {[
@@ -389,7 +389,7 @@ function BalanceSheetView({ onNav }) {
         ].map((k,i) => (
           <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'16px 20px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
-            <div style={{fontSize:26,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
+            <div style={{fontSize:34,fontWeight:500,letterSpacing:'-0.075em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
             <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
           </div>
         ))}
