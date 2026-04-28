@@ -200,6 +200,14 @@ function CollateralView({ onNav }) {
 
   return (
     <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
+      {/* Page header */}
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 32px',gap:24}}>
+        <div>
+          <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>Collateral &amp; Treasury</div>
+          <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Free cash, custody balances and venue collateral across the fund.</div>
+        </div>
+      </div>
+
       <section style={{marginBottom:56}}>
         <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:24,marginBottom:20}}>
           <div>
@@ -709,7 +717,7 @@ function ShareRegisterView({ onNav }) {
       {/* ===== Head ===== */}
       <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:24,marginBottom:32}}>
         <div style={{minWidth:0}}>
-          <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>Share Register</div>
+          <div style={{fontSize:24,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.015em'}}>Share Register</div>
           <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Holders, share classes and lock-ups across the fund.</div>
         </div>
         <div style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
