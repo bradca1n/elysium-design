@@ -87,27 +87,26 @@ function NavView({ onNav, showTweaks }) {
 
         <SubTitle title="Portfolio composition" right={<SegToggle value={assetGroup} setValue={setAssetGroup} options={[{v:'spot',l:'Spot'},{v:'derivatives',l:'Derivatives'}]}/>}/>
 
-        <div style={{display:'grid',gridTemplateColumns:'240px 1fr',gap:32,alignItems:'center',marginBottom:16}}>
+        <div style={{display:'grid',gridTemplateColumns:'480px 1fr',gap:32,alignItems:'center',marginBottom:16}}>
           <div style={{display:'flex',justifyContent:'center'}}>
             <DonutChart assets={activeAssets}/>
           </div>
           <div>
-            <div style={{display:'grid',gridTemplateColumns:'28px minmax(0,1.3fr) minmax(0,1.4fr) 120px 70px',gap:16,padding:'4px 4px 8px',borderBottom:'1px solid var(--line-1)',fontSize:10.5,color:'var(--ink-3)',fontWeight:500}}>
-              <div/><div>Asset</div><div>Allocation</div><div style={{textAlign:'right'}}>Value</div><div style={{textAlign:'right'}}>24h</div>
+            <div style={{display:'grid',gridTemplateColumns:'28px minmax(0,1fr) minmax(0,1.1fr) 90px minmax(0,1.4fr) 120px 70px',gap:16,padding:'4px 4px 8px',borderBottom:'1px solid var(--line-1)',fontSize:10.5,color:'var(--ink-3)',fontWeight:500}}>
+              <div/><div>Asset</div><div>Units</div><div style={{textAlign:'right'}}>Price</div><div>Allocation</div><div style={{textAlign:'right'}}>Value</div><div style={{textAlign:'right'}}>24h</div>
             </div>
             {activeAssets.map(a => (
               <div key={a.id} onMouseEnter={() => setActiveAsset(a.id)} onMouseLeave={() => setActiveAsset(null)} style={{
-                display:'grid',gridTemplateColumns:'28px minmax(0,1.3fr) minmax(0,1.4fr) 120px 70px',gap:16,
+                display:'grid',gridTemplateColumns:'28px minmax(0,1fr) minmax(0,1.1fr) 90px minmax(0,1.4fr) 120px 70px',gap:16,
                 padding:'12px 4px',borderBottom:'1px solid var(--line-1)',alignItems:'center',cursor:'pointer',
                 background: activeAsset === a.id ? 'var(--glass-bg)' : 'transparent',
                 backdropFilter: activeAsset === a.id ? 'blur(10px)' : 'none',
                 borderRadius: activeAsset === a.id ? 6 : 0,
               }}>
                 <span style={{width:22,height:22,borderRadius:'50%',background:a.color,color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:9.5,fontWeight:700}}>{a.glyph}</span>
-                <div style={{fontSize:13,fontWeight:500}}>
-                  {a.name}
-                  <span style={{display:'block',fontSize:11.5,color:'var(--ink-3)',marginTop:2,fontVariantNumeric:'tabular-nums',fontWeight:400}}>{a.units} · {a.price}</span>
-                </div>
+                <div style={{fontSize:13,fontWeight:500}}>{a.name}</div>
+                <div style={{fontSize:12.5,color:'var(--ink-2)',fontVariantNumeric:'tabular-nums'}}>{a.units}</div>
+                <div style={{fontSize:12.5,color:'var(--ink-2)',fontVariantNumeric:'tabular-nums',textAlign:'right'}}>{a.price}</div>
                 <div style={{display:'flex',alignItems:'center',gap:12,minWidth:0}}>
                   <span style={{fontSize:12,fontVariantNumeric:'tabular-nums',minWidth:40,color:'var(--ink-1)'}}>{a.pct}%</span>
                   <span style={{flex:1,height:4,background:'var(--bg-subtle)',borderRadius:3,overflow:'hidden',minWidth:60}}>
