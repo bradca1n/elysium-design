@@ -48,28 +48,24 @@ function EconomicsView({ onNav }) {
   return (
     <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
       {/* ===== Head ===== */}
-      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:24,marginBottom:32}}>
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:24,marginBottom:16}}>
         <div style={{minWidth:0}}>
-          <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>Economics</div>
+          <div style={{fontSize:24,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.015em'}}>Economics</div>
           <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Fees, performance and capital flows for the period.</div>
         </div>
         <div style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
-          <div style={{display:'inline-flex',padding:3,background:'var(--bg-subtle)',borderRadius:8}}>
-            {['mtd','qtd','ytd','itd'].map(r => (
-              <button key={r} onClick={()=>setRange(r)} style={{
-                border:'none',cursor:'pointer',padding:'6px 12px',borderRadius:6,
-                fontSize:12,fontWeight:500,fontFamily:'inherit',
-                background: range===r?'var(--bg-canvas)':'transparent',
-                color: range===r?'var(--ink-1)':'var(--ink-2)',
-                boxShadow: range===r?'0 1px 2px rgba(0,0,0,0.06)':'none',
-              }}>{r.toUpperCase()}</button>
-            ))}
-          </div>
           <button aria-label="More" style={{width:32,height:32,border:'1px solid var(--line-2)',background:'var(--bg-canvas)',borderRadius:8,cursor:'pointer',color:'var(--ink-2)',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
           </button>
         </div>
       </div>
+
+      <FilterBar
+        range={range.toUpperCase()}
+        setRange={r => setRange(r.toLowerCase())}
+        ranges={['MTD','QTD','YTD','ITD']}
+        chips={['All custody venues']}
+      />
 
       {/* ===== KPI strip ===== */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:48}}>

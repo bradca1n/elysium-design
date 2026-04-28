@@ -197,10 +197,11 @@ function NextDealingCountdown() {
   const days = Math.floor(remaining / 86_400_000);
   const hours = Math.floor((remaining % 86_400_000) / 3_600_000);
   const mins = Math.floor((remaining % 3_600_000) / 60_000);
+  const secs = Math.floor((remaining % 60_000) / 1000);
   const pad = n => String(n).padStart(2, '0');
   return (
     <span style={{fontSize:12.5,color:'var(--ink-2)',whiteSpace:'nowrap',fontVariantNumeric:'tabular-nums'}}>
-      Next dealing · {pad(days)}d {pad(hours)}h {pad(mins)}m
+      Next dealing · {pad(days)}d {pad(hours)}h {pad(mins)}m {pad(secs)}s
     </span>
   );
 }

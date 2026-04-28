@@ -14,7 +14,7 @@ function ProfitLossView({ onNav }) {
       {/* Head */}
       <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 16px',gap:24}}>
         <div>
-          <div style={{fontSize:28,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>Profit &amp; Loss</div>
+          <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>Profit &amp; Loss</div>
           <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Close of 07 Feb 16:00 UTC · base USD</div>
         </div>
         <div style={{display:'flex',gap:8,alignItems:'center',flexShrink:0}}>
@@ -369,7 +369,7 @@ function BalanceSheetView({ onNav }) {
       {/* Head */}
       <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 20px',gap:24}}>
         <div>
-          <div style={{fontSize:28,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)',display:'flex',alignItems:'baseline',gap:12}}>
+          <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)',display:'flex',alignItems:'baseline',gap:12}}>
             Balance Sheet
             <span style={{fontSize:12,fontWeight:500,color:'var(--ink-2)'}}>As of {asOf} 16:00 UTC · base USD · IFRS</span>
           </div>
@@ -495,10 +495,10 @@ function FilterBar({ range, setRange, ranges, chips = [] }) {
   const divider = <div style={{width:1,height:24,background:'var(--line-1)',flexShrink:0}}/>;
   return (
     <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:28,flexWrap:'wrap'}}>
-      <div style={{display:'inline-flex',background:'var(--bg-subtle)',borderRadius:999,padding:4}}>
+      <div style={{display:'inline-flex',background:'var(--bg-subtle)',borderRadius:12,padding:4}}>
         {ranges.map(r => (
           <button key={r} onClick={()=>setRange(r)} style={{
-            height:32,padding:'0 18px',border:'none',borderRadius:999,cursor:'pointer',fontFamily:'inherit',fontSize:13,fontWeight:500,
+            height:32,padding:'0 18px',border:'none',borderRadius:8,cursor:'pointer',fontFamily:'inherit',fontSize:13,fontWeight:500,
             background: range===r?'var(--bg-canvas)':'transparent',
             color: range===r?'var(--ink-1)':'var(--ink-3)',
             boxShadow: range===r?'0 1px 2px rgba(0,0,0,0.08)':'none',
@@ -510,7 +510,7 @@ function FilterBar({ range, setRange, ranges, chips = [] }) {
       {activeChips.map(c => (
         <button key={c} onClick={()=>removeChip(c)} style={{
           display:'inline-flex',alignItems:'center',gap:8,height:32,padding:'0 14px',
-          border:'none',background:'var(--bg-subtle)',borderRadius:999,
+          border:'none',background:'var(--bg-subtle)',borderRadius:8,
           color:'var(--ink-1)',fontSize:13,fontWeight:500,cursor:'pointer',fontFamily:'inherit',
         }}>
           {c}
@@ -520,7 +520,7 @@ function FilterBar({ range, setRange, ranges, chips = [] }) {
       {divider}
       <button style={{
         display:'inline-flex',alignItems:'center',gap:8,height:32,padding:'0 14px',
-        border:'1px solid var(--line-2)',background:'var(--bg-canvas)',borderRadius:999,
+        border:'1px solid var(--line-2)',background:'var(--bg-canvas)',borderRadius:8,
         color:'var(--ink-1)',fontSize:13,fontWeight:500,cursor:'pointer',fontFamily:'inherit',
       }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='var(--bg-canvas)'}>
         <Icon.plus style={{width:13,height:13}}/>
