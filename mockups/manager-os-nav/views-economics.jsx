@@ -77,7 +77,7 @@ function EconomicsView({ onNav }) {
       </div>
 
       {/* ===== Fees earned ===== */}
-      <SectionHeadE title="Fees earned" desc="Management and performance fees accrued to the manager. Split between cash withdrawn and fees kept invested alongside LPs."/>
+      <SectionHeadE title="Fees earned"/>
 
       {/* Timeline chart */}
       <div style={{background:'var(--bg-card)',border:'1px solid var(--line-1)',borderRadius:12,padding:'20px 24px',marginBottom:32}}>
@@ -148,7 +148,7 @@ function EconomicsView({ onNav }) {
       </div>
 
       {/* ===== Expenses paid ===== */}
-      <SectionHeadE title="Expenses paid" desc="Fund expenses charged against NAV. Custody fees are paid monthly from the Operating account and allocated pro-rata across classes."/>
+      <SectionHeadE title="Expenses paid"/>
 
       <SubCard
         title="Custody fees"
@@ -209,7 +209,7 @@ function SectionHeadE({ title, desc }) {
   return (
     <div style={{marginBottom:18}}>
       <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',color:'var(--ink-1)'}}>{title}</div>
-      <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4,maxWidth:640}}>{desc}</div>
+      {desc && <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4,maxWidth:640}}>{desc}</div>}
     </div>
   );
 }
