@@ -66,7 +66,7 @@ function NavView({ onNav, showTweaks }) {
   return (
     <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
       {/* ========= NET ASSET VALUE ========= */}
-      <section style={{marginBottom:56}}>
+      <section style={{marginBottom:70}}>
         <SectionHead title="NAV" desc="Portfolio allocation and live market values across custody & exchanges." right={<PageKebab/>}/>
 
         {/* Headline KPIs */}
@@ -158,7 +158,7 @@ function NavView({ onNav, showTweaks }) {
       </section>
 
       {/* ========= TREASURY FLOWS ========= */}
-      <section style={{marginBottom:56}}>
+      <section style={{marginBottom:70}}>
         <SectionHead title="Treasury flows" desc="Subscription and redemption activity for the upcoming dealing window. Stables coverage across custody and exchange venues." cta={{ label: 'Open Treasury', onClick: () => onNav('collateral') }}/>
         <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16}}>
           <Kpi l="Net flow next dealing" v="−$170,000" s="Subs +$150K · Redemptions −$320K" neg/>
@@ -168,7 +168,7 @@ function NavView({ onNav, showTweaks }) {
       </section>
 
       {/* ========= PROFIT & LOSS ========= */}
-      <section style={{marginBottom:56}}>
+      <section style={{marginBottom:70}}>
         <SectionHead title="Profit & Loss" desc="Drivers of NAV change this period. Month-to-date as of 07 Feb 16:00 UTC." cta={{ label: 'Open Profit & Loss', onClick: () => onNav('pnl') }}/>
 
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:24}}>
