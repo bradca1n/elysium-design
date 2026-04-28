@@ -34,7 +34,7 @@
     --green-600: #3D5F1F;
     --green-700: #2B4516;
     --pos: #3D5F1F;
-    --neg: #A14133;
+    --neg: #e13733;
     --info-bg: #EEF3F9;
     --info-border: #D2DFEC;
     --info-fg: #345B85;
@@ -51,15 +51,15 @@
     --ink-3: #6B6E73;
     --line-1: #23262C;
     --line-2: #2F333B;
-    --green-50: rgba(159,232,112,0.10);
-    --green-200: rgba(159,232,112,0.25);
+    --green-50: rgba(69,213,155,0.10);
+    --green-200: rgba(69,213,155,0.25);
     --green-300: #4F7A38;
     --green-400: #6FBF55;
-    --green-500: #9FE870;
+    --green-500: #45d59b;
     --green-600: #B8F18C;
     --green-700: #D2F7AE;
-    --pos: #9FE870;
-    --neg: #E68A7A;
+    --pos: #45d59b;
+    --neg: #e13733;
     --info-bg: rgba(95,184,218,0.10);
     --info-border: rgba(95,184,218,0.25);
     --info-fg: #9CC9DD;
@@ -206,7 +206,7 @@
   body { font-feature-settings: normal; }
 
   /* Lock dark-mode accent to bright terminal lime; light mode flows from accent swatch */
-  .dark { --accent-plum: #9FE870 !important; --accent-plum-soft: rgba(159,232,112,0.18) !important; --accent-plum-on: #0A1106 !important; --accent-grad: linear-gradient(135deg, #9FE870, #6FBF55) !important; }
+  .dark { --accent-plum: #45d59b !important; --accent-plum-soft: rgba(69,213,155,0.18) !important; --accent-plum-on: #0A1106 !important; --accent-grad: linear-gradient(135deg, #45d59b, #6FBF55) !important; }
 
   /* Tables — hairline dividers, uppercase tracked headers, no fill on th row */
   table thead tr { background: transparent !important; }
@@ -328,14 +328,14 @@ function App() {
     const accents = {
       // [light-strong, dark-strong, light-soft, dark-soft, light-gradient]
       // Light-mode greens — picked for vibrancy on paper-white (#FBFBF9) at AA on body text
-      moss:       ['#3D5F1F', '#9FE870', 'rgba(86,140,40,0.16)',  'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#5C8A2C,#3D5F1F)'],
-      forest:     ['#1F6B3A', '#9FE870', 'rgba(31,107,58,0.14)',  'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#2E8C50,#1F6B3A)'],
-      kelly:      ['#2E8B3D', '#9FE870', 'rgba(46,139,61,0.14)',  'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#43B056,#2E8B3D)'],
-      shamrock:   ['#1AAA5C', '#9FE870', 'rgba(26,170,92,0.13)',  'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#2BC872,#1AAA5C)'],
-      emerald:    ['#0D9F70', '#9FE870', 'rgba(13,159,112,0.14)', 'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#22C58E,#0D9F70)'],
-      jade:       ['#117F5C', '#9FE870', 'rgba(17,127,92,0.14)',  'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#1FA178,#117F5C)'],
-      lime:       ['#4F8C1A', '#9FE870', 'rgba(79,140,26,0.15)',  'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#7BBF34,#4F8C1A)'],
-      chartreuse: ['#5C8A0E', '#9FE870', 'rgba(92,138,14,0.14)',  'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#92BE2A,#5C8A0E)'],
+      moss:       ['#3D5F1F', '#45d59b', 'rgba(86,140,40,0.16)',  'rgba(69,213,155,0.18)', 'linear-gradient(135deg,#5C8A2C,#3D5F1F)'],
+      forest:     ['#1F6B3A', '#45d59b', 'rgba(31,107,58,0.14)',  'rgba(69,213,155,0.18)', 'linear-gradient(135deg,#2E8C50,#1F6B3A)'],
+      kelly:      ['#2E8B3D', '#45d59b', 'rgba(46,139,61,0.14)',  'rgba(69,213,155,0.18)', 'linear-gradient(135deg,#43B056,#2E8B3D)'],
+      shamrock:   ['#1AAA5C', '#45d59b', 'rgba(26,170,92,0.13)',  'rgba(69,213,155,0.18)', 'linear-gradient(135deg,#2BC872,#1AAA5C)'],
+      emerald:    ['#0D9F70', '#45d59b', 'rgba(13,159,112,0.14)', 'rgba(69,213,155,0.18)', 'linear-gradient(135deg,#22C58E,#0D9F70)'],
+      jade:       ['#117F5C', '#45d59b', 'rgba(17,127,92,0.14)',  'rgba(69,213,155,0.18)', 'linear-gradient(135deg,#1FA178,#117F5C)'],
+      lime:       ['#4F8C1A', '#45d59b', 'rgba(79,140,26,0.15)',  'rgba(69,213,155,0.18)', 'linear-gradient(135deg,#7BBF34,#4F8C1A)'],
+      chartreuse: ['#5C8A0E', '#45d59b', 'rgba(92,138,14,0.14)',  'rgba(69,213,155,0.18)', 'linear-gradient(135deg,#92BE2A,#5C8A0E)'],
     };
     const [fgLight, fgDark, softLight, softDark, grad] = accents[tweaks.accent] || accents.moss;
     const isDark = document.body.classList.contains('dark');

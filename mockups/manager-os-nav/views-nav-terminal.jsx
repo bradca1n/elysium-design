@@ -233,7 +233,7 @@ function DonutChart({ assets }) {
   // Normalize slices so they sum to 100% of the donut regardless of actual pct
   const total = assets.reduce((s,a) => s + a.pct, 0);
   const R = 78, r = 54, C = 2 * Math.PI * R;
-  const SIZE = 300;
+  const SIZE = 240;
   let offset = 0;
   return (
     <div style={{position:'relative',width:SIZE,height:SIZE}}>

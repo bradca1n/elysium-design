@@ -110,7 +110,7 @@ function OrderBookView({ onNav }) {
 }
 
 function OrderTypeTag({ type }) {
-  const cfg = type === 'sub' ? { bg: 'var(--green-50)', fg: 'var(--green-700)', label: 'Sub', sym: '↑' } : { bg: '#FFF2F0', fg: '#A14133', label: 'Red', sym: '↓' };
+  const cfg = type === 'sub' ? { bg: 'var(--green-50)', fg: 'var(--green-700)', label: 'Sub', sym: '↑' } : { bg: '#FFF2F0', fg: '#e13733', label: 'Red', sym: '↓' };
   return <span style={{display:'inline-flex',alignItems:'center',gap:4,padding:'2px 8px',borderRadius:4,background:cfg.bg,color:cfg.fg,fontSize:11,fontWeight:600}}>{cfg.sym} {cfg.label}</span>;
 }
 
@@ -809,7 +809,7 @@ function ShareRegisterView({ onNav }) {
           <div style={{display:'flex',alignItems:'center',gap:28}}>
             <ConcentrationPie slices={concSlices}/>
             <div style={{flex:1}}>
-              <div style={{display:'inline-block',padding:'4px 12px',borderRadius:999,background:'#FFF2E8',color:'#A14133',fontSize:11,fontWeight:600,marginBottom:14}}>Moderate concentration</div>
+              <div style={{display:'inline-block',padding:'4px 12px',borderRadius:999,background:'#FFF2E8',color:'#e13733',fontSize:11,fontWeight:600,marginBottom:14}}>Moderate concentration</div>
               {concSlices.map((s,i) => (
                 <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'5px 0',fontSize:12.5}}>
                   <span style={{width:10,height:10,borderRadius:'50%',background:s.color}}/>
@@ -982,10 +982,10 @@ function LockupChip({ value }) {
   const v = (value||'').toLowerCase();
   let bg='var(--bg-subtle)', fg='var(--ink-2)';
   if (v.includes('free')) { bg='transparent'; fg='var(--ink-2)'; }
-  else if (v.includes('hot')) { bg='#FFE8E0'; fg='#A14133'; }
+  else if (v.includes('hot')) { bg='#FFE8E0'; fg='#e13733'; }
   else if (v.includes('locked')) { bg='#F5E9E4'; fg='#8E5948'; }
   else if (v.includes('expiring')) { bg='#FFF0DC'; fg='#8A5A10'; }
-  else if (v.includes('expired')) { bg='#FFE1DC'; fg='#A14133'; }
+  else if (v.includes('expired')) { bg='#FFE1DC'; fg='#e13733'; }
   else if (v.includes('notice')) { bg='#FFF0DC'; fg='#8A5A10'; }
   return <span style={{display:'inline-block',padding:'2px 8px',borderRadius:5,fontSize:11.5,fontWeight:500,background:bg,color:fg}}>{value}</span>;
 }
@@ -995,7 +995,7 @@ function KycChip({ status }) {
     verified:   { label: 'Verified',  bg:'var(--green-50)',  fg:'var(--green-700)' },
     'pending-dd':{label: 'Pending DD',bg:'#FFF0DC',          fg:'#8A5A10' },
     expiring:   { label: 'Expiring DD',bg:'#FFF0DC',          fg:'#8A5A10' },
-    expired:    { label: 'Expired',   bg:'#FFE1DC',          fg:'#A14133' },
+    expired:    { label: 'Expired',   bg:'#FFE1DC',          fg:'#e13733' },
   };
   const s = map[status] || map.verified;
   return <span style={{display:'inline-flex',alignItems:'center',gap:5,padding:'2px 8px',borderRadius:5,fontSize:11.5,fontWeight:500,background:s.bg,color:s.fg}}>
