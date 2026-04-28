@@ -134,12 +134,12 @@ function NavView({ onNav, showTweaks }) {
         }/>
 
         <div>
-          <div style={{display:'grid',gridTemplateColumns:'minmax(0,1.3fr) minmax(0,1.0fr) 100px 70px 90px 110px 100px',gap:16,padding:'4px 4px 8px',borderBottom:'1px solid var(--line-1)',fontSize:10.5,color:'var(--ink-3)',fontWeight:500}}>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(7, minmax(0, 1fr))',gap:16,padding:'4px 4px 8px',borderBottom:'1px solid var(--line-1)',fontSize:10.5,color:'var(--ink-3)',fontWeight:500}}>
             <div>Venue</div><div>Holdings</div><div style={{textAlign:'right'}}>Value</div><div style={{textAlign:'right'}}>Share</div><div style={{textAlign:'right'}}>Net flow</div><div style={{textAlign:'right'}}>Margin</div><div style={{textAlign:'right'}}>Status</div>
           </div>
           {venues.map((v,i) => (
             <React.Fragment key={i}>
-              <div style={{display:'grid',gridTemplateColumns:'minmax(0,1.3fr) minmax(0,1.0fr) 100px 70px 90px 110px 100px',gap:16,padding:'14px 4px 8px',borderBottom:'1px solid var(--line-2)',fontSize:10.5,color:'var(--ink-3)',fontWeight:600,marginTop:4}}>
+              <div style={{display:'grid',gridTemplateColumns:'repeat(7, minmax(0, 1fr))',gap:16,padding:'14px 4px 8px',borderBottom:'1px solid var(--line-2)',fontSize:10.5,color:'var(--ink-3)',fontWeight:600,marginTop:4}}>
                 <div style={{color:'var(--ink-2)'}}>{v.group}</div>
                 <div/>
                 <div style={{textAlign:'right',color:'var(--ink-1)',textTransform:'none',letterSpacing:0,fontSize:12.5,fontWeight:500}}>{v.total}</div>
@@ -147,7 +147,7 @@ function NavView({ onNav, showTweaks }) {
                 <div/><div/><div/>
               </div>
               {v.rows.map((r,j) => (
-                <div key={j} style={{display:'grid',gridTemplateColumns:'minmax(0,1.3fr) minmax(0,1.0fr) 100px 70px 90px 110px 100px',gap:16,padding:'11px 4px',borderBottom:'1px solid var(--line-1)',alignItems:'center',fontSize:13,fontVariantNumeric:'tabular-nums'}}>
+                <div key={j} style={{display:'grid',gridTemplateColumns:'repeat(7, minmax(0, 1fr))',gap:16,padding:'11px 4px',borderBottom:'1px solid var(--line-1)',alignItems:'center',fontSize:13,fontVariantNumeric:'tabular-nums'}}>
                   <div style={{fontWeight:500}}>{r.name}</div>
                   <div style={{color:'var(--ink-2)',fontSize:12.5}}>{r.holdings}</div>
                   <div style={{textAlign:'right'}}>{r.value}</div>
@@ -233,10 +233,11 @@ function DonutChart({ assets }) {
   // Normalize slices so they sum to 100% of the donut regardless of actual pct
   const total = assets.reduce((s,a) => s + a.pct, 0);
   const R = 78, r = 54, C = 2 * Math.PI * R;
+  const SIZE = 320;
   let offset = 0;
   return (
-    <div style={{position:'relative',width:180,height:180}}>
-      <svg width="180" height="180" viewBox="0 0 180 180" style={{transform:'rotate(-90deg)'}}>
+    <div style={{position:'relative',width:SIZE,height:SIZE}}>
+      <svg width={SIZE} height={SIZE} viewBox="0 0 180 180" style={{transform:'rotate(-90deg)'}}>
         <circle cx="90" cy="90" r={R} fill="none" stroke="var(--bg-subtle)" strokeWidth={R - r}/>
         {assets.map((a,i) => {
           const share = a.pct / total;
@@ -254,9 +255,9 @@ function DonutChart({ assets }) {
         })}
       </svg>
       <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center'}}>
-        <div style={{fontSize:10.5,color:'var(--ink-3)',fontWeight:500}}>NAV</div>
-        <div style={{fontSize:22,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',marginTop:2}}>$47.46M</div>
-        <div style={{fontSize:11.5,color:'var(--ink-3)',marginTop:2}}>5 assets</div>
+        <div style={{fontSize:12,color:'var(--ink-3)',fontWeight:500,letterSpacing:'0.04em',textTransform:'uppercase'}}>NAV</div>
+        <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',marginTop:6}}>$47.46M</div>
+        <div style={{fontSize:13,color:'var(--ink-3)',marginTop:4}}>5 assets</div>
       </div>
     </div>
   );
