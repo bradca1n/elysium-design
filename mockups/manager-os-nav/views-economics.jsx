@@ -222,9 +222,9 @@ function SubCard({ title, amount, sub, action, children }) {
     <div style={{background:'var(--bg-card)',border:'1px solid var(--line-1)',borderRadius:12,padding:'20px 24px',display:'flex',flexDirection:'column',minWidth:0}}>
       <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:16,marginBottom:16}}>
         <div style={{minWidth:0}}>
-          <div style={{fontSize:14,fontWeight:500,color:'var(--ink-2)'}}>{title}</div>
-          <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)',marginTop:4}}>{amount}</div>
-          <div style={{fontSize:12,color:'var(--ink-3)',marginTop:6,maxWidth:360}}>{sub}</div>
+          <div style={{fontSize:28,fontWeight:600,letterSpacing:'-0.02em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)',lineHeight:1.1}}>{amount}</div>
+          <div style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',marginTop:24}}>{title}</div>
+          <div style={{fontSize:12.5,color:'var(--ink-2)',marginTop:4,maxWidth:360}}>{sub}</div>
         </div>
         {action && (
           <button style={{
