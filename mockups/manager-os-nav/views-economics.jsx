@@ -46,16 +46,14 @@ function EconomicsView({ onNav }) {
   ];
 
   return (
-    <div style={{padding:'48px 40px 80px',maxWidth:1160,margin:'0 auto'}} data-page>
+    <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
       {/* ===== Head ===== */}
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:24,marginBottom:32}}>
-        <div style={{display:'flex',alignItems:'center',gap:8,fontSize:14,color:'var(--ink-2)'}}>
-          <span style={{width:18,height:18,borderRadius:'50%',background:'linear-gradient(135deg,#D9C9EC,#BBA3DC)',boxShadow:'0 0 0 1px var(--line-2)'}}/>
-          <span>POD Crypto Fund</span>
-          <Icon.chevron style={{width:13,height:13,color:'var(--ink-3)'}}/>
-          <span style={{color:'var(--ink-1)',fontWeight:500}}>Economics</span>
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:24,marginBottom:32}}>
+        <div style={{minWidth:0}}>
+          <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>Economics</div>
+          <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Fees, performance and capital flows for the period.</div>
         </div>
-        <div style={{display:'flex',alignItems:'center',gap:8}}>
+        <div style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
           <div style={{display:'inline-flex',padding:3,background:'var(--bg-subtle)',borderRadius:8}}>
             {['mtd','qtd','ytd','itd'].map(r => (
               <button key={r} onClick={()=>setRange(r)} style={{

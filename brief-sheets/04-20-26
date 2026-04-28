@@ -1,0 +1,115 @@
+# Daily UI/UX Design Tasks
+
+**Date:** 04-20-26
+**Project:** Elysium
+**Focus area:**
+**Main outcome needed today:** Finalise the Phase 1 Manager App screens. 
+
+---
+
+## Top priorities
+1. [ ] We need to build the NAV & Collateral page as high fidelity. Page ID: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product?node-id=1065-519501&t=IaJvR68e9Ge3sru6-11 Please use existing components (Table). Please explicitly use design tokens and text styles. 
+2. [ ] We need to build the Economics page as high fidelity. Page ID: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product?node-id=1065-525668&t=IaJvR68e9Ge3sru6-11 Please use existing components (Table). Please explicitly use design tokens and text styles. 
+3. [ ] Review the Share Register page and see how we can improve the onpage elements and create new components where needed, there are new data visuals here, including the large line graph and filled pie graph. Please improve there structure and then create and systemise the components. 
+3. [ ] We need to build the ‘Benchmarking’ page as high fidelity. Page ID: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product?node-id=1065-527577&t=IaJvR68e9Ge3sru6-11Potential reference for charts: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product?node-id=1196-163333&t=IaJvR68e9Ge3sru6-11Please use existing components (Table). Please explicitly use design tokens and text styles.
+
+### Deferred from Priority 4 (Dropdowns — 04-17) — finish today
+Context: Dropdowns (Account + Notifications) were built this week. These follow-up items were intentionally deferred to keep that scope tight. Full list + rationale: `elysium-design/docs/specs/2026-04-20-dropdown-menus-ship-notes.md`.
+
+- [ ] **Full Tailwind token bridge.** Currently only ~16 Elysium semantic tokens are exposed in `tailwind.config.js` under `colors.ely.*`. Expose all 124 semantic tokens (bg, text color, border, button, status, radius, space, focus, table) as Tailwind utilities + matching CSS vars in `components/ui/gluestack-ui-provider/config.ts`. Consider generating from `tokens/semantic/{Light,Dark}.tokens.json` via a script.
+- [ ] **Text-style utilities in `global.css`.** Generate `.text-body-sm-medium`, `.text-display-md-light`, etc. from `tokens/text-styles.json` (Inter + Serrif Condensed × 5 weights × 11 sizes). Replace inline `font-inter text-[px] leading-[px] font-weight` in the 6 dropdown custom components with named classes.
+- [ ] **Run `tsc --noEmit` + lint** in `LOCAL/gluestack-ui-pro` and fix any type/lint issues introduced by the dropdown work.
+- [ ] **Visual parity QA**: render the 6 dropdown custom components in a scratch screen, side-by-side with the Figma components (`1603:291578`, `291674`, `291742`, `291743`, `291761`, `291910`, `291953`, `292353`). Check pixel-level differences, dark-mode swap, and a11y keyboard tab order.
+- [ ] **Fund filter popover contents**: the filter button exists in the Notifications Dropdown; clicking it should open a checkbox-list popover of funds. Defer until real notification data is wired, but the Figma design for the popover could be sketched now.
+- [ ] **Cosmetic fixes on `Account Dropdown` Figma component**:
+  - Avatar frame isn't a perfect circle (auto-layout stretching). Fix by setting fixed 40×40 sizing or swapping to `Avatar` component instance.
+  - "Give Feedback" label wraps to two lines inside the 40-height menu item. Fix by setting the label's `textAutoResize=HEIGHT` and using `primaryAxisAlignItems=SPACE_BETWEEN` on the row, or shorten copy.
+
+---
+
+## Active design problems
+### Problem 1
+- **Area:**
+- **Context:**
+- **Constraint:**
+- **What good looks like:**
+
+### Problem 2
+- **Area:**
+- **Context:**
+- **Constraint:**
+- **What good looks like:**
+
+### Problem 3
+- **Area:**
+- **Context:**
+- **Constraint:**
+- **What good looks like:**
+
+---
+
+## Work areas
+
+### Figma File
+- [ ] https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+
+### Pages
+- [ ] Widgets > Investor App: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+- [ ] Widgets > Manager OS: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69417
+
+### Components
+- [ ] Global: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69298
+- [ ] Investor App (mobile): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69296
+- [ ] Manager OS (desktop): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69297
+
+### UX writing / product copy
+- [ ]
+- [ ]
+
+---
+
+## Review checklist
+- [ ] User goal is clear
+- [ ] Primary action is clear
+- [ ] Edge cases covered
+- [ ] Empty / loading / error / success states considered
+- [ ] Consistent with design system
+- [ ] Realistic for engineering handoff
+- [ ] Mobile / responsive behaviour considered
+
+---
+
+## Claude session notes
+**Context to give Claude:**
+-
+-
+-
+
+**What I want back from Claude:**
+-
+-
+-
+
+---
+
+## Notes
+-
+-
+-
+
+---
+
+## End of day
+### Done
+-
+-
+-
+
+### Carry forward
+-
+-
+-
+
+### Last task
+- [ ] Run the skill in `elysium-design/skills/daily-summary`
+- [ ] Output the daily summary into `elysium-design/daily-summary`

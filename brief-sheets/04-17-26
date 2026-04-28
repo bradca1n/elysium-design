@@ -1,0 +1,125 @@
+# Daily UI/UX Design Tasks
+
+**Date:** 04-17-26
+**Project:** Elysium (POD)
+**Focus area:** Component system audit & cleanup (Product file)
+**Main outcome needed today:** Every component in the Product file is on the correct page and neatly wrapped in sections, matching the example pattern.
+
+---
+
+## Top priorities
+
+### 1. Component system audit — Product file
+- [ ] **Goal:** review every component in the Product file, confirm correct page placement, and wrap them in neat sections matching the reference example
+- **Target file:** https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product?node-id=340-92&t=IaJvR68e9Ge3sru6-1
+- **Section/layout reference:** https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product?node-id=638-114399&t=IaJvR68e9Ge3sru6-11
+- **Scope:**
+  - Inventory all components across all pages
+  - For each: decide correct home page (Global / Investor App / Manager OS / etc.)
+  - Group by family and wrap in horizontal sections with standard margins (100/50/100/50, 50px header-to-content gap)
+  - Flag orphans, duplicates, and mis-placed components
+- **Constraints:** never use `figma_arrange_component_set` (destructive); sections run horizontally on component pages; bind to Figma variables only
+
+### 2. [carryover — see below]
+### 3. [carryover — see below]
+
+---
+
+## Carryover from 04-14
+- [ ] **Manager app — login + basic account sign-up flow** (priority #1 from 04-14). Pattern source: Mobile Investor App KYC/Onboarding (`600:16351`); Investor Log-in (`334:1032`). Open Q: single-tenant seat vs org creation on sign-up?
+- [ ] **Manager app — initial/empty state screens** (priority #2). Figma: node `340:92`. Mirror Investor App empty-state approach (onboarding checklist + pending items).
+- [ ] **Manager app — fund subsidiary pages** (priority #3). Sidebar master at `346:5724`; 8 nav items (Overview, NAV & Collateral, Share registry, Distribution, Economics, Benchmarking, Classes, Investors). Next step: confirm which items are already built vs new; decide if `Fund Overview`/`Liquidity` map onto `Overview`/`NAV & Collateral` or get retired.
+- [ ] **Dropdown menus** — account/actions (`341:8931`) + notifications (node still needs confirming). Default + scrolling states; notifications needs empty / unread / read.
+- [ ] **Icon strategy** (brief #6 follow-up). Pick A (size-variant wrappers ~100 components), B (leave gluestack `as=*Icon`), or C (swap one and diff breakage — cheap-first recommendation).
+- [ ] **Walkthrough helper / AI sidekick** — greenfield. Decide form first: guided coach-marks vs AI sidekick panel (chat vs contextual tooltips). Start with Manager.
+- [ ] **Input variant mismatch** — code's `outline` variant uses `rounded-xl` (12px) vs Figma spec `rounded-lg` (8px). Decide whether to sweep.
+- [ ] **Desktop portfolio dark-mode** — parked; revisit later.
+
+---
+
+## Active design problems
+### Problem 1
+- **Area:**
+- **Context:**
+- **Constraint:**
+- **What good looks like:**
+
+### Problem 2
+- **Area:**
+- **Context:**
+- **Constraint:**
+- **What good looks like:**
+
+### Problem 3
+- **Area:**
+- **Context:**
+- **Constraint:**
+- **What good looks like:**
+
+---
+
+## Work areas
+
+### Figma File
+- [ ] https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+
+### Pages
+- [ ] Widgets > Investor App: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+- [ ] Widgets > Manager OS: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69417
+
+### Components
+- [ ] Global: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69298
+- [ ] Investor App (mobile): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69296
+- [ ] Manager OS (desktop): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69297
+
+### UX writing / product copy
+- [ ]
+- [ ]
+
+---
+
+## Review checklist
+- [ ] User goal is clear
+- [ ] Primary action is clear
+- [ ] Edge cases covered
+- [ ] Empty / loading / error / success states considered
+- [ ] Consistent with design system
+- [ ] Realistic for engineering handoff
+- [ ] Mobile / responsive behaviour considered
+
+---
+
+## Claude session notes
+**Context to give Claude:**
+-
+-
+-
+
+**What I want back from Claude:**
+-
+-
+-
+
+---
+
+## Notes
+-
+-
+-
+
+---
+
+## End of day
+### Done
+-
+-
+-
+
+### Carry forward
+-
+-
+-
+
+### Last task
+- [ ] Run the skill in `elysium-design/skills/daily-summary`
+- [ ] Output the daily summary into `elysium-design/daily-summary`

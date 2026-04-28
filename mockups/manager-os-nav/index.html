@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Manager OS · POD Crypto Fund</title>
+<title>Manager OS Version 3.0 · POD Crypto Fund</title>
 <meta name="viewport" content="width=1400">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,21 +17,23 @@
     --bg-surface: #FAF9F7;
     --bg-card: #FFFFFF;
     --bg-subtle: #F2F0EC;
-    --ink-1: #15151A;
-    --ink-2: #5A5A63;
-    --ink-3: #8A8A92;
-    --line-1: #E7E5E0;
-    --line-2: #D9D6D0;
-    --accent-plum: #6F4FA0;
-    --accent-plum-soft: #D9C9EC;
-    --green-50: #EEF5EE;
-    --green-200: #C6E1C6;
-    --green-300: #9ECCA0;
-    --green-400: #72B578;
-    --green-500: #4E9E56;
-    --green-600: #3A8544;
-    --green-700: #2B6734;
-    --pos: #2B6734;
+    --ink-1: #0E0F12;
+    --ink-2: #4F5258;
+    --ink-3: #82858B;
+    --line-1: #E4E3DE;
+    --line-2: #D2D1CB;
+    --accent-plum: #3D5F1F;
+    --accent-plum-soft: rgba(86,140,40,0.16);
+    --accent-plum-on: #FFFFFF;
+    --accent-grad: linear-gradient(135deg,#5C8A2C,#3D5F1F);
+    --green-50: rgba(86,140,40,0.08);
+    --green-200: rgba(86,140,40,0.20);
+    --green-300: #8EB763;
+    --green-400: #6FA241;
+    --green-500: #568C28;
+    --green-600: #3D5F1F;
+    --green-700: #2B4516;
+    --pos: #3D5F1F;
     --neg: #A14133;
     --info-bg: #EEF3F9;
     --info-border: #D2DFEC;
@@ -40,29 +42,29 @@
     --glass-border: rgba(0,0,0,0.06);
   }
   .dark {
-    --bg-canvas: #15151A;
-    --bg-surface: #1C1C22;
-    --bg-card: #22222A;
-    --bg-subtle: #2B2B34;
-    --ink-1: #F2F0EC;
-    --ink-2: #B4B2AD;
-    --ink-3: #84828B;
-    --line-1: #2E2E36;
-    --line-2: #3A3A44;
-    --green-50: #1F2C22;
-    --green-200: #2B4530;
-    --green-300: #4E7F53;
-    --green-400: #72B578;
-    --green-500: #8ECC93;
-    --green-600: #A9DBAE;
-    --green-700: #C9E9CD;
-    --pos: #9CD1A1;
-    --neg: #E29E94;
-    --info-bg: #1E2936;
-    --info-border: #34475C;
-    --info-fg: #9EBCDF;
-    --glass-bg: rgba(255,255,255,0.05);
-    --glass-border: rgba(255,255,255,0.08);
+    --bg-canvas: #08090B;
+    --bg-surface: #0F1115;
+    --bg-card: #131519;
+    --bg-subtle: #1B1E24;
+    --ink-1: #F4F5F4;
+    --ink-2: #9DA0A4;
+    --ink-3: #6B6E73;
+    --line-1: #23262C;
+    --line-2: #2F333B;
+    --green-50: rgba(159,232,112,0.10);
+    --green-200: rgba(159,232,112,0.25);
+    --green-300: #4F7A38;
+    --green-400: #6FBF55;
+    --green-500: #9FE870;
+    --green-600: #B8F18C;
+    --green-700: #D2F7AE;
+    --pos: #9FE870;
+    --neg: #E68A7A;
+    --info-bg: rgba(95,184,218,0.10);
+    --info-border: rgba(95,184,218,0.25);
+    --info-fg: #9CC9DD;
+    --glass-bg: #131519;
+    --glass-border: #23262C;
   }
   * { box-sizing: border-box; }
   body {
@@ -195,10 +197,74 @@
   .tweaks-panel .row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-top: 1px solid var(--line-1); }
   .tweaks-panel .row:first-of-type { border-top: none; }
   .tweaks-panel label { color: var(--ink-2); }
-  .swatches { display: flex; gap: 6px; }
+  .swatches { display: flex; gap: 6px; flex-wrap: wrap; max-width: 200px; }
   .swatches button { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line-2); cursor: pointer; padding: 0; }
   .swatches button.active { border-color: var(--ink-1); transform: scale(1.08); }
   .tweak-select { height: 28px; border-radius: 6px; border: 1px solid var(--line-2); background: var(--bg-canvas); color: var(--ink-1); padding: 0 8px; font-size: 12px; }
+
+  /* ─── Terminal theme overrides (apply in BOTH light + dark) ─── */
+  body { font-feature-settings: normal; }
+
+  /* Lock dark-mode accent to bright terminal lime; light mode flows from accent swatch */
+  .dark { --accent-plum: #9FE870 !important; --accent-plum-soft: rgba(159,232,112,0.18) !important; --accent-plum-on: #0A1106 !important; --accent-grad: linear-gradient(135deg, #9FE870, #6FBF55) !important; }
+
+  /* Tables — hairline dividers, uppercase tracked headers, no fill on th row */
+  table thead tr { background: transparent !important; }
+  table thead th {
+    text-transform: uppercase !important;
+    letter-spacing: 0.10em !important;
+    font-size: 10px !important;
+    color: var(--ink-3) !important;
+    font-weight: 500 !important;
+    border-bottom: 1px solid var(--line-1) !important;
+    background: transparent !important;
+  }
+  .dark table tbody tr:hover td { background: var(--bg-card) !important; }
+  body:not(.dark) table tbody tr:hover td { background: var(--bg-surface) !important; }
+
+  /* KPI tile — refined terminal style with numbered badge */
+  [data-kpi-grid] > * {
+    background: var(--bg-card) !important;
+    backdrop-filter: none !important;
+    border-radius: 10px !important;
+    padding: 18px 20px 16px !important;
+    position: relative !important;
+  }
+  body:not(.dark) [data-kpi-grid] > * { border: 1px solid var(--line-1) !important; }
+  [data-kpi-grid] > *::before {
+    content: attr(data-kpi-num);
+    position: absolute; top: 14px; right: 14px;
+    width: 18px; height: 18px;
+    border: 1px solid var(--line-2); border-radius: 4px;
+    color: var(--ink-3); font-size: 9.5px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  [data-kpi-grid] > *:not([data-kpi-num])::before { display: none; }
+  [data-kpi-grid] > * > div:first-child {
+    text-transform: uppercase !important;
+    letter-spacing: 0.10em !important;
+    font-size: 10px !important;
+    color: var(--ink-3) !important;
+    font-weight: 500 !important;
+    margin-bottom: 16px !important;
+  }
+  [data-kpi-grid] > * > div:nth-child(2) {
+    margin-bottom: 24px !important;
+  }
+  [data-kpi-grid] > * > div:nth-child(3) {
+    color: var(--ink-2) !important;
+    margin-top: 0 !important;
+  }
+
+  /* Buttons — terminal corner radii (6px); icon/avatar stay circular */
+  button { border-radius: 6px !important; }
+  .icon-btn, .avatar-btn, .avatar-btn .avatar-circle { border-radius: 50% !important; }
+  .swatches button { border-radius: 50% !important; }
+
+  /* Duration profile graph — sharper corners (colour driven by JSX from accent) */
+  [data-duration-bar] { border-radius: 4px !important; border: none !important; }
+
+  /* Comments thread (giscus) */
   .comments { max-width: 1200px; margin: 0 auto; padding: 48px 40px 96px; border-top: 1px solid var(--line-1); background: var(--bg-canvas); font-family: 'Inter', sans-serif; }
   .comments h2 { font-size: 22px; font-weight: 600; margin: 0 0 6px; color: var(--ink-1); letter-spacing: -0.01em; }
   .comments .comments-sub { font-size: 13px; color: var(--ink-2); margin-bottom: 28px; }
@@ -207,7 +273,7 @@
 <script type="application/json" id="__tweaks">
 {
   "dark": false,
-  "accent": "plum",
+  "accent": "emerald",
   "density": "comfortable",
   "view": "nav"
 }
@@ -229,7 +295,7 @@
           data-reactions-enabled="1"
           data-emit-metadata="0"
           data-input-position="top"
-          data-theme="light"
+          data-theme="preferred_color_scheme"
           data-lang="en"
           crossorigin="anonymous"
           async>
@@ -237,15 +303,15 @@
 </div>
 
 <script type="text/babel" src="components.jsx"></script>
-<script type="text/babel" src="views-nav.jsx"></script>
-<script type="text/babel" src="views-other.jsx"></script>
+<script type="text/babel" src="views-nav-terminal.jsx"></script>
+<script type="text/babel" src="views-other-terminal.jsx"></script>
 <script type="text/babel" src="views-pnl-bs.jsx"></script>
 <script type="text/babel" src="views-economics.jsx"></script>
 
 <script type="text/babel">
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "dark": false,
-  "accent": "plum",
+  "dark": true,
+  "accent": "kelly",
   "density": "comfortable"
 }/*EDITMODE-END*/;
 
@@ -260,15 +326,31 @@ function App() {
     // Only control dark mode if user hasn't set an explicit theme in the account menu
     if (!localStorage.getItem('mos.theme')) document.body.classList.toggle('dark', tweaks.dark);
     const accents = {
-      plum: ['#6F4FA0', '#D9C9EC', 'linear-gradient(135deg,#D9C9EC,#BBA3DC)'],
-      sage: ['#3A8544', '#C6E1C6', 'linear-gradient(135deg,#C6E1C6,#9ECCA0)'],
-      oxblood: ['#8B2F3C', '#EAC9CE', 'linear-gradient(135deg,#EAC9CE,#D29AA3)'],
-      slate: ['#4A5668', '#CBD1DA', 'linear-gradient(135deg,#CBD1DA,#A7B0BE)'],
+      // [light-strong, dark-strong, light-soft, dark-soft, light-gradient]
+      // Light-mode greens — picked for vibrancy on paper-white (#FBFBF9) at AA on body text
+      moss:       ['#3D5F1F', '#9FE870', 'rgba(86,140,40,0.16)',  'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#5C8A2C,#3D5F1F)'],
+      forest:     ['#1F6B3A', '#9FE870', 'rgba(31,107,58,0.14)',  'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#2E8C50,#1F6B3A)'],
+      kelly:      ['#2E8B3D', '#9FE870', 'rgba(46,139,61,0.14)',  'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#43B056,#2E8B3D)'],
+      shamrock:   ['#1AAA5C', '#9FE870', 'rgba(26,170,92,0.13)',  'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#2BC872,#1AAA5C)'],
+      emerald:    ['#0D9F70', '#9FE870', 'rgba(13,159,112,0.14)', 'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#22C58E,#0D9F70)'],
+      jade:       ['#117F5C', '#9FE870', 'rgba(17,127,92,0.14)',  'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#1FA178,#117F5C)'],
+      lime:       ['#4F8C1A', '#9FE870', 'rgba(79,140,26,0.15)',  'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#7BBF34,#4F8C1A)'],
+      chartreuse: ['#5C8A0E', '#9FE870', 'rgba(92,138,14,0.14)',  'rgba(159,232,112,0.18)', 'linear-gradient(135deg,#92BE2A,#5C8A0E)'],
     };
-    const [fg, soft, grad] = accents[tweaks.accent] || accents.plum;
-    document.documentElement.style.setProperty('--accent-plum', fg);
-    document.documentElement.style.setProperty('--accent-plum-soft', soft);
+    const [fgLight, fgDark, softLight, softDark, grad] = accents[tweaks.accent] || accents.moss;
+    const isDark = document.body.classList.contains('dark');
+    document.documentElement.style.setProperty('--accent-plum', isDark ? fgDark : fgLight);
+    document.documentElement.style.setProperty('--accent-plum-soft', isDark ? softDark : softLight);
+    document.documentElement.style.setProperty('--accent-plum-on', isDark ? '#0A1106' : '#FFFFFF');
     document.documentElement.style.setProperty('--accent-grad', grad);
+    // Keep positive/up indicators in lockstep with the accent in light mode
+    if (!isDark) {
+      document.documentElement.style.setProperty('--pos', fgLight);
+      document.documentElement.style.setProperty('--green-600', fgLight);
+    } else {
+      document.documentElement.style.removeProperty('--pos');
+      document.documentElement.style.removeProperty('--green-600');
+    }
   }, [tweaks]);
 
   // Tweaks host protocol
@@ -302,12 +384,12 @@ function App() {
   else view = <NavView onNav={setRoute} showTweaks={showTweaks}/>;
 
   return (
-    <div style={{display:'flex',flexDirection:'column',minHeight:'100vh',background:'var(--bg-canvas)'}}>
-      <div style={{position:'sticky',top:0,zIndex:30,background:'var(--bg-canvas)'}}>
-        <Navbar route={route} onNav={setRoute}/>
-      </div>
-      <div style={{display:'flex',flex:1,minHeight:0}}>
-        <Sidebar route={route} onNav={setRoute}/>
+    <div style={{display:'flex',minHeight:'100vh',background:'var(--bg-canvas)'}}>
+      <Sidebar route={route} onNav={setRoute}/>
+      <div style={{display:'flex',flexDirection:'column',flex:1,minWidth:0}}>
+        <div style={{position:'sticky',top:0,zIndex:30,background:'var(--bg-canvas)'}}>
+          <Navbar route={route} onNav={setRoute}/>
+        </div>
         <main style={{flex:1,minWidth:0,background:'var(--bg-canvas)'}}>
           <div key={route}>{view}</div>
         </main>
@@ -327,10 +409,19 @@ function App() {
             </button>
           </div>
           <div className="row">
-            <label>Accent</label>
+            <label>Accent (light mode)</label>
             <div className="swatches">
-              {[['plum','#6F4FA0'],['sage','#3A8544'],['oxblood','#8B2F3C'],['slate','#4A5668']].map(([k,c]) => (
-                <button key={k} onClick={()=>setTweak('accent', k)} className={tweaks.accent===k?'active':''} style={{background:c}}/>
+              {[
+                ['moss','#3D5F1F'],
+                ['forest','#1F6B3A'],
+                ['kelly','#2E8B3D'],
+                ['shamrock','#1AAA5C'],
+                ['emerald','#0D9F70'],
+                ['jade','#117F5C'],
+                ['lime','#4F8C1A'],
+                ['chartreuse','#5C8A0E'],
+              ].map(([k,c]) => (
+                <button key={k} onClick={()=>setTweak('accent', k)} className={tweaks.accent===k?'active':''} style={{background:c}} title={k}/>
               ))}
             </div>
           </div>
@@ -360,6 +451,35 @@ function App() {
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+
+<script>
+// Terminal-theme post-mount tagger:
+// - numbers each KPI tile within its grid (data-kpi-num="01"…)
+// - tags the duration profile bar (data-duration-bar) so dark CSS can recolor it
+function applyTerminalTags() {
+  document.querySelectorAll('[data-kpi-grid]').forEach(grid => {
+    Array.from(grid.children).forEach((tile, i) => {
+      tile.setAttribute('data-kpi-num', String(i + 1).padStart(2, '0'));
+    });
+  });
+  // Duration profile: a flex row of 3 segments inside Share Register summary charts
+  document.querySelectorAll('div').forEach(el => {
+    if (el.dataset.durationBar) return;
+    const txt = el.textContent || '';
+    if (!/Duration profile/i.test(txt)) return;
+    // Walk siblings to find the bar (a flex container with 3 colored % segments)
+    const next = el.nextElementSibling;
+    if (next && next.children.length === 3 && getComputedStyle(next).display === 'flex') {
+      next.setAttribute('data-duration-bar', '1');
+    }
+  });
+}
+const obs = new MutationObserver(() => applyTerminalTags());
+obs.observe(document.body, { childList: true, subtree: true });
+window.addEventListener('load', applyTerminalTags);
+setTimeout(applyTerminalTags, 100);
+setTimeout(applyTerminalTags, 600);
 </script>
 </body>
 </html>

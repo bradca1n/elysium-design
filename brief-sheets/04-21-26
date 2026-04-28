@@ -1,0 +1,104 @@
+# Daily UI/UX Design Tasks
+
+**Date:** 04-21-26
+**Project:** Elysium
+**Focus area:**
+**Main outcome needed today:**
+
+---
+
+## Top priorities
+1. [ ] Finalise onboarding screens
+2. [ ] Ensure KYC is desktop ready
+3. [ ] Settlements & Transfers (Subscribe, Redeem, Withdraw + Security)
+4. [ ] Finalise Manager App screens for MVP
+5. [ ] Pull fund creation screens in from HTML
+
+---
+
+## Active design problems
+### Problem 1
+- **Area:**
+- **Context:**
+- **Constraint:**
+- **What good looks like:**
+
+### Problem 2
+- **Area:**
+- **Context:**
+- **Constraint:**
+- **What good looks like:**
+
+### Problem 3
+- **Area:**
+- **Context:**
+- **Constraint:**
+- **What good looks like:**
+
+---
+
+## Work areas
+
+### Figma File
+- [ ] https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+
+### Pages
+- [ ] Widgets > Investor App: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+- [ ] Widgets > Manager OS: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69417
+
+### Components
+- [ ] Global: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69298
+- [ ] Investor App (mobile): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69296
+- [ ] Manager OS (desktop): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69297
+
+### UX writing / product copy
+- [ ]
+- [ ]
+
+---
+
+## Review checklist
+- [ ] User goal is clear
+- [ ] Primary action is clear
+- [ ] Edge cases covered
+- [ ] Empty / loading / error / success states considered
+- [ ] Consistent with design system
+- [ ] Realistic for engineering handoff
+- [ ] Mobile / responsive behaviour considered
+
+---
+
+## Claude session notes
+**Context to give Claude:**
+-
+-
+-
+
+**What I want back from Claude:**
+-
+-
+-
+
+---
+
+## Notes
+-
+-
+-
+
+---
+
+## End of day
+### Done
+-
+-
+-
+
+### Carry forward
+-
+-
+-
+
+### Last task
+- [ ] Run the skill in `elysium-design/skills/daily-summary`
+- [ ] Output the daily summary into `elysium-design/daily-summary`

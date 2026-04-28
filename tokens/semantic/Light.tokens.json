@@ -1679,6 +1679,28 @@
       }
     }
   },
+  "shadow": {
+    "dropdown": {
+      "$type": "shadow",
+      "$value": {
+        "offsetX": "0px",
+        "offsetY": "4px",
+        "blur": "24px",
+        "spread": "-2px",
+        "color": "rgba(0,0,0,0.08)",
+        "secondary": {
+          "offsetX": "0px",
+          "offsetY": "2px",
+          "blur": "6px",
+          "spread": "-1px",
+          "color": "rgba(0,0,0,0.06)"
+        }
+      },
+      "$extensions": {
+        "com.figma.effectStyleName": "shadow/dropdown"
+      }
+    }
+  },
   "status": {
     "positive": {
       "$type": "color",

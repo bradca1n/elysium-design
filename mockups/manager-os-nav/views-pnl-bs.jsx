@@ -10,18 +10,10 @@ function ProfitLossView({ onNav }) {
   const [range, setRange] = _pb1('MTD');
 
   return (
-    <div style={{padding:'48px 40px 80px',maxWidth:1160,margin:'0 auto'}} data-page>
+    <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
       {/* Head */}
       <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 20px',gap:24}}>
         <div>
-          <div style={{display:'flex',alignItems:'center',gap:8,fontSize:14,fontWeight:500,color:'var(--ink-2)',marginBottom:40}}>
-            <span style={{width:20,height:20,borderRadius:'50%',background:'linear-gradient(135deg,#D9C9EC,#BBA3DC)',boxShadow:'0 0 0 1px var(--line-2)'}}/>
-            <span>POD Crypto Fund</span>
-            <Icon.chevron style={{width:14,height:14,color:'var(--ink-3)'}}/>
-            <a onClick={(e)=>{e.preventDefault();onNav('nav');}} href="#" style={{color:'var(--ink-2)',textDecoration:'none',cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.color='var(--ink-1)'} onMouseLeave={e=>e.currentTarget.style.color='var(--ink-2)'}>NAV</a>
-            <Icon.chevron style={{width:14,height:14,color:'var(--ink-3)'}}/>
-            <span style={{color:'var(--ink-1)'}}>Profit &amp; Loss</span>
-          </div>
           <div style={{fontSize:28,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)',display:'flex',alignItems:'baseline',gap:12}}>
             Profit &amp; Loss
             <span style={{fontSize:12,fontWeight:500,color:'var(--ink-2)'}}>Period {range} · close of 07 Feb 16:00 UTC · base USD</span>
@@ -73,6 +65,7 @@ function ProfitLossView({ onNav }) {
             fontSize:13,fontWeight: tab===t.k?600:500,
             color: tab===t.k?'var(--ink-1)':'var(--ink-2)',
             borderBottom: tab===t.k?'2px solid var(--ink-1)':'2px solid transparent',
+            borderRadius:0,
             marginBottom:-1,
           }}>{t.l}</button>
         ))}
@@ -376,18 +369,10 @@ function BalanceSheetView({ onNav }) {
   const totalEquity = 47270400;
 
   return (
-    <div style={{padding:'48px 40px 80px',maxWidth:1160,margin:'0 auto'}} data-page>
+    <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
       {/* Head */}
       <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 20px',gap:24}}>
         <div>
-          <div style={{display:'flex',alignItems:'center',gap:8,fontSize:14,fontWeight:500,color:'var(--ink-2)',marginBottom:40}}>
-            <span style={{width:20,height:20,borderRadius:'50%',background:'linear-gradient(135deg,#D9C9EC,#BBA3DC)',boxShadow:'0 0 0 1px var(--line-2)'}}/>
-            <span>POD Crypto Fund</span>
-            <Icon.chevron style={{width:14,height:14,color:'var(--ink-3)'}}/>
-            <a onClick={(e)=>{e.preventDefault();onNav('nav');}} href="#" style={{color:'var(--ink-2)',textDecoration:'none',cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.color='var(--ink-1)'} onMouseLeave={e=>e.currentTarget.style.color='var(--ink-2)'}>NAV</a>
-            <Icon.chevron style={{width:14,height:14,color:'var(--ink-3)'}}/>
-            <span style={{color:'var(--ink-1)'}}>Balance Sheet</span>
-          </div>
           <div style={{fontSize:28,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)',display:'flex',alignItems:'baseline',gap:12}}>
             Balance Sheet
             <span style={{fontSize:12,fontWeight:500,color:'var(--ink-2)'}}>As of {asOf} 16:00 UTC · base USD · IFRS</span>
@@ -510,7 +495,7 @@ function BalanceSheetView({ onNav }) {
 
 // Scoped styles (renamed to avoid collision with views-other)
 const pbBtnOutline = { background:'var(--bg-canvas)',border:'1px solid var(--line-2)',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,color:'var(--ink-1)',display:'inline-flex',alignItems:'center',gap:6,fontFamily:'inherit' };
-const pbBtnPrimary = { background:'#15151A',color:'#F2F0EC',border:'none',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,fontFamily:'inherit' };
+const pbBtnPrimary = { background:'var(--accent-plum)',color:'var(--accent-plum-on)',border:'none',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,fontFamily:'inherit' };
 const pbTh = { textAlign:'left',padding:'10px 16px',fontWeight:500 };
 const pbTd = { padding:'12px 16px',borderTop:'1px solid var(--line-1)' };
 

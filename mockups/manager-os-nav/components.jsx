@@ -192,19 +192,35 @@ function Navbar({ onNav, route }) {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [menuOpen]);
+  // Breadcrumb label for the active route
+  const routeLabels = {
+    'home': 'Home', 'actions': 'Actions', 'communication': 'Communication',
+    'overview': 'Overview', 'nav': 'NAV', 'collateral': 'Collateral & Treasury',
+    'share-register': 'Share Register', 'economics': 'Economics',
+    'pnl': 'Profit & Loss', 'balance-sheet': 'Balance Sheet', 'reconciliation': 'Reconciliation log',
+    'order-book': 'Order Book',
+  };
+  const fundScopedRoutes = ['overview','nav','collateral','share-register','economics','pnl','balance-sheet','reconciliation','order-book'];
+  const inFund = fundScopedRoutes.includes(route);
+  const currentLabel = routeLabels[route] || '';
   return (
     <header style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '14px 32px', background: 'var(--bg-canvas)',
+      display: 'flex', alignItems: 'center',
+      padding: '14px 0', background: 'var(--bg-canvas)',
       height: 64, flexShrink: 0,
     }}>
-      <div style={{display:'flex',alignItems:'center',gap:14}}>
-        <div style={{ display: 'flex', alignItems: 'center', color: 'var(--ink-1)', cursor:'pointer' }} onClick={() => onNav('nav')}>
-          <svg viewBox="0 0 116 28" fill="none" style={{height:24,width:'auto'}}>
-            <path d="M18.52 14.51c0 2.96-2.4 5.35-5.35 5.35s-5.36-2.4-5.36-5.35 2.4-5.36 5.36-5.36 5.35 2.4 5.35 5.36Zm6.21-3.74a13.54 13.54 0 0 1 .3 9.62l-.45.92c-1.73 3.55-4.95 5.81-8.9 5.81h-5.07c-3.95 0-7.13-2.26-8.86-5.81l-.45-.92a13.54 13.54 0 0 1 .3-9.62l2.54-5.26A9.21 9.21 0 0 1 8.92 1.16c2.69-1.2 5.76-1.2 8.44 0 2.02.91 3.69 2.43 4.78 4.36l2.59 5.26M20.43 16.09c-.85-.85-.85-2.22 0-3.07 1.58-1.58 1.58-4.15 0-5.74-1.59-1.59-4.16-1.59-5.74 0a2.18 2.18 0 0 1-3.07 0c-1.59-1.59-4.16-1.59-5.74 0l-.06.06c-1.58 1.58-1.5 4.1.07 5.7.83.85.83 2.22-.01 3.06-1.59 1.58-1.59 4.15 0 5.74 1.58 1.58 4.15 1.58 5.74 0 .84-.84 2.22-.84 3.06 0 1.59 1.58 4.16 1.58 5.75 0 1.58-1.58 1.58-4.15 0-5.74Z" fill="currentColor"/>
-            <path d="M40.98 16.86v6.33h-5.95V4.2h14.25c6.82 0 8.86 2.7 8.86 6.17v.25c0 3.4-2.07 6.23-8.86 6.23h-8.3Zm0-4.26h8.2c1.86 0 2.75-.72 2.75-2v-.08c0-1.27-.87-2.01-2.76-2.01h-8.2V12.6ZM87 13.26v.77c0 3.34-1.38 9.49-13.35 9.49h-1.1c-12.02 0-13.37-6.15-13.37-9.49v-.77c0-3.4 1.35-9.4 13.37-9.4h1.1c11.94 0 13.35 6 13.35 9.4ZM65.4 13.44v.31c0 2.17 1.28 5.15 7.69 5.15s7.68-2.91 7.68-5.1v-.36c0-2.19-1.27-4.97-7.68-4.97s-7.69 2.78-7.69 4.97Zm36.18-9.24c11 0 13.4 4.72 13.4 8.99v.76c0 4.08-2.27 9.27-13.38 9.24H88.99V4.2h12.59Zm-.46 14.42c6.74 0 7.63-2.96 7.63-4.9v-.15c0-1.94-.82-4.88-7.63-4.88h-6.18v9.93h6.18Z" fill="currentColor"/>
-          </svg>
-        </div>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',width:'100%',maxWidth:1500,margin:'0 auto',padding:'0 40px'}}>
+      <div style={{display:'flex',alignItems:'center',gap:10,minWidth:0,flex:1}}>
+        {inFund ? (
+          <React.Fragment>
+            <div style={{width:22,height:22,borderRadius:'50%',background:'radial-gradient(circle at 30% 30%,#E9D5FF 0%,transparent 45%),radial-gradient(circle at 70% 35%,#BFDBFE 0%,transparent 50%),radial-gradient(circle at 50% 75%,#FCA5A5 0%,transparent 55%),linear-gradient(135deg,#C4B5FD 0%,#A5B4FC 55%,#FBCFE8 100%)',flexShrink:0}}/>
+            <span style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',whiteSpace:'nowrap'}}>POD Crypto Fund</span>
+            <Icon.chevron style={{width:14,height:14,color:'var(--ink-3)',flexShrink:0}}/>
+            <span style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{currentLabel}</span>
+          </React.Fragment>
+        ) : (
+          <span style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',whiteSpace:'nowrap'}}>{currentLabel}</span>
+        )}
       </div>
       <div style={{display:'flex',alignItems:'center',gap:14}}>
         <button style={{
@@ -297,6 +313,7 @@ function Navbar({ onNav, route }) {
           )}
         </div>
       </div>
+      </div>
     </header>
   );
 }
@@ -332,7 +349,7 @@ function Sidebar({ route, onNav }) {
     return (
       <a onClick={(e) => { e.preventDefault(); onNav(item.id); }} href="#" style={{
         display: 'flex', alignItems: 'center', gap: 14,
-        padding: '8px 12px', borderRadius: 8,
+        padding: '7px 12px', borderRadius: 8,
         color: active ? 'var(--ink-1)' : 'var(--ink-2)',
         fontSize: 14, fontWeight: active ? 600 : 500,
         textDecoration: 'none', cursor: 'pointer',
@@ -348,16 +365,9 @@ function Sidebar({ route, onNav }) {
     const isActive = route === 'nav';
     return (
       <div style={{display:'flex',flexDirection:'column'}}>
-        <div style={{
-          display:'flex',alignItems:'center',
-          padding:'8px 12px',borderRadius:8,
-          color: isActive ? 'var(--ink-1)' : 'var(--ink-2)',
-          fontSize:14,fontWeight: isActive ? 600 : 500,
-          cursor:'pointer',
-          background: isActive ? 'var(--bg-card)' : 'transparent',
-          transition:'background 0.12s',
-        }} onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'var(--bg-card)'; }} onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}>
-          <a onClick={(e)=>{e.preventDefault();onNav('nav');}} href="#" style={{display:'flex',alignItems:'center',gap:14,flex:1,minWidth:0,color:'inherit',textDecoration:'none'}}>
+        <div style={{display:'flex',alignItems:'center'}}>
+          <a onClick={(e)=>{e.preventDefault();onNav('nav');}} href="#" style={{display:'flex',alignItems:'center',gap:14,padding:'7px 12px',borderRadius:8,color: isActive ? 'var(--ink-1)' : 'var(--ink-2)',fontSize:14,fontWeight: isActive ? 600 : 500,cursor:'pointer',textDecoration:'none',background: isActive ? 'var(--bg-card)' : 'transparent',transition:'background 0.12s',flex:1,minWidth:0}}
+          onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'var(--bg-card)'; }} onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}>
             <Icon.navIcon style={{width:18,height:18,flexShrink:0}}/>
             <span>NAV</span>
           </a>
@@ -396,16 +406,22 @@ function Sidebar({ route, onNav }) {
   };
   return (
     <nav style={{
-      width: 240, padding: '16px 12px',
+      width: 240, padding: '14px 12px 16px',
       background: 'var(--bg-canvas)',
       display: 'flex', flexDirection: 'column', gap: 20,
       flexShrink: 0,
       position: 'sticky',
-      top: 64,
+      top: 0,
       alignSelf: 'flex-start',
-      height: 'calc(100vh - 64px)',
+      height: '100vh',
       overflowY: 'auto',
     }}>
+      <div style={{ display: 'flex', alignItems: 'center', color: 'var(--ink-1)', cursor:'pointer', height: 36, padding: '0 8px' }} onClick={() => onNav('nav')}>
+        <svg viewBox="0 0 116 28" fill="none" style={{height:24,width:'auto'}}>
+          <path d="M18.52 14.51c0 2.96-2.4 5.35-5.35 5.35s-5.36-2.4-5.36-5.35 2.4-5.36 5.36-5.36 5.35 2.4 5.35 5.36Zm6.21-3.74a13.54 13.54 0 0 1 .3 9.62l-.45.92c-1.73 3.55-4.95 5.81-8.9 5.81h-5.07c-3.95 0-7.13-2.26-8.86-5.81l-.45-.92a13.54 13.54 0 0 1 .3-9.62l2.54-5.26A9.21 9.21 0 0 1 8.92 1.16c2.69-1.2 5.76-1.2 8.44 0 2.02.91 3.69 2.43 4.78 4.36l2.59 5.26M20.43 16.09c-.85-.85-.85-2.22 0-3.07 1.58-1.58 1.58-4.15 0-5.74-1.59-1.59-4.16-1.59-5.74 0a2.18 2.18 0 0 1-3.07 0c-1.59-1.59-4.16-1.59-5.74 0l-.06.06c-1.58 1.58-1.5 4.1.07 5.7.83.85.83 2.22-.01 3.06-1.59 1.58-1.59 4.15 0 5.74 1.58 1.58 4.15 1.58 5.74 0 .84-.84 2.22-.84 3.06 0 1.59 1.58 4.16 1.58 5.75 0 1.58-1.58 1.58-4.15 0-5.74Z" fill="currentColor"/>
+          <path d="M40.98 16.86v6.33h-5.95V4.2h14.25c6.82 0 8.86 2.7 8.86 6.17v.25c0 3.4-2.07 6.23-8.86 6.23h-8.3Zm0-4.26h8.2c1.86 0 2.75-.72 2.75-2v-.08c0-1.27-.87-2.01-2.76-2.01h-8.2V12.6ZM87 13.26v.77c0 3.34-1.38 9.49-13.35 9.49h-1.1c-12.02 0-13.37-6.15-13.37-9.49v-.77c0-3.4 1.35-9.4 13.37-9.4h1.1c11.94 0 13.35 6 13.35 9.4ZM65.4 13.44v.31c0 2.17 1.28 5.15 7.69 5.15s7.68-2.91 7.68-5.1v-.36c0-2.19-1.27-4.97-7.68-4.97s-7.69 2.78-7.69 4.97Zm36.18-9.24c11 0 13.4 4.72 13.4 8.99v.76c0 4.08-2.27 9.27-13.38 9.24H88.99V4.2h12.59Zm-.46 14.42c6.74 0 7.63-2.96 7.63-4.9v-.15c0-1.94-.82-4.88-7.63-4.88h-6.18v9.93h6.18Z" fill="currentColor"/>
+        </svg>
+      </div>
       <div style={{display:'flex',flexDirection:'column',gap:2}}>
         {primary.map(i => <NavItem key={i.id} item={i}/>)}
       </div>

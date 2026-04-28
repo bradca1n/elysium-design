@@ -20,15 +20,9 @@ function OrderBookView({ onNav }) {
   const filtered = filter === 'all' ? orders : orders.filter(o => filter === 'sub' ? o.type === 'sub' : filter === 'red' ? o.type === 'red' : o.status === filter);
 
   return (
-    <div style={{padding:'48px 40px 80px',maxWidth:1160,margin:'0 auto'}} data-page>
+    <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
       <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 24px',gap:24}}>
         <div>
-          <div style={{display:'flex',alignItems:'center',gap:8,fontSize:14,fontWeight:500,color:'var(--ink-1)',marginBottom:40}}>
-            <span style={{width:20,height:20,borderRadius:'50%',background:'linear-gradient(135deg,#D9C9EC,#BBA3DC)',boxShadow:'0 0 0 1px var(--line-2)'}}/>
-            <span>POD Crypto Fund</span>
-            <Icon.chevron style={{width:14,height:14,color:'var(--ink-3)'}}/>
-            <span>Order book</span>
-          </div>
           <div style={{fontSize:28,fontWeight:600,letterSpacing:'-0.015em',display:'flex',alignItems:'baseline',gap:12}}>
             Order book <span style={{fontSize:12,fontWeight:500,color:'var(--ink-2)'}}>7 orders · cutoff Mon 14:00 UTC</span>
           </div>
@@ -191,12 +185,13 @@ function CollateralView({ onNav }) {
   const [sheetOpen, setSheetOpen] = _s1(false);
 
   const collateral = [
-    { asset:'BTC', venue:'Coinbase Prime', type:'Custody', posted:'$4.1M', util:68 },
-    { asset:'ETH', venue:'Copper.co', type:'Clearloop', posted:'$1.6M', util:41 },
-    { asset:'USDC', venue:'Binance', type:'Margin', posted:'$2.7M', util:22 },
-    { asset:'SOL', venue:'OKX', type:'Perp', posted:'$0.8M', util:57 },
-    { asset:'USDT', venue:'Binance', type:'Margin', posted:'$1.2M', util:18 },
+    { asset:'BTC', venue:'Coinbase Prime', type:'Custody', posted:'$4.1M', util:68, fee: 0.08, income: 0.42 },
+    { asset:'ETH', venue:'Copper.co', type:'Clearloop', posted:'$1.6M', util:41, fee: 0.12, income: 0.30 },
+    { asset:'USDC', venue:'Binance', type:'Margin', posted:'$2.7M', util:22, fee: 0.18, income: 0.06 },
+    { asset:'SOL', venue:'OKX', type:'Perp', posted:'$0.8M', util:57, fee: 0.22, income: 0.00 },
+    { asset:'USDT', venue:'Binance', type:'Margin', posted:'$1.2M', util:18, fee: 0.18, income: 0.06 },
   ];
+  // Computed blended rates (weighted by posted value): fee 0.13%, income 0.20%, net +0.07%
   const redemptions = [
     { inv:'@NovaTechFund', cls:'Class A', units:'904.76', amt:'$950,000' },
     { inv:'@GlobalVest', cls:'Class B', units:'3,492.01', amt:'$350,000' },
@@ -205,66 +200,19 @@ function CollateralView({ onNav }) {
   ];
 
   return (
-    <div style={{padding:'48px 40px 80px',maxWidth:1160,margin:'0 auto'}} data-page>
-      <div style={{display:'flex',alignItems:'center',gap:8,fontSize:14,fontWeight:500,color:'var(--ink-2)',marginBottom:40}}>
-        <span style={{width:20,height:20,borderRadius:'50%',background:'linear-gradient(135deg,#D9C9EC,#BBA3DC)',boxShadow:'0 0 0 1px var(--line-2)'}}/>
-        <span>POD Crypto Fund</span>
-        <Icon.chevron style={{width:14,height:14,color:'var(--ink-3)'}}/>
-        <span style={{color:'var(--ink-1)'}}>Collateral & Treasury</span>
-      </div>
-
-      <section style={{marginBottom:56}}>
-        <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:24,marginBottom:20}}>
-          <div>
-            <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em',display:'flex',alignItems:'baseline',gap:10}}>
-              Collateral position
-              <span style={{fontSize:11.5,fontWeight:500,color:'var(--green-700)',background:'var(--green-50)',padding:'3px 8px',borderRadius:999}}>68% utilised · 5 venues</span>
-            </div>
-            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Assets posted to exchanges to support trading. Not part of free cash — moves with positions and prices.</div>
-          </div>
-          <button onClick={()=>setSheetOpen(true)} style={btnOutline}>Move collateral</button>
-        </div>
-
-        <div style={{display:'flex',alignItems:'flex-start',gap:10,padding:'12px 16px',background:'var(--info-bg)',border:'1px solid var(--info-border)',borderRadius:10,marginBottom:20}}>
-          <div style={{width:18,height:18,borderRadius:'50%',background:'var(--info-fg)',color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,flexShrink:0,marginTop:1}}>i</div>
-          <div style={{fontSize:13,color:'var(--info-fg)'}}>Collateral is required margin at exchanges, posted to back open positions. It's not available as free cash.</div>
-        </div>
-
-        <div style={{overflowX:'auto'}}>
-          <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
-            <thead>
-              <tr style={{fontSize:12,color:'var(--ink-3)',fontWeight:500}}>
-                <th style={th}>Asset</th>
-                <th style={th}>Venue</th>
-                <th style={th}>Account type</th>
-                <th style={th}>Posted</th>
-                <th style={{...th,textAlign:'right'}}>Utilization</th>
-              </tr>
-            </thead>
-            <tbody>
-              {collateral.map((r,i) => (
-                <tr key={i} data-row>
-                  <td style={{...td,fontWeight:500}}>{r.asset}</td>
-                  <td style={td}>{r.venue}</td>
-                  <td style={td}>{r.type}</td>
-                  <td style={td}>{r.posted}</td>
-                  <td style={{...td,textAlign:'right'}}>
-                    <span style={{display:'inline-flex',fontSize:12,fontWeight:500,color:'var(--green-700)',background:'var(--green-50)',padding:'3px 10px',borderRadius:999}}>{r.util}%</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
+    <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
       <section style={{marginBottom:56}}>
         <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:24,marginBottom:20}}>
           <div>
             <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>Treasury</div>
             <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Free cash available for trading positions, and upcoming fund flows.</div>
           </div>
-          <button style={btnOutline}>View Cashbook</button>
+          <div style={{display:'flex',alignItems:'center',gap:8}}>
+            <button style={btnOutline}>View Cashbook</button>
+            <button aria-label="More" style={{width:32,height:32,border:'none',background:'transparent',borderRadius:8,cursor:'pointer',color:'var(--ink-2)',display:'inline-flex',alignItems:'center',justifyContent:'center',flexShrink:0}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+            </button>
+          </div>
         </div>
 
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
@@ -302,6 +250,80 @@ function CollateralView({ onNav }) {
             </div>
           </div>
         </div>
+
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:16}}>
+          <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'16px 20px'}}>
+            <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>Coverage of avg daily withdrawal</div>
+            <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums'}}>52×</div>
+            <div style={{fontSize:11.5,color:'var(--ink-2)',marginTop:6}}>$6.25M cash ÷ $120K avg daily withdrawal</div>
+          </div>
+          <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'16px 20px'}}>
+            <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>Coverage of next notice period</div>
+            <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums'}}>8.4×</div>
+            <div style={{fontSize:11.5,color:'var(--ink-2)',marginTop:6}}>$6.25M cash ÷ $745K max plausible withdrawals</div>
+          </div>
+        </div>
+      </section>
+
+      <section style={{marginBottom:56}}>
+        <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:24,marginBottom:20}}>
+          <div>
+            <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em',display:'flex',alignItems:'baseline',gap:10}}>
+              Collateral position
+              <span style={{fontSize:11.5,fontWeight:500,color:'var(--green-700)',background:'var(--green-50)',padding:'3px 8px',borderRadius:999}}>68% utilised · 5 venues</span>
+            </div>
+            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Assets posted to exchanges to support trading. Not part of free cash — moves with positions and prices.</div>
+          </div>
+          <button onClick={()=>setSheetOpen(true)} style={btnOutline}>Move collateral</button>
+        </div>
+
+        <div style={{display:'flex',alignItems:'flex-start',gap:10,padding:'12px 16px',background:'var(--info-bg)',border:'1px solid var(--info-border)',borderRadius:10,marginBottom:20}}>
+          <div style={{width:18,height:18,borderRadius:'50%',background:'var(--info-fg)',color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,flexShrink:0,marginTop:1}}>i</div>
+          <div style={{fontSize:13,color:'var(--info-fg)'}}>Collateral is required margin at exchanges, posted to back open positions. It's not available as free cash.</div>
+        </div>
+
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
+            <thead>
+              <tr style={{fontSize:12,color:'var(--ink-3)',fontWeight:500}}>
+                <th style={th}>Asset</th>
+                <th style={th}>Venue</th>
+                <th style={th}>Account type</th>
+                <th style={th}>Posted</th>
+                <th style={{...th,textAlign:'right'}}>Utilization</th>
+                <th style={{...th,textAlign:'right'}}>Fee</th>
+                <th style={{...th,textAlign:'right'}}>Income</th>
+                <th style={{...th,textAlign:'right'}}>Net rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              {collateral.map((r,i) => {
+                const net = r.income - r.fee;
+                return (
+                  <tr key={i} data-row>
+                    <td style={{...td,fontWeight:500}}>{r.asset}</td>
+                    <td style={td}>{r.venue}</td>
+                    <td style={td}>{r.type}</td>
+                    <td style={td}>{r.posted}</td>
+                    <td style={{...td,textAlign:'right'}}>
+                      <span style={{display:'inline-flex',fontSize:12,fontWeight:500,color:'var(--green-700)',background:'var(--green-50)',padding:'3px 10px',borderRadius:999}}>{r.util}%</span>
+                    </td>
+                    <td style={{...td,textAlign:'right',color:'var(--ink-2)'}}>{r.fee.toFixed(2)}%</td>
+                    <td style={{...td,textAlign:'right',color:'var(--ink-2)'}}>{r.income.toFixed(2)}%</td>
+                    <td style={{...td,textAlign:'right',fontWeight:500,color: net >= 0 ? 'var(--pos)' : 'var(--neg)'}}>{net >= 0 ? '+' : ''}{net.toFixed(2)}%</td>
+                  </tr>
+                );
+              })}
+              <tr style={{background:'var(--bg-subtle)',fontSize:13,fontWeight:600}}>
+                <td style={{...td,fontWeight:600}} colSpan={4}>Blended (weighted by posted value)</td>
+                <td style={{...td,textAlign:'right',color:'var(--ink-3)'}}>—</td>
+                <td style={{...td,textAlign:'right'}}>0.13%</td>
+                <td style={{...td,textAlign:'right'}}>0.20%</td>
+                <td style={{...td,textAlign:'right',color:'var(--pos)'}}>+0.07%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section style={{marginBottom:56}}>
@@ -312,7 +334,7 @@ function CollateralView({ onNav }) {
           <button onClick={()=>onNav('order-book')} style={btnOutline}>View full order book</button>
         </div>
 
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(280px, 1fr))',gap:16}}>
           <div style={{background:'#DEF3E4',borderRadius:10,padding:'18px 22px'}}>
             <div style={{fontSize:12,color:'var(--green-700)',fontWeight:500,marginBottom:6}}>Pending Subscriptions</div>
             <div style={{fontSize:28,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',color:'var(--green-700)'}}>+$150,000</div>
@@ -612,21 +634,22 @@ function VenuePicker({ label, value, setValue }) {
 // SHARE REGISTER
 // ============================================================================
 function ShareRegisterView({ onNav }) {
-  const [holdingBy, setHoldingBy] = _s1('investor');
+  const [holdingBy, setHoldingBy] = _s1('capital');
+  const [resultsBy, setResultsBy] = _s1('book');
 
   // Investor rows — deterministic palette per avatar
   const palette = ['#D97A5B','#6E8AB5','#3F7E58','#9B6BA8','#C09A3C','#4A6B85','#8E5948','#6B8E6B','#B06A7E','#4C8D93'];
   const rows = [
-    { name: 'Anchor Capital',          loc: 'Delaware, US · Institutional', cls: 'Class A', units: '42,100.5', value: '$6,012,942', lockup: 'Free',        kyc: 'verified',  last: 'Sub · 08 Apr' },
-    { name: 'Elara Trust',             loc: 'Zug, CH · Family office',      cls: 'Class A', units: '21,003.2', value: '$3,000,097', lockup: 'Hot notice',  kyc: 'verified',  last: 'Red · 02 Apr' },
-    { name: 'Kestrel Family Office',   loc: 'Singapore, SG · Family office',cls: 'Class B', units: '18,721.0', value: '$2,598,144', lockup: 'Locked 330d',kyc: 'verified',  last: 'Onboarded · 12 Feb' },
-    { name: 'Harborlight LLC',         loc: 'London, UK · Corporate',       cls: 'Class I', units: '12,400.7', value: '$1,799,015', lockup: 'Free',        kyc: 'verified',  last: 'Dividend · 31 Mar' },
-    { name: 'Meridian Fund LP',        loc: 'George Town, KY · Institutional',cls: 'Class A', units: '10,102.1', value: '$1,442,596', lockup: 'Free',        kyc: 'pending-dd',last: 'Sub pending · 14 Apr' },
-    { name: 'Northgate Capital',       loc: 'New York, US · Institutional', cls: 'Class I', units: '8,920.4',  value: '$1,273,718', lockup: 'Expiring 1d',kyc: 'expiring',  last: 'Sub · 11 Apr' },
-    { name: 'Solway Ventures',         loc: 'Geneva, CH · Corporate',       cls: 'Class B', units: '7,250.0',  value: '$1,034,982', lockup: '23d notice',  kyc: 'verified',  last: 'Red · 28 Mar' },
-    { name: 'L. Pemberton (HNW)',      loc: 'Monaco · HNWI',                cls: 'Class A', units: '5,003.6',  value: '$715,220',   lockup: 'Expired',     kyc: 'expired',   last: 'Sub · 24 Mar' },
-    { name: 'Orion Capital Partners',  loc: 'Boston, US · Institutional',   cls: 'Class B', units: '4,801.2',  value: '$685,476',   lockup: 'Locked 180d',kyc: 'verified',  last: 'Onboarded · 11 Jan' },
-    { name: 'Vela Asset Mgmt',         loc: 'Boston, US · Institutional',   cls: 'Class A', units: '3,650.9',  value: '$521,120',   lockup: 'Free',        kyc: 'verified',  last: 'Sub · 05 Apr' },
+    { name: 'L2-Eth Ventures',       loc: 'Singapore, SG · Institutional',  cls: 'Class A', units: '142,390', value: '$21,019,500', lockup: 'Locked 270d',  kyc: 'verified',  last: 'Sub · 12 Apr' },
+    { name: 'ZkSync-Bridge Holdings',loc: 'Zug, CH · Institutional',         cls: 'Class A', units: '138,452', value: '$20,438,440', lockup: 'Locked 180d',  kyc: 'verified',  last: 'Sub · 09 Apr' },
+    { name: 'Arbitrum-Gateway Fund', loc: 'George Town, KY · Institutional', cls: 'Class A', units: '132,580', value: '$19,572,150', lockup: 'In notice 18d',kyc: 'verified',  last: 'Red · 04 Apr' },
+    { name: 'Optimism-Stream LP',    loc: 'Delaware, US · Institutional',    cls: 'Class B', units: '128,904', value: '$19,029,090', lockup: 'Free',         kyc: 'verified',  last: 'Sub · 07 Apr' },
+    { name: 'Scroll-Channel Co.',    loc: 'London, UK · Corporate',          cls: 'Class A', units: '125,310', value: '$18,499,820', lockup: 'Locked 330d',  kyc: 'verified',  last: 'Onboarded · 11 Feb' },
+    { name: 'Base-Relay Group',      loc: 'New York, US · Institutional',    cls: 'Class I', units: '119,472', value: '$17,635,460', lockup: 'Free',         kyc: 'verified',  last: 'Dividend · 31 Mar' },
+    { name: 'Polygon-ZkRoute',       loc: 'Geneva, CH · Corporate',          cls: 'Class B', units: '114,238', value: '$16,862,180', lockup: 'In notice 23d',kyc: 'verified',  last: 'Sub · 02 Apr' },
+    { name: 'Starknet-Path Fund',    loc: 'Boston, US · Institutional',      cls: 'Class A', units: '110,592', value: '$16,323,400', lockup: 'Free',         kyc: 'pending-dd',last: 'Sub pending · 14 Apr' },
+    { name: 'Nomina-Universal',      loc: 'Monaco · HNWI',                   cls: 'Class A', units: '108,452', value: '$16,007,710', lockup: 'Expiring 1d', kyc: 'expiring',  last: 'KYC hold · 03 Apr' },
+    { name: 'Vela Asset Mgmt',       loc: 'Boston, US · Institutional',      cls: 'Class A', units: '103,650', value: '$15,298,090', lockup: 'Free',         kyc: 'verified',  last: 'Sub · 05 Apr' },
   ];
 
   // Share classes
@@ -636,12 +659,27 @@ function ShareRegisterView({ onNav }) {
     { name: 'Class I', nav: '10,050.20 USD', units: '1.0 M', totalNav: '10,050,200 USD', mgt: '0.5%', fees: '4,500 USD', investors: '20' },
   ];
 
-  // KPI row
-  const kpis = [
-    { l: 'Total AUM', v: '$150.81 M', s: '+$6.4M' },
-    { l: 'Investors', v: '135',       s: '4 this month' },
-    { l: 'Free float', v: '62.4%',    s: 'Locked 24.1% · Notice 13.5%' },
-    { l: 'KYC health', v: '3',        s: <span style={{color:'var(--neg)'}}>3 active issues</span> },
+  // Blended measures (replaces old KPI strip; KYC health dropped per ptl-pod)
+  const blended = [
+    { l: 'Total AUM',        v: '$150.81 M', s: '+$6.4M MTD' },
+    { l: 'Blended duration', v: '14.2 mo',   s: 'Min of notice or lock-up' },
+    { l: 'Blended mgmt fee', v: '2.18%',     s: 'Weighted by AUM across A/B/I' },
+    { l: 'Blended perf fee', v: '14.4%',     s: 'Weighted by AUM' },
+  ];
+
+  // Manager + POD own holdings
+  const ownHoldings = [
+    { who: 'Manager team',  units: '4,823.0',  value: '$711,763',   pct: '0.47%', duration: '12 mo locked', returns: '+8.1% YTD' },
+    { who: 'POD',           units: '12,200.0', value: '$1,802,440', pct: '1.20%', duration: '24 mo locked', returns: '+8.1% YTD' },
+  ];
+
+  // Results delivered for investors — distribution of returns across the book
+  const resultsBuckets = [
+    { bucket: '<0%',     book: 4,  dealings: 6,  neg: true  },
+    { bucket: '0–10%',   book: 22, dealings: 28 },
+    { bucket: '10–25%',  book: 41, dealings: 35 },
+    { bucket: '25–50%',  book: 26, dealings: 22 },
+    { bucket: '>50%',    book: 7,  dealings: 9  },
   ];
 
   // Holding period bars (Investor view)
@@ -675,25 +713,23 @@ function ShareRegisterView({ onNav }) {
     { icon: 'award',    name: 'Endowment / other', pct: 3  },
   ];
 
-  // Concentration slices
+  // Concentration slices — colour derived from active accent so it follows theme
   const concSlices = [
-    { label: 'Top 5',       pct: 29, color: '#2E6B46' },
-    { label: 'Next 5 (6–10)',pct: 19, color: '#4E8A5E' },
-    { label: 'Next 10 (11–20)',pct: 22, color: '#7BAE7B' },
+    { label: 'Top 5',         pct: 29, color: 'var(--accent-plum)' },
+    { label: 'Next 5 (6–10)', pct: 19, color: 'color-mix(in oklab, var(--accent-plum) 72%, var(--bg-canvas))' },
+    { label: 'Next 10 (11–20)', pct: 22, color: 'color-mix(in oklab, var(--accent-plum) 50%, var(--bg-canvas))' },
     { label: 'Remaining 115', pct: 30, color: '#BFD8B6' },
   ];
 
   return (
-    <div style={{padding:'48px 40px 80px',maxWidth:1160,margin:'0 auto'}} data-page>
+    <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
       {/* ===== Head ===== */}
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:24,marginBottom:32}}>
-        <div style={{display:'flex',alignItems:'center',gap:8,fontSize:14,color:'var(--ink-2)'}}>
-          <span style={{width:18,height:18,borderRadius:'50%',background:'linear-gradient(135deg,#D9C9EC,#BBA3DC)',boxShadow:'0 0 0 1px var(--line-2)'}}/>
-          <span>POD Crypto Fund</span>
-          <Icon.chevron style={{width:13,height:13,color:'var(--ink-3)'}}/>
-          <span style={{color:'var(--ink-1)',fontWeight:500}}>Share Register</span>
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:24,marginBottom:32}}>
+        <div style={{minWidth:0}}>
+          <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>Share Register</div>
+          <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Holders, share classes and lock-ups across the fund.</div>
         </div>
-        <div style={{display:'flex',alignItems:'center',gap:8}}>
+        <div style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
           <button style={{...btnPrimary,height:32}}>+ New Share Class</button>
           <button aria-label="More" style={{width:32,height:32,border:'1px solid var(--line-2)',background:'var(--bg-canvas)',borderRadius:8,cursor:'pointer',color:'var(--ink-2)',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
@@ -701,9 +737,38 @@ function ShareRegisterView({ onNav }) {
         </div>
       </div>
 
-      {/* ===== KPI Strip ===== */}
+      {/* ===== Manager + POD holdings ===== */}
+      <div style={{fontSize:15,fontWeight:600,marginBottom:12}}>Manager &amp; POD holdings</div>
+      <div style={{border:'1px solid var(--line-1)',borderRadius:10,overflow:'hidden',marginBottom:32}}>
+        <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
+          <thead>
+            <tr style={{fontSize:10.5,color:'var(--ink-3)',fontWeight:500,background:'var(--bg-subtle)'}}>
+              <th style={{...th,padding:'10px 16px'}}>Holder</th>
+              <th style={{...th,padding:'10px 16px',textAlign:'right'}}>Units</th>
+              <th style={{...th,padding:'10px 16px',textAlign:'right'}}>Value</th>
+              <th style={{...th,padding:'10px 16px',textAlign:'right'}}>% of fund</th>
+              <th style={{...th,padding:'10px 16px'}}>Duration profile</th>
+              <th style={{...th,padding:'10px 16px',textAlign:'right'}}>Returns earned</th>
+            </tr>
+          </thead>
+          <tbody>
+            {ownHoldings.map((r,i) => (
+              <tr key={i} style={{fontSize:13,borderTop:'1px solid var(--line-1)'}}>
+                <td style={{...td,padding:'12px 16px',fontWeight:500}}>{r.who}</td>
+                <td style={{...td,padding:'12px 16px',textAlign:'right'}}>{r.units}</td>
+                <td style={{...td,padding:'12px 16px',textAlign:'right'}}>{r.value}</td>
+                <td style={{...td,padding:'12px 16px',textAlign:'right',color:'var(--ink-2)'}}>{r.pct}</td>
+                <td style={{...td,padding:'12px 16px',color:'var(--ink-2)'}}>{r.duration}</td>
+                <td style={{...td,padding:'12px 16px',textAlign:'right',color:'var(--pos)',fontWeight:500}}>{r.returns}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ===== Blended measures ===== */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:40}}>
-        {kpis.map((k,i) => (
+        {blended.map((k,i) => (
           <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'14px 18px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
             <div style={{fontSize:22,fontWeight:600,letterSpacing:'-0.01em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
@@ -712,15 +777,96 @@ function ShareRegisterView({ onNav }) {
         ))}
       </div>
 
+      {/* ===== Summary charts: Duration profile + Concentration ===== */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32,marginBottom:40}}>
+        <div>
+          <div style={{fontSize:15,fontWeight:600,marginBottom:14}}>Duration profile</div>
+          <div style={{display:'flex',height:38,borderRadius:8,overflow:'hidden',border:'1px solid var(--line-1)'}}>
+            <div style={{width:'24.1%',background:'var(--accent-plum)',color:'var(--accent-plum-on)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:600}}>24.1%</div>
+            <div style={{width:'13.5%',background:'color-mix(in oklab, var(--accent-plum) 55%, var(--bg-canvas))',color:'var(--ink-1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:600}}>13.5%</div>
+            <div style={{flex:1,background:'color-mix(in oklab, var(--accent-plum) 18%, var(--bg-canvas))',color:'var(--ink-2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:600}}>62.4%</div>
+          </div>
+          <div style={{display:'flex',gap:18,marginTop:12,fontSize:12,color:'var(--ink-2)'}}>
+            <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:8,height:8,borderRadius:'50%',background:'var(--accent-plum)'}}/> Available · 24.1%</span>
+            <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:8,height:8,borderRadius:'50%',background:'color-mix(in oklab, var(--accent-plum) 55%, var(--bg-canvas))'}}/> In notice · 13.5%</span>
+            <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:8,height:8,borderRadius:'50%',background:'color-mix(in oklab, var(--accent-plum) 28%, var(--bg-canvas))'}}/> Locked · 62.4%</span>
+          </div>
+
+          <div style={{fontSize:15,fontWeight:600,margin:'28px 0 12px'}}>Holding period</div>
+          <div style={{display:'inline-flex',padding:3,background:'var(--bg-subtle)',borderRadius:8,marginBottom:16}}>
+            <button onClick={()=>setHoldingBy('capital')} style={{border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,fontSize:12,fontWeight:500,background:holdingBy==='capital'?'var(--bg-canvas)':'transparent',color:holdingBy==='capital'?'var(--ink-1)':'var(--ink-2)',boxShadow:holdingBy==='capital'?'0 1px 2px rgba(0,0,0,0.06)':'none'}}>By Capital</button>
+            <button onClick={()=>setHoldingBy('investor')} style={{border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,fontSize:12,fontWeight:500,background:holdingBy==='investor'?'var(--bg-canvas)':'transparent',color:holdingBy==='investor'?'var(--ink-1)':'var(--ink-2)',boxShadow:holdingBy==='investor'?'0 1px 2px rgba(0,0,0,0.06)':'none'}}>By Investor</button>
+          </div>
+          <div>
+            {holding.map((h,i) => (
+              <div key={h.bucket} style={{display:'grid',gridTemplateColumns:'60px 1fr auto',gap:12,alignItems:'center',padding:'8px 0',fontSize:12,fontVariantNumeric:'tabular-nums'}}>
+                <div style={{color:'var(--ink-2)'}}>{h.bucket}</div>
+                <div style={{display:'flex',alignItems:'center',gap:10}}>
+                  <div style={{flex:1,height:6,background:'var(--bg-subtle)',borderRadius:3,overflow:'hidden'}}>
+                    <div style={{width:`${h.pct * 2}%`,maxWidth:'100%',height:'100%',background:'var(--accent-plum)',borderRadius:3,transition:'width 0.6s cubic-bezier(0.22,1,0.36,1)'}}/>
+                  </div>
+                  <span style={{fontWeight:500,minWidth:40,textAlign:'right'}}>{h.pct}%</span>
+                </div>
+                <div style={{color:'var(--ink-3)',fontSize:11}}>{h.right}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div style={{fontSize:15,fontWeight:600,marginBottom:14}}>Concentration</div>
+          <div style={{display:'flex',alignItems:'center',gap:28}}>
+            <ConcentrationPie slices={concSlices}/>
+            <div style={{flex:1}}>
+              <div style={{display:'inline-block',padding:'4px 12px',borderRadius:999,background:'#FFF2E8',color:'#A14133',fontSize:11,fontWeight:600,marginBottom:14}}>Moderate concentration</div>
+              {concSlices.map((s,i) => (
+                <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'5px 0',fontSize:12.5}}>
+                  <span style={{width:10,height:10,borderRadius:'50%',background:s.color}}/>
+                  <span style={{color:'var(--ink-1)'}}>{s.label}</span>
+                  <span style={{marginLeft:'auto',color:'var(--ink-3)',fontVariantNumeric:'tabular-nums'}}>{s.pct}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ===== Results delivered for investors ===== */}
+      <div style={{display:'flex',alignItems:'flex-end',justifyContent:'space-between',gap:24,marginBottom:14}}>
+        <div>
+          <div style={{fontSize:15,fontWeight:600,marginBottom:4}}>Results delivered for investors</div>
+          <div style={{fontSize:12,color:'var(--ink-3)'}}>Distribution of investor returns across the {resultsBy === 'book' ? 'book' : 'dealings'}.</div>
+        </div>
+        <div style={{display:'inline-flex',padding:3,background:'var(--bg-subtle)',borderRadius:8}}>
+          <button onClick={()=>setResultsBy('book')} style={{border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,fontSize:12,fontWeight:500,background:resultsBy==='book'?'var(--bg-canvas)':'transparent',color:resultsBy==='book'?'var(--ink-1)':'var(--ink-2)',boxShadow:resultsBy==='book'?'0 1px 2px rgba(0,0,0,0.06)':'none'}}>By Book</button>
+          <button onClick={()=>setResultsBy('dealings')} style={{border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,fontSize:12,fontWeight:500,background:resultsBy==='dealings'?'var(--bg-canvas)':'transparent',color:resultsBy==='dealings'?'var(--ink-1)':'var(--ink-2)',boxShadow:resultsBy==='dealings'?'0 1px 2px rgba(0,0,0,0.06)':'none'}}>By Dealings</button>
+        </div>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12,marginBottom:48}}>
+        {resultsBuckets.map(b => {
+          const pct = resultsBy === 'book' ? b.book : b.dealings;
+          return (
+            <div key={b.bucket} style={{
+              padding:'16px 18px',borderRadius:10,
+              background: b.neg
+                ? 'color-mix(in oklab, var(--neg) 14%, var(--glass-bg))'
+                : 'color-mix(in oklab, var(--accent-plum) 14%, var(--glass-bg))',
+              backdropFilter:'blur(10px)',
+              WebkitBackdropFilter:'blur(10px)',
+              color: b.neg ? 'var(--neg)' : 'var(--ink-1)',
+            }}>
+              <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',marginBottom:4}}>{pct}%</div>
+              <div style={{fontSize:11,opacity:0.8}}>{b.bucket} return</div>
+            </div>
+          );
+        })}
+      </div>
+
       {/* ===== Share Classes ===== */}
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
         <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em'}}>Share Classes</div>
         <div style={{display:'flex',alignItems:'center',gap:8}}>
           <button style={{...btnOutline,height:30,fontSize:12.5}}>+ Create class</button>
-          <button style={{...btnOutline,height:30,fontSize:12.5}}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
-            Manage classes
-          </button>
         </div>
       </div>
       <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:48}}>
@@ -754,7 +900,7 @@ function ShareRegisterView({ onNav }) {
         <button style={{...btnOutline,height:36}}><Icon.download style={{width:12,height:12}}/> Export</button>
       </div>
 
-      <div style={{border:'1px solid var(--line-1)',borderRadius:10,overflow:'hidden'}}>
+      <div style={{overflow:'hidden'}}>
         <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
           <thead>
             <tr style={{fontSize:10.5,color:'var(--ink-3)',fontWeight:500,background:'var(--bg-subtle)'}}>
@@ -772,13 +918,7 @@ function ShareRegisterView({ onNav }) {
             {rows.map((r,i) => (
               <tr key={i} style={{fontSize:13}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
                 <td style={{...td,padding:'12px 16px'}}>
-                  <div style={{display:'flex',alignItems:'center',gap:12}}>
-                    <div style={{width:28,height:28,borderRadius:'50%',background:palette[i%palette.length],color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontWeight:600,fontSize:10.5,letterSpacing:'0.01em'}}>{r.name.split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase()}</div>
-                    <div>
-                      <div style={{fontWeight:500,color:'var(--ink-1)'}}>{r.name}</div>
-                      <div style={{fontSize:11,color:'var(--ink-3)',marginTop:2}}>{r.loc}</div>
-                    </div>
-                  </div>
+                  <div style={{fontWeight:500,color:'var(--ink-1)'}}>{r.name}</div>
                 </td>
                 <td style={{...td,padding:'12px 16px',color:'var(--ink-2)'}}>{r.cls}</td>
                 <td style={{...td,padding:'12px 16px',textAlign:'right',fontWeight:500}}>{r.units}</td>
@@ -795,7 +935,6 @@ function ShareRegisterView({ onNav }) {
         </table>
       </div>
 
-      {/* Pagination row */}
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',margin:'16px 4px 48px',fontSize:12,color:'var(--ink-2)'}}>
         <div>Showing 10 of 135 investors</div>
         <div style={{display:'flex',alignItems:'center',gap:6}}>
@@ -809,70 +948,7 @@ function ShareRegisterView({ onNav }) {
         </div>
       </div>
 
-      {/* ===== Analytics row 1: Duration profile + Concentration ===== */}
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32,marginBottom:40}}>
-        <div>
-          <div style={{fontSize:15,fontWeight:600,marginBottom:14}}>Duration profile</div>
-          <div style={{display:'flex',height:38,borderRadius:8,overflow:'hidden',border:'1px solid var(--line-1)'}}>
-            <div style={{width:'24.1%',background:'#3F7E58',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:600}}>24.1%</div>
-            <div style={{width:'13.5%',background:'#A8D0B4',color:'#1C4A34',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:600}}>13.5%</div>
-            <div style={{flex:1,background:'#E8F2EC',color:'#2E6B46',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:600}}>62.4%</div>
-          </div>
-          <div style={{display:'flex',gap:18,marginTop:12,fontSize:12,color:'var(--ink-2)'}}>
-            <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:8,height:8,borderRadius:'50%',background:'#3F7E58'}}/> Available · 24.1%</span>
-            <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:8,height:8,borderRadius:'50%',background:'#A8D0B4'}}/> In notice · 13.5%</span>
-            <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:8,height:8,borderRadius:'50%',background:'#BFD8B6'}}/> Locked · 62.4%</span>
-          </div>
-
-          {/* Holding period */}
-          <div style={{fontSize:15,fontWeight:600,margin:'28px 0 12px'}}>Holding period</div>
-          <div style={{display:'inline-flex',padding:3,background:'var(--bg-subtle)',borderRadius:8,marginBottom:16}}>
-            <button onClick={()=>setHoldingBy('investor')} style={{border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,fontSize:12,fontWeight:500,background:holdingBy==='investor'?'var(--bg-canvas)':'transparent',color:holdingBy==='investor'?'var(--ink-1)':'var(--ink-2)',boxShadow:holdingBy==='investor'?'0 1px 2px rgba(0,0,0,0.06)':'none'}}>By Investor</button>
-            <button onClick={()=>setHoldingBy('capital')} style={{border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,fontSize:12,fontWeight:500,background:holdingBy==='capital'?'var(--bg-canvas)':'transparent',color:holdingBy==='capital'?'var(--ink-1)':'var(--ink-2)',boxShadow:holdingBy==='capital'?'0 1px 2px rgba(0,0,0,0.06)':'none'}}>By Capital</button>
-          </div>
-          <div>
-            {holding.map((h,i) => (
-              <div key={h.bucket} style={{display:'grid',gridTemplateColumns:'60px 1fr auto',gap:12,alignItems:'center',padding:'8px 0',fontSize:12,fontVariantNumeric:'tabular-nums'}}>
-                <div style={{color:'var(--ink-2)'}}>{h.bucket}</div>
-                <div style={{display:'flex',alignItems:'center',gap:10}}>
-                  <div style={{flex:1,height:6,background:'var(--bg-subtle)',borderRadius:3,overflow:'hidden'}}>
-                    <div style={{width:`${h.pct * 2}%`,maxWidth:'100%',height:'100%',background:'#3F7E58',borderRadius:3,transition:'width 0.6s cubic-bezier(0.22,1,0.36,1)',animation:'barGrow 0.7s cubic-bezier(0.22,1,0.36,1) both',animationDelay:`${0.1+i*0.08}s`,transformOrigin:'left'}}/>
-                  </div>
-                  <span style={{fontWeight:500,minWidth:40,textAlign:'right'}}>{h.pct}%</span>
-                </div>
-                <div style={{color:'var(--ink-3)',fontSize:11}}>{h.right}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <div style={{fontSize:15,fontWeight:600,marginBottom:14}}>Concentration</div>
-          <div style={{display:'flex',alignItems:'center',gap:28}}>
-            <ConcentrationPie slices={concSlices}/>
-            <div style={{flex:1}}>
-              <div style={{display:'inline-block',padding:'4px 12px',borderRadius:999,background:'#FFF2E8',color:'#A14133',fontSize:11,fontWeight:600,marginBottom:14}}>Moderate concentration</div>
-              {concSlices.map((s,i) => (
-                <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'5px 0',fontSize:12.5}}>
-                  <span style={{width:10,height:10,borderRadius:'50%',background:s.color}}/>
-                  <span style={{color:'var(--ink-1)'}}>{s.label}</span>
-                  <span style={{marginLeft:'auto',color:'var(--ink-3)',fontVariantNumeric:'tabular-nums'}}>{s.pct}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Top 3 holders */}
-          <div style={{fontSize:15,fontWeight:600,margin:'28px 0 12px'}}>Top 3 holders</div>
-          <div style={{border:'1px solid var(--line-1)',borderRadius:10,overflow:'hidden'}}>
-            {['Anchor Alpha Fund','Keel Alpha Master Fund','Kestrel Family Office'].map((n,i,a) => (
-              <div key={n} style={{padding:'14px 18px',fontSize:13,fontWeight:500,borderBottom:i<a.length-1?'1px solid var(--line-1)':'none',background:'var(--bg-card)'}}>{n}</div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ===== Analytics row 2: Top Jurisdictions + Entity Type ===== */}
+      {/* ===== Tail: Top Jurisdictions + Entity Type (preserved, may drop on review) ===== */}
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32}}>
         <div>
           <div style={{fontSize:15,fontWeight:600,marginBottom:14}}>Top Jurisdictions</div>
@@ -977,16 +1053,8 @@ function ReconciliationView({ onNav }) {
     { d: '03 Feb 16:00', nav: '$44,381,190', ch: '−$122,400', checks: '6 / 6', status: 'verified', hash: '0x66f0…02aa' },
   ];
   return (
-    <div style={{padding:'48px 40px 80px',maxWidth:1160,margin:'0 auto'}} data-page>
+    <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
       <div style={{paddingBottom:24}}>
-        <div style={{display:'flex',alignItems:'center',gap:8,fontSize:14,fontWeight:500,color:'var(--ink-2)',marginBottom:40}}>
-          <span style={{width:20,height:20,borderRadius:'50%',background:'linear-gradient(135deg,#D9C9EC,#BBA3DC)',boxShadow:'0 0 0 1px var(--line-2)'}}/>
-          <span>POD Crypto Fund</span>
-          <Icon.chevron style={{width:14,height:14,color:'var(--ink-3)'}}/>
-          <a onClick={(e)=>{e.preventDefault();onNav('nav');}} href="#" style={{color:'var(--ink-2)',textDecoration:'none',cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.color='var(--ink-1)'} onMouseLeave={e=>e.currentTarget.style.color='var(--ink-2)'}>NAV</a>
-          <Icon.chevron style={{width:14,height:14,color:'var(--ink-3)'}}/>
-          <span style={{color:'var(--ink-1)'}}>Reconciliation log</span>
-        </div>
         <div style={{fontSize:28,fontWeight:600,letterSpacing:'-0.015em',display:'flex',alignItems:'baseline',gap:12}}>Reconciliation log <span style={{fontSize:12,fontWeight:500,color:'var(--ink-2)'}}>· 5 most-recent strikes</span></div>
       </div>
 
@@ -1035,7 +1103,7 @@ function ReconciliationView({ onNav }) {
 
 // Shared styles
 const btnOutline = { background:'var(--bg-canvas)',border:'1px solid var(--line-2)',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,color:'var(--ink-1)',display:'inline-flex',alignItems:'center',gap:6,fontFamily:'inherit' };
-const btnPrimary = { background:'#15151A',color:'#F2F0EC',border:'none',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,fontFamily:'inherit' };
+const btnPrimary = { background:'var(--accent-plum)',color:'var(--accent-plum-on)',border:'none',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,fontFamily:'inherit' };
 const th = { textAlign:'left',padding:'8px 12px',borderBottom:'1px solid var(--line-1)',fontWeight:500 };
 const td = { padding:'14px 12px',borderBottom:'1px solid var(--line-1)' };
 const fLabel = { fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:6,display:'block' };
