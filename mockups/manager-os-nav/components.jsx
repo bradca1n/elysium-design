@@ -223,6 +223,9 @@ function Navbar({ onNav, route }) {
         )}
       </div>
       <div style={{display:'flex',alignItems:'center',gap:14}}>
+        {inFund && (
+          <span style={{fontSize:12.5,color:'var(--ink-3)',whiteSpace:'nowrap',fontVariantNumeric:'tabular-nums'}}>Next dealing · 03d 14h 22m</span>
+        )}
         <button style={{
           display: 'inline-flex', alignItems: 'center', gap: 8,
           height: 32, padding: '0 12px', borderRadius: 8,

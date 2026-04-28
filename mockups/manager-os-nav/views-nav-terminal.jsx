@@ -155,8 +155,11 @@ function NavView({ onNav, showTweaks }) {
           ))}
         </div>
 
-        {/* Treasury flows */}
-        <SubTitle title="Treasury flows" right={<span style={{fontSize:11.5,color:'var(--ink-3)'}}>Next dealing · 03d 14h 22m</span>}/>
+      </section>
+
+      {/* ========= TREASURY FLOWS ========= */}
+      <section style={{marginBottom:56}}>
+        <SectionHead title="Treasury flows" desc="Subscription and redemption activity for the upcoming dealing window. Stables coverage across custody and exchange venues." cta={{ label: 'Open Treasury', onClick: () => onNav('collateral') }}/>
         <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16}}>
           <Kpi l="Net flow next dealing" v="−$170,000" s="Subs +$150K · Redemptions −$320K" neg/>
           <Kpi l="Available stables / USD" v="$6.25M" s="4.2% APY across 4 venues"/>
