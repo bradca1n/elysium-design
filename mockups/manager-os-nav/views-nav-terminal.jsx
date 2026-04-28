@@ -65,10 +65,17 @@ function NavView({ onNav, showTweaks }) {
 
   return (
     <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
+      {/* Page header */}
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 32px',gap:24}}>
+        <div>
+          <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>NAV</div>
+          <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Portfolio allocation and live market values across custody & exchanges.</div>
+        </div>
+        <div style={{flexShrink:0}}><PageKebab/></div>
+      </div>
+
       {/* ========= NET ASSET VALUE ========= */}
       <section style={{marginBottom:70}}>
-        <SectionHead title="NAV" desc="Portfolio allocation and live market values across custody & exchanges." right={<PageKebab/>}/>
-
         {/* Headline KPIs */}
         <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:8}}>
           {[

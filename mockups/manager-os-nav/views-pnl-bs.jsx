@@ -369,12 +369,10 @@ function BalanceSheetView({ onNav }) {
       {/* Head */}
       <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 20px',gap:24}}>
         <div>
-          <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)',display:'flex',alignItems:'baseline',gap:12}}>
-            Balance Sheet
-            <span style={{fontSize:12,fontWeight:500,color:'var(--ink-2)'}}>As of {asOf} 16:00 UTC · base USD · IFRS</span>
-          </div>
+          <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>Balance Sheet</div>
+          <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>As of {asOf} 16:00 UTC · base USD · IFRS</div>
         </div>
-        <div style={{display:'flex',gap:8}}>
+        <div style={{display:'flex',gap:8,flexShrink:0}}>
           <button style={pbBtnOutline}><Icon.check style={{width:13,height:13,color:'var(--green-600)'}}/> Reconciled</button>
           <button style={pbBtnOutline}><Icon.download style={{width:13,height:13}}/> Export</button>
           <button style={pbBtnPrimary}>Sign off</button>

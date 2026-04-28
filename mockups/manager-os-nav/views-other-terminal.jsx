@@ -23,11 +23,10 @@ function OrderBookView({ onNav }) {
     <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
       <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 24px',gap:24}}>
         <div>
-          <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',display:'flex',alignItems:'baseline',gap:12}}>
-            Order book <span style={{fontSize:12,fontWeight:500,color:'var(--ink-2)'}}>7 orders · cutoff Mon 14:00 UTC</span>
-          </div>
+          <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>Order book</div>
+          <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>7 orders · cutoff Mon 14:00 UTC</div>
         </div>
-        <div style={{display:'flex',gap:8}}>
+        <div style={{display:'flex',gap:8,flexShrink:0}}>
           <button style={btnOutline}><Icon.download style={{width:13,height:13}}/> Export CSV</button>
           <button style={btnPrimary}>+ New order</button>
         </div>
@@ -1039,7 +1038,8 @@ function ReconciliationView({ onNav }) {
   return (
     <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
       <div style={{paddingBottom:24}}>
-        <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',display:'flex',alignItems:'baseline',gap:12}}>Reconciliation log <span style={{fontSize:12,fontWeight:500,color:'var(--ink-2)'}}>· 5 most-recent strikes</span></div>
+        <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>Reconciliation log</div>
+        <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>5 most-recent strikes</div>
       </div>
 
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:28}}>
