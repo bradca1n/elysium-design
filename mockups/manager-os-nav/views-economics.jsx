@@ -60,12 +60,13 @@ function EconomicsView({ onNav }) {
         </div>
       </div>
 
-      <FilterBar
+      {/* FilterBar hidden for now */}
+      {false && <FilterBar
         range={range.toUpperCase()}
         setRange={r => setRange(r.toLowerCase())}
         ranges={['MTD','QTD','YTD','ITD']}
         chips={['All custody venues']}
-      />
+      />}
 
       {/* ===== KPI strip ===== */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:48}}>

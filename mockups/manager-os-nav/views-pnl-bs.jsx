@@ -23,13 +23,13 @@ function ProfitLossView({ onNav }) {
         </div>
       </div>
 
-      {/* Filter row */}
-      <FilterBar
+      {/* Filter row — hidden for now */}
+      {false && <FilterBar
         range={range}
         setRange={setRange}
         ranges={['MTD','QTD','YTD','ITD']}
         chips={['Spot + derivatives','All venues']}
-      />
+      />}
 
       {/* KPIs */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:28}}>
