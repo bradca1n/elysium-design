@@ -629,7 +629,7 @@ function ShareRegisterView({ onNav }) {
   const [resultsBy, setResultsBy] = _s1('book');
 
   // Investor rows — deterministic palette per avatar
-  const palette = ['#D97A5B','#6E8AB5','#3F7E58','#9B6BA8','#C09A3C','#4A6B85','#8E5948','#6B8E6B','#B06A7E','#4C8D93'];
+  const palette = ['#D97A5B','#6E8AB5','#1d7d59','#9B6BA8','#C09A3C','#4A6B85','#8E5948','#5edaa6','#B06A7E','#4C8D93'];
   const rows = [
     { name: 'L2-Eth Ventures',       loc: 'Singapore, SG · Institutional',  cls: 'Class A', units: '142,390', value: '$21,019,500', lockup: 'Locked 270d',  kyc: 'verified',  last: 'Sub · 12 Apr' },
     { name: 'ZkSync-Bridge Holdings',loc: 'Zug, CH · Institutional',         cls: 'Class A', units: '138,452', value: '$20,438,440', lockup: 'Locked 180d',  kyc: 'verified',  last: 'Sub · 09 Apr' },

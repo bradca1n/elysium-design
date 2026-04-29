@@ -42,7 +42,7 @@ function EconomicsView({ onNav }) {
     { venue: 'Copper.co',      aum: '$9.5M',  bps: 12, monthly: '$9,500',   ytd: '$38,000',  logoBg: '#111111' },
     { venue: 'BitGo',          aum: '$4.2M',  bps: 10, monthly: '$3,500',   ytd: '$14,000',  logoBg: '#0B1A33' },
     { venue: 'Fireblocks',     aum: '$3.8M',  bps: 14, monthly: '$4,430',   ytd: '$17,720',  logoBg: '#F06536' },
-    { venue: 'Self-custody',   aum: '$7.5M',  bps: 0,  monthly: '—',        ytd: '—',        logoBg: '#6B8E6B' },
+    { venue: 'Self-custody',   aum: '$7.5M',  bps: 0,  monthly: '—',        ytd: '—',        logoBg: '#5edaa6' },
   ];
 
   return (
@@ -87,8 +87,8 @@ function EconomicsView({ onNav }) {
             <div style={{fontSize:22,fontWeight:600,letterSpacing:'-0.01em',fontVariantNumeric:'tabular-nums',marginTop:4}}>$82.6K <span style={{fontSize:13,fontWeight:400,color:'var(--ink-3)'}}>· April</span></div>
           </div>
           <div style={{display:'flex',alignItems:'center',gap:14,fontSize:11.5,color:'var(--ink-2)'}}>
-            <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:10,height:10,borderRadius:2,background:'#3F7E58'}}/> Management</span>
-            <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:10,height:10,borderRadius:2,background:'#9BC3A5'}}/> Performance</span>
+            <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:10,height:10,borderRadius:2,background:'#1d7d59'}}/> Management</span>
+            <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:10,height:10,borderRadius:2,background:'#82e0b9'}}/> Performance</span>
           </div>
         </div>
         <FeeBars data={series}/>
@@ -260,8 +260,8 @@ function FeeBars({ data }) {
           return (
             <div key={i} style={{display:'flex',flexDirection:'column',justifyContent:'flex-end',height:H,position:'relative'}} title={`${d.m}: Mgt $${d.mgt.toFixed(1)}K + Perf $${d.perf.toFixed(1)}K`}>
               <div style={{display:'flex',flexDirection:'column',borderRadius:4,overflow:'hidden',height:totalH,animation:'barGrow 0.7s cubic-bezier(0.22,1,0.36,1) both',animationDelay:`${0.05+i*0.04}s`,transformOrigin:'bottom'}}>
-                <div style={{height:perfH,background:'#9BC3A5'}}/>
-                <div style={{height:mgtH,background:'#3F7E58'}}/>
+                <div style={{height:perfH,background:'#82e0b9'}}/>
+                <div style={{height:mgtH,background:'#1d7d59'}}/>
               </div>
             </div>
           );
