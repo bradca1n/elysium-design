@@ -88,7 +88,7 @@ function NavView({ onNav, showTweaks }) {
 
         <SubTitle title="Portfolio composition" right={<SegToggle value={assetGroup} setValue={setAssetGroup} options={[{v:'spot',l:'Spot'},{v:'derivatives',l:'Derivatives'}]}/>}/>
 
-        <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) minmax(280px,480px)',gap:32,alignItems:'center',marginBottom:24}}>
+        <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) minmax(280px,480px)',gap:32,alignItems:'start',marginBottom:24}}>
           <div>
             <div style={{display:'grid',gridTemplateColumns:'28px minmax(0,1fr) minmax(0,1.1fr) 90px minmax(0,1.4fr) 120px 70px',gap:16,padding:'4px 4px 8px',borderBottom:'1px solid var(--line-1)',fontSize:10.5,color:'var(--ink-3)',fontWeight:500}}>
               <div/><div>Asset</div><div>Units</div><div style={{textAlign:'right'}}>Price</div><div>Allocation</div><div style={{textAlign:'right'}}>Value</div><div style={{textAlign:'right'}}>24h</div>
