@@ -7,17 +7,17 @@ function NavView({ onNav, showTweaks }) {
   const [assetGroup, setAssetGroup] = _u1('spot');
 
   const assets = [
-    { id: 'btc', name: 'Bitcoin', sym: 'BTC', glyph: '₿', color: '#E69A2A', units: '323.80', price: '$68,992', pct: 47.1, bar: 47.1, value: '$22,340,000', d: '+0.8%', donutColor: 'var(--green-700)' },
-    { id: 'eth', name: 'Ethereum', sym: 'ETH', glyph: 'Ξ', color: '#5B6FBE', units: '1,094.00', price: '$2,011', pct: 4.6, bar: 15, value: '$2,200,000', d: '+3.5%', donutColor: 'var(--green-500)' },
-    { id: 'link', name: 'Chainlink', sym: 'LINK', glyph: 'L', color: '#1F5BD9', units: '109,489.00', price: '$13.70', pct: 3.2, bar: 10, value: '$1,500,000', d: '+1.5%', donutColor: 'var(--green-400)' },
-    { id: 'ltc', name: 'Litecoin', sym: 'LTC', glyph: 'Ł', color: '#9AA2A8', units: '20,362.82', price: '$54.02', pct: 2.3, bar: 7, value: '$1,100,000', d: '+2.0%', donutColor: 'var(--green-300)' },
-    { id: 'ada', name: 'Cardano', sym: 'ADA', glyph: '₳', color: '#1F3C9E', units: '3,653,846.15', price: '$0.26', pct: 2.0, bar: 6, value: '$950,000', d: '+4.1%', donutColor: 'var(--green-200)' },
+    { id: 'btc', name: 'Bitcoin', sym: 'BTC', glyph: '₿', color: '#FF9900', units: '323.80', price: '$68,992', pct: 47.1, bar: 47.1, value: '$22,340,000', d: '+0.8%', donutColor: '#FF9900' },
+    { id: 'eth', name: 'Ethereum', sym: 'ETH', glyph: 'Ξ', color: '#8E76FF', units: '1,094.00', price: '$2,011', pct: 4.6, bar: 15, value: '$2,200,000', d: '+3.5%', donutColor: '#8E76FF' },
+    { id: 'link', name: 'Chainlink', sym: 'LINK', glyph: 'L', color: '#1C46EE', units: '109,489.00', price: '$13.70', pct: 3.2, bar: 10, value: '$1,500,000', d: '+1.5%', donutColor: '#1C46EE' },
+    { id: 'ltc', name: 'Litecoin', sym: 'LTC', glyph: 'Ł', color: '#A6A9AA', units: '20,362.82', price: '$54.02', pct: 2.3, bar: 7, value: '$1,100,000', d: '+2.0%', donutColor: '#A6A9AA' },
+    { id: 'ada', name: 'Cardano', sym: 'ADA', glyph: '₳', color: '#0033AD', units: '3,653,846.15', price: '$0.26', pct: 2.0, bar: 6, value: '$950,000', d: '+4.1%', donutColor: '#0033AD' },
   ];
   // PLACEHOLDER — pending Timo's answer on Haruko spot vs. derivatives split
   const derivatives = [
-    { id: 'btc-perp', name: 'BTC Perpetual', sym: 'BTC-PERP', glyph: '₿', color: '#E69A2A', units: '+12.40', price: '$101,220', pct: 6.8, bar: 22, value: '$3,200,000', d: '+1.2%', donutColor: 'var(--green-700)' },
-    { id: 'eth-perp', name: 'ETH Perpetual', sym: 'ETH-PERP', glyph: 'Ξ', color: '#5B6FBE', units: '−180.00', price: '$2,918',   pct: 1.1, bar: 4,  value: '$525,000',   d: '−0.4%', donutColor: 'var(--green-500)' },
-    { id: 'sol-fut',  name: 'SOL Futures',   sym: 'SOL-FUT',  glyph: 'S', color: '#7E5BBE', units: '+8,400',  price: '$140',     pct: 0.6, bar: 2,  value: '$280,000',   d: '+2.1%', donutColor: 'var(--green-400)' },
+    { id: 'btc-perp', name: 'BTC Perpetual', sym: 'BTC-PERP', glyph: '₿', color: '#FF9900', units: '+12.40', price: '$101,220', pct: 6.8, bar: 22, value: '$3,200,000', d: '+1.2%', donutColor: '#FF9900' },
+    { id: 'eth-perp', name: 'ETH Perpetual', sym: 'ETH-PERP', glyph: 'Ξ', color: '#8E76FF', units: '−180.00', price: '$2,918',   pct: 1.1, bar: 4,  value: '$525,000',   d: '−0.4%', donutColor: '#8E76FF' },
+    { id: 'sol-fut',  name: 'SOL Futures',   sym: 'SOL-FUT',  glyph: 'S', color: '#1C46EE', units: '+8,400',  price: '$140',     pct: 0.6, bar: 2,  value: '$280,000',   d: '+2.1%', donutColor: '#1C46EE' },
   ];
   const activeAssets = assetGroup === 'spot' ? assets : derivatives;
   const venues = [
@@ -116,7 +116,7 @@ function NavView({ onNav, showTweaks }) {
             ))}
           </div>
           <div style={{display:'flex',justifyContent:'center'}}>
-            <DonutChart assets={activeAssets}/>
+            <DonutChart assets={activeAssets} activeAsset={activeAsset}/>
           </div>
         </div>
 
@@ -229,35 +229,51 @@ function NavView({ onNav, showTweaks }) {
 }
 
 // ---------- Helpers ----------
-function DonutChart({ assets }) {
-  // Normalize slices so they sum to 100% of the donut regardless of actual pct
+function DonutChart({ assets, activeAsset }) {
   const total = assets.reduce((s,a) => s + a.pct, 0);
-  const R = 78, r = 54, C = 2 * Math.PI * R;
   const SIZE = 240;
-  let offset = 0;
+  const VB = 180;
+  const cx = VB / 2, cy = VB / 2;
+  const TICK_COUNT = 120;
+  const innerR = 60;
+  const outerR = 80;
+
+  // Cumulative slice ranges, normalized to [0,1)
+  const slices = [];
+  let cum = 0;
+  assets.forEach(a => {
+    const share = a.pct / total;
+    slices.push({ id: a.id, color: a.donutColor, start: cum, end: cum + share });
+    cum += share;
+  });
+
   return (
     <div style={{position:'relative',width:SIZE,height:SIZE}}>
-      <svg width={SIZE} height={SIZE} viewBox="0 0 180 180" style={{transform:'rotate(-90deg)'}}>
-        <circle cx="90" cy="90" r={R} fill="none" stroke="var(--bg-subtle)" strokeWidth={R - r}/>
-        {assets.map((a,i) => {
-          const share = a.pct / total;
-          const len = share * C;
-          const el = (
-            <circle key={i} cx="90" cy="90" r={R} fill="none"
-              stroke={a.donutColor}
-              strokeWidth={R - r}
-              strokeDasharray={`${len} ${C - len}`}
-              strokeDashoffset={-offset}
+      <svg width={SIZE} height={SIZE} viewBox={`0 0 ${VB} ${VB}`}>
+        {Array.from({length: TICK_COUNT}).map((_, i) => {
+          const t = i / TICK_COUNT;
+          const slice = slices.find(s => t >= s.start && t < s.end) || slices[slices.length - 1];
+          const angle = t * 2 * Math.PI - Math.PI / 2;
+          const x1 = cx + innerR * Math.cos(angle);
+          const y1 = cy + innerR * Math.sin(angle);
+          const x2 = cx + outerR * Math.cos(angle);
+          const y2 = cy + outerR * Math.sin(angle);
+          const dimmed = activeAsset && slice.id !== activeAsset;
+          return (
+            <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
+              stroke={slice.color}
+              strokeWidth={1.4}
+              strokeLinecap="round"
+              opacity={dimmed ? 0.3 : 1}
+              style={{transition:'opacity 0.25s'}}
             />
           );
-          offset += len;
-          return el;
         })}
       </svg>
       <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center'}}>
         <div style={{fontSize:12,color:'var(--ink-3)',fontWeight:500,letterSpacing:'0.04em',textTransform:'uppercase'}}>NAV</div>
         <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',marginTop:6}}>$47.46M</div>
-        <div style={{fontSize:13,color:'var(--ink-3)',marginTop:4}}>5 assets</div>
+        <div style={{fontSize:13,color:'var(--ink-3)',marginTop:4}}>{assets.length} assets</div>
       </div>
     </div>
   );
