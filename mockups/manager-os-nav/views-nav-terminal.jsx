@@ -236,8 +236,8 @@ function DonutChart({ assets, activeAsset, onHover }) {
   const cx = VB / 2, cy = VB / 2;
   const R = 78;
   const STROKE = 14;
-  const GAP_DEG = 4;
-  const TILT = 64;
+  const GAP_DEG = 10;
+  const TILT = 48;
   const TILT_COS = Math.cos(TILT * Math.PI / 180);
 
   const slices = [];
