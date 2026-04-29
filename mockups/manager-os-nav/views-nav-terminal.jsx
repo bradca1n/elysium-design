@@ -116,7 +116,7 @@ function NavView({ onNav, showTweaks }) {
             ))}
           </div>
           <div style={{display:'flex',justifyContent:'center'}}>
-            <DonutChart assets={activeAssets} activeAsset={activeAsset}/>
+            <DonutChart assets={activeAssets} activeAsset={activeAsset} onHover={setActiveAsset}/>
           </div>
         </div>
 
@@ -229,52 +229,137 @@ function NavView({ onNav, showTweaks }) {
 }
 
 // ---------- Helpers ----------
-function DonutChart({ assets, activeAsset }) {
+function DonutChart({ assets, activeAsset, onHover }) {
   const total = assets.reduce((s,a) => s + a.pct, 0);
-  const SIZE = 240;
-  const VB = 180;
+  const SIZE = 320;
+  const VB = 200;
   const cx = VB / 2, cy = VB / 2;
-  const TICK_COUNT = 120;
-  const innerR = 60;
-  const outerR = 80;
+  const R = 78;
+  const STROKE = 14;
+  const GAP_DEG = 4;
+  const TILT = 64;
+  const TILT_COS = Math.cos(TILT * Math.PI / 180);
 
-  // Cumulative slice ranges, normalized to [0,1)
   const slices = [];
-  let cum = 0;
+  let cumDeg = -90;
   assets.forEach(a => {
-    const share = a.pct / total;
-    slices.push({ id: a.id, color: a.donutColor, start: cum, end: cum + share });
-    cum += share;
+    const sweep = (a.pct / total) * 360;
+    slices.push({
+      id: a.id,
+      sym: a.sym,
+      color: a.donutColor,
+      pct: a.pct,
+      startDeg: cumDeg + GAP_DEG / 2,
+      endDeg: cumDeg + sweep - GAP_DEG / 2,
+      midDeg: cumDeg + sweep / 2,
+    });
+    cumDeg += sweep;
   });
 
+  const polar = (deg, r) => {
+    const rad = deg * Math.PI / 180;
+    return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
+  };
+
+  const arcPath = (startDeg, endDeg) => {
+    const [x1, y1] = polar(startDeg, R);
+    const [x2, y2] = polar(endDeg, R);
+    const large = (endDeg - startDeg) > 180 ? 1 : 0;
+    return `M ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2}`;
+  };
+
+  const active = slices.find(s => s.id === activeAsset);
+
+  // Project a point at angle/radius (in SVG units) to container px after rotateX(TILT)
+  const project = (deg, r) => {
+    const rad = deg * Math.PI / 180;
+    const px = r * Math.cos(rad);
+    const py = r * Math.sin(rad);
+    return {
+      x: SIZE / 2 + (px / VB) * SIZE,
+      y: SIZE / 2 + (py / VB) * SIZE * TILT_COS,
+    };
+  };
+
+  // Callout: leader stub from the segment edge going radially outward
+  const callout = active ? (() => {
+    const edge = project(active.midDeg, R + STROKE / 2);
+    const stub = project(active.midDeg, R + STROKE / 2 + 28);
+    // For top-half segments, anchor label above the stub end; for bottom, below.
+    const above = Math.sin(active.midDeg * Math.PI / 180) < 0;
+    return { edge, stub, above };
+  })() : null;
+
   return (
-    <div style={{position:'relative',width:SIZE,height:SIZE}}>
-      <svg width={SIZE} height={SIZE} viewBox={`0 0 ${VB} ${VB}`}>
-        {Array.from({length: TICK_COUNT}).map((_, i) => {
-          const t = i / TICK_COUNT;
-          const slice = slices.find(s => t >= s.start && t < s.end) || slices[slices.length - 1];
-          const angle = t * 2 * Math.PI - Math.PI / 2;
-          const x1 = cx + innerR * Math.cos(angle);
-          const y1 = cy + innerR * Math.sin(angle);
-          const x2 = cx + outerR * Math.cos(angle);
-          const y2 = cy + outerR * Math.sin(angle);
-          const dimmed = activeAsset && slice.id !== activeAsset;
-          return (
-            <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-              stroke={slice.color}
-              strokeWidth={1.4}
-              strokeLinecap="round"
-              opacity={dimmed ? 0.3 : 1}
-              style={{transition:'opacity 0.25s'}}
+    <div style={{position:'relative',width:SIZE,height:SIZE * 0.72,display:'flex',alignItems:'center',justifyContent:'center'}}>
+      {/* Tilted ring */}
+      <div style={{position:'relative',width:SIZE,height:SIZE,transform:`perspective(1000px) rotateX(${TILT}deg)`,transformOrigin:'center center'}}>
+        <svg width={SIZE} height={SIZE} viewBox={`0 0 ${VB} ${VB}`} style={{overflow:'visible'}}>
+          {/* Ground glow under active segment */}
+          {active && (
+            <path d={arcPath(active.startDeg, active.endDeg)}
+              fill="none" stroke={active.color} strokeWidth={STROKE + 10}
+              strokeLinecap="round" opacity={0.35}
+              style={{filter:'blur(6px)',transition:'opacity 0.25s'}}
             />
-          );
-        })}
-      </svg>
-      <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center'}}>
-        <div style={{fontSize:12,color:'var(--ink-3)',fontWeight:500,letterSpacing:'0.04em',textTransform:'uppercase'}}>NAV</div>
-        <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',marginTop:6}}>$47.46M</div>
-        <div style={{fontSize:13,color:'var(--ink-3)',marginTop:4}}>{assets.length} assets</div>
+          )}
+          {slices.map((s,i) => {
+            const dimmed = activeAsset && s.id !== activeAsset;
+            return (
+              <path key={i} d={arcPath(s.startDeg, s.endDeg)}
+                fill="none"
+                stroke={dimmed ? 'var(--ink-4)' : s.color}
+                strokeWidth={STROKE}
+                strokeLinecap="round"
+                opacity={dimmed ? 0.4 : 1}
+                style={{transition:'stroke 0.25s, opacity 0.25s, stroke-width 0.25s',cursor:'pointer'}}
+                onMouseEnter={() => onHover && onHover(s.id)}
+                onMouseLeave={() => onHover && onHover(null)}
+              />
+            );
+          })}
+        </svg>
       </div>
+
+      {/* Center label — sits flat on top of the tilted ring */}
+      <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',pointerEvents:'none'}}>
+        <div style={{fontSize:11,color:'var(--ink-3)',fontWeight:500,letterSpacing:'0.06em',textTransform:'uppercase'}}>NAV</div>
+        <div style={{fontSize:28,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',marginTop:2}}>$47.46M</div>
+        <div style={{fontSize:12,color:'var(--ink-3)',marginTop:2}}>{assets.length} assets</div>
+      </div>
+
+      {/* Hover callout */}
+      {callout && (
+        <>
+          <svg width={SIZE} height={SIZE * 0.72} viewBox={`0 0 ${SIZE} ${SIZE * 0.72}`}
+            style={{position:'absolute',left:0,top:0,pointerEvents:'none',overflow:'visible'}}>
+            <line x1={callout.edge.x} y1={callout.edge.y - SIZE * 0.14}
+                  x2={callout.stub.x} y2={callout.stub.y - SIZE * 0.14}
+                  stroke="var(--ink-3)" strokeWidth="1" opacity="0.5"/>
+            <circle cx={callout.edge.x} cy={callout.edge.y - SIZE * 0.14} r="2" fill={active.color}/>
+          </svg>
+          <div style={{
+            position:'absolute',
+            left: callout.stub.x,
+            top: callout.stub.y - SIZE * 0.14 + (callout.above ? -14 : 14),
+            transform: callout.above ? 'translate(-50%, -100%)' : 'translate(-50%, 0)',
+            display:'inline-flex',alignItems:'center',gap:8,
+            padding:'5px 11px',
+            background:'var(--bg-card)',
+            border:'1px solid var(--line-2)',
+            borderRadius:999,
+            fontSize:12,fontWeight:500,
+            whiteSpace:'nowrap',
+            pointerEvents:'none',
+            boxShadow:'0 6px 18px rgba(0,0,0,0.25)',
+            transition:'left 0.25s ease, top 0.25s ease',
+          }}>
+            <span style={{width:8,height:8,borderRadius:'50%',background:active.color}}/>
+            <span style={{color:'var(--ink-1)'}}>{active.sym}</span>
+            <span style={{color:'var(--ink-3)',fontVariantNumeric:'tabular-nums'}}>{active.pct}%</span>
+          </div>
+        </>
+      )}
     </div>
   );
 }
