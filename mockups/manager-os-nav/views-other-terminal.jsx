@@ -229,17 +229,17 @@ function CollateralView({ onNav }) {
                 <div style={{fontSize:12,color:'var(--ink-2)',fontWeight:500}}>Free cash position</div>
                 <span style={{fontSize:11.5,fontWeight:500,color:'var(--green-700)',background:'var(--green-50)',padding:'3px 10px',borderRadius:999,whiteSpace:'nowrap'}}>+4.2% APY on T-bills · ~$26,200 / mo</span>
               </div>
-              <div style={{fontSize:32,fontWeight:600,letterSpacing:'-0.02em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>$6,246,000</div>
+              <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>$6,246,000</div>
               <div style={{fontSize:12,color:'var(--green-700)',marginTop:4,fontWeight:500}}>13.2% of NAV</div>
             </div>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
               <div style={{background:'var(--glass-bg)',borderRadius:10,padding:'16px 20px'}}>
                 <div style={{fontSize:12,color:'var(--ink-2)',fontWeight:500,marginBottom:6}}>USD</div>
-                <div style={{fontSize:20,fontWeight:600,fontVariantNumeric:'tabular-nums',letterSpacing:'-0.015em'}}>$5,966,000</div>
+                <div style={{fontSize:20,fontWeight:500,fontVariantNumeric:'tabular-nums',letterSpacing:'-0.05em'}}>$5,966,000</div>
               </div>
               <div style={{background:'var(--glass-bg)',borderRadius:10,padding:'16px 20px'}}>
                 <div style={{fontSize:12,color:'var(--ink-2)',fontWeight:500,marginBottom:6}}>EUR</div>
-                <div style={{fontSize:20,fontWeight:600,fontVariantNumeric:'tabular-nums',letterSpacing:'-0.015em'}}>$280,000</div>
+                <div style={{fontSize:20,fontWeight:500,fontVariantNumeric:'tabular-nums',letterSpacing:'-0.05em'}}>$280,000</div>
               </div>
             </div>
           </div>
@@ -248,7 +248,7 @@ function CollateralView({ onNav }) {
               <div style={{fontSize:12,color:'var(--ink-2)',fontWeight:500}}>Next dealing in</div>
               <span style={{width:8,height:8,borderRadius:'50%',background:'#E08A42',marginTop:5,boxShadow:'0 0 0 3px rgba(224,138,66,0.15)'}}/>
             </div>
-            <div style={{fontSize:32,fontWeight:600,letterSpacing:'-0.02em',fontVariantNumeric:'tabular-nums'}}>03d 14h 22m</div>
+            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>03d 14h 22m</div>
             <div style={{fontSize:12,color:'var(--ink-3)',marginTop:4}}>Window opens Mon 8 Feb, 17:00 UTC</div>
             <div style={{marginTop:18,paddingTop:16,borderTop:'1px solid var(--line-1)',display:'grid',gridTemplateColumns:'1fr auto',gap:'10px 20px',fontSize:13}}>
               <div style={{color:'var(--ink-2)'}}>Next dealing</div><div style={{fontVariantNumeric:'tabular-nums'}}>Mon 8 Feb, 17:00 UTC</div>
@@ -261,12 +261,12 @@ function CollateralView({ onNav }) {
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:16}}>
           <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'16px 20px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>Coverage of avg daily withdrawal</div>
-            <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums'}}>52×</div>
+            <div style={{fontSize:24,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>52×</div>
             <div style={{fontSize:11.5,color:'var(--ink-2)',marginTop:6}}>$6.25M cash ÷ $120K avg daily withdrawal</div>
           </div>
           <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'16px 20px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>Coverage of next notice period</div>
-            <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums'}}>8.4×</div>
+            <div style={{fontSize:24,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>8.4×</div>
             <div style={{fontSize:11.5,color:'var(--ink-2)',marginTop:6}}>$6.25M cash ÷ $745K max plausible withdrawals</div>
           </div>
         </div>
@@ -846,7 +846,7 @@ function ShareRegisterView({ onNav }) {
               WebkitBackdropFilter:'blur(10px)',
               color: b.neg ? 'var(--neg)' : 'var(--ink-1)',
             }}>
-              <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',marginBottom:4}}>{pct}%</div>
+              <div style={{fontSize:24,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',marginBottom:4}}>{pct}%</div>
               <div style={{fontSize:11,opacity:0.8}}>{b.bucket} return</div>
             </div>
           );
@@ -867,7 +867,7 @@ function ShareRegisterView({ onNav }) {
               <div style={{fontSize:13,color:'var(--ink-2)',fontWeight:500}}>{c.name}</div>
               <span style={{fontSize:10.5,fontWeight:600,padding:'2px 8px',borderRadius:999,background:'var(--green-50)',color:'var(--green-700)',border:'1px solid var(--green-200)'}}>Active</span>
             </div>
-            <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',fontVariantNumeric:'tabular-nums',marginBottom:16}}>{c.nav}</div>
+            <div style={{fontSize:24,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',marginBottom:16}}>{c.nav}</div>
             <div style={{display:'grid',gridTemplateColumns:'auto 1fr',rowGap:8,columnGap:12,fontSize:12.5}}>
               <span style={{color:'var(--ink-3)'}}>Units</span><span style={{fontVariantNumeric:'tabular-nums',fontWeight:500,textAlign:'right'}}>{c.units}</span>
               <span style={{color:'var(--ink-3)'}}>NAV</span><span style={{fontVariantNumeric:'tabular-nums',fontWeight:500,textAlign:'right',whiteSpace:'nowrap'}}>{c.totalNav}</span>
