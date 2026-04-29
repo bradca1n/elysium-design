@@ -150,13 +150,20 @@ function NavView({ onNav, showTweaks }) {
               {v.rows.map((r,j) => (
                 <div key={j} style={{display:'grid',gridTemplateColumns:'repeat(7, minmax(0, 1fr))',gap:16,padding:'11px 4px',borderBottom:'1px solid var(--line-1)',alignItems:'center',fontSize:13,fontVariantNumeric:'tabular-nums'}}>
                   <div style={{fontWeight:500}}>{r.name}</div>
-                  <div style={{display:'inline-flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
-                    {r.holdings.split(',').map(s => s.trim()).map((t,k) => (
-                      <span key={k} style={{display:'inline-flex',alignItems:'center',gap:5}}>
-                        <span style={{width:6,height:6,borderRadius:'50%',background:tickerColor[t] || 'var(--ink-3)'}}/>
-                        <span style={{fontSize:12.5,color:'var(--ink-1)'}}>{t}</span>
-                      </span>
-                    ))}
+                  <div style={{display:'inline-flex',alignItems:'center',gap:6,flexWrap:'wrap'}}>
+                    {r.holdings.split(',').map(s => s.trim()).map((t,k) => {
+                      const c = tickerColor[t] || '#888';
+                      const r2 = parseInt(c.slice(1,3),16), g2 = parseInt(c.slice(3,5),16), b2 = parseInt(c.slice(5,7),16);
+                      return (
+                        <span key={k} style={{
+                          display:'inline-flex',alignItems:'center',
+                          padding:'2px 8px',borderRadius:5,
+                          fontSize:11,fontWeight:500,
+                          background:`rgba(${r2},${g2},${b2},0.15)`,
+                          color:c,
+                        }}>{t}</span>
+                      );
+                    })}
                   </div>
                   <div style={{textAlign:'right'}}>{r.value}</div>
                   <div style={{textAlign:'right'}}>{r.share}</div>
@@ -451,12 +458,12 @@ function MarginBar({ used }) {
 
 function StatusChip({ status }) {
   const map = {
-    verified: { bg: 'var(--green-50)', fg: 'var(--green-700)', border: 'var(--green-200)', label: 'Verified' },
-    pending: { bg: '#FFF6E6', fg: '#8A5A10', border: '#F5E2B8', label: 'Pending' },
+    verified: { fg: 'var(--green-700)', label: 'Verified' },
+    pending: { fg: '#8A5A10', label: 'Pending' },
   };
   const s = map[status] || map.verified;
   return (
-    <span style={{display:'inline-flex',alignItems:'center',gap:5,padding:'2px 8px',borderRadius:999,fontSize:11.5,fontWeight:500,background:s.bg,color:s.fg,border:`1px solid ${s.border}`}}>
+    <span style={{display:'inline-flex',alignItems:'center',gap:5,fontSize:11.5,fontWeight:500,color:s.fg,justifyContent:'flex-end'}}>
       {status === 'verified' && <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3.5 8.5 6.5 11.5 12.5 5"/></svg>}
       {status === 'pending' && <span style={{width:6,height:6,borderRadius:'50%',background:'#D89A20'}}/>}
       {s.label}
