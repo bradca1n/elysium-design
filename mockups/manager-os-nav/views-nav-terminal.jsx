@@ -231,14 +231,12 @@ function NavView({ onNav, showTweaks }) {
 // ---------- Helpers ----------
 function DonutChart({ assets, activeAsset, onHover }) {
   const total = assets.reduce((s,a) => s + a.pct, 0);
-  const SIZE = 320;
+  const SIZE = 300;
   const VB = 200;
   const cx = VB / 2, cy = VB / 2;
   const R = 78;
   const STROKE = 14;
   const GAP_DEG = 10;
-  const TILT = 48;
-  const TILT_COS = Math.cos(TILT * Math.PI / 180);
 
   const slices = [];
   let cumDeg = -90;
@@ -270,78 +268,59 @@ function DonutChart({ assets, activeAsset, onHover }) {
 
   const active = slices.find(s => s.id === activeAsset);
 
-  // Project a point at angle/radius (in SVG units) to container px after rotateX(TILT)
   const project = (deg, r) => {
     const rad = deg * Math.PI / 180;
-    const px = r * Math.cos(rad);
-    const py = r * Math.sin(rad);
     return {
-      x: SIZE / 2 + (px / VB) * SIZE,
-      y: SIZE / 2 + (py / VB) * SIZE * TILT_COS,
+      x: SIZE / 2 + (r * Math.cos(rad) / VB) * SIZE,
+      y: SIZE / 2 + (r * Math.sin(rad) / VB) * SIZE,
     };
   };
 
-  // Callout: leader stub from the segment edge going radially outward
   const callout = active ? (() => {
     const edge = project(active.midDeg, R + STROKE / 2);
-    const stub = project(active.midDeg, R + STROKE / 2 + 28);
-    // For top-half segments, anchor label above the stub end; for bottom, below.
+    const stub = project(active.midDeg, R + STROKE / 2 + 22);
     const above = Math.sin(active.midDeg * Math.PI / 180) < 0;
     return { edge, stub, above };
   })() : null;
 
   return (
-    <div style={{position:'relative',width:SIZE,height:SIZE * 0.72,display:'flex',alignItems:'center',justifyContent:'center'}}>
-      {/* Tilted ring */}
-      <div style={{position:'relative',width:SIZE,height:SIZE,transform:`perspective(1000px) rotateX(${TILT}deg)`,transformOrigin:'center center'}}>
-        <svg width={SIZE} height={SIZE} viewBox={`0 0 ${VB} ${VB}`} style={{overflow:'visible'}}>
-          {/* Ground glow under active segment */}
-          {active && (
-            <path d={arcPath(active.startDeg, active.endDeg)}
-              fill="none" stroke={active.color} strokeWidth={STROKE + 10}
-              strokeLinecap="round" opacity={0.35}
-              style={{filter:'blur(6px)',transition:'opacity 0.25s'}}
+    <div style={{position:'relative',width:SIZE,height:SIZE,display:'flex',alignItems:'center',justifyContent:'center'}}>
+      <svg width={SIZE} height={SIZE} viewBox={`0 0 ${VB} ${VB}`} style={{overflow:'visible',position:'absolute',inset:0}}>
+        {slices.map((s,i) => {
+          const dimmed = activeAsset && s.id !== activeAsset;
+          return (
+            <path key={i} d={arcPath(s.startDeg, s.endDeg)}
+              fill="none"
+              stroke={dimmed ? 'var(--ink-4)' : s.color}
+              strokeWidth={STROKE}
+              opacity={dimmed ? 0.4 : 1}
+              style={{transition:'stroke 0.25s, opacity 0.25s',cursor:'pointer'}}
+              onMouseEnter={() => onHover && onHover(s.id)}
+              onMouseLeave={() => onHover && onHover(null)}
             />
-          )}
-          {slices.map((s,i) => {
-            const dimmed = activeAsset && s.id !== activeAsset;
-            return (
-              <path key={i} d={arcPath(s.startDeg, s.endDeg)}
-                fill="none"
-                stroke={dimmed ? 'var(--ink-4)' : s.color}
-                strokeWidth={STROKE}
-                strokeLinecap="round"
-                opacity={dimmed ? 0.4 : 1}
-                style={{transition:'stroke 0.25s, opacity 0.25s, stroke-width 0.25s',cursor:'pointer'}}
-                onMouseEnter={() => onHover && onHover(s.id)}
-                onMouseLeave={() => onHover && onHover(null)}
-              />
-            );
-          })}
-        </svg>
-      </div>
+          );
+        })}
+      </svg>
 
-      {/* Center label — sits flat on top of the tilted ring */}
       <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',pointerEvents:'none'}}>
         <div style={{fontSize:11,color:'var(--ink-3)',fontWeight:500,letterSpacing:'0.06em',textTransform:'uppercase'}}>NAV</div>
         <div style={{fontSize:28,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',marginTop:2}}>$47.46M</div>
         <div style={{fontSize:12,color:'var(--ink-3)',marginTop:2}}>{assets.length} assets</div>
       </div>
 
-      {/* Hover callout */}
       {callout && (
         <>
-          <svg width={SIZE} height={SIZE * 0.72} viewBox={`0 0 ${SIZE} ${SIZE * 0.72}`}
+          <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}
             style={{position:'absolute',left:0,top:0,pointerEvents:'none',overflow:'visible'}}>
-            <line x1={callout.edge.x} y1={callout.edge.y - SIZE * 0.14}
-                  x2={callout.stub.x} y2={callout.stub.y - SIZE * 0.14}
+            <line x1={callout.edge.x} y1={callout.edge.y}
+                  x2={callout.stub.x} y2={callout.stub.y}
                   stroke="var(--ink-3)" strokeWidth="1" opacity="0.5"/>
-            <circle cx={callout.edge.x} cy={callout.edge.y - SIZE * 0.14} r="2" fill={active.color}/>
+            <circle cx={callout.edge.x} cy={callout.edge.y} r="2" fill={active.color}/>
           </svg>
           <div style={{
             position:'absolute',
             left: callout.stub.x,
-            top: callout.stub.y - SIZE * 0.14 + (callout.above ? -14 : 14),
+            top: callout.stub.y + (callout.above ? -10 : 10),
             transform: callout.above ? 'translate(-50%, -100%)' : 'translate(-50%, 0)',
             display:'inline-flex',alignItems:'center',gap:8,
             padding:'5px 11px',
