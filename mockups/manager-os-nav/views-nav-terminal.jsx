@@ -77,7 +77,7 @@ function NavView({ onNav, showTweaks }) {
       {/* ========= NET ASSET VALUE ========= */}
       <section style={{marginBottom:70}}>
         {/* Headline KPIs */}
-        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:8}}>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:16}}>
           {[
             { l: 'NAV', v: '$47,460,000', s: <><span style={{color:'var(--pos)',fontWeight:500}}>+5.2%</span> vs. prior NAV</>, pos: false },
             { l: 'Period P&L (MTD)', v: '+$2,340,000', s: <><span style={{color:'var(--pos)',fontWeight:500}}>+5.2%</span> on opening NAV</>, pos: true },
@@ -87,10 +87,7 @@ function NavView({ onNav, showTweaks }) {
 
         <SubTitle title="Portfolio composition" right={<SegToggle value={assetGroup} setValue={setAssetGroup} options={[{v:'spot',l:'Spot'},{v:'derivatives',l:'Derivatives'}]}/>}/>
 
-        <div style={{display:'grid',gridTemplateColumns:'480px 1fr',gap:32,alignItems:'center',marginBottom:16}}>
-          <div style={{display:'flex',justifyContent:'center'}}>
-            <DonutChart assets={activeAssets}/>
-          </div>
+        <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) minmax(280px,480px)',gap:32,alignItems:'center',marginBottom:24}}>
           <div>
             <div style={{display:'grid',gridTemplateColumns:'28px minmax(0,1fr) minmax(0,1.1fr) 90px minmax(0,1.4fr) 120px 70px',gap:16,padding:'4px 4px 8px',borderBottom:'1px solid var(--line-1)',fontSize:10.5,color:'var(--ink-3)',fontWeight:500}}>
               <div/><div>Asset</div><div>Units</div><div style={{textAlign:'right'}}>Price</div><div>Allocation</div><div style={{textAlign:'right'}}>Value</div><div style={{textAlign:'right'}}>24h</div>
@@ -117,6 +114,9 @@ function NavView({ onNav, showTweaks }) {
                 <div style={{textAlign:'right',fontVariantNumeric:'tabular-nums',fontSize:12.5,fontWeight:500,color:'var(--pos)'}}>{a.d}</div>
               </div>
             ))}
+          </div>
+          <div style={{display:'flex',justifyContent:'center'}}>
+            <DonutChart assets={activeAssets}/>
           </div>
         </div>
 
@@ -306,7 +306,7 @@ function SectionHead({ title, desc, cta, right }) {
 
 function SubTitle({ title, right }) {
   return (
-    <div style={{display:'flex',alignItems:'center',gap:12,margin:'32px 0 12px'}}>
+    <div style={{display:'flex',alignItems:'center',gap:12,margin:'40px 0 16px'}}>
       <div style={{fontSize:16,fontWeight:500,color:'var(--ink-1)'}}>{title}</div>
       <div style={{flex:1}}/>
       {right}
