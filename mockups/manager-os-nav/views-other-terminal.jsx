@@ -40,7 +40,7 @@ function OrderBookView({ onNav }) {
           { l: 'Net flow (strike)', v: '+$2.88M', s: '+6.1% AUM', pos: true },
           { l: 'Pending review', v: '2', s: '1 AML · 1 cooling-off' },
         ].map((k,i) => (
-          <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'16px 20px'}}>
+          <div key={i} style={{background:'var(--bg-card)',borderRadius:10,padding:'16px 20px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
             <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',color:k.pos?'var(--pos)':'var(--ink-1)'}}>{k.v}</div>
             <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
@@ -224,7 +224,7 @@ function CollateralView({ onNav }) {
 
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
           <div style={{display:'flex',flexDirection:'column',gap:16}}>
-            <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'20px 22px'}}>
+            <div style={{background:'var(--bg-card)',borderRadius:10,padding:'20px 22px'}}>
               <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:12,marginBottom:8}}>
                 <div style={{fontSize:12,color:'var(--ink-2)',fontWeight:500}}>Free cash position</div>
                 <span style={{fontSize:11.5,fontWeight:500,color:'var(--green-700)',background:'var(--green-50)',padding:'3px 10px',borderRadius:999,whiteSpace:'nowrap'}}>+4.2% APY on T-bills · ~$26,200 / mo</span>
@@ -233,17 +233,17 @@ function CollateralView({ onNav }) {
               <div style={{fontSize:12,color:'var(--green-700)',marginTop:4,fontWeight:500}}>13.2% of NAV</div>
             </div>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-              <div style={{background:'var(--glass-bg)',borderRadius:10,padding:'16px 20px'}}>
+              <div style={{background:'var(--bg-card)',borderRadius:10,padding:'16px 20px'}}>
                 <div style={{fontSize:12,color:'var(--ink-2)',fontWeight:500,marginBottom:6}}>USD</div>
                 <div style={{fontSize:20,fontWeight:500,fontVariantNumeric:'tabular-nums',letterSpacing:'-0.05em'}}>$5,966,000</div>
               </div>
-              <div style={{background:'var(--glass-bg)',borderRadius:10,padding:'16px 20px'}}>
+              <div style={{background:'var(--bg-card)',borderRadius:10,padding:'16px 20px'}}>
                 <div style={{fontSize:12,color:'var(--ink-2)',fontWeight:500,marginBottom:6}}>EUR</div>
                 <div style={{fontSize:20,fontWeight:500,fontVariantNumeric:'tabular-nums',letterSpacing:'-0.05em'}}>$280,000</div>
               </div>
             </div>
           </div>
-          <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'20px 22px',display:'flex',flexDirection:'column'}}>
+          <div style={{background:'var(--bg-card)',borderRadius:10,padding:'20px 22px',display:'flex',flexDirection:'column'}}>
             <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:12,marginBottom:8}}>
               <div style={{fontSize:12,color:'var(--ink-2)',fontWeight:500}}>Next dealing in</div>
               <span style={{width:8,height:8,borderRadius:'50%',background:'#E08A42',marginTop:5,boxShadow:'0 0 0 3px rgba(224,138,66,0.15)'}}/>
@@ -259,12 +259,12 @@ function CollateralView({ onNav }) {
         </div>
 
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:16}}>
-          <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'16px 20px'}}>
+          <div style={{background:'var(--bg-card)',borderRadius:10,padding:'16px 20px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>Coverage of avg daily withdrawal</div>
             <div style={{fontSize:24,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>52×</div>
             <div style={{fontSize:11.5,color:'var(--ink-2)',marginTop:6}}>$6.25M cash ÷ $120K avg daily withdrawal</div>
           </div>
-          <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'16px 20px'}}>
+          <div style={{background:'var(--bg-card)',borderRadius:10,padding:'16px 20px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>Coverage of next notice period</div>
             <div style={{fontSize:24,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>8.4×</div>
             <div style={{fontSize:11.5,color:'var(--ink-2)',marginTop:6}}>$6.25M cash ÷ $745K max plausible withdrawals</div>
@@ -355,7 +355,7 @@ function CollateralView({ onNav }) {
           <button onClick={()=>onNav('order-book')} style={btnOutline}>View all</button>
         </div>
 
-        <div style={{background:'var(--glass-bg)',borderRadius:10,padding:'18px 22px',marginBottom:16}}>
+        <div style={{background:'var(--bg-card)',borderRadius:10,padding:'18px 22px',marginBottom:16}}>
           <div style={{fontSize:12,color:'var(--ink-2)',fontWeight:500,marginBottom:6}}>Queued order amount</div>
           <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>$4.50M</div>
           <div style={{fontSize:12,color:'var(--ink-3)',marginTop:4}}>5 orders</div>
@@ -487,7 +487,7 @@ function MoveCollateralSheet({ open, onClose }) {
                 <div style={{fontSize:16,fontWeight:500,marginBottom:4}}>Sign & broadcast</div>
                 <div style={{fontSize:13,color:'var(--ink-2)'}}>Two signers required. Hardware wallets sealed to their desk.</div>
               </div>
-              <div style={{background:'var(--glass-bg)',borderRadius:10,padding:20}}>
+              <div style={{background:'var(--bg-card)',borderRadius:10,padding:20}}>
                 <div style={{fontSize:11,color:'var(--ink-3)',fontWeight:600,marginBottom:10}}>Transfer summary</div>
                 <div style={{display:'grid',gridTemplateColumns:'1fr auto',gap:'10px 20px',fontSize:13,fontVariantNumeric:'tabular-nums'}}>
                   <div>Move</div><div style={{fontWeight:600}}>{amount} {asset}</div>
@@ -760,7 +760,7 @@ function ShareRegisterView({ onNav }) {
       {/* ===== Blended measures ===== */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:40}}>
         {blended.map((k,i) => (
-          <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'14px 18px'}}>
+          <div key={i} style={{background:'var(--bg-card)',borderRadius:10,padding:'14px 18px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
             <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
             <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
@@ -1057,7 +1057,7 @@ function ReconciliationView({ onNav }) {
           { l: 'Mean dispersion', v: '0.018%', s: 'Well within 0.25% tolerance' },
           { l: 'Variances flagged', v: '1', s: '07 Feb · dust on Binance' },
         ].map((k,i) => (
-          <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'16px 20px'}}>
+          <div key={i} style={{background:'var(--bg-card)',borderRadius:10,padding:'16px 20px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
             <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
             <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>

@@ -39,7 +39,7 @@ function ProfitLossView({ onNav }) {
           { l: 'Total fees', v: '−$0.47M', s: 'Mgmt −$0.31M · Perf −$0.16M' },
           { l: 'Realised / unrealised', v: '62 / 38', s: '$1.45M realised vs $0.89M mark' },
         ].map((k,i) => (
-          <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'16px 20px'}}>
+          <div key={i} style={{background:'var(--bg-card)',borderRadius:10,padding:'16px 20px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
             <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',color: k.pos?'var(--pos)':'var(--ink-1)'}}>{k.v}</div>
             <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
@@ -244,7 +244,7 @@ function FeesExpenses() {
           { l: 'YTD fee drag', v: '0.91%', s: 'Below 1.20% budget' },
           { l: 'Performance fee accrued', v: '$156,800', s: 'Above HWM by $784K' },
         ].map((k,i) => (
-          <div key={i} style={{background:'var(--glass-bg)',borderRadius:10,padding:'16px 20px'}}>
+          <div key={i} style={{background:'var(--bg-card)',borderRadius:10,padding:'16px 20px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
             <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
             <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
@@ -387,7 +387,7 @@ function BalanceSheetView({ onNav }) {
           { l: "Net assets (equity)", v: '$47.27M', s: 'Ties to NAV within $1 tolerance' },
           { l: 'Leverage', v: '1.00×', s: 'Unlevered · no borrowings' },
         ].map((k,i) => (
-          <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'16px 20px'}}>
+          <div key={i} style={{background:'var(--bg-card)',borderRadius:10,padding:'16px 20px'}}>
             <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
             <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
             <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
