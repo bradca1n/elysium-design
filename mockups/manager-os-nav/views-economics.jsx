@@ -197,7 +197,7 @@ function EconomicsView({ onNav }) {
 
 function KpiCard({ l, v, s, neg }) {
   return (
-    <div style={{background:'var(--bg-card)',borderRadius:10,padding:'14px 18px'}}>
+    <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'14px 18px'}}>
       <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{l}</div>
       <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',color: neg?'var(--ink-1)':'var(--ink-1)'}}>{v}</div>
       <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{s}</div>
