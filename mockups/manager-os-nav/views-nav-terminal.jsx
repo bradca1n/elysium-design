@@ -231,9 +231,9 @@ function NavView({ onNav, showTweaks }) {
         <div style={{overflow:'hidden'}}>
           <BSSection title="Assets" rows={bsAssets} total={{ l: 'Total assets', v: '$47,803,000' }}/>
           <BSSection title="Liabilities" rows={bsLiab} total={{ l: 'Total liabilities', v: '−$343,000', neg: true }}/>
-          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'16px 20px',background:'#15151A',color:'#F2F0EC',borderRadius:8,marginTop:8}}>
-            <div style={{fontSize:14,fontWeight:600}}>Net assets</div>
-            <div style={{fontSize:16,fontWeight:600,fontVariantNumeric:'tabular-nums'}}>$47,460,000</div>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'14px 20px',background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,marginTop:4}}>
+            <div style={{fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>Net assets</div>
+            <div style={{fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>$47,460,000</div>
           </div>
         </div>
       </section>

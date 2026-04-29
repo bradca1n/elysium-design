@@ -114,9 +114,9 @@ function IncomeStatement() {
             </div>
           </React.Fragment>
         ))}
-        <div style={{display:'flex',padding:'18px 20px',gap:16,background:'#15151A',color:'#F2F0EC'}}>
-          <div style={{flex:1,fontSize:14,fontWeight:600}}>Net P&amp;L for period</div>
-          <div style={{fontSize:18,fontWeight:600,fontVariantNumeric:'tabular-nums'}}>+$2,258,400</div>
+        <div style={{display:'flex',padding:'14px 20px',gap:16,background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,marginTop:4}}>
+          <div style={{flex:1,fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>Net P&amp;L for period</div>
+          <div style={{fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>+$2,258,400</div>
         </div>
       </div>
       <div style={{marginTop:16,fontSize:12,color:'var(--ink-3)'}}>Figures reconcile to NAV strike 07 Feb 16:00 UTC · base currency USD · IFRS 9 fair value through P&amp;L</div>
@@ -461,25 +461,25 @@ function BalanceSheetView({ onNav }) {
       </div>
 
       {/* Balance check */}
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'18px 24px',background:'#15151A',color:'#F2F0EC',borderRadius:12,border:'1px solid #2E2E36'}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'14px 20px',background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,marginTop:4}}>
         <div style={{display:'flex',alignItems:'center',gap:12}}>
-          <div style={{width:32,height:32,borderRadius:'50%',background:'var(--green-500)',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>
-            <Icon.check style={{width:16,height:16,color:'#fff'}}/>
+          <div style={{width:24,height:24,borderRadius:'50%',background:'var(--green-500)',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>
+            <Icon.check style={{width:12,height:12,color:'#fff'}}/>
           </div>
           <div>
-            <div style={{fontSize:14,fontWeight:600}}>Books balance</div>
-            <div style={{fontSize:12,opacity:0.7,marginTop:2}}>Assets = Liabilities + Equity · $0 variance · last verified 07 Feb 16:02 UTC</div>
+            <div style={{fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>Books balance</div>
+            <div style={{fontSize:11.5,color:'var(--ink-3)',marginTop:2}}>Assets = Liabilities + Equity · $0 variance · last verified 07 Feb 16:02 UTC</div>
           </div>
         </div>
-        <div style={{display:'flex',gap:24,fontVariantNumeric:'tabular-nums'}}>
+        <div style={{display:'flex',gap:20,fontVariantNumeric:'tabular-nums'}}>
           <div>
-            <div style={{fontSize:11,opacity:0.6}}>Assets</div>
-            <div style={{fontSize:16,fontWeight:600}}>$48,173,000</div>
+            <div style={{fontSize:11,color:'var(--ink-3)'}}>Assets</div>
+            <div style={{fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>$48,173,000</div>
           </div>
-          <div style={{opacity:0.5,fontSize:20,alignSelf:'center'}}>=</div>
+          <div style={{color:'var(--ink-3)',fontSize:14,alignSelf:'center'}}>=</div>
           <div>
-            <div style={{fontSize:11,opacity:0.6}}>Liab. + Equity</div>
-            <div style={{fontSize:16,fontWeight:600}}>$48,173,000</div>
+            <div style={{fontSize:11,color:'var(--ink-3)'}}>Liab. + Equity</div>
+            <div style={{fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>$48,173,000</div>
           </div>
         </div>
       </div>
