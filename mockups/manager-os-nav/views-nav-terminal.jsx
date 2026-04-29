@@ -7,17 +7,17 @@ function NavView({ onNav, showTweaks }) {
   const [assetGroup, setAssetGroup] = _u1('spot');
 
   const assets = [
-    { id: 'btc', name: 'Bitcoin', sym: 'BTC', glyph: '₿', color: '#E69A2A', units: '323.80 BTC', price: '$68,992', pct: 47.1, bar: 47.1, value: '$22,340,000', d: '+0.8%', donutColor: 'var(--green-700)' },
-    { id: 'eth', name: 'Ethereum', sym: 'ETH', glyph: 'Ξ', color: '#5B6FBE', units: '1,094.00 ETH', price: '$2,011', pct: 4.6, bar: 15, value: '$2,200,000', d: '+3.5%', donutColor: 'var(--green-500)' },
-    { id: 'link', name: 'Chainlink', sym: 'LINK', glyph: 'L', color: '#1F5BD9', units: '109,489.00 LINK', price: '$13.70', pct: 3.2, bar: 10, value: '$1,500,000', d: '+1.5%', donutColor: 'var(--green-400)' },
-    { id: 'ltc', name: 'Litecoin', sym: 'LTC', glyph: 'Ł', color: '#9AA2A8', units: '20,362.82 LTC', price: '$54.02', pct: 2.3, bar: 7, value: '$1,100,000', d: '+2.0%', donutColor: 'var(--green-300)' },
-    { id: 'ada', name: 'Cardano', sym: 'ADA', glyph: '₳', color: '#1F3C9E', units: '3,653,846.15 ADA', price: '$0.26', pct: 2.0, bar: 6, value: '$950,000', d: '+4.1%', donutColor: 'var(--green-200)' },
+    { id: 'btc', name: 'Bitcoin', sym: 'BTC', glyph: '₿', color: '#E69A2A', units: '323.80', price: '$68,992', pct: 47.1, bar: 47.1, value: '$22,340,000', d: '+0.8%', donutColor: 'var(--green-700)' },
+    { id: 'eth', name: 'Ethereum', sym: 'ETH', glyph: 'Ξ', color: '#5B6FBE', units: '1,094.00', price: '$2,011', pct: 4.6, bar: 15, value: '$2,200,000', d: '+3.5%', donutColor: 'var(--green-500)' },
+    { id: 'link', name: 'Chainlink', sym: 'LINK', glyph: 'L', color: '#1F5BD9', units: '109,489.00', price: '$13.70', pct: 3.2, bar: 10, value: '$1,500,000', d: '+1.5%', donutColor: 'var(--green-400)' },
+    { id: 'ltc', name: 'Litecoin', sym: 'LTC', glyph: 'Ł', color: '#9AA2A8', units: '20,362.82', price: '$54.02', pct: 2.3, bar: 7, value: '$1,100,000', d: '+2.0%', donutColor: 'var(--green-300)' },
+    { id: 'ada', name: 'Cardano', sym: 'ADA', glyph: '₳', color: '#1F3C9E', units: '3,653,846.15', price: '$0.26', pct: 2.0, bar: 6, value: '$950,000', d: '+4.1%', donutColor: 'var(--green-200)' },
   ];
   // PLACEHOLDER — pending Timo's answer on Haruko spot vs. derivatives split
   const derivatives = [
-    { id: 'btc-perp', name: 'BTC Perpetual', sym: 'BTC-PERP', glyph: '₿', color: '#E69A2A', units: '+12.40 BTC notional', price: '$101,220', pct: 6.8, bar: 22, value: '$3,200,000', d: '+1.2%', donutColor: 'var(--green-700)' },
-    { id: 'eth-perp', name: 'ETH Perpetual', sym: 'ETH-PERP', glyph: 'Ξ', color: '#5B6FBE', units: '−180.00 ETH notional', price: '$2,918',   pct: 1.1, bar: 4,  value: '$525,000',   d: '−0.4%', donutColor: 'var(--green-500)' },
-    { id: 'sol-fut',  name: 'SOL Futures',   sym: 'SOL-FUT',  glyph: 'S', color: '#7E5BBE', units: '+8,400 SOL notional',  price: '$140',     pct: 0.6, bar: 2,  value: '$280,000',   d: '+2.1%', donutColor: 'var(--green-400)' },
+    { id: 'btc-perp', name: 'BTC Perpetual', sym: 'BTC-PERP', glyph: '₿', color: '#E69A2A', units: '+12.40', price: '$101,220', pct: 6.8, bar: 22, value: '$3,200,000', d: '+1.2%', donutColor: 'var(--green-700)' },
+    { id: 'eth-perp', name: 'ETH Perpetual', sym: 'ETH-PERP', glyph: 'Ξ', color: '#5B6FBE', units: '−180.00', price: '$2,918',   pct: 1.1, bar: 4,  value: '$525,000',   d: '−0.4%', donutColor: 'var(--green-500)' },
+    { id: 'sol-fut',  name: 'SOL Futures',   sym: 'SOL-FUT',  glyph: 'S', color: '#7E5BBE', units: '+8,400',  price: '$140',     pct: 0.6, bar: 2,  value: '$280,000',   d: '+2.1%', donutColor: 'var(--green-400)' },
   ];
   const activeAssets = assetGroup === 'spot' ? assets : derivatives;
   const venues = [
@@ -101,7 +101,7 @@ function NavView({ onNav, showTweaks }) {
                 borderRadius: activeAsset === a.id ? 6 : 0,
               }}>
                 <span style={{width:22,height:22,borderRadius:'50%',background:a.color,color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:9.5,fontWeight:700}}>{a.glyph}</span>
-                <div style={{fontSize:13,fontWeight:500}}>{a.name}</div>
+                <div style={{fontSize:13,fontWeight:500}}>{a.sym}</div>
                 <div style={{fontSize:12.5,color:'var(--ink-2)',fontVariantNumeric:'tabular-nums'}}>{a.units}</div>
                 <div style={{fontSize:12.5,color:'var(--ink-2)',fontVariantNumeric:'tabular-nums',textAlign:'right'}}>{a.price}</div>
                 <div style={{display:'flex',alignItems:'center',gap:12,minWidth:0}}>
