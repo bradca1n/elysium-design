@@ -22,17 +22,18 @@ function NavView({ onNav, showTweaks }) {
   const activeAssets = assetGroup === 'spot' ? assets : derivatives;
   const venues = [
     { group: 'Custody', total: '$27.5M', share: '58%', rows: [
-      { name: 'Coinbase Prime', holdings: 'BTC, ETH, USDC', value: '$18.0M', share: '38.0%', flow: '+0.32%', margin: null, status: 'verified' },
-      { name: 'Copper.co', holdings: 'BTC, SOL', value: '$9.5M', share: '20.0%', flow: '+0.18%', margin: null, status: 'verified' },
+      { name: 'Coinbase Prime', holdings: 'BTC, ETH', value: '$18.0M', share: '38.0%', flow: '+0.32%', margin: null, status: 'verified' },
+      { name: 'Copper.co', holdings: 'BTC, LINK', value: '$9.5M', share: '20.0%', flow: '+0.18%', margin: null, status: 'verified' },
     ]},
     { group: 'Exchange', total: '$12.4M', share: '26%', rows: [
-      { name: 'Binance', holdings: 'Mixed', value: '$7.1M', share: '15.0%', flow: '−0.12%', margin: 62, status: 'verified' },
-      { name: 'OKX', holdings: 'Mixed', value: '$5.3M', share: '11.0%', flow: '−0.08%', margin: 84, status: 'pending' },
+      { name: 'Binance', holdings: 'ETH, LTC, ADA', value: '$7.1M', share: '15.0%', flow: '−0.12%', margin: 62, status: 'verified' },
+      { name: 'OKX', holdings: 'LINK, LTC, ADA', value: '$5.3M', share: '11.0%', flow: '−0.08%', margin: 84, status: 'pending' },
     ]},
     { group: 'Cold', total: '$7.5M', share: '16%', rows: [
       { name: 'Self custody', holdings: 'BTC', value: '$7.5M', share: '16.0%', flow: '0.00%', margin: null, status: 'verified' },
     ]},
   ];
+  const tickerColor = Object.fromEntries(assets.map(a => [a.sym, a.color]));
 
   const pnlKpis = [
     { l: 'Realized P&L', v: '+$612,400', s: '8 trades settled', pos: true },
@@ -149,7 +150,14 @@ function NavView({ onNav, showTweaks }) {
               {v.rows.map((r,j) => (
                 <div key={j} style={{display:'grid',gridTemplateColumns:'repeat(7, minmax(0, 1fr))',gap:16,padding:'11px 4px',borderBottom:'1px solid var(--line-1)',alignItems:'center',fontSize:13,fontVariantNumeric:'tabular-nums'}}>
                   <div style={{fontWeight:500}}>{r.name}</div>
-                  <div style={{color:'var(--ink-2)',fontSize:12.5}}>{r.holdings}</div>
+                  <div style={{display:'inline-flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
+                    {r.holdings.split(',').map(s => s.trim()).map((t,k) => (
+                      <span key={k} style={{display:'inline-flex',alignItems:'center',gap:5}}>
+                        <span style={{width:6,height:6,borderRadius:'50%',background:tickerColor[t] || 'var(--ink-3)'}}/>
+                        <span style={{fontSize:12.5,color:'var(--ink-1)'}}>{t}</span>
+                      </span>
+                    ))}
+                  </div>
                   <div style={{textAlign:'right'}}>{r.value}</div>
                   <div style={{textAlign:'right'}}>{r.share}</div>
                   <div style={{textAlign:'right',color: r.flow.startsWith('+') ? 'var(--pos)' : r.flow.startsWith('−') ? 'var(--neg)' : 'var(--ink-3)',fontWeight:500}}>{r.flow}</div>
