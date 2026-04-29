@@ -236,7 +236,7 @@ function DonutChart({ assets, activeAsset, onHover }) {
   const cx = VB / 2, cy = VB / 2;
   const R = 78;
   const STROKE = 14;
-  const GAP_DEG = 10;
+  const GAP_DEG = 1;
 
   const slices = [];
   let cumDeg = -90;
@@ -323,14 +323,9 @@ function DonutChart({ assets, activeAsset, onHover }) {
             top: callout.stub.y + (callout.above ? -10 : 10),
             transform: callout.above ? 'translate(-50%, -100%)' : 'translate(-50%, 0)',
             display:'inline-flex',alignItems:'center',gap:8,
-            padding:'5px 11px',
-            background:'var(--bg-card)',
-            border:'1px solid var(--line-2)',
-            borderRadius:999,
             fontSize:12,fontWeight:500,
             whiteSpace:'nowrap',
             pointerEvents:'none',
-            boxShadow:'0 6px 18px rgba(0,0,0,0.25)',
             transition:'left 0.25s ease, top 0.25s ease',
           }}>
             <span style={{width:8,height:8,borderRadius:'50%',background:active.color}}/>
