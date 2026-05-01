@@ -208,11 +208,10 @@ function CollateralView({ onNav }) {
         </div>
       </div>
 
-      <section style={{marginBottom:56}}>
+      <section style={{marginBottom:70}}>
         <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:24,marginBottom:20}}>
           <div>
             <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>Treasury</div>
-            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Free cash available for trading positions, and upcoming fund flows.</div>
           </div>
           <div style={{display:'flex',alignItems:'center',gap:8}}>
             <button style={btnOutline}>View Cashbook</button>
@@ -272,14 +271,13 @@ function CollateralView({ onNav }) {
         </div>
       </section>
 
-      <section style={{marginBottom:56}}>
+      <section style={{marginBottom:70}}>
         <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:24,marginBottom:20}}>
           <div>
             <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em',display:'flex',alignItems:'baseline',gap:10}}>
               Collateral position
               <span style={{fontSize:11.5,fontWeight:500,color:'var(--green-700)',background:'var(--green-50)',padding:'3px 8px',borderRadius:999}}>68% utilised · 5 venues</span>
             </div>
-            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Assets posted to exchanges to support trading. Not part of free cash — moves with positions and prices.</div>
           </div>
           <button onClick={()=>setSheetOpen(true)} style={btnOutline}>Move collateral</button>
         </div>
@@ -333,7 +331,7 @@ function CollateralView({ onNav }) {
         </div>
       </section>
 
-      <section style={{marginBottom:56}}>
+      <section style={{marginBottom:70}}>
         <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:24,marginBottom:20}}>
           <div>
             <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>Upcoming fund flows</div>
@@ -341,7 +339,7 @@ function CollateralView({ onNav }) {
           <button onClick={()=>onNav('order-book')} style={btnOutline}>View full order book</button>
         </div>
 
-        <div style={{display:'grid',gridTemplateColumns:'repeat(4, 1fr)',gap:16}} data-kpi-grid>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(4, 1fr)',gap:16}}>
           <Kpi l="Pending subscriptions" v="+$150,000" s="5 orders" pos/>
           <Kpi l="Pending redemptions" v="−$320,000" s="2 orders" neg/>
           <Kpi l="Projected post-dealing cash" v="$2,476,000" s="after settlement Mon 4 May"/>
@@ -643,11 +641,11 @@ function ShareRegisterView({ onNav }) {
     { name: 'Vela Asset Mgmt',       loc: 'Boston, US · Institutional',      cls: 'Class A', units: '103,650', value: '$15,298,090', lockup: 'Free',         kyc: 'verified',  last: 'Sub · 05 Apr' },
   ];
 
-  // Share classes
+  // Share classes — shape matches Overview's ClassCard
   const classes = [
-    { name: 'Class A', nav: '100.20 USD', units: '3.20 M', totalNav: '10,050,200 USD', mgt: '4.50%', fees: '45,000 USD', investors: '85' },
-    { name: 'Class B', nav: '1,050.20 USD', units: '1.0 M', totalNav: '10,050,200 USD', mgt: '1.0%',  fees: '45,000 USD', investors: '40' },
-    { name: 'Class I', nav: '10,050.20 USD', units: '1.0 M', totalNav: '10,050,200 USD', mgt: '0.5%', fees: '4,500 USD', investors: '20' },
+    { name: 'Class A', navShare: '$100.20',    units: '3.20 M', total: '$10,050,200', mgmt: '4.50%', perf: '20%', investors: 85, change: '+5.2%' },
+    { name: 'Class B', navShare: '$1,050.20',  units: '1.0 M',  total: '$10,050,200', mgmt: '1.00%', perf: '20%', investors: 40, change: '+4.8%' },
+    { name: 'Class I', navShare: '$10,050.20', units: '1.0 M',  total: '$10,050,200', mgmt: '0.50%', perf: '30%', investors: 20, change: '+5.5%' },
   ];
 
   // Blended measures (replaces old KPI strip; KYC health dropped per ptl-pod)
@@ -709,7 +707,7 @@ function ShareRegisterView({ onNav }) {
     { label: 'Top 5',         pct: 29, color: 'var(--accent-plum)' },
     { label: 'Next 5 (6–10)', pct: 19, color: 'color-mix(in oklab, var(--accent-plum) 72%, var(--bg-canvas))' },
     { label: 'Next 10 (11–20)', pct: 22, color: 'color-mix(in oklab, var(--accent-plum) 50%, var(--bg-canvas))' },
-    { label: 'Remaining 115', pct: 30, color: '#BFD8B6' },
+    { label: 'Remaining 115', pct: 30, color: 'color-mix(in oklab, var(--accent-plum) 22%, var(--bg-canvas))' },
   ];
 
   return (
@@ -721,7 +719,8 @@ function ShareRegisterView({ onNav }) {
           <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Holders, share classes and lock-ups across the fund.</div>
         </div>
         <div style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
-          <button style={{...btnPrimary,height:32}}>+ New Share Class</button>
+          <button onClick={()=>onNav('share-classes')} style={{...btnOutline,height:32,fontSize:12.5}}>Manage classes</button>
+          <button onClick={()=>onNav('share-classes')} style={{...btnPrimary,height:32}}>+ New Share Class</button>
           <button aria-label="More" style={{width:32,height:32,border:'1px solid var(--line-2)',background:'var(--bg-canvas)',borderRadius:8,cursor:'pointer',color:'var(--ink-2)',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
           </button>
@@ -729,7 +728,7 @@ function ShareRegisterView({ onNav }) {
       </div>
 
       {/* ===== Blended measures ===== */}
-      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:48}}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:70}}>
         {blended.map((k,i) => (
           <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'14px 18px'}}>
             <div style={{fontSize:14,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
@@ -741,122 +740,105 @@ function ShareRegisterView({ onNav }) {
 
       {/* ===== Manager + POD holdings ===== */}
       <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',marginBottom:20}}>Manager &amp; POD holdings</div>
-      <div style={{marginBottom:48}}>
-        <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
-          <thead>
-            <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>
-              <th style={{textAlign:'left',padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Holder</th>
-              <th style={{textAlign:'right',padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Units</th>
-              <th style={{textAlign:'right',padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Value</th>
-              <th style={{textAlign:'right',padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>% of fund</th>
-              <th style={{textAlign:'left',padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Duration profile</th>
-              <th style={{textAlign:'right',padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Returns earned</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ownHoldings.map((r,i) => (
-              <tr key={i} style={{fontSize:13}}>
-                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',fontWeight:500}}>{r.who}</td>
-                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right'}}>{r.units}</td>
-                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right'}}>{r.value}</td>
-                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right',color:'var(--ink-2)'}}>{r.pct}</td>
-                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color:'var(--ink-2)'}}>{r.duration}</td>
-                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right',color:'var(--pos)',fontWeight:500}}>{r.returns}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div style={{marginBottom:70,display:'flex',flexDirection:'column',gap:12}}>
+        {ownHoldings.map((r,i) => (
+          <div key={i} style={{display:'flex',alignItems:'center',padding:'14px 20px',gap:16,background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8}}>
+            <div style={{flex:1,fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>{r.who}</div>
+            <div style={{width:160,textAlign:'right',fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>{r.value}</div>
+            <div style={{width:90,textAlign:'right',fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>{r.returns}</div>
+          </div>
+        ))}
       </div>
 
-      {/* ===== Summary charts: Duration profile + Concentration ===== */}
+      {/* ===== Top split: Holding period + Duration profile ===== */}
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32,marginBottom:48}}>
+        {/* Holding period — horizontal bars w/ hover tooltip */}
         <div>
-          <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',marginBottom:20}}>Duration profile</div>
-          <div style={{display:'flex',height:38,borderRadius:8,overflow:'hidden',border:'1px solid var(--line-1)'}}>
-            <div style={{width:'24.1%',background:'var(--accent-plum)',color:'var(--accent-plum-on)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:600}}>24.1%</div>
-            <div style={{width:'13.5%',background:'color-mix(in oklab, var(--accent-plum) 55%, var(--bg-canvas))',color:'var(--ink-1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:600}}>13.5%</div>
-            <div style={{flex:1,background:'color-mix(in oklab, var(--accent-plum) 18%, var(--bg-canvas))',color:'var(--ink-2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:600}}>62.4%</div>
+          <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:16,marginBottom:18}}>
+            <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em'}}>Holding period</div>
+            <div style={{display:'inline-flex',padding:3,background:'var(--bg-subtle)',borderRadius:8}}>
+              <button onClick={()=>setHoldingBy('capital')} style={{border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,fontSize:12,fontWeight:500,background:holdingBy==='capital'?'var(--bg-canvas)':'transparent',color:holdingBy==='capital'?'var(--ink-1)':'var(--ink-2)',boxShadow:holdingBy==='capital'?'0 1px 2px rgba(0,0,0,0.06)':'none'}}>By Capital</button>
+              <button onClick={()=>setHoldingBy('investor')} style={{border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,fontSize:12,fontWeight:500,background:holdingBy==='investor'?'var(--bg-canvas)':'transparent',color:holdingBy==='investor'?'var(--ink-1)':'var(--ink-2)',boxShadow:holdingBy==='investor'?'0 1px 2px rgba(0,0,0,0.06)':'none'}}>By Investor</button>
+            </div>
           </div>
-          <div style={{display:'flex',gap:18,marginTop:12,fontSize:12,color:'var(--ink-2)'}}>
-            <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:8,height:8,borderRadius:'50%',background:'var(--accent-plum)'}}/> Available · 24.1%</span>
-            <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:8,height:8,borderRadius:'50%',background:'color-mix(in oklab, var(--accent-plum) 55%, var(--bg-canvas))'}}/> In notice · 13.5%</span>
-            <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:8,height:8,borderRadius:'50%',background:'color-mix(in oklab, var(--accent-plum) 28%, var(--bg-canvas))'}}/> Locked · 62.4%</span>
-          </div>
-
-          <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',margin:'40px 0 20px'}}>Holding period</div>
-          <div style={{display:'inline-flex',padding:3,background:'var(--bg-subtle)',borderRadius:8,marginBottom:16}}>
-            <button onClick={()=>setHoldingBy('capital')} style={{border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,fontSize:12,fontWeight:500,background:holdingBy==='capital'?'var(--bg-canvas)':'transparent',color:holdingBy==='capital'?'var(--ink-1)':'var(--ink-2)',boxShadow:holdingBy==='capital'?'0 1px 2px rgba(0,0,0,0.06)':'none'}}>By Capital</button>
-            <button onClick={()=>setHoldingBy('investor')} style={{border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,fontSize:12,fontWeight:500,background:holdingBy==='investor'?'var(--bg-canvas)':'transparent',color:holdingBy==='investor'?'var(--ink-1)':'var(--ink-2)',boxShadow:holdingBy==='investor'?'0 1px 2px rgba(0,0,0,0.06)':'none'}}>By Investor</button>
-          </div>
-          <div>
-            {holding.map((h,i) => (
-              <div key={h.bucket} style={{display:'grid',gridTemplateColumns:'60px 1fr auto',gap:12,alignItems:'center',padding:'8px 0',fontSize:12,fontVariantNumeric:'tabular-nums'}}>
-                <div style={{color:'var(--ink-2)'}}>{h.bucket}</div>
-                <div style={{display:'flex',alignItems:'center',gap:10}}>
-                  <div style={{flex:1,height:6,background:'var(--bg-subtle)',borderRadius:3,overflow:'hidden'}}>
-                    <div style={{width:`${h.pct * 2}%`,maxWidth:'100%',height:'100%',background:'var(--accent-plum)',borderRadius:3,transition:'width 0.6s cubic-bezier(0.22,1,0.36,1)'}}/>
-                  </div>
-                  <span style={{fontWeight:500,minWidth:40,textAlign:'right'}}>{h.pct}%</span>
-                </div>
-                <div style={{color:'var(--ink-3)',fontSize:11}}>{h.right}</div>
-              </div>
-            ))}
-          </div>
+          <HoldingBars data={holding}/>
         </div>
 
+        {/* Duration profile — donut */}
         <div>
-          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:14}}>
-            <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em'}}>Concentration</div>
-            <div style={{display:'inline-block',padding:'3px 10px',borderRadius:999,background:'#FFF2E8',color:'#e13733',fontSize:11,fontWeight:600}}>Moderate concentration</div>
-          </div>
-          <div style={{display:'flex',height:38,borderRadius:8,overflow:'hidden',border:'1px solid var(--line-1)'}}>
-            {concSlices.map((s,i) => (
-              <div key={i} style={{
-                width:`${s.pct}%`,
-                background:s.color,
-                color: i === 0 ? 'var(--accent-plum-on)' : i < 3 ? 'var(--ink-1)' : 'var(--ink-2)',
-                display:'flex',alignItems:'center',justifyContent:'center',
-                fontSize:11,fontWeight:600,
-              }}>{s.pct}%</div>
-            ))}
-          </div>
-          <div style={{display:'flex',gap:18,marginTop:12,fontSize:12,color:'var(--ink-2)',flexWrap:'wrap'}}>
-            {concSlices.map((s,i) => (
-              <span key={i} style={{display:'inline-flex',alignItems:'center',gap:6}}>
-                <span style={{width:8,height:8,borderRadius:'50%',background:s.color}}/>
-                {s.label} · {s.pct}%
-              </span>
-            ))}
+          <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',marginBottom:24}}>Duration profile</div>
+          <div style={{display:'grid',gridTemplateColumns:'320px 1fr',gap:28,alignItems:'center'}}>
+            <div style={{position:'relative',width:320,height:320,display:'flex',alignItems:'center',justifyContent:'center'}}>
+              <svg width="320" height="320" viewBox="0 0 200 200" style={{overflow:'visible',position:'absolute',inset:0}}>
+                {/* Available 24.1% */}
+                <path d="M 101.36 22.01 A 78 78 0 0 1 177.84 94.91" fill="none" stroke="var(--accent-plum)" strokeWidth="14"/>
+                {/* In notice 13.5% */}
+                <path d="M 177.91 96.27 A 78 78 0 0 1 155.31 155.04" fill="none" stroke="color-mix(in oklab, var(--accent-plum) 55%, var(--bg-canvas))" strokeWidth="14"/>
+                {/* Locked 62.4% */}
+                <path d="M 154.30 155.99 A 78 78 0 1 1 99.32 22.00" fill="none" stroke="color-mix(in oklab, var(--accent-plum) 22%, var(--bg-canvas))" strokeWidth="14"/>
+              </svg>
+              <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',pointerEvents:'none'}}>
+                <div style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>Available</div>
+                <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.04em',fontVariantNumeric:'tabular-nums',marginTop:2,color:'var(--accent-plum)'}}>24.1%</div>
+              </div>
+            </div>
+            <div style={{display:'flex',flexDirection:'column',gap:10}}>
+              <DurationLegendRow color="var(--accent-plum)" label="Available" pct="24.1%"/>
+              <DurationLegendRow color="color-mix(in oklab, var(--accent-plum) 55%, var(--bg-canvas))" label="In notice" pct="13.5%"/>
+              <DurationLegendRow color="color-mix(in oklab, var(--accent-plum) 22%, var(--bg-canvas))" label="Locked" pct="62.4%"/>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ===== Results delivered for investors ===== */}
-      <div style={{display:'flex',alignItems:'flex-end',justifyContent:'space-between',gap:24,marginBottom:20}}>
-        <div>
-          <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',marginBottom:4}}>Results delivered for investors</div>
-          <div style={{fontSize:12,color:'var(--ink-3)'}}>Distribution of investor returns across the {resultsBy === 'book' ? 'book' : 'dealings'}.</div>
+      {/* ===== Concentration full width ===== */}
+      <div style={{marginBottom:48}}>
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:20}}>
+          <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em'}}>Concentration</div>
+          <div style={{display:'inline-block',padding:'3px 10px',borderRadius:999,background:'#FFF2E8',color:'#e13733',fontSize:11,fontWeight:600}}>Moderate concentration</div>
         </div>
+        <div style={{display:'flex',height:64,borderRadius:6,overflow:'hidden'}}>
+          {concSlices.map((s,i) => (
+            <div key={i} style={{
+              flex:s.pct,
+              background:s.color,
+              color: i === 0 ? 'var(--accent-plum-on)' : i === 3 ? '#fff' : 'var(--ink-1)',
+              display:'flex',alignItems:'center',justifyContent:'center',
+              fontSize:16,fontWeight:600,
+              fontVariantNumeric:'tabular-nums',letterSpacing:'-0.005em',
+            }}>{s.pct}%</div>
+          ))}
+        </div>
+        <div style={{display:'flex',gap:24,marginTop:16,fontSize:12,color:'var(--ink-2)',flexWrap:'wrap'}}>
+          {concSlices.map((s,i) => (
+            <span key={i} style={{display:'inline-flex',alignItems:'center',gap:8}}>
+              <span style={{width:10,height:10,borderRadius:3,background:s.color}}/>
+              {s.label} · {s.pct}%
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ===== Results delivered — KPI tiles ===== */}
+      <div style={{display:'flex',alignItems:'flex-end',justifyContent:'space-between',gap:24,marginBottom:20}}>
+        <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em'}}>Results delivered for investors</div>
         <div style={{display:'inline-flex',padding:3,background:'var(--bg-subtle)',borderRadius:8}}>
           <button onClick={()=>setResultsBy('book')} style={{border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,fontSize:12,fontWeight:500,background:resultsBy==='book'?'var(--bg-canvas)':'transparent',color:resultsBy==='book'?'var(--ink-1)':'var(--ink-2)',boxShadow:resultsBy==='book'?'0 1px 2px rgba(0,0,0,0.06)':'none'}}>By Book</button>
           <button onClick={()=>setResultsBy('dealings')} style={{border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,fontSize:12,fontWeight:500,background:resultsBy==='dealings'?'var(--bg-canvas)':'transparent',color:resultsBy==='dealings'?'var(--ink-1)':'var(--ink-2)',boxShadow:resultsBy==='dealings'?'0 1px 2px rgba(0,0,0,0.06)':'none'}}>By Dealings</button>
         </div>
       </div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12,marginBottom:48}}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12,marginBottom:70}}>
         {resultsBuckets.map(b => {
           const pct = resultsBy === 'book' ? b.book : b.dealings;
           return (
             <div key={b.bucket} style={{
-              padding:'16px 18px',borderRadius:10,
               background: b.neg
                 ? 'color-mix(in oklab, var(--neg) 14%, var(--glass-bg))'
-                : 'color-mix(in oklab, var(--accent-plum) 14%, var(--glass-bg))',
-              backdropFilter:'blur(10px)',
-              WebkitBackdropFilter:'blur(10px)',
-              color: b.neg ? 'var(--neg)' : 'var(--ink-1)',
+                : 'var(--glass-bg)',
+              borderRadius:8,padding:'16px 20px',
             }}>
-              <div style={{fontSize:24,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',marginBottom:4}}>{pct}%</div>
-              <div style={{fontSize:11,opacity:0.8}}>{b.bucket} return</div>
+              <div style={{fontSize:14,color: b.neg ? 'var(--neg)' : 'var(--ink-2)',fontWeight:500,marginBottom:8}}>{b.bucket} return</div>
+              <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color: b.neg ? 'var(--neg)' : 'var(--ink-1)'}}>{pct}%</div>
             </div>
           );
         })}
@@ -866,23 +848,22 @@ function ShareRegisterView({ onNav }) {
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20}}>
         <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em'}}>Share Classes</div>
         <div style={{display:'flex',alignItems:'center',gap:8}}>
-          <button style={{...btnOutline,height:30,fontSize:12.5}}>+ Create class</button>
+          <button onClick={()=>onNav('share-classes')} style={{...btnOutline,height:30,fontSize:12.5}}>Manage classes</button>
+          <button onClick={()=>onNav('share-classes')} style={{...btnOutline,height:30,fontSize:12.5}}>+ Create class</button>
         </div>
       </div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:48}}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:70}}>
         {classes.map((c,i) => (
-          <div key={i} style={{background:'var(--bg-card)',border:'1px solid var(--line-1)',borderRadius:12,padding:'18px 20px'}}>
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
-              <div style={{fontSize:13,color:'var(--ink-2)',fontWeight:500}}>{c.name}</div>
-              <span style={{fontSize:10.5,fontWeight:600,padding:'2px 8px',borderRadius:999,background:'var(--green-50)',color:'var(--green-700)',border:'1px solid var(--green-200)'}}>Active</span>
+          <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:10,padding:'18px 22px'}}>
+            <div style={{fontSize:14,fontWeight:500,color:'var(--ink-2)',marginBottom:10}}>{c.name}</div>
+            <div style={{display:'flex',alignItems:'baseline',gap:10,flexWrap:'wrap',marginBottom:4}}>
+              <span style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>{c.total}</span>
+              <span style={{fontSize:13,fontWeight:500,fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>{c.change}</span>
             </div>
-            <div style={{fontSize:24,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',marginBottom:16}}>{c.nav}</div>
-            <div style={{display:'grid',gridTemplateColumns:'auto 1fr',rowGap:8,columnGap:12,fontSize:12.5}}>
-              <span style={{color:'var(--ink-3)'}}>Units</span><span style={{fontVariantNumeric:'tabular-nums',fontWeight:500,textAlign:'right'}}>{c.units}</span>
-              <span style={{color:'var(--ink-3)'}}>NAV</span><span style={{fontVariantNumeric:'tabular-nums',fontWeight:500,textAlign:'right',whiteSpace:'nowrap'}}>{c.totalNav}</span>
-              <span style={{color:'var(--ink-3)'}}>Mgt Fees</span><span style={{fontVariantNumeric:'tabular-nums',fontWeight:500,textAlign:'right'}}>{c.mgt}</span>
-              <span style={{color:'var(--ink-3)'}}>Fees collected</span><span style={{fontVariantNumeric:'tabular-nums',fontWeight:500,textAlign:'right',whiteSpace:'nowrap'}}>{c.fees}</span>
-              <span style={{color:'var(--ink-3)'}}>Investors</span><span style={{fontVariantNumeric:'tabular-nums',fontWeight:500,textAlign:'right'}}>{c.investors}</span>
+            <div style={{fontSize:13,color:'var(--ink-3)',fontVariantNumeric:'tabular-nums'}}>{c.navShare} / unit</div>
+            <div style={{marginTop:16,paddingTop:14,borderTop:'1px solid var(--line-1)',display:'flex',flexDirection:'column',gap:6,fontSize:12.5,color:'var(--ink-2)',fontVariantNumeric:'tabular-nums'}}>
+              <div>{c.units} units · {c.investors} investors</div>
+              <div>{c.mgmt} mgmt · {c.perf} perf fee</div>
             </div>
           </div>
         ))}
@@ -935,7 +916,7 @@ function ShareRegisterView({ onNav }) {
         </table>
       </div>
 
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',margin:'16px 4px 48px',fontSize:12,color:'var(--ink-2)'}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',margin:'16px 4px 70px',fontSize:12,color:'var(--ink-2)'}}>
         <div>Showing 10 of 135 investors</div>
         <div style={{display:'flex',alignItems:'center',gap:6}}>
           <PageBtn>‹</PageBtn>
@@ -975,6 +956,165 @@ function ShareRegisterView({ onNav }) {
   );
 }
 
+// ============================================================================
+// SHARE CLASSES (sub-page of Share Register)
+// ============================================================================
+function ShareClassesView({ onNav }) {
+  const [filter, setFilter] = _s1('all');
+
+  const allClasses = [
+    { name: 'Class A', code: 'POD-A', status: 'active',   navShare: '$100.20',     units: '3.20 M', aum: '$320.64 M', mgmt: '4.50%', perf: '20%', investors: 85, lockup: '270d notice',     launched: 'Launched 12 Mar 2023',  activity: 'Subscription · 12 Apr' },
+    { name: 'Class B', code: 'POD-B', status: 'active',   navShare: '$1,050.20',   units: '1.00 M', aum: '$1.05 B',   mgmt: '1.00%', perf: '20%', investors: 40, lockup: '180d notice',     launched: 'Launched 12 Mar 2023',  activity: 'Subscription · 11 Apr' },
+    { name: 'Class I', code: 'POD-I', status: 'active',   navShare: '$10,050.20',  units: '1.00 M', aum: '$10.05 B',  mgmt: '0.50%', perf: '30%', investors: 20, lockup: '365d hard lock',  launched: 'Launched 01 Jul 2023',  activity: 'Distribution · 31 Mar' },
+    { name: 'Class C', code: 'POD-C', status: 'draft',    navShare: '—',           units: '—',      aum: '—',         mgmt: '0.75%', perf: '25%', investors: 0,  lockup: '90d notice',      launched: 'IC approval pending',   activity: 'Edited · 28 Apr' },
+    { name: 'Class S', code: 'POD-S', status: 'draft',    navShare: '—',           units: '—',      aum: '—',         mgmt: '2.00%', perf: '25%', investors: 0,  lockup: '720d hard lock',  launched: 'Term sheet · drafting', activity: 'Created · 22 Apr' },
+    { name: 'Class P', code: 'POD-P', status: 'inactive', navShare: 'Final $98.40',units: '0',      aum: '$0',        mgmt: '3.00%', perf: '15%', investors: 0,  lockup: '—',               launched: 'Wound down 18 Dec 2024',activity: 'Wound down · 18 Dec 2024' },
+    { name: 'Class L', code: 'POD-L', status: 'inactive', navShare: '$112.50',     units: '420 K',  aum: '$47.25 M',  mgmt: '2.50%', perf: '20%', investors: 8,  lockup: 'Frozen',          launched: 'Closed to new subs · 30 Sep 2024', activity: 'Closed · 30 Sep 2024' },
+  ];
+
+  const filtered = filter === 'all' ? allClasses : allClasses.filter(c => c.status === filter);
+  const counts = {
+    all: allClasses.length,
+    draft: allClasses.filter(c => c.status === 'draft').length,
+    active: allClasses.filter(c => c.status === 'active').length,
+    inactive: allClasses.filter(c => c.status === 'inactive').length,
+  };
+
+  const summary = [
+    { l: 'Active classes',     v: '3',         s: 'A · B · I open for dealings' },
+    { l: 'AUM (active)',       v: '$11.42 B',  s: '+$487M MTD across active' },
+    { l: 'Investors (active)', v: '145',       s: '85 · 40 · 20 by class' },
+    { l: 'Pending review',     v: '2',         s: '1 IC approval · 1 term sheet' },
+  ];
+
+  const filterTabs = [
+    { k: 'all',      l: 'All' },
+    { k: 'draft',    l: 'Draft' },
+    { k: 'active',   l: 'Active' },
+    { k: 'inactive', l: 'Inactive' },
+  ];
+
+  return (
+    <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
+      {/* ===== Page head ===== */}
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:24,marginBottom:32}}>
+        <div style={{minWidth:0}}>
+          <div style={{fontSize:24,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.015em'}}>Share classes</div>
+          <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Define, activate and retire share classes for the fund.</div>
+        </div>
+        <div style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
+          <button style={{...btnPrimary,height:32}}>+ New share class</button>
+        </div>
+      </div>
+
+      {/* ===== Summary KPIs ===== */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:70}}>
+        {summary.map((k,i) => (
+          <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'14px 18px'}}>
+            <div style={{fontSize:14,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
+            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
+            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:10}}>{k.s}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* ===== Filter row ===== */}
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,marginBottom:14,flexWrap:'wrap'}}>
+        <div style={{display:'inline-flex',padding:3,background:'var(--bg-subtle)',borderRadius:8}}>
+          {filterTabs.map(t => {
+            const active = filter === t.k;
+            return (
+              <button key={t.k} onClick={()=>setFilter(t.k)} style={{
+                border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,
+                fontSize:12,fontWeight:500,fontFamily:'inherit',
+                background: active?'var(--bg-canvas)':'transparent',
+                color: active?'var(--ink-1)':'var(--ink-2)',
+                boxShadow: active?'0 1px 2px rgba(0,0,0,0.06)':'none',
+                display:'inline-flex',alignItems:'center',gap:6,
+              }}>
+                <span>{t.l}</span>
+                <span style={{fontSize:11,color:'var(--ink-3)',fontVariantNumeric:'tabular-nums'}}>{counts[t.k]}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
+          <div style={{position:'relative'}}>
+            <input placeholder="Search classes..." style={{...fInput,height:34,paddingLeft:32,fontSize:13,minWidth:240}}/>
+            <Icon.search style={{position:'absolute',left:11,top:'50%',transform:'translateY(-50%)',width:13,height:13,color:'var(--ink-3)'}}/>
+          </div>
+          <button style={{...btnOutline,height:34}}><Icon.download style={{width:12,height:12}}/> Export</button>
+        </div>
+      </div>
+
+      {/* ===== Table ===== */}
+      <div style={{overflow:'hidden',marginBottom:16}}>
+        <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
+          <thead>
+            <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,background:'var(--bg-subtle)'}}>
+              <th style={{...th,padding:'10px 16px'}}>Class</th>
+              <th style={{...th,padding:'10px 16px'}}>Reference</th>
+              <th style={{...th,textAlign:'right',padding:'10px 16px'}}>NAV / unit</th>
+              <th style={{...th,textAlign:'right',padding:'10px 16px'}}>Units</th>
+              <th style={{...th,textAlign:'right',padding:'10px 16px'}}>AUM</th>
+              <th style={{...th,textAlign:'right',padding:'10px 16px'}}>Mgmt / Perf</th>
+              <th style={{...th,textAlign:'right',padding:'10px 16px'}}>Investors</th>
+              <th style={{...th,padding:'10px 16px'}}>Lock-up</th>
+              <th style={{...th,padding:'10px 16px'}}>Last activity</th>
+              <th style={{...th,padding:'10px 16px'}}>Status</th>
+              <th style={{...th,padding:'10px 16px',width:32}}/>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((c,i) => {
+              const muted = c.status !== 'active';
+              return (
+                <tr key={i} data-row style={{fontSize:13,cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                  <td style={{...td,padding:'14px 16px',fontWeight:500,color:'var(--ink-1)'}}>{c.name}</td>
+                  <td style={{...td,padding:'14px 16px',color:'var(--ink-2)',fontSize:12.5}}>{c.code} · {c.launched}</td>
+                  <td style={{...td,padding:'14px 16px',textAlign:'right',color: muted ? 'var(--ink-3)' : 'var(--ink-1)'}}>{c.navShare}</td>
+                  <td style={{...td,padding:'14px 16px',textAlign:'right',color: muted ? 'var(--ink-3)' : 'var(--ink-1)'}}>{c.units}</td>
+                  <td style={{...td,padding:'14px 16px',textAlign:'right',fontWeight:500,color: muted ? 'var(--ink-3)' : 'var(--ink-1)'}}>{c.aum}</td>
+                  <td style={{...td,padding:'14px 16px',textAlign:'right',color:'var(--ink-2)',fontSize:12.5}}>{c.mgmt} / {c.perf}</td>
+                  <td style={{...td,padding:'14px 16px',textAlign:'right',color: muted ? 'var(--ink-3)' : 'var(--ink-1)'}}>{c.investors}</td>
+                  <td style={{...td,padding:'14px 16px',color:'var(--ink-2)'}}>{c.lockup}</td>
+                  <td style={{...td,padding:'14px 16px',color:'var(--ink-2)',fontSize:12.5}}>{c.activity}</td>
+                  <td style={{...td,padding:'14px 16px'}}><ClassStatusChip status={c.status}/></td>
+                  <td style={{...td,padding:'14px 16px',textAlign:'right',color:'var(--ink-3)'}}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+                  </td>
+                </tr>
+              );
+            })}
+            {filtered.length === 0 && (
+              <tr><td colSpan={11} style={{...td,padding:'40px 16px',textAlign:'center',color:'var(--ink-3)'}}>No share classes match this filter.</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <div style={{fontSize:12,color:'var(--ink-3)'}}>
+        Showing {filtered.length} of {allClasses.length} classes
+      </div>
+    </div>
+  );
+}
+
+function ClassStatusChip({ status }) {
+  const map = {
+    draft:    { label: 'Draft',    bg: 'var(--bg-subtle)',  fg: 'var(--ink-2)',      dot: 'var(--ink-3)',         border: 'none' },
+    active:   { label: 'Active',   bg: 'var(--green-50)',   fg: 'var(--green-700)',  dot: 'var(--accent-plum)',   border: 'none' },
+    inactive: { label: 'Inactive', bg: 'transparent',       fg: 'var(--ink-3)',      dot: 'var(--ink-3)',         border: '1px solid var(--line-2)' },
+  };
+  const s = map[status] || map.draft;
+  return (
+    <span style={{display:'inline-flex',alignItems:'center',gap:6,padding:'2px 8px',borderRadius:5,fontSize:11.5,fontWeight:500,background:s.bg,color:s.fg,border:s.border}}>
+      <span style={{width:6,height:6,borderRadius:'50%',background:s.dot}}/>
+      {s.label}
+    </span>
+  );
+}
+
 function PageBtn({ children, active }) {
   return (
     <button style={{
@@ -1011,6 +1151,61 @@ function KycChip({ status }) {
     {status==='verified' && <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 8.5 6.5 12 13 5"/></svg>}
     {s.label}
   </span>;
+}
+
+function DurationLegendRow({ color, label, pct }) {
+  return (
+    <div style={{display:'grid',gridTemplateColumns:'8px 1fr auto',gap:10,alignItems:'center'}}>
+      <span style={{width:8,height:8,borderRadius:'50%',background:color}}/>
+      <span style={{color:'var(--ink-1)',fontSize:15,fontWeight:500}}>{label}</span>
+      <span style={{fontSize:15,fontWeight:600,letterSpacing:'-0.005em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>{pct}</span>
+    </div>
+  );
+}
+
+function HoldingBars({ data }) {
+  const [hovered, setHovered] = _s1(null);
+  const max = 40; // axis scale; bars scale relative to this
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:14}}>
+      {data.map((h, i) => {
+        const isHovered = hovered === i;
+        const [capital, invStr] = (h.right || '').split(' · ');
+        const investors = invStr ? invStr.replace(' Investors', '') : '';
+        return (
+          <div key={h.bucket}
+               style={{display:'grid',gridTemplateColumns:'80px 1fr 60px',gap:20,alignItems:'center',padding:'6px 0',cursor:'default'}}
+               onMouseEnter={()=>setHovered(i)}
+               onMouseLeave={()=>setHovered(null)}>
+            <div style={{color:'var(--ink-1)',fontSize:15,fontWeight:500,fontVariantNumeric:'tabular-nums'}}>{h.bucket}</div>
+            <div style={{position:'relative'}}>
+              <div style={{height:16,background:'var(--bg-subtle)',borderRadius:5,overflow:'hidden'}}>
+                <div style={{height:'100%',width:`${(h.pct / max) * 100}%`,background:'var(--accent-plum)',borderRadius:5,transition:'width 0.6s cubic-bezier(0.22,1,0.36,1), filter 0.18s',filter: isHovered ? 'brightness(1.08)' : 'none'}}/>
+              </div>
+              {isHovered && (
+                <div style={{position:'absolute',bottom:'calc(100% + 10px)',left:0,background:'var(--ink-1)',color:'var(--bg-canvas)',borderRadius:6,padding:'10px 14px',fontSize:12,fontWeight:500,whiteSpace:'nowrap',zIndex:10,boxShadow:'0 4px 16px rgba(0,0,0,0.12)',pointerEvents:'none'}}>
+                  <div style={{display:'flex',justifyContent:'space-between',gap:18}}>
+                    <span style={{opacity:0.65}}>Capital</span>
+                    <span style={{fontVariantNumeric:'tabular-nums'}}>{capital}</span>
+                  </div>
+                  <div style={{display:'flex',justifyContent:'space-between',gap:18,marginTop:4}}>
+                    <span style={{opacity:0.65}}>Investors</span>
+                    <span style={{fontVariantNumeric:'tabular-nums'}}>{investors}</span>
+                  </div>
+                  <div style={{display:'flex',justifyContent:'space-between',gap:18,marginTop:4}}>
+                    <span style={{opacity:0.65}}>Share</span>
+                    <span style={{fontVariantNumeric:'tabular-nums'}}>{h.pct}%</span>
+                  </div>
+                  <div style={{position:'absolute',top:'100%',left:16,width:0,height:0,border:'5px solid transparent',borderTopColor:'var(--ink-1)'}}/>
+                </div>
+              )}
+            </div>
+            <div style={{color:'var(--ink-1)',fontSize:15,fontWeight:600,letterSpacing:'-0.005em',fontVariantNumeric:'tabular-nums',textAlign:'right'}}>{h.pct}%</div>
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 function ConcentrationPie({ slices }) {
@@ -1110,4 +1305,4 @@ const td = { padding:'14px 12px',borderBottom:'1px solid var(--line-1)' };
 const fLabel = { fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:6,display:'block' };
 const fInput = { width:'100%',height:40,padding:'0 14px',border:'1px solid var(--line-2)',borderRadius:8,fontSize:13,color:'var(--ink-1)',background:'var(--bg-canvas)',fontFamily:'inherit',boxSizing:'border-box' };
 
-Object.assign(window, { OrderBookView, CollateralView, ShareRegisterView, ReconciliationView });
+Object.assign(window, { OrderBookView, CollateralView, ShareRegisterView, ShareClassesView, ReconciliationView });

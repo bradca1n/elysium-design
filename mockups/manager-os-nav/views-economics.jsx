@@ -94,7 +94,7 @@ function EconomicsView({ onNav }) {
       />}
 
       {/* ===== KPI strip ===== */}
-      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:48}}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:70}}>
         <KpiCard l="Fees earned · YTD"        pct="1.78%" v="$844,200"  s={<><span style={{color:'var(--pos)',fontWeight:500}}>+12.4%</span> vs. prior YTD</>}/>
         <KpiCard l="Available for withdrawal" pct="0.25%" v="$118,400"  s="Swept to Operating monthly"/>
         <KpiCard l="Invested in the fund"     pct="1.50%" v="$711,763"  s={<><span style={{color:'var(--pos)',fontWeight:500}}>+12.8%</span> return on basis</>}/>
@@ -120,7 +120,7 @@ function EconomicsView({ onNav }) {
       </div>
 
       {/* Available for withdrawal + Invested */}
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:40}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:70}}>
         <SubCard
           title="Available for withdrawal"
           amount="$118,400"
@@ -255,7 +255,6 @@ function SectionHeadE({ title, desc }) {
   return (
     <div style={{marginBottom:18}}>
       <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',color:'var(--ink-1)'}}>{title}</div>
-      {desc && <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4,maxWidth:640}}>{desc}</div>}
     </div>
   );
 }

@@ -220,12 +220,21 @@ function Navbar({ onNav, route }) {
   const routeLabels = {
     'home': 'Home', 'actions': 'Actions', 'communication': 'Communication',
     'overview': 'Overview', 'nav': 'NAV', 'collateral': 'Collateral & Treasury',
-    'share-register': 'Share Register', 'economics': 'Economics',
+    'share-register': 'Share Register', 'share-classes': 'Share Classes', 'economics': 'Economics',
     'pnl': 'Profit & Loss', 'balance-sheet': 'Balance Sheet', 'reconciliation': 'Reconciliation log',
     'order-book': 'Order Book',
   };
-  const fundScopedRoutes = ['overview','nav','collateral','share-register','economics','pnl','balance-sheet','reconciliation','order-book'];
+  const fundScopedRoutes = ['overview','nav','collateral','share-register','share-classes','economics','pnl','balance-sheet','reconciliation','order-book'];
   const inFund = fundScopedRoutes.includes(route);
+  // Sub-pages map to their parent route for 3-crumb breadcrumbs
+  const parentOf = {
+    'share-classes': 'share-register',
+    'pnl': 'nav',
+    'balance-sheet': 'nav',
+    'reconciliation': 'nav',
+  };
+  const parentRoute = parentOf[route];
+  const parentLabel = parentRoute ? routeLabels[parentRoute] : '';
   const currentLabel = routeLabels[route] || '';
   return (
     <header style={{
@@ -240,6 +249,12 @@ function Navbar({ onNav, route }) {
             <div style={{width:22,height:22,borderRadius:'50%',background:'radial-gradient(circle at 30% 30%,#E9D5FF 0%,transparent 45%),radial-gradient(circle at 70% 35%,#BFDBFE 0%,transparent 50%),radial-gradient(circle at 50% 75%,#FCA5A5 0%,transparent 55%),linear-gradient(135deg,#C4B5FD 0%,#A5B4FC 55%,#FBCFE8 100%)',flexShrink:0}}/>
             <span style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',whiteSpace:'nowrap'}}>POD Crypto Fund</span>
             <Icon.chevron style={{width:14,height:14,color:'var(--ink-3)',flexShrink:0}}/>
+            {parentRoute ? (
+              <React.Fragment>
+                <a onClick={(e)=>{e.preventDefault();onNav(parentRoute);}} href="#" style={{fontSize:14,fontWeight:500,color:'var(--ink-2)',whiteSpace:'nowrap',textDecoration:'none',cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.color='var(--ink-1)'} onMouseLeave={e=>e.currentTarget.style.color='var(--ink-2)'}>{parentLabel}</a>
+                <Icon.chevron style={{width:14,height:14,color:'var(--ink-3)',flexShrink:0}}/>
+              </React.Fragment>
+            ) : null}
             <span style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{currentLabel}</span>
           </React.Fragment>
         ) : (
@@ -355,18 +370,26 @@ function Sidebar({ route, onNav }) {
     { id: 'balance-sheet', label: 'Balance Sheet' },
     { id: 'reconciliation', label: 'Reconciliation log' },
   ];
-  // Top-level fund items (NAV shown separately with expandable chevron)
+  // Share Register children
+  const shareRegisterChildren = [
+    { id: 'share-classes', label: 'Share classes' },
+  ];
+  // Top-level fund items (NAV / Share Register shown separately with expandable chevron)
   const fundTop = [
     { id: 'overview', label: 'Overview', icon: Icon.grid },
   ];
-  const fundBottom = [
+  const fundBetween = [
     { id: 'collateral', label: 'Collateral & Treasury', icon: Icon.vault },
-    { id: 'share-register', label: 'Share Register', icon: Icon.register },
+  ];
+  const fundBottom = [
     { id: 'economics', label: 'Economics', icon: Icon.chart },
   ];
   const navActive = route === 'nav' || navChildren.some(c => c.id === route);
+  const shareRegisterActive = route === 'share-register' || shareRegisterChildren.some(c => c.id === route);
   const [navExpanded, setNavExpanded] = React.useState(() => navActive);
+  const [srExpanded, setSrExpanded] = React.useState(() => shareRegisterActive);
   React.useEffect(() => { if (navActive) setNavExpanded(true); }, [navActive]);
+  React.useEffect(() => { if (shareRegisterActive) setSrExpanded(true); }, [shareRegisterActive]);
 
   const NavItem = ({ item }) => {
     const active = route === item.id;
@@ -386,36 +409,36 @@ function Sidebar({ route, onNav }) {
       </a>
     );
   };
-  const NavItemExpandable = () => {
-    const isActive = route === 'nav';
+  const ExpandableItem = ({ id, label, icon: I, items, expanded, setExpanded }) => {
+    const isActive = route === id;
     return (
       <div style={{display:'flex',flexDirection:'column'}}>
         <div style={{display:'flex',alignItems:'center'}}>
-          <a onClick={(e)=>{e.preventDefault();onNav('nav');}} href="#" style={{display:'flex',alignItems:'center',gap:14,padding:'7px 12px',borderRadius:8,color: isActive ? 'var(--ink-1)' : 'var(--ink-2)',fontSize:14,fontWeight: isActive ? 600 : 500,cursor:'pointer',textDecoration:'none',background: isActive ? 'var(--bg-card)' : 'transparent',transition:'background 0.12s',flex:1,minWidth:0}}
+          <a onClick={(e)=>{e.preventDefault();onNav(id);}} href="#" style={{display:'flex',alignItems:'center',gap:14,padding:'7px 12px',borderRadius:8,color: isActive ? 'var(--ink-1)' : 'var(--ink-2)',fontSize:14,fontWeight: isActive ? 600 : 500,cursor:'pointer',textDecoration:'none',background: isActive ? 'var(--bg-card)' : 'transparent',transition:'background 0.12s',flex:1,minWidth:0}}
           onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'var(--bg-card)'; }} onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}>
-            <Icon.navIcon style={{width:18,height:18,flexShrink:0}}/>
-            <span>NAV</span>
+            <I style={{width:18,height:18,flexShrink:0}}/>
+            <span>{label}</span>
           </a>
-          <button aria-label={navExpanded?'Collapse':'Expand'} onClick={(e)=>{e.stopPropagation();setNavExpanded(v=>!v);}} style={{
+          <button aria-label={expanded?'Collapse':'Expand'} onClick={(e)=>{e.stopPropagation();setExpanded(v=>!v);}} style={{
             width:22,height:22,border:'none',background:'transparent',cursor:'pointer',
             color:'var(--ink-3)',display:'inline-flex',alignItems:'center',justifyContent:'center',
             borderRadius:5,padding:0,flexShrink:0,
-            transform: navExpanded ? 'rotate(0deg)' : 'rotate(-90deg)',
+            transform: expanded ? 'rotate(0deg)' : 'rotate(-90deg)',
             transition:'transform 0.15s',
           }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
             <Icon.down style={{width:14,height:14}}/>
           </button>
         </div>
-        {navExpanded && (
-          <div style={{display:'flex',flexDirection:'column',gap:1,marginTop:2,marginLeft:24,borderLeft:'1px solid var(--line-1)',paddingLeft:10}}>
-            {navChildren.map(c => {
+        {expanded && (
+          <div style={{display:'flex',flexDirection:'column',gap:1,marginTop:2,marginBottom:10,marginLeft:24,borderLeft:'1px solid var(--line-1)',paddingLeft:10}}>
+            {items.map(c => {
               const active = route === c.id;
               return (
                 <a key={c.id} onClick={(e)=>{e.preventDefault();onNav(c.id);}} href="#" style={{
                   display:'flex',alignItems:'center',
                   padding:'7px 10px',borderRadius:6,
                   color: active ? 'var(--ink-1)' : 'var(--ink-2)',
-                  fontSize:13,fontWeight: active ? 600 : 500,
+                  fontSize:14,fontWeight: active ? 600 : 500,
                   textDecoration:'none',cursor:'pointer',
                   background: active ? 'var(--bg-card)' : 'transparent',
                   transition:'background 0.12s',
@@ -463,7 +486,9 @@ function Sidebar({ route, onNav }) {
         </div>
         <div style={{display:'flex',flexDirection:'column',gap:2}}>
           {fundTop.map(i => <NavItem key={i.id} item={i}/>)}
-          <NavItemExpandable/>
+          <ExpandableItem id="nav" label="NAV" icon={Icon.navIcon} items={navChildren} expanded={navExpanded} setExpanded={setNavExpanded}/>
+          {fundBetween.map(i => <NavItem key={i.id} item={i}/>)}
+          <ExpandableItem id="share-register" label="Share Register" icon={Icon.register} items={shareRegisterChildren} expanded={srExpanded} setExpanded={setSrExpanded}/>
           {fundBottom.map(i => <NavItem key={i.id} item={i}/>)}
         </div>
       </div>

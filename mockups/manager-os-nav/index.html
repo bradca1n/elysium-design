@@ -378,6 +378,7 @@ function App() {
   else if (route === 'order-book') view = <OrderBookView onNav={setRoute}/>;
   else if (route === 'collateral') view = <CollateralView onNav={setRoute}/>;
   else if (route === 'share-register') view = <ShareRegisterView onNav={setRoute}/>;
+  else if (route === 'share-classes') view = <ShareClassesView onNav={setRoute}/>;
   else if (route === 'reconciliation') view = <ReconciliationView onNav={setRoute}/>;
   else if (route === 'pnl') view = <ProfitLossView onNav={setRoute}/>;
   else if (route === 'balance-sheet') view = <BalanceSheetView onNav={setRoute}/>;
@@ -441,6 +442,7 @@ function App() {
               <option value="order-book">Order book</option>
               <option value="collateral">Move collateral</option>
               <option value="share-register">Share register</option>
+              <option value="share-classes">Share classes</option>
               <option value="reconciliation">Reconciliation</option>
               <option value="pnl">Profit & Loss</option>
               <option value="balance-sheet">Balance Sheet</option>

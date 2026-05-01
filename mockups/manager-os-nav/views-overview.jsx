@@ -51,7 +51,7 @@ function OverviewView({ onNav }) {
       </div>
 
       {/* ===== Two-column main: chart + status ===== */}
-      <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) 340px',gap:32,marginBottom:48}}>
+      <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) 340px',gap:32,marginBottom:70}}>
         <div style={{minWidth:0}}>
           {/* Headline NAV tile */}
           <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'18px 22px',marginBottom:24,position:'relative'}}>
@@ -86,7 +86,7 @@ function OverviewView({ onNav }) {
 
       {/* ===== Share classes ===== */}
       <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',marginBottom:20}}>Share classes</div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:48}}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:70}}>
         {classes.map((c,i) => <ClassCard key={i} {...c}/>)}
       </div>
 
@@ -102,7 +102,7 @@ function OverviewView({ onNav }) {
           <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M4.66 11.33 11.33 4.66M11.33 4.66H4.66M11.33 4.66v6.67"/></svg>
         </button>
       </div>
-      <div style={{marginBottom:48}}>
+      <div style={{marginBottom:70}}>
         <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
           <thead>
             <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,textAlign:'left'}}>

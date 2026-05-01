@@ -436,7 +436,6 @@ function SectionHead({ title, desc, cta, right }) {
     <div style={{marginBottom:20,display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:24}}>
       <div style={{minWidth:0}}>
         <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>{title}</div>
-        <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>{desc}</div>
       </div>
       {right}
       {cta && (
