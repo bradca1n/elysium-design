@@ -173,7 +173,7 @@ function Donut({ slices, total, label = 'NAV' }) {
     <div style={{ width: 200, height: 200, borderRadius: '50%', position: 'relative', background: `conic-gradient(${stops})` }}>
       <div style={{ position: 'absolute', inset: 30, borderRadius: '50%', background: 'var(--bg-canvas)', boxShadow: 'inset 0 0 0 1px var(--line-1)' }}/>
       <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
-        <div style={{ fontSize: 10.5, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--ink-3)', fontWeight: 500 }}>{label}</div>
+        <div style={{ fontSize: 11.5, color: 'var(--ink-3)', fontWeight: 500 }}>{label}</div>
         <div style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.01em', fontVariantNumeric: 'tabular-nums', marginTop: 2 }}>{total}</div>
         <div style={{ fontSize: 11, color: 'var(--ink-2)', marginTop: 2 }}>{slices.length} assets</div>
       </div>
@@ -286,7 +286,7 @@ function Navbar({ onNav, route }) {
                   <div style={{fontSize:12.5,color:'var(--ink-3)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>POD Capital</div>
                 </div>
               </div>
-              <div style={{padding:'8px 0 2px',fontSize:10,textTransform:'uppercase',letterSpacing:'0.08em',color:'var(--ink-3)',fontWeight:600,paddingLeft:2}}>Workspaces</div>
+              <div style={{padding:'8px 0 2px',fontSize:11.5,color:'var(--ink-3)',fontWeight:600,paddingLeft:2}}>Workspaces</div>
               {[
                 { n: 'POD Capital', r: 'Fund Ops', active: true, init: 'PC', grad: 'linear-gradient(135deg,#C4B5FD,#A5B4FC)' },
                 { n: 'Meridian Partners', r: 'Observer', active: false, init: 'MP', grad: 'linear-gradient(135deg,#FDE68A,#FCA5A5)' },

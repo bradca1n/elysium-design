@@ -30,19 +30,44 @@ function EconomicsView({ onNav }) {
 
   // Re-invested tranches (fees left to compound alongside investors)
   const reinvested = [
-    { date: '07 Apr 2026', class: 'Class A', units: '1,284.2', value: '$128,657', basis: '$100.16', status: 'locked' },
-    { date: '05 Mar 2026', class: 'Class A', units:   '912.8', value: '$91,477',  basis: '$100.22', status: 'locked' },
-    { date: '03 Feb 2026', class: 'Class I', units:   '42.10', value: '$423,141', basis: '$10,048.40', status: 'locked' },
-    { date: '06 Jan 2026', class: 'Class A', units:   '683.3', value: '$68,488',  basis: '$100.24', status: 'locked' },
+    { date: '07 Apr 2026', class: 'Class A', units: '1,284.2', value: '$128,657', basis: '$112.00',   returnPct: '+8.4%',  status: 'locked' },
+    { date: '05 Mar 2026', class: 'Class A', units:   '912.8', value: '$91,477',  basis: '$92.00',    returnPct: '+8.9%',  status: 'locked' },
+    { date: '03 Feb 2026', class: 'Class I', units:   '42.10', value: '$423,141', basis: '$8,800.00', returnPct: '+14.2%', status: 'locked' },
+    { date: '06 Jan 2026', class: 'Class A', units:   '683.3', value: '$68,488',  basis: '$94.00',    returnPct: '+6.6%',  status: 'locked' },
   ];
 
-  // Custody fees by venue — monthly
-  const custody = [
-    { venue: 'Coinbase Prime', aum: '$18.0M', bps: 8,  monthly: '$12,000',  ytd: '$48,000',  logoBg: '#0E4FE3' },
-    { venue: 'Copper.co',      aum: '$9.5M',  bps: 12, monthly: '$9,500',   ytd: '$38,000',  logoBg: '#111111' },
-    { venue: 'BitGo',          aum: '$4.2M',  bps: 10, monthly: '$3,500',   ytd: '$14,000',  logoBg: '#0B1A33' },
-    { venue: 'Fireblocks',     aum: '$3.8M',  bps: 14, monthly: '$4,430',   ytd: '$17,720',  logoBg: '#F06536' },
-    { venue: 'Self-custody',   aum: '$7.5M',  bps: 0,  monthly: '—',        ytd: '—',        logoBg: '#5edaa6' },
+  // Expenses by category — one consolidated table
+  const expenseGroups = [
+    {
+      g: 'Custody',
+      items: [
+        { name: 'Coinbase Prime', detail: '$18.0M held · 8 bps',  monthly: '$12,000', ytd: '$48,000',  logoBg: '#0E4FE3' },
+        { name: 'Copper.co',      detail: '$9.5M held · 12 bps',  monthly: '$9,500',  ytd: '$38,000',  logoBg: '#111111' },
+        { name: 'BitGo',          detail: '$4.2M held · 10 bps',  monthly: '$3,500',  ytd: '$14,000',  logoBg: '#0B1A33' },
+        { name: 'Fireblocks',     detail: '$3.8M held · 14 bps',  monthly: '$4,430',  ytd: '$17,720',  logoBg: '#F06536' },
+        { name: 'Self-custody',   detail: '$7.5M held · no fee',  monthly: '—',       ytd: '—',        logoBg: '#5edaa6' },
+      ],
+      monthlyTotal: '$29,430', ytdTotal: '$117,720',
+    },
+    {
+      g: 'Service providers',
+      items: [
+        { name: 'Apex Fund Services', detail: 'Administration · Monthly',   monthly: '$4,200', ytd: '$16,800', logoBg: '#1F3C9E' },
+        { name: 'Clifford Chance',    detail: 'Legal · Quarterly',          monthly: '$2,067', ytd: '$18,600', logoBg: '#0B1A33' },
+        { name: 'PwC',                detail: 'Audit · Quarterly',          monthly: '$2,567', ytd: '$15,400', logoBg: '#D04A02' },
+        { name: 'KPMG',               detail: 'Tax review · Annual',        monthly: '—',      ytd: '$4,400',  logoBg: '#00338D' },
+      ],
+      monthlyTotal: '$8,834', ytdTotal: '$55,200',
+    },
+    {
+      g: 'Trading',
+      items: [
+        { name: 'Binance',  detail: 'Spot + perps', monthly: '$2,800', ytd: '$11,200', logoBg: '#F0B90B' },
+        { name: 'OKX',      detail: 'Spot',         monthly: '$1,400', ytd: '$5,600',  logoBg: '#000000' },
+        { name: 'Coinbase', detail: 'Spot',         monthly: '$980',   ytd: '$3,920',  logoBg: '#0052FF' },
+      ],
+      monthlyTotal: '$5,180', ytdTotal: '$20,720',
+    },
   ];
 
   return (
@@ -70,17 +95,17 @@ function EconomicsView({ onNav }) {
 
       {/* ===== KPI strip ===== */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:48}}>
-        <KpiCard l="Fees earned · YTD"      v="$844,200"  s={<><span style={{color:'var(--pos)',fontWeight:500}}>+12.4%</span> vs. prior YTD</>}/>
-        <KpiCard l="Available for withdrawal" v="$118,400" s="Swept to Operating monthly"/>
-        <KpiCard l="Invested in the fund"   v="$711,763"  s="Re-invested · 4,823 units across A/I"/>
-        <KpiCard l="Expenses · YTD"         v="$117,720"  s="Custody fees across 4 venues" neg/>
+        <KpiCard l="Fees earned · YTD"        pct="1.78%" v="$844,200"  s={<><span style={{color:'var(--pos)',fontWeight:500}}>+12.4%</span> vs. prior YTD</>}/>
+        <KpiCard l="Available for withdrawal" pct="0.25%" v="$118,400"  s="Swept to Operating monthly"/>
+        <KpiCard l="Invested in the fund"     pct="1.50%" v="$711,763"  s={<><span style={{color:'var(--pos)',fontWeight:500}}>+12.8%</span> return on basis</>}/>
+        <KpiCard l="Expenses · YTD"           pct="0.41%" v="$193,640"  s="Custody · service providers · trading" neg/>
       </div>
 
       {/* ===== Fees earned ===== */}
       <SectionHeadE title="Fees earned"/>
 
       {/* Timeline chart */}
-      <div style={{background:'var(--bg-card)',border:'1px solid var(--line-1)',borderRadius:12,padding:'20px 24px',marginBottom:32}}>
+      <div style={{marginBottom:32}}>
         <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
           <div>
             <div style={{fontSize:13,fontWeight:500,color:'var(--ink-2)'}}>Fees earned, monthly</div>
@@ -101,6 +126,7 @@ function EconomicsView({ onNav }) {
           amount="$118,400"
           sub="Swept to Operating · Citi 4451 after each month-end"
           action="Withdraw funds"
+          tile
         >
           <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums',marginTop:4}}>
             <tbody>
@@ -121,16 +147,20 @@ function EconomicsView({ onNav }) {
         <SubCard
           title="Invested in the fund"
           amount="$711,763"
+          pct="+12.8%"
           sub="Manager fees re-subscribed to the fund. Locked, compounds with NAV."
           action="New re-investment"
+          tile
         >
           <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums',marginTop:4}}>
             <thead>
-              <tr style={{fontSize:10.5,color:'var(--ink-3)',fontWeight:500,textAlign:'left'}}>
+              <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,textAlign:'left'}}>
                 <th style={{padding:'0 0 8px 0',fontWeight:500}}>Date</th>
                 <th style={{padding:'0 8px 8px',fontWeight:500}}>Class</th>
+                <th style={{padding:'0 8px 8px',fontWeight:500,textAlign:'right'}}>Basis</th>
                 <th style={{padding:'0 0 8px 0',fontWeight:500,textAlign:'right'}}>Units</th>
-                <th style={{padding:'0 0 8px 0',fontWeight:500,textAlign:'right'}}>Value</th>
+                <th style={{padding:'0 8px 8px',fontWeight:500,textAlign:'right'}}>Value</th>
+                <th style={{padding:'0 0 8px 0',fontWeight:500,textAlign:'right'}}>Return</th>
               </tr>
             </thead>
             <tbody>
@@ -138,8 +168,10 @@ function EconomicsView({ onNav }) {
                 <tr key={i} style={{fontSize:12.5,borderTop:'1px solid var(--line-1)'}}>
                   <td style={{padding:'10px 0',color:'var(--ink-3)',whiteSpace:'nowrap'}}>{r.date}</td>
                   <td style={{padding:'10px 8px',color:'var(--ink-2)'}}>{r.class}</td>
+                  <td style={{padding:'10px 8px',textAlign:'right',color:'var(--ink-2)',whiteSpace:'nowrap'}}>{r.basis}</td>
                   <td style={{padding:'10px 0',textAlign:'right',fontWeight:500}}>{r.units}</td>
-                  <td style={{padding:'10px 0',textAlign:'right',fontWeight:500,color:'var(--ink-1)',whiteSpace:'nowrap'}}>{r.value}</td>
+                  <td style={{padding:'10px 8px',textAlign:'right',fontWeight:500,color:'var(--ink-1)',whiteSpace:'nowrap'}}>{r.value}</td>
+                  <td style={{padding:'10px 0',textAlign:'right',fontWeight:500,color:'var(--pos)',whiteSpace:'nowrap'}}>{r.returnPct}</td>
                 </tr>
               ))}
             </tbody>
@@ -151,42 +183,53 @@ function EconomicsView({ onNav }) {
       <SectionHeadE title="Expenses paid"/>
 
       <SubCard
-        title="Custody fees"
-        amount="$117,720"
-        sub="Paid YTD across 4 custody partners · Self-custody is free"
-        action="Reconcile invoices"
+        title="Expenses paid YTD"
+        amount="$193,640"
+        pct="0.41%"
+        sub="Custody, service providers and trading costs paid year-to-date"
+        action="View invoices"
       >
-        <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums',marginTop:4}}>
+        <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums',marginTop:8}}>
           <thead>
-            <tr style={{fontSize:10.5,color:'var(--ink-3)',fontWeight:500,textAlign:'left'}}>
-              <th style={{padding:'0 0 8px 0',fontWeight:500}}>Venue</th>
-              <th style={{padding:'0 0 8px 0',fontWeight:500,textAlign:'right'}}>AUM held</th>
-              <th style={{padding:'0 0 8px 0',fontWeight:500,textAlign:'right'}}>Rate</th>
-              <th style={{padding:'0 0 8px 0',fontWeight:500,textAlign:'right'}}>Monthly fee</th>
-              <th style={{padding:'0 0 8px 0',fontWeight:500,textAlign:'right'}}>YTD fee</th>
+            <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,textAlign:'left'}}>
+              <th style={{padding:'0 0 8px 0',fontWeight:500}}>Item</th>
+              <th style={{padding:'0 0 8px 0',fontWeight:500}}>Detail</th>
+              <th style={{padding:'0 0 8px 0',fontWeight:500,textAlign:'right'}}>Monthly</th>
+              <th style={{padding:'0 0 8px 0',fontWeight:500,textAlign:'right'}}>YTD</th>
             </tr>
           </thead>
           <tbody>
-            {custody.map((c,i) => (
-              <tr key={i} style={{fontSize:13,borderTop:'1px solid var(--line-1)'}}>
-                <td style={{padding:'12px 0'}}>
-                  <div style={{display:'flex',alignItems:'center',gap:12}}>
-                    <span style={{width:26,height:26,borderRadius:6,background:c.logoBg,color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:10.5,fontWeight:600}}>{c.venue.split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase()}</span>
-                    <span style={{fontWeight:500}}>{c.venue}</span>
-                  </div>
-                </td>
-                <td style={{padding:'12px 0',textAlign:'right',color:'var(--ink-2)'}}>{c.aum}</td>
-                <td style={{padding:'12px 0',textAlign:'right',color:'var(--ink-2)'}}>{c.bps === 0 ? '—' : `${c.bps} bps`}</td>
-                <td style={{padding:'12px 0',textAlign:'right',fontWeight:500}}>{c.monthly}</td>
-                <td style={{padding:'12px 0',textAlign:'right',fontWeight:500,color:c.ytd==='—'?'var(--ink-3)':'var(--ink-1)'}}>{c.ytd}</td>
-              </tr>
+            {expenseGroups.map((grp, gi) => (
+              <React.Fragment key={gi}>
+                <tr>
+                  <td colSpan={4} style={{padding:'14px 0 8px',fontSize:12,fontWeight:600,color:'var(--ink-2)',borderTop:'1px solid var(--line-1)'}}>{grp.g}</td>
+                </tr>
+                {grp.items.map((it, i) => (
+                  <tr key={i} style={{fontSize:13,borderTop:'1px solid var(--line-1)'}}>
+                    <td style={{padding:'12px 0'}}>
+                      <div style={{display:'flex',alignItems:'center',gap:12}}>
+                        <span style={{width:26,height:26,borderRadius:6,background:it.logoBg,color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:10.5,fontWeight:600,flexShrink:0}}>{it.name.split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase()}</span>
+                        <span style={{fontWeight:500}}>{it.name}</span>
+                      </div>
+                    </td>
+                    <td style={{padding:'12px 12px',color:'var(--ink-2)'}}>{it.detail}</td>
+                    <td style={{padding:'12px 0',textAlign:'right',fontWeight:500,color:it.monthly==='—'?'var(--ink-3)':'var(--ink-1)'}}>{it.monthly}</td>
+                    <td style={{padding:'12px 0',textAlign:'right',fontWeight:500,color:it.ytd==='—'?'var(--ink-3)':'var(--ink-1)'}}>{it.ytd}</td>
+                  </tr>
+                ))}
+                <tr style={{fontSize:12.5,borderTop:'1px solid var(--line-1)'}}>
+                  <td style={{padding:'10px 0',color:'var(--ink-3)',fontWeight:500}}>Subtotal</td>
+                  <td/>
+                  <td style={{padding:'10px 0',textAlign:'right',color:'var(--ink-2)',fontWeight:500}}>{grp.monthlyTotal}</td>
+                  <td style={{padding:'10px 0',textAlign:'right',color:'var(--ink-2)',fontWeight:500}}>{grp.ytdTotal}</td>
+                </tr>
+              </React.Fragment>
             ))}
             <tr style={{fontSize:13,borderTop:'1px solid var(--line-1)',background:'var(--bg-subtle)'}}>
-              <td style={{padding:'12px 12px',fontWeight:600}}>Total</td>
-              <td style={{padding:'12px 0',textAlign:'right',color:'var(--ink-3)'}}></td>
-              <td style={{padding:'12px 0',textAlign:'right',color:'var(--ink-3)'}}></td>
-              <td style={{padding:'12px 0',textAlign:'right',fontWeight:600}}>$29,430</td>
-              <td style={{padding:'12px 12px 12px 0',textAlign:'right',fontWeight:600}}>$117,720</td>
+              <td style={{padding:'14px 12px',fontWeight:600}}>Total</td>
+              <td/>
+              <td style={{padding:'14px 0',textAlign:'right',fontWeight:600}}>$43,444</td>
+              <td style={{padding:'14px 12px 14px 0',textAlign:'right',fontWeight:600}}>$193,640</td>
             </tr>
           </tbody>
         </table>
@@ -195,12 +238,15 @@ function EconomicsView({ onNav }) {
   );
 }
 
-function KpiCard({ l, v, s, neg }) {
+function KpiCard({ l, v, pct, s, neg }) {
   return (
     <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'14px 18px'}}>
-      <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{l}</div>
-      <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',color: neg?'var(--ink-1)':'var(--ink-1)'}}>{v}</div>
-      <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{s}</div>
+      <div style={{fontSize:14,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{l}</div>
+      <div style={{display:'flex',alignItems:'baseline',gap:10,flexWrap:'wrap'}}>
+        <span style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>{pct || v}</span>
+        {pct && <span style={{fontSize:14,color:'var(--ink-2)',fontVariantNumeric:'tabular-nums'}}>{v}</span>}
+      </div>
+      <div style={{fontSize:13,color:'var(--ink-2)',marginTop:10}}>{s}</div>
     </div>
   );
 }
@@ -214,12 +260,22 @@ function SectionHeadE({ title, desc }) {
   );
 }
 
-function SubCard({ title, amount, sub, action, children }) {
+function SubCard({ title, amount, pct, sub, action, tile, children }) {
+  const tileStyle = tile ? {
+    background:'var(--glass-bg)',
+    backdropFilter:'blur(10px)',
+    WebkitBackdropFilter:'blur(10px)',
+    borderRadius:8,
+    padding:'20px 24px',
+  } : {};
   return (
-    <div style={{background:'var(--bg-card)',border:'1px solid var(--line-1)',borderRadius:12,padding:'20px 24px',display:'flex',flexDirection:'column',minWidth:0}}>
-      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:16,marginBottom:16}}>
+    <div style={{display:'flex',flexDirection:'column',minWidth:0}}>
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:16,marginBottom: tile ? 20 : 16, ...tileStyle}}>
         <div style={{minWidth:0}}>
-          <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)',lineHeight:1.1}}>{amount}</div>
+          <div style={{display:'flex',alignItems:'baseline',gap:10,flexWrap:'wrap',lineHeight:1.1}}>
+            <span style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>{amount}</span>
+            {pct && <span style={{fontSize:13,fontWeight:500,fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>{pct}</span>}
+          </div>
           <div style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',marginTop:24}}>{title}</div>
           <div style={{fontSize:12.5,color:'var(--ink-2)',marginTop:4,maxWidth:360}}>{sub}</div>
         </div>

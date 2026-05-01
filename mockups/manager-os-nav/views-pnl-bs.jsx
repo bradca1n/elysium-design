@@ -15,7 +15,7 @@ function ProfitLossView({ onNav }) {
       <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 16px',gap:24}}>
         <div>
           <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>Profit &amp; Loss</div>
-          <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Close of 07 Feb 16:00 UTC · base USD</div>
+          <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Close of 30 Apr 16:00 UTC · base USD</div>
         </div>
         <div style={{display:'flex',gap:8,alignItems:'center',flexShrink:0}}>
           <button style={pbBtnOutline}><Icon.download style={{width:13,height:13}}/> Export</button>
@@ -34,15 +34,18 @@ function ProfitLossView({ onNav }) {
       {/* KPIs */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:28}}>
         {[
-          { l: 'Net P&L', v: '+$2.34M', s: <><span style={{color:'var(--pos)'}}>+5.18%</span> on opening NAV</>, pos: true },
-          { l: 'Gross income', v: '+$2.81M', s: 'Trading +$2.35M · Staking +$0.46M' },
-          { l: 'Total fees', v: '−$0.47M', s: 'Mgmt −$0.31M · Perf −$0.16M' },
-          { l: 'Realised / unrealised', v: '62 / 38', s: '$1.45M realised vs $0.89M mark' },
+          { l: 'Net P&L',               v: '+$2.34M',  pct: '+5.18%',  s: 'on opening NAV',                         pos: true },
+          { l: 'Gross income',          v: '+$2.81M',  pct: '+6.21%',  s: 'Trading +$2.35M · Staking +$0.46M',      pos: true },
+          { l: 'Total fees',            v: '−$0.47M',  pct: '−1.04%',  s: 'Mgmt −$0.31M · Perf −$0.16M',            neg: true },
+          { l: 'Realised / unrealised', v: '62 / 38',  pct: null,      s: '$1.45M realised vs $0.89M mark' },
         ].map((k,i) => (
           <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'16px 20px'}}>
-            <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
-            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',color: k.pos?'var(--pos)':'var(--ink-1)'}}>{k.v}</div>
-            <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
+            <div style={{fontSize:14,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
+            <div style={{display:'flex',alignItems:'baseline',gap:10,flexWrap:'wrap'}}>
+              <span style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color: k.pos?'var(--pos)': k.neg?'var(--neg)':'var(--ink-1)'}}>{k.v}</span>
+              {k.pct && <span style={{fontSize:13,fontWeight:500,fontVariantNumeric:'tabular-nums',color: k.pos?'var(--pos)': k.neg?'var(--neg)':'var(--ink-3)'}}>{k.pct}</span>}
+            </div>
+            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:10}}>{k.s}</div>
           </div>
         ))}
       </div>
@@ -80,22 +83,27 @@ function ProfitLossView({ onNav }) {
 function IncomeStatement() {
   const rows = [
     { g: 'Income', items: [
-      { l: 'Realised trading gains', v: '+$1,450,000', sub: '47 trades · avg +0.4%' },
-      { l: 'Unrealised mark-to-market', v: '+$890,000', sub: 'Across 6 asset lines' },
-      { l: 'Staking & yield', v: '+$462,000', sub: 'ETH validators · LINK CCIP · T-bill coupon' },
-      { l: 'FX & other', v: '+$8,200', sub: 'USDC/USDT basis capture' },
-    ], total: '+$2,810,200', totalLabel: 'Gross income' },
+      { l: 'Realised trading gains',   v: '+$1,450,000', pct: '+51.6%', sub: '47 trades · avg +0.4%' },
+      { l: 'Unrealised mark-to-market', v: '+$890,000',  pct: '+31.7%', sub: 'Across 6 asset lines' },
+      { l: 'Staking & yield',          v: '+$462,000',   pct: '+16.4%', sub: 'ETH validators · LINK CCIP · T-bill coupon' },
+      { l: 'FX & other',               v: '+$8,200',     pct: '+0.3%',  sub: 'USDC/USDT basis capture' },
+    ], total: '+$2,810,200', totalPct: '+100.0%', totalLabel: 'Gross income' },
     { g: 'Costs', items: [
-      { l: 'Management fee (1.50% p.a. accrual)', v: '−$312,400', sub: 'Accrued daily · billed quarterly' },
-      { l: 'Performance fee (20% over HWM)', v: '−$156,800', sub: 'Above high-water mark' },
-      { l: 'Trading costs', v: '−$42,100', sub: 'Spread + exchange fees (3 venues)' },
-      { l: 'Custody & audit', v: '−$21,900', sub: 'Coinbase Prime · Copper · PwC' },
-      { l: 'Administration', v: '−$18,600', sub: 'Apex · legal · compliance' },
-    ], total: '−$551,800', totalLabel: 'Total costs' },
+      { l: 'Management fee (1.50% p.a. accrual)', v: '−$312,400', pct: '−11.1%', sub: 'Accrued daily · billed quarterly' },
+      { l: 'Performance fee (20% over HWM)',      v: '−$156,800', pct: '−5.6%',  sub: 'Above high-water mark' },
+      { l: 'Trading costs',                       v: '−$42,100',  pct: '−1.5%',  sub: 'Spread + exchange fees (3 venues)' },
+      { l: 'Custody & audit',                     v: '−$21,900',  pct: '−0.8%',  sub: 'Coinbase Prime · Copper · PwC' },
+      { l: 'Administration',                      v: '−$18,600',  pct: '−0.7%',  sub: 'Apex · legal · compliance' },
+    ], total: '−$551,800', totalPct: '−19.6%', totalLabel: 'Total costs' },
   ];
   return (
     <div>
       <div style={{border:'1px solid var(--line-1)',borderRadius:12,overflow:'hidden',background:'var(--bg-canvas)'}}>
+        <div style={{display:'flex',alignItems:'center',padding:'10px 20px',background:'var(--bg-subtle)',borderBottom:'1px solid var(--line-1)',gap:16,fontSize:11.5,fontWeight:500,color:'var(--ink-3)'}}>
+          <div style={{flex:1}}>Line</div>
+          <div style={{width:160,textAlign:'right'}}>Amount</div>
+          <div style={{width:90,textAlign:'right'}}>% of gross</div>
+        </div>
         {rows.map((grp, gi) => (
           <React.Fragment key={gi}>
             <div style={{padding:'12px 20px',background:'var(--bg-subtle)',fontSize:11,fontWeight:600,color:'var(--ink-2)',borderBottom:'1px solid var(--line-1)'}}>{grp.g}</div>
@@ -105,21 +113,24 @@ function IncomeStatement() {
                   <div style={{fontSize:14,fontWeight:500,color:'var(--ink-1)'}}>{r.l}</div>
                   <div style={{fontSize:12,color:'var(--ink-2)',marginTop:2}}>{r.sub}</div>
                 </div>
-                <div style={{fontSize:15,fontWeight:500,fontVariantNumeric:'tabular-nums',color: r.v.startsWith('+')?'var(--pos)':'var(--neg)'}}>{r.v}</div>
+                <div style={{width:160,textAlign:'right',fontSize:15,fontWeight:500,fontVariantNumeric:'tabular-nums',color: r.v.startsWith('+')?'var(--pos)':'var(--neg)'}}>{r.v}</div>
+                <div style={{width:90,textAlign:'right',fontSize:13,fontVariantNumeric:'tabular-nums',color:'var(--ink-3)'}}>{r.pct}</div>
               </div>
             ))}
-            <div style={{display:'flex',padding:'14px 20px',background:'var(--bg-subtle)',borderBottom: gi===rows.length-1?'none':'1px solid var(--line-1)',gap:16}}>
+            <div style={{display:'flex',alignItems:'center',padding:'14px 20px',background:'var(--bg-subtle)',borderBottom: gi===rows.length-1?'none':'1px solid var(--line-1)',gap:16}}>
               <div style={{flex:1,fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>{grp.totalLabel}</div>
-              <div style={{fontSize:15,fontWeight:600,fontVariantNumeric:'tabular-nums',color: grp.total.startsWith('+')?'var(--pos)':'var(--neg)'}}>{grp.total}</div>
+              <div style={{width:160,textAlign:'right',fontSize:15,fontWeight:600,fontVariantNumeric:'tabular-nums',color: grp.total.startsWith('+')?'var(--pos)':'var(--neg)'}}>{grp.total}</div>
+              <div style={{width:90,textAlign:'right',fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--ink-2)'}}>{grp.totalPct}</div>
             </div>
           </React.Fragment>
         ))}
-        <div style={{display:'flex',padding:'14px 20px',gap:16,background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,marginTop:4}}>
+        <div style={{display:'flex',alignItems:'center',padding:'14px 20px',gap:16,background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,marginTop:4}}>
           <div style={{flex:1,fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>Net P&amp;L for period</div>
-          <div style={{fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>+$2,258,400</div>
+          <div style={{width:160,textAlign:'right',fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>+$2,258,400</div>
+          <div style={{width:90,textAlign:'right',fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>+80.4%</div>
         </div>
       </div>
-      <div style={{marginTop:16,fontSize:12,color:'var(--ink-3)'}}>Figures reconcile to NAV strike 07 Feb 16:00 UTC · base currency USD · IFRS 9 fair value through P&amp;L</div>
+      <div style={{marginTop:16,fontSize:12,color:'var(--ink-3)'}}>Figures reconcile to NAV strike 30 Apr 16:00 UTC · base currency USD · IFRS 9 fair value through P&amp;L</div>
     </div>
   );
 }
@@ -136,7 +147,7 @@ function ByStrategy() {
     <div style={{border:'1px solid var(--line-1)',borderRadius:12,overflow:'hidden'}}>
       <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
         <thead>
-          <tr style={{fontSize:10.5,color:'var(--ink-3)',fontWeight:500,background:'var(--bg-subtle)'}}>
+          <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,background:'var(--bg-subtle)'}}>
             <th style={pbTh}>Strategy</th>
             <th style={{...pbTh,textAlign:'right'}}>Allocation</th>
             <th style={{...pbTh,textAlign:'right'}}>P&amp;L</th>
@@ -184,7 +195,7 @@ function ByAsset() {
     <div style={{border:'1px solid var(--line-1)',borderRadius:12,overflow:'hidden'}}>
       <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
         <thead>
-          <tr style={{fontSize:10.5,color:'var(--ink-3)',fontWeight:500,background:'var(--bg-subtle)'}}>
+          <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,background:'var(--bg-subtle)'}}>
             <th style={pbTh}>Asset</th>
             <th style={{...pbTh,textAlign:'right'}}>Quantity</th>
             <th style={{...pbTh,textAlign:'right'}}>Price</th>
@@ -245,16 +256,16 @@ function FeesExpenses() {
           { l: 'Performance fee accrued', v: '$156,800', s: 'Above HWM by $784K' },
         ].map((k,i) => (
           <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'16px 20px'}}>
-            <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
-            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
-            <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
+            <div style={{fontSize:14,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
+            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
+            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:10}}>{k.s}</div>
           </div>
         ))}
       </div>
       <div style={{border:'1px solid var(--line-1)',borderRadius:12,overflow:'hidden'}}>
         <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
           <thead>
-            <tr style={{fontSize:10.5,color:'var(--ink-3)',fontWeight:500,background:'var(--bg-subtle)'}}>
+            <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,background:'var(--bg-subtle)'}}>
               <th style={pbTh}>Line</th>
               <th style={pbTh}>Rate</th>
               <th style={{...pbTh,textAlign:'right'}}>Period</th>
@@ -306,7 +317,7 @@ function Attribution() {
       <div style={{border:'1px solid var(--line-1)',borderRadius:12,padding:'20px 24px'}}>
         <div style={{fontSize:13,fontWeight:600,marginBottom:16,color:'var(--ink-1)'}}>vs benchmark (CCI 30)</div>
         <div style={{display:'flex',alignItems:'baseline',gap:12,marginBottom:20}}>
-          <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',color:'var(--pos)',fontVariantNumeric:'tabular-nums'}}>+1.82%</div>
+          <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',color:'var(--pos)',fontVariantNumeric:'tabular-nums'}}>+1.82%</div>
           <div style={{fontSize:13,color:'var(--ink-2)'}}>excess return, period</div>
         </div>
         {[
@@ -330,7 +341,7 @@ function Attribution() {
 // BALANCE SHEET
 // ============================================================================
 function BalanceSheetView({ onNav }) {
-  const [asOf] = _pb1('07 Feb 2026');
+  const [asOf] = _pb1('30 Apr 2026');
 
   const assets = [
     { g: 'Current assets', items: [
@@ -388,9 +399,9 @@ function BalanceSheetView({ onNav }) {
           { l: 'Leverage', v: '1.00×', s: 'Unlevered · no borrowings' },
         ].map((k,i) => (
           <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'16px 20px'}}>
-            <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
-            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
-            <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
+            <div style={{fontSize:14,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
+            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
+            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:10}}>{k.s}</div>
           </div>
         ))}
       </div>
@@ -468,7 +479,7 @@ function BalanceSheetView({ onNav }) {
           </div>
           <div>
             <div style={{fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>Books balance</div>
-            <div style={{fontSize:11.5,color:'var(--ink-3)',marginTop:2}}>Assets = Liabilities + Equity · $0 variance · last verified 07 Feb 16:02 UTC</div>
+            <div style={{fontSize:11.5,color:'var(--ink-3)',marginTop:2}}>Assets = Liabilities + Equity · $0 variance · last verified 30 Apr 16:02 UTC</div>
           </div>
         </div>
         <div style={{display:'flex',gap:20,fontVariantNumeric:'tabular-nums'}}>

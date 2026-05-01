@@ -1,25 +1,79 @@
 /* NAV view — matches reference: KPIs + Portfolio composition + Venue breakdown + P&L + Balance Sheet */
 const { useState: _u1, useMemo: _u2 } = React;
 
+const RISKS_BY_RANGE = {
+  '1M':  { sharpe: 0.15,  sortino: 0.20,  btcSharpe: 0.30, btcSortino: 0.45 },
+  '3M':  { sharpe: 1.42,  sortino: 2.10,  btcSharpe: 0.85, btcSortino: 1.10 },
+  '6M':  { sharpe: -0.85, sortino: -0.92, btcSharpe: 0.45, btcSortino: 0.65 },
+  'YTD': { sharpe: -0.92, sortino: -1.04, btcSharpe: 0.55, btcSortino: 0.78 },
+  '1Y':  { sharpe: 0.62,  sortino: 0.84,  btcSharpe: 0.92, btcSortino: 1.18 },
+  'All': { sharpe: 0.65,  sortino: 0.92,  btcSharpe: 0.78, btcSortino: 1.02 },
+};
+
+function sharpeVerdict(v) {
+  if (v < 0) return 'Underperforming the risk-free rate';
+  if (v < 1) return 'Below benchmark';
+  if (v < 2) return 'Solid risk-adjusted returns';
+  return 'Excellent';
+}
+function sortinoVerdict(v) {
+  if (v < 0) return 'Negative downside-adjusted returns';
+  if (v < 1) return 'Below benchmark';
+  if (v < 2) return 'Solid';
+  return 'Excellent — downside risk well managed';
+}
+
+const RANGE_DEFS = [
+  { k: '1M',  label: '1 month',      days: 22,  pct: '+0.17%',   pos: true  },
+  { k: '3M',  label: '3 months',     days: 66,  pct: '+13.42%',  pos: true  },
+  { k: '6M',  label: '6 months',     days: 130, pct: '−18.75%',  pos: false },
+  { k: 'YTD', label: 'Year to date', days: 85,  pct: '−17.45%',  pos: false },
+  { k: '1Y',  label: '1 year',       days: 260, pct: '+4.93%',   pos: true  },
+  { k: 'All', label: 'All time',     days: 260, pct: '+4.93%',   pos: true  },
+];
+
+// Synthetic master series — ~261 daily points expressed as % from series start.
+// Window slicing re-baselines so each visible window starts at 0%.
+function buildSeries(anchors, jitter) {
+  const out = [];
+  for (let i = 0; i <= 260; i++) {
+    let j = 0;
+    while (j < anchors.length - 1 && anchors[j+1][0] < i) j++;
+    if (j >= anchors.length - 1) { out.push(anchors[anchors.length-1][1]); continue; }
+    const [x0,y0] = anchors[j], [x1,y1] = anchors[j+1];
+    const t = (i - x0) / (x1 - x0);
+    out.push(y0 + t*(y1-y0) + jitter(i));
+  }
+  return out;
+}
+
+const MASTER_PORTFOLIO = buildSeries(
+  [[0,0],[22,8],[44,30],[66,50],[88,70],[110,80],[132,65],[154,45],[176,28],[198,25],[220,20],[240,-20],[250,-10],[260,5]],
+  i => Math.sin(i*0.7)*2.5 + Math.sin(i*1.7+1)*1.5,
+);
+const MASTER_BENCHMARK = buildSeries(
+  [[0,0],[44,3],[88,6],[132,9],[176,11],[220,13],[260,15]],
+  i => Math.sin(i*0.5)*0.4,
+);
+
 function NavView({ onNav, showTweaks }) {
   const [activeAsset, setActiveAsset] = _u1(null);
   const [sheetOpen, setSheetOpen] = _u1(null);
-  const [assetGroup, setAssetGroup] = _u1('spot');
+  const [perfRange, setPerfRange] = _u1('1Y');
 
   const assets = [
-    { id: 'btc', name: 'Bitcoin', sym: 'BTC', glyph: '₿', color: '#FF9900', units: '323.80', price: '$68,992', pct: 47.1, bar: 47.1, value: '$22,340,000', d: '+0.8%', donutColor: '#FF9900' },
-    { id: 'eth', name: 'Ethereum', sym: 'ETH', glyph: 'Ξ', color: '#8E76FF', units: '1,094.00', price: '$2,011', pct: 4.6, bar: 15, value: '$2,200,000', d: '+3.5%', donutColor: '#8E76FF' },
-    { id: 'link', name: 'Chainlink', sym: 'LINK', glyph: 'L', color: '#1C46EE', units: '109,489.00', price: '$13.70', pct: 3.2, bar: 10, value: '$1,500,000', d: '+1.5%', donutColor: '#1C46EE' },
-    { id: 'ltc', name: 'Litecoin', sym: 'LTC', glyph: 'Ł', color: '#A6A9AA', units: '20,362.82', price: '$54.02', pct: 2.3, bar: 7, value: '$1,100,000', d: '+2.0%', donutColor: '#A6A9AA' },
-    { id: 'ada', name: 'Cardano', sym: 'ADA', glyph: '₳', color: '#0033AD', units: '3,653,846.15', price: '$0.26', pct: 2.0, bar: 6, value: '$950,000', d: '+4.1%', donutColor: '#0033AD' },
+    { id: 'btc', name: 'Bitcoin', sym: 'BTC', glyph: '₿', color: '#FF9900', price: '$68,992', pct: 47.1, value: '$22,340,000', delta: '+$22,340,000', d: '+0.8%', donutColor: '#FF9900' },
+    { id: 'eth', name: 'Ethereum', sym: 'ETH', glyph: 'Ξ', color: '#8E76FF', price: '$2,011', pct: 4.6, value: '$2,200,000', delta: '+$2,200,000', d: '+3.5%', donutColor: '#8E76FF' },
+    { id: 'link', name: 'Chainlink', sym: 'LINK', glyph: 'L', color: '#1C46EE', price: '$13.70', pct: 3.2, value: '$1,500,000', delta: '+$1,500,000', d: '+1.5%', donutColor: '#1C46EE' },
+    { id: 'ltc', name: 'Litecoin', sym: 'LTC', glyph: 'Ł', color: '#A6A9AA', price: '$54.02', pct: 2.3, value: '$1,100,000', delta: '+$1,100,000', d: '+2.0%', donutColor: '#A6A9AA' },
+    { id: 'ada', name: 'Cardano', sym: 'ADA', glyph: '₳', color: '#0033AD', price: '$0.26', pct: 2.0, value: '$950,000', delta: '+$950,000', d: '+4.1%', donutColor: '#0033AD' },
   ];
   // PLACEHOLDER — pending Timo's answer on Haruko spot vs. derivatives split
   const derivatives = [
-    { id: 'btc-perp', name: 'BTC Perpetual', sym: 'BTC-PERP', glyph: '₿', color: '#FF9900', units: '+12.40', price: '$101,220', pct: 6.8, bar: 22, value: '$3,200,000', d: '+1.2%', donutColor: '#FF9900' },
-    { id: 'eth-perp', name: 'ETH Perpetual', sym: 'ETH-PERP', glyph: 'Ξ', color: '#8E76FF', units: '−180.00', price: '$2,918',   pct: 1.1, bar: 4,  value: '$525,000',   d: '−0.4%', donutColor: '#8E76FF' },
-    { id: 'sol-fut',  name: 'SOL Futures',   sym: 'SOL-FUT',  glyph: 'S', color: '#1C46EE', units: '+8,400',  price: '$140',     pct: 0.6, bar: 2,  value: '$280,000',   d: '+2.1%', donutColor: '#1C46EE' },
+    { id: 'btc-perp', name: 'BTC Perpetual', sym: 'BTC-PERP', glyph: '₿', color: '#FF9900', price: '$101,220', pct: 6.8, value: '$3,200,000', delta: '+$3,200,000', d: '+1.2%', donutColor: '#FF9900' },
+    { id: 'eth-perp', name: 'ETH Perpetual', sym: 'ETH-PERP', glyph: 'Ξ', color: '#8E76FF', price: '$2,918',   pct: 1.1, value: '$525,000',   delta: '−$525,000',   d: '−0.4%', donutColor: '#8E76FF' },
+    { id: 'sol-fut',  name: 'SOL Futures',   sym: 'SOL-FUT',  glyph: 'S', color: '#1C46EE', price: '$140',     pct: 0.6, value: '$280,000',   delta: '+$280,000',   d: '+2.1%', donutColor: '#1C46EE' },
   ];
-  const activeAssets = assetGroup === 'spot' ? assets : derivatives;
   const venues = [
     { group: 'Custody', total: '$27.5M', share: '58%', rows: [
       { name: 'Coinbase Prime', holdings: 'BTC, ETH', value: '$18.0M', share: '38.0%', flow: '+0.32%', margin: null, status: 'verified' },
@@ -43,7 +97,7 @@ function NavView({ onNav, showTweaks }) {
   ];
 
   const attr = [
-    { label: 'Opening NAV · 01 Feb', kind: 'neu', delta: '—', amt: '$45,100,000' },
+    { label: 'Opening NAV · 01 Apr', kind: 'neu', delta: '—', amt: '$45,100,000' },
     { label: 'Unrealized P&L', kind: 'pos', delta: '+$1,720,000', amt: 'Mark-to-market across 5 positions' },
     { label: 'Realized P&L', kind: 'pos', delta: '+$612,400', amt: '8 trades settled' },
     { label: 'Income · T-bills', kind: 'pos', delta: '+$26,200', amt: '4.2% APY on $6.25M free cash' },
@@ -78,46 +132,48 @@ function NavView({ onNav, showTweaks }) {
       {/* ========= NET ASSET VALUE ========= */}
       <section style={{marginBottom:70}}>
         {/* Headline KPIs */}
-        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:16}}>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:48}}>
           {[
-            { l: 'NAV', v: '$47,460,000', s: <><span style={{color:'var(--pos)',fontWeight:500}}>+5.2%</span> vs. prior NAV</>, pos: false },
-            { l: 'Period P&L (MTD)', v: '+$2,340,000', s: <><span style={{color:'var(--pos)',fontWeight:500}}>+5.2%</span> on opening NAV</>, pos: true },
-            { l: 'NAV per share', v: '$104.27', s: <><span style={{color:'var(--pos)',fontWeight:500}}>+$5.18</span> vs. prior NAV</>, pos: false },
+            { l: 'NAV',              v: '$47,460,000', pct: '+5.2%', s: 'vs. prior NAV' },
+            { l: 'Period P&L (MTD)', v: '+$2,340,000', pct: '+5.2%', s: 'on opening NAV', pos: true },
+            { l: 'NAV per share',    v: '$104.27',     pct: '+5.2%', s: '+$5.18 vs. prior NAV' },
           ].map((k,i) => <Kpi key={i} {...k}/>)}
         </div>
 
-        <SubTitle title="Portfolio composition" right={<SegToggle value={assetGroup} setValue={setAssetGroup} options={[{v:'spot',l:'Spot'},{v:'derivatives',l:'Derivatives'}]}/>}/>
+        <PerformanceSection range={perfRange} setRange={setPerfRange}/>
+
+        <RisksSection range={perfRange}/>
+
+        <SubTitle title="Portfolio composition"/>
 
         <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) minmax(280px,480px)',gap:32,alignItems:'start',marginBottom:24}}>
           <div>
-            <div style={{display:'grid',gridTemplateColumns:'28px minmax(0,1fr) minmax(0,1.1fr) 90px minmax(0,1.4fr) 120px 70px',gap:16,padding:'4px 4px 8px',borderBottom:'1px solid var(--line-1)',fontSize:10.5,color:'var(--ink-3)',fontWeight:500}}>
-              <div/><div>Asset</div><div>Units</div><div style={{textAlign:'right'}}>Price</div><div>Allocation</div><div style={{textAlign:'right'}}>Value</div><div style={{textAlign:'right'}}>24h</div>
+            {/* Spot */}
+            <div style={{display:'flex',alignItems:'baseline',gap:10,marginBottom:14}}>
+              <div style={{fontSize:14,fontWeight:600,color:'var(--ink-1)'}}>Spot</div>
+              <div style={{fontSize:11.5,color:'var(--ink-3)'}}>{assets.length} positions · $28.09M</div>
             </div>
-            {activeAssets.map(a => (
-              <div key={a.id} onMouseEnter={() => setActiveAsset(a.id)} onMouseLeave={() => setActiveAsset(null)} style={{
-                display:'grid',gridTemplateColumns:'28px minmax(0,1fr) minmax(0,1.1fr) 90px minmax(0,1.4fr) 120px 70px',gap:16,
-                padding:'12px 4px',borderBottom:'1px solid var(--line-1)',alignItems:'center',cursor:'pointer',
-                background: activeAsset === a.id ? 'var(--glass-bg)' : 'transparent',
-                backdropFilter: activeAsset === a.id ? 'blur(10px)' : 'none',
-                borderRadius: activeAsset === a.id ? 6 : 0,
-              }}>
-                <span style={{width:22,height:22,borderRadius:'50%',background:a.color,color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:9.5,fontWeight:700}}>{a.glyph}</span>
-                <div style={{fontSize:13,fontWeight:500}}>{a.sym}</div>
-                <div style={{fontSize:12.5,color:'var(--ink-2)',fontVariantNumeric:'tabular-nums'}}>{a.units}</div>
-                <div style={{fontSize:12.5,color:'var(--ink-2)',fontVariantNumeric:'tabular-nums',textAlign:'right'}}>{a.price}</div>
-                <div style={{display:'flex',alignItems:'center',gap:12,minWidth:0}}>
-                  <span style={{fontSize:12,fontVariantNumeric:'tabular-nums',minWidth:40,color:'var(--ink-1)'}}>{a.pct}%</span>
-                  <span style={{flex:1,height:4,background:'var(--bg-subtle)',borderRadius:3,overflow:'hidden',minWidth:60}}>
-                    <span style={{display:'block',height:'100%',width:`${a.bar}%`,background:a.donutColor,borderRadius:3,transition:'width 0.4s'}}/>
-                  </span>
-                </div>
-                <div style={{textAlign:'right',fontVariantNumeric:'tabular-nums',fontSize:13}}>{a.value}</div>
-                <div style={{textAlign:'right',fontVariantNumeric:'tabular-nums',fontSize:12.5,fontWeight:500,color:'var(--pos)'}}>{a.d}</div>
-              </div>
+            <div style={{display:'grid',gridTemplateColumns:'28px minmax(0,1fr) 100px 90px 140px 70px',gap:16,padding:'4px 4px 8px',borderBottom:'1px solid var(--line-1)',fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>
+              <div/><div>Asset</div><div style={{textAlign:'right'}}>Price</div><div style={{textAlign:'right'}}>Allocation</div><div style={{textAlign:'right'}}>Value</div><div style={{textAlign:'right'}}>24h</div>
+            </div>
+            {assets.map(a => (
+              <SpotRow key={a.id} a={a} active={activeAsset === a.id} onEnter={() => setActiveAsset(a.id)} onLeave={() => setActiveAsset(null)}/>
+            ))}
+
+            {/* Derivatives */}
+            <div style={{display:'flex',alignItems:'baseline',gap:10,marginTop:32,marginBottom:14}}>
+              <div style={{fontSize:14,fontWeight:600,color:'var(--ink-1)'}}>Derivatives</div>
+              <div style={{fontSize:11.5,color:'var(--ink-3)'}}>{derivatives.length} positions · $4.00M</div>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'28px minmax(0,1fr) 110px 130px 130px 70px',gap:16,padding:'4px 4px 8px',borderBottom:'1px solid var(--line-1)',fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>
+              <div/><div>Asset</div><div style={{textAlign:'right'}}>Price</div><div style={{textAlign:'right'}}>Notional</div><div style={{textAlign:'right'}}>Delta</div><div style={{textAlign:'right'}}>24h</div>
+            </div>
+            {derivatives.map(a => (
+              <DerivativeRow key={a.id} a={a}/>
             ))}
           </div>
           <div style={{display:'flex',justifyContent:'center'}}>
-            <DonutChart assets={activeAssets} activeAsset={activeAsset} onHover={setActiveAsset}/>
+            <DonutChart assets={assets} activeAsset={activeAsset} onHover={setActiveAsset}/>
           </div>
         </div>
 
@@ -135,7 +191,7 @@ function NavView({ onNav, showTweaks }) {
         }/>
 
         <div>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(7, minmax(0, 1fr))',gap:16,padding:'4px 4px 8px',borderBottom:'1px solid var(--line-1)',fontSize:10.5,color:'var(--ink-3)',fontWeight:500}}>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(7, minmax(0, 1fr))',gap:16,padding:'4px 4px 8px',borderBottom:'1px solid var(--line-1)',fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>
             <div>Venue</div><div>Holdings</div><div style={{textAlign:'right'}}>Value</div><div style={{textAlign:'right'}}>Share</div><div style={{textAlign:'right'}}>Net flow</div><div style={{textAlign:'right'}}>Margin</div><div style={{textAlign:'right'}}>Status</div>
           </div>
           {venues.map((v,i) => (
@@ -180,7 +236,7 @@ function NavView({ onNav, showTweaks }) {
 
       {/* ========= TREASURY FLOWS ========= */}
       <section style={{marginBottom:70}}>
-        <SectionHead title="Treasury flows" desc="Subscription and redemption activity for the upcoming dealing window. Stables coverage across custody and exchange venues." cta={{ label: 'Open Treasury', onClick: () => onNav('collateral') }}/>
+        <SectionHead title="Treasury flows" cta={{ label: 'Open Treasury', onClick: () => onNav('collateral') }}/>
         <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16}}>
           <Kpi l="Net flow next dealing" v="−$170,000" s="Subs +$150K · Redemptions −$320K" neg/>
           <Kpi l="Available stables / USD" v="$6.25M" s="4.2% APY across 4 venues"/>
@@ -190,13 +246,13 @@ function NavView({ onNav, showTweaks }) {
 
       {/* ========= PROFIT & LOSS ========= */}
       <section style={{marginBottom:70}}>
-        <SectionHead title="Profit & Loss" desc="Drivers of NAV change this period. Month-to-date as of 07 Feb 16:00 UTC." cta={{ label: 'Open Profit & Loss', onClick: () => onNav('pnl') }}/>
+        <SectionHead title="Profit & Loss" cta={{ label: 'Open Profit & Loss', onClick: () => onNav('pnl') }}/>
 
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:24}}>
           {pnlKpis.map((k,i) => <Kpi key={i} {...k}/>)}
         </div>
 
-        <SubTitle title="Profit & Loss" right={<span style={{fontSize:11.5,color:'var(--ink-3)'}}>01 Feb → 07 Feb</span>}/>
+        <SubTitle title="Profit & Loss" right={<span style={{fontSize:11.5,color:'var(--ink-3)'}}>01 Apr → 30 Apr</span>}/>
 
         <div style={{marginTop:4}}>
               {attr.map((r,i) => (
@@ -211,7 +267,7 @@ function NavView({ onNav, showTweaks }) {
               ))}
               {/* Closing row */}
               <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) 160px 200px',gap:20,alignItems:'center',padding:'14px 4px',fontSize:13,fontVariantNumeric:'tabular-nums',background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,marginTop:4,paddingLeft:16,paddingRight:16}}>
-                <div style={{fontWeight:600,color:'var(--ink-1)'}}>Closing NAV · 07 Feb</div>
+                <div style={{fontWeight:600,color:'var(--ink-1)'}}>Closing NAV · 30 Apr</div>
                 <div style={{textAlign:'right',fontWeight:600,color:'var(--pos)'}}>+$2,360,060</div>
                 <div style={{textAlign:'right',fontWeight:600,color:'var(--ink-1)'}}>$47,460,060</div>
               </div>
@@ -220,7 +276,7 @@ function NavView({ onNav, showTweaks }) {
 
       {/* ========= BALANCE SHEET ========= */}
       <section>
-        <SectionHead title="Balance sheet" desc="Net assets snapshot reconciling to NAV. As of 07 Feb 16:00 UTC." cta={{ label: 'Open Balance Sheet', onClick: () => onNav('balance-sheet') }}/>
+        <SectionHead title="Balance sheet" desc="Net assets snapshot reconciling to NAV. As of 30 Apr 16:00 UTC." cta={{ label: 'Open Balance Sheet', onClick: () => onNav('balance-sheet') }}/>
 
         <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12,marginBottom:24}}>
           <Kpi l="Total assets" v="$47,803,000" s="Investments + cash + receivables"/>
@@ -318,7 +374,7 @@ function DonutChart({ assets, activeAsset, onHover }) {
       </svg>
 
       <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',pointerEvents:'none'}}>
-        <div style={{fontSize:11,color:'var(--ink-3)',fontWeight:500,letterSpacing:'0.06em',textTransform:'uppercase'}}>NAV</div>
+        <div style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>NAV</div>
         <div style={{fontSize:28,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',marginTop:2}}>$47.46M</div>
         <div style={{fontSize:12,color:'var(--ink-3)',marginTop:2}}>{assets.length} assets</div>
       </div>
@@ -353,12 +409,16 @@ function DonutChart({ assets, activeAsset, onHover }) {
   );
 }
 
-function Kpi({ l, v, s, pos, neg }) {
+function Kpi({ l, v, pct, s, pos, neg }) {
+  const valColor = pos ? 'var(--pos)' : neg ? 'var(--neg)' : 'var(--ink-1)';
   return (
     <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'16px 20px'}}>
-      <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{l}</div>
-      <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',color: pos?'var(--pos)': neg?'var(--neg)':'var(--ink-1)'}}>{v}</div>
-      <div style={{fontSize:11.5,color:'var(--ink-2)',marginTop:6}}>{s}</div>
+      <div style={{fontSize:14,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{l}</div>
+      <div style={{display:'flex',alignItems:'baseline',gap:10,flexWrap:'wrap'}}>
+        <span style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color: valColor}}>{v}</span>
+        {pct && <span style={{fontSize:13,fontWeight:500,fontVariantNumeric:'tabular-nums',color: pos?'var(--pos)': neg?'var(--neg)':'var(--ink-3)'}}>{pct}</span>}
+      </div>
+      <div style={{fontSize:13,color:'var(--ink-2)',marginTop:10}}>{s}</div>
     </div>
   );
 }
@@ -396,8 +456,8 @@ function SectionHead({ title, desc, cta, right }) {
 
 function SubTitle({ title, right }) {
   return (
-    <div style={{display:'flex',alignItems:'center',gap:12,margin:'40px 0 16px'}}>
-      <div style={{fontSize:16,fontWeight:500,color:'var(--ink-1)'}}>{title}</div>
+    <div style={{display:'flex',alignItems:'center',gap:12,margin:'40px 0 20px'}}>
+      <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>{title}</div>
       <div style={{flex:1}}/>
       {right}
     </div>
@@ -483,4 +543,336 @@ function SideSheet({ kind, onClose }) {
   );
 }
 
-Object.assign(window, { NavView });
+function SpotRow({ a, active, onEnter, onLeave }) {
+  const dNeg = a.d.startsWith('−') || a.d.startsWith('-');
+  return (
+    <div onMouseEnter={onEnter} onMouseLeave={onLeave} style={{
+      display:'grid',gridTemplateColumns:'28px minmax(0,1fr) 100px 90px 140px 70px',gap:16,
+      padding:'12px 4px',borderBottom:'1px solid var(--line-1)',alignItems:'center',cursor:'pointer',
+      background: active ? 'var(--glass-bg)' : 'transparent',
+      backdropFilter: active ? 'blur(10px)' : 'none',
+      borderRadius: active ? 6 : 0,
+    }}>
+      <span style={{width:22,height:22,borderRadius:'50%',background:a.color,color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:9.5,fontWeight:700}}>{a.glyph}</span>
+      <div style={{fontSize:13,fontWeight:500}}>{a.sym}</div>
+      <div style={{fontSize:12.5,color:'var(--ink-2)',fontVariantNumeric:'tabular-nums',textAlign:'right'}}>{a.price}</div>
+      <div style={{fontSize:12.5,color:'var(--ink-1)',fontVariantNumeric:'tabular-nums',textAlign:'right'}}>{a.pct}%</div>
+      <div style={{textAlign:'right',fontVariantNumeric:'tabular-nums',fontSize:13}}>{a.value}</div>
+      <div style={{textAlign:'right',fontVariantNumeric:'tabular-nums',fontSize:12.5,fontWeight:500,color: dNeg?'var(--neg)':'var(--pos)'}}>{a.d}</div>
+    </div>
+  );
+}
+
+function DerivativeRow({ a }) {
+  const deltaNeg = a.delta.startsWith('−') || a.delta.startsWith('-');
+  const dNeg = a.d.startsWith('−') || a.d.startsWith('-');
+  return (
+    <div style={{
+      display:'grid',gridTemplateColumns:'28px minmax(0,1fr) 110px 130px 130px 70px',gap:16,
+      padding:'12px 4px',borderBottom:'1px solid var(--line-1)',alignItems:'center',
+    }}>
+      <span style={{width:22,height:22,borderRadius:'50%',background:a.color,color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:9.5,fontWeight:700}}>{a.glyph}</span>
+      <div style={{fontSize:13,fontWeight:500}}>{a.sym}</div>
+      <div style={{fontSize:12.5,color:'var(--ink-2)',fontVariantNumeric:'tabular-nums',textAlign:'right'}}>{a.price}</div>
+      <div style={{textAlign:'right',fontVariantNumeric:'tabular-nums',fontSize:13}}>{a.value}</div>
+      <div style={{textAlign:'right',fontVariantNumeric:'tabular-nums',fontSize:12.5,fontWeight:500,color: deltaNeg?'var(--neg)':'var(--pos)'}}>{a.delta}</div>
+      <div style={{textAlign:'right',fontVariantNumeric:'tabular-nums',fontSize:12.5,fontWeight:500,color: dNeg?'var(--neg)':'var(--pos)'}}>{a.d}</div>
+    </div>
+  );
+}
+
+function PerformanceSection({ range, setRange, bigHeadline }) {
+  const def = RANGE_DEFS.find(d => d.k === range) || RANGE_DEFS[0];
+  // Period returns computed from master series so they always match the chart endpoint
+  const portSlice  = MASTER_PORTFOLIO.slice(-def.days - 1);
+  const benchSlice = MASTER_BENCHMARK.slice(-def.days - 1);
+  const portRet  = portSlice[portSlice.length - 1]  - portSlice[0];
+  const benchRet = benchSlice[benchSlice.length - 1] - benchSlice[0];
+  const fmtPct = v => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(2) + '%';
+
+  return (
+    <div style={{marginBottom:48}}>
+      <div style={{display:'flex',alignItems:'flex-end',justifyContent:'space-between',marginBottom:20,gap:16,flexWrap:'wrap'}}>
+        {bigHeadline ? (
+          <div>
+            <div style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',marginBottom:12}}>Portfolio return · {def.label}</div>
+            <div style={{display:'flex',alignItems:'baseline',gap:14,flexWrap:'wrap'}}>
+              <span style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color: portRet >= 0 ? 'var(--pos)' : 'var(--neg)'}}>{fmtPct(portRet)}</span>
+              <span style={{fontSize:13,color:'var(--ink-3)'}}>vs BTCUSD <span style={{fontWeight:500,color:'var(--ink-1)',fontVariantNumeric:'tabular-nums'}}>{fmtPct(benchRet)}</span></span>
+            </div>
+          </div>
+        ) : (
+          <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>Performance</div>
+        )}
+        <div style={{fontSize:11.5,color:'var(--ink-3)'}}>
+          Benchmark <span style={{color:'var(--ink-2)',fontWeight:500}}>BTC/USD</span>
+          <span style={{margin:'0 8px',color:'var(--line-2)'}}>·</span>
+          Risk-free rate <span style={{color:'var(--ink-2)',fontWeight:500}}>SOFR (4.83%)</span>
+          <span style={{margin:'0 8px',color:'var(--line-2)'}}>·</span>
+          Updated <span style={{color:'var(--ink-2)',fontWeight:500}}>30 Apr 2026, 14:02 UTC</span>
+        </div>
+      </div>
+      <PerformanceChart range={range}/>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(6, minmax(0,1fr))',marginTop:24,gap:4}}>
+        {RANGE_DEFS.map(def => (
+          <button key={def.k} onClick={() => setRange(def.k)} style={{
+            padding:'14px 18px',
+            background: range === def.k ? 'var(--bg-subtle)' : 'transparent',
+            border:'none',
+            borderRadius: 12,
+            cursor:'pointer',
+            fontFamily:'inherit',
+            textAlign:'left',
+            color:'var(--ink-1)',
+            transition:'background 0.15s',
+          }}>
+            <div style={{fontSize:14, color:'var(--ink-2)', marginBottom:6}}>{def.label}</div>
+            <div style={{fontSize:18, fontWeight:500, color: def.pos ? 'var(--pos)' : 'var(--neg)', fontVariantNumeric:'tabular-nums'}}>
+              {def.pct}
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PerformanceChart({ range }) {
+  const def = RANGE_DEFS.find(d => d.k === range);
+  const days = def.days;
+  const portSlice  = MASTER_PORTFOLIO.slice(-days - 1);
+  const benchSlice = MASTER_BENCHMARK.slice(-days - 1);
+  const port  = portSlice.map(v => v - portSlice[0]);
+  const bench = benchSlice.map(v => v - benchSlice[0]);
+
+  const allVals = [...port, ...bench, 0];
+  const yMin = Math.floor(Math.min(...allVals) / 10) * 10;
+  const yMax = Math.ceil(Math.max(...allVals) / 10) * 10;
+
+  const W = 1000, H = 300, LABEL_W = 80;
+  const xScale = i => (i / (port.length - 1)) * W;
+  const yScale = v => H - ((v - yMin) / (yMax - yMin)) * H;
+
+  const portPath  = port.map((v,i)  => `${i===0?'M':'L'}${xScale(i).toFixed(1)},${yScale(v).toFixed(1)}`).join(' ');
+  const portFill  = `${portPath} L${xScale(port.length-1).toFixed(1)},${H} L${xScale(0).toFixed(1)},${H} Z`;
+  const benchPath = bench.map((v,i) => `${i===0?'M':'L'}${xScale(i).toFixed(1)},${yScale(v).toFixed(1)}`).join(' ');
+
+  const ticks = [];
+  for (let t = yMin; t <= yMax; t += 10) ticks.push(t);
+
+  const today = new Date('2026-04-30');
+  const xLabelCount = days <= 30 ? 4 : days <= 95 ? 5 : days <= 180 ? 6 : 7;
+  const xLabels = [];
+  for (let i = 0; i < xLabelCount; i++) {
+    const fraction = i / (xLabelCount - 1);
+    const dataIndex = Math.round(fraction * (port.length - 1));
+    const daysAgo = port.length - 1 - dataIndex;
+    const d = new Date(today); d.setDate(d.getDate() - daysAgo);
+    xLabels.push({ pct: fraction * 100, text: d.toLocaleDateString('en-US', { month: 'short' }) });
+  }
+
+  const portLast  = port[port.length - 1];
+  const benchLast = bench[bench.length - 1];
+  const fmt = v => (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+
+  const [hover, setHover] = _u1(null);
+  const wrapRef = React.useRef(null);
+
+  const onMove = (e) => {
+    const rect = wrapRef.current.getBoundingClientRect();
+    const chartW = rect.width - LABEL_W;
+    const xPx = e.clientX - rect.left;
+    if (xPx < 0 || xPx > chartW) { setHover(null); return; }
+    const fraction = xPx / chartW;
+    const idx = Math.max(0, Math.min(port.length - 1, Math.round(fraction * (port.length - 1))));
+    setHover(idx);
+  };
+
+  let tooltip = null;
+  if (hover != null) {
+    const daysAgo = port.length - 1 - hover;
+    const d = new Date(today); d.setDate(d.getDate() - daysAgo);
+    const dateLabel = d.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: '2-digit' });
+    const xPct = (hover / (port.length - 1)) * 100;
+    const onLeftSide = xPct < 50;
+    tooltip = {
+      portVal: port[hover],
+      benchVal: bench[hover],
+      dateLabel,
+      xPct,
+      onLeftSide,
+    };
+  }
+
+  return (
+    <div ref={wrapRef} onMouseMove={onMove} onMouseLeave={() => setHover(null)} style={{position:'relative', height: H + 28, paddingRight: LABEL_W}}>
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} preserveAspectRatio="none" style={{display:'block', overflow:'visible'}}>
+        <defs>
+          <linearGradient id="portGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#4080FF" stopOpacity="0.40"/>
+            <stop offset="100%" stopColor="#4080FF" stopOpacity="0"/>
+          </linearGradient>
+        </defs>
+        <line x1="0" y1={yScale(0)} x2={W} y2={yScale(0)} stroke="var(--line-2)" strokeWidth="1" vectorEffect="non-scaling-stroke"/>
+        <path d={portFill} fill="url(#portGrad)"/>
+        <path d={portPath}  fill="none" stroke="#4080FF" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke"/>
+        <path d={benchPath} fill="none" stroke="#5ed9b5" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke"/>
+        {hover != null && (
+          <line x1={xScale(hover)} y1={0} x2={xScale(hover)} y2={H} stroke="var(--ink-3)" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity="0.6" style={{pointerEvents:'none'}}/>
+        )}
+      </svg>
+
+      {hover != null && (
+        <>
+          <div style={{
+            position:'absolute',
+            left: `calc((100% - ${LABEL_W}px) * ${hover/(port.length-1)})`,
+            top: yScale(port[hover]),
+            width: 10, height: 10, borderRadius: '50%',
+            background: '#5b9bff',
+            border: '2px solid var(--bg-canvas)',
+            transform: 'translate(-50%, -50%)',
+            pointerEvents:'none',
+            zIndex: 2,
+          }}/>
+          <div style={{
+            position:'absolute',
+            left: `calc((100% - ${LABEL_W}px) * ${hover/(port.length-1)})`,
+            top: yScale(bench[hover]),
+            width: 10, height: 10, borderRadius: '50%',
+            background: '#6dd9b1',
+            border: '2px solid var(--bg-canvas)',
+            transform: 'translate(-50%, -50%)',
+            pointerEvents:'none',
+            zIndex: 2,
+          }}/>
+        </>
+      )}
+
+      {/* Y-axis labels */}
+      {ticks.map(t => (
+        <div key={t} style={{
+          position:'absolute', right: 0, top: yScale(t),
+          transform:'translateY(-50%)',
+          fontSize: 11, color:'var(--ink-3)',
+          fontVariantNumeric:'tabular-nums',
+          paddingLeft: 8, lineHeight: 1, pointerEvents:'none',
+        }}>{t.toFixed(2)}%</div>
+      ))}
+
+      {/* X-axis labels */}
+      {xLabels.map((l, i) => (
+        <div key={i} style={{
+          position:'absolute',
+          left: `calc((100% - ${LABEL_W}px) * ${l.pct/100})`,
+          top: H + 8,
+          transform:'translateX(-50%)',
+          fontSize: 11, color:'var(--ink-3)', whiteSpace:'nowrap',
+        }}>{l.text}</div>
+      ))}
+
+      {/* Legend pills at end of each line — filled, two-tone */}
+      <div style={{position:'absolute', right: 0, top: yScale(benchLast), transform:'translateY(-50%)', display:'inline-flex', alignItems:'stretch', fontSize:12, fontWeight:500, lineHeight:1.4, zIndex:2}}>
+        <span style={{background:'#6dd9b1', color:'#0e3829', padding:'3px 8px', borderRadius:'5px 0 0 5px'}}>BTCUSD</span>
+        <span style={{background:'#a3e7ce', color:'#0e3829', padding:'3px 8px', borderRadius:'0 5px 5px 0', fontVariantNumeric:'tabular-nums'}}>{fmt(benchLast)}</span>
+      </div>
+      <div style={{position:'absolute', right: 0, top: yScale(portLast), transform:'translateY(-50%)', display:'inline-flex', alignItems:'stretch', fontSize:12, fontWeight:500, lineHeight:1.4, zIndex:2}}>
+        <span style={{background:'#5b9bff', color:'#0c1f4a', padding:'3px 8px', borderRadius:'5px 0 0 5px'}}>Portfolio</span>
+        <span style={{background:'#a5c4ff', color:'#0c1f4a', padding:'3px 8px', borderRadius:'0 5px 5px 0', fontVariantNumeric:'tabular-nums'}}>{fmt(portLast)}</span>
+      </div>
+
+      {/* Crosshair tooltip */}
+      {tooltip && (
+        <div style={{
+          position:'absolute',
+          left: `calc((100% - ${LABEL_W}px) * ${tooltip.xPct/100})`,
+          top: 16,
+          transform: tooltip.onLeftSide ? 'translate(12px, 0)' : 'translate(calc(-100% - 12px), 0)',
+          background:'rgba(28, 30, 36, 0.96)',
+          backdropFilter:'blur(8px)',
+          WebkitBackdropFilter:'blur(8px)',
+          border:'1px solid rgba(255,255,255,0.08)',
+          borderRadius:8,
+          padding:'10px 14px',
+          color:'#fff',
+          fontSize:13,
+          fontFamily:'inherit',
+          pointerEvents:'none',
+          zIndex:3,
+          minWidth:200,
+          boxShadow:'0 4px 16px rgba(0,0,0,0.3)',
+        }}>
+          <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:6}}>
+            <span style={{display:'inline-flex',alignItems:'center',gap:8}}>
+              <span style={{width:8,height:8,borderRadius:'50%',background:'#5b9bff'}}/>
+              <span style={{fontWeight:500}}>Portfolio</span>
+            </span>
+            <span style={{marginLeft:'auto',fontVariantNumeric:'tabular-nums',fontWeight:500}}>{fmt(tooltip.portVal)}</span>
+          </div>
+          <div style={{display:'flex',alignItems:'center',gap:14}}>
+            <span style={{display:'inline-flex',alignItems:'center',gap:8}}>
+              <span style={{width:8,height:8,borderRadius:'50%',background:'#6dd9b1'}}/>
+              <span style={{fontWeight:500}}>BTCUSD</span>
+            </span>
+            <span style={{marginLeft:'auto',fontVariantNumeric:'tabular-nums',fontWeight:500}}>{fmt(tooltip.benchVal)}</span>
+          </div>
+          <div style={{textAlign:'center',color:'rgba(255,255,255,0.55)',fontSize:11.5,marginTop:8,paddingTop:8,borderTop:'1px solid rgba(255,255,255,0.10)'}}>{tooltip.dateLabel}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RisksSection({ range }) {
+  const r = RISKS_BY_RANGE[range] || RISKS_BY_RANGE['1Y'];
+  const def = RANGE_DEFS.find(d => d.k === range);
+  return (
+    <div style={{marginBottom:48}}>
+      <div style={{display:'flex',alignItems:'baseline',gap:10,marginBottom:20}}>
+        <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>Risks</div>
+        <div style={{fontSize:11.5,color:'var(--ink-3)'}}>over <span style={{color:'var(--ink-2)',fontWeight:500}}>{def?.label || '1 year'}</span></div>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <RiskCard title="Sharpe ratio"  value={r.sharpe}  peerValue={r.btcSharpe}  peerLabel="BTCUSD" verdict={sharpeVerdict(r.sharpe)}/>
+        <RiskCard title="Sortino ratio" value={r.sortino} peerValue={r.btcSortino} peerLabel="BTCUSD" verdict={sortinoVerdict(r.sortino)}/>
+      </div>
+    </div>
+  );
+}
+
+function RiskCard({ title, value, peerValue, peerLabel, verdict }) {
+  const delta = value - peerValue;
+  const isPos = delta > 0.001;
+  const isNeg = delta < -0.001;
+  const arrow = isPos ? '↑' : isNeg ? '↓' : '=';
+  const deltaColor = isPos ? 'var(--pos)' : isNeg ? 'var(--neg)' : 'var(--ink-3)';
+  const valueColor = value < 0 ? 'var(--neg)' : 'var(--ink-1)';
+  const fmt = v => v.toFixed(2);
+  return (
+    <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:12,padding:'20px 24px'}}>
+      <div style={{display:'flex',alignItems:'center',gap:8}}>
+        <span style={{fontSize:14,fontWeight:500,color:'var(--ink-2)'}}>{title}</span>
+        <span aria-hidden="true" style={{
+          display:'inline-flex',alignItems:'center',justifyContent:'center',
+          width:14,height:14,borderRadius:'50%',
+          background:'var(--bg-subtle)',color:'var(--ink-3)',
+          fontSize:10,fontWeight:600,
+        }}>?</span>
+      </div>
+      <div style={{display:'flex',alignItems:'baseline',gap:14,marginTop:10,flexWrap:'wrap'}}>
+        <span style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',color:valueColor,fontVariantNumeric:'tabular-nums',lineHeight:1}}>{fmt(value)}</span>
+        <span style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:13}}>
+          <span style={{color:deltaColor,fontWeight:500,fontVariantNumeric:'tabular-nums'}}>{arrow} {fmt(Math.abs(delta))}</span>
+          <span style={{color:'var(--ink-3)'}}>vs {peerLabel} {fmt(peerValue)}</span>
+        </span>
+      </div>
+      <div style={{fontSize:13,color:'var(--ink-2)',marginTop:10}}>{verdict}</div>
+    </div>
+  );
+}
+
+Object.assign(window, {
+  NavView,
+  Kpi, PerformanceSection, PerformanceChart, DonutChart, SpotRow,
+  RANGE_DEFS, MASTER_PORTFOLIO, MASTER_BENCHMARK, RISKS_BY_RANGE,
+});

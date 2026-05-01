@@ -9,13 +9,13 @@ function OrderBookView({ onNav }) {
   const [selected, setSelected] = _s1(null);
 
   const orders = [
-    { id: 'ORD-2026-00418', type: 'sub', holder: 'Meridian Capital Partners', class: 'B', amount: '$450,000', shares: '—', strike: 'Mon 08 Feb', status: 'approved', created: '07 Feb 14:22', note: 'Wire confirmed' },
-    { id: 'ORD-2026-00417', type: 'red', holder: 'Henri Desrosiers', class: 'C', amount: '$82,500', shares: '2,128', strike: 'Mon 08 Feb', status: 'pending', created: '07 Feb 13:55', note: 'Awaiting AML re-check' },
-    { id: 'ORD-2026-00416', type: 'sub', holder: 'Saltbush Super Fund', class: 'A', amount: 'A$1,200,000', shares: '—', strike: 'Mon 08 Feb', status: 'approved', created: '07 Feb 11:40', note: 'Settled' },
-    { id: 'ORD-2026-00415', type: 'red', holder: 'M. Okafor', class: 'C', amount: '$24,000', shares: '619', strike: 'Mon 08 Feb', status: 'hold', created: '07 Feb 09:12', note: 'Cooling-off period' },
-    { id: 'ORD-2026-00414', type: 'sub', holder: 'Peninsula Platform Nominees', class: 'D', amount: '$2,100,000', shares: '—', strike: 'Mon 08 Feb', status: 'approved', created: '06 Feb 18:30', note: 'Bulk platform order' },
-    { id: 'ORD-2026-00413', type: 'sub', holder: 'J. Whitley-Bent', class: 'C', amount: '$15,000', shares: '—', strike: 'Mon 08 Feb', status: 'approved', created: '06 Feb 15:02', note: 'Monthly recurring' },
-    { id: 'ORD-2026-00412', type: 'red', holder: 'Verdant Family Office', class: 'A', amount: '$780,000', shares: '21,576', strike: 'Mon 08 Feb', status: 'approved', created: '06 Feb 10:18', note: 'Rebalancing' },
+    { id: 'ORD-2026-00418', type: 'sub', holder: 'Meridian Capital Partners', class: 'B', amount: '$450,000', shares: '—', strike: 'Mon 04 May', status: 'approved', created: '30 Apr 14:22', note: 'Wire confirmed' },
+    { id: 'ORD-2026-00417', type: 'red', holder: 'Henri Desrosiers', class: 'C', amount: '$82,500', shares: '2,128', strike: 'Mon 04 May', status: 'pending', created: '30 Apr 13:55', note: 'Awaiting AML re-check' },
+    { id: 'ORD-2026-00416', type: 'sub', holder: 'Saltbush Super Fund', class: 'A', amount: 'A$1,200,000', shares: '—', strike: 'Mon 04 May', status: 'approved', created: '30 Apr 11:40', note: 'Settled' },
+    { id: 'ORD-2026-00415', type: 'red', holder: 'M. Okafor', class: 'C', amount: '$24,000', shares: '619', strike: 'Mon 04 May', status: 'hold', created: '30 Apr 09:12', note: 'Cooling-off period' },
+    { id: 'ORD-2026-00414', type: 'sub', holder: 'Peninsula Platform Nominees', class: 'D', amount: '$2,100,000', shares: '—', strike: 'Mon 04 May', status: 'approved', created: '29 Apr 18:30', note: 'Bulk platform order' },
+    { id: 'ORD-2026-00413', type: 'sub', holder: 'J. Whitley-Bent', class: 'C', amount: '$15,000', shares: '—', strike: 'Mon 04 May', status: 'approved', created: '29 Apr 15:02', note: 'Monthly recurring' },
+    { id: 'ORD-2026-00412', type: 'red', holder: 'Verdant Family Office', class: 'A', amount: '$780,000', shares: '21,576', strike: 'Mon 04 May', status: 'approved', created: '29 Apr 10:18', note: 'Rebalancing' },
   ];
   const filtered = filter === 'all' ? orders : orders.filter(o => filter === 'sub' ? o.type === 'sub' : filter === 'red' ? o.type === 'red' : o.status === filter);
 
@@ -41,9 +41,9 @@ function OrderBookView({ onNav }) {
           { l: 'Pending review', v: '2', s: '1 AML · 1 cooling-off' },
         ].map((k,i) => (
           <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'16px 20px'}}>
-            <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
-            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',color:k.pos?'var(--pos)':'var(--ink-1)'}}>{k.v}</div>
-            <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
+            <div style={{fontSize:14,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
+            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color:k.pos?'var(--pos)':'var(--ink-1)'}}>{k.v}</div>
+            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:10}}>{k.s}</div>
           </div>
         ))}
       </div>
@@ -67,7 +67,7 @@ function OrderBookView({ onNav }) {
       {/* Table */}
       <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums',marginBottom:32}}>
         <thead>
-          <tr style={{fontSize:10.5,color:'var(--ink-3)',fontWeight:500}}>
+          <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>
             <th style={th}>Order</th>
             <th style={th}>Holder</th>
             <th style={{...th,textAlign:'center'}}>Class</th>
@@ -85,7 +85,7 @@ function OrderBookView({ onNav }) {
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <OrderTypeTag type={o.type}/>
                   <div>
-                    <div style={{fontFamily:'JetBrains Mono, monospace',fontSize:11.5,color:'var(--ink-2)'}}>{o.id}</div>
+                    <div style={{fontSize:11.5,color:'var(--ink-2)'}}>{o.id}</div>
                     <div style={{fontSize:11,color:'var(--ink-3)',marginTop:1}}>{o.created}</div>
                   </div>
                 </div>
@@ -134,7 +134,7 @@ function OrderDrawer({ order, onClose }) {
           <button onClick={onClose} style={{position:'absolute',top:20,right:24,padding:'6px 10px',border:'none',background:'var(--bg-surface)',cursor:'pointer',borderRadius:999,fontFamily:'inherit',fontSize:12,fontWeight:500,color:'var(--ink-1)'}}>Close</button>
           <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
             <OrderTypeTag type={order.type}/>
-            <span style={{fontFamily:'JetBrains Mono, monospace',fontSize:11.5,color:'var(--ink-2)'}}>{order.id}</span>
+            <span style={{fontSize:11.5,color:'var(--ink-2)'}}>{order.id}</span>
           </div>
           <div style={{fontSize:20,fontWeight:600,letterSpacing:'-0.01em'}}>{order.amount} · Class {order.class}</div>
           <div style={{fontSize:13,color:'var(--ink-2)',marginTop:2}}>{order.holder}</div>
@@ -155,9 +155,9 @@ function OrderDrawer({ order, onClose }) {
           <div style={{position:'relative',paddingLeft:20,borderLeft:'1px dashed var(--line-2)',marginLeft:6,display:'flex',flexDirection:'column',gap:18,fontSize:12.5}}>
             {[
               { t: 'Created', a: order.created, done: true, who: 'Investor portal' },
-              { t: 'Funds verified', a: '07 Feb 14:45', done: order.status!=='pending', who: 'Treasury · Coinbase Prime' },
-              { t: 'AML / KYC', a: order.status==='pending'?'In review':'07 Feb 15:02', done: order.status==='approved', who: 'Compliance' },
-              { t: 'Strike applied', a: 'Mon 08 Feb 16:00', done: false, who: 'NAV ops' },
+              { t: 'Funds verified', a: '30 Apr 14:45', done: order.status!=='pending', who: 'Treasury · Coinbase Prime' },
+              { t: 'AML / KYC', a: order.status==='pending'?'In review':'30 Apr 15:02', done: order.status==='approved', who: 'Compliance' },
+              { t: 'Strike applied', a: 'Mon 04 May 16:00', done: false, who: 'NAV ops' },
               { t: 'Shares issued', a: '—', done: false, who: 'Registry' },
             ].map((e,i) => (
               <div key={i} style={{position:'relative'}}>
@@ -229,7 +229,7 @@ function CollateralView({ onNav }) {
                 <div style={{fontSize:12,color:'var(--ink-2)',fontWeight:500}}>Free cash position</div>
                 <span style={{fontSize:11.5,fontWeight:500,color:'var(--green-700)',background:'var(--green-50)',padding:'3px 10px',borderRadius:999,whiteSpace:'nowrap'}}>+4.2% APY on T-bills · ~$26,200 / mo</span>
               </div>
-              <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>$6,246,000</div>
+              <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>$6,246,000</div>
               <div style={{fontSize:12,color:'var(--green-700)',marginTop:4,fontWeight:500}}>13.2% of NAV</div>
             </div>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
@@ -248,26 +248,26 @@ function CollateralView({ onNav }) {
               <div style={{fontSize:12,color:'var(--ink-2)',fontWeight:500}}>Next dealing in</div>
               <span style={{width:8,height:8,borderRadius:'50%',background:'#E08A42',marginTop:5,boxShadow:'0 0 0 3px rgba(224,138,66,0.15)'}}/>
             </div>
-            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>03d 14h 22m</div>
-            <div style={{fontSize:12,color:'var(--ink-3)',marginTop:4}}>Window opens Mon 8 Feb, 17:00 UTC</div>
+            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums'}}>03d 14h 22m</div>
+            <div style={{fontSize:12,color:'var(--ink-3)',marginTop:4}}>Window opens Mon 4 May, 17:00 UTC</div>
             <div style={{marginTop:18,paddingTop:16,borderTop:'1px solid var(--line-1)',display:'grid',gridTemplateColumns:'1fr auto',gap:'10px 20px',fontSize:13}}>
-              <div style={{color:'var(--ink-2)'}}>Next dealing</div><div style={{fontVariantNumeric:'tabular-nums'}}>Mon 8 Feb, 17:00 UTC</div>
-              <div style={{color:'var(--ink-2)'}}>Cutoff</div><div style={{fontVariantNumeric:'tabular-nums'}}>Sun 7 Feb, 17:00 UTC</div>
-              <div style={{color:'var(--ink-2)'}}>Settlement</div><div style={{fontVariantNumeric:'tabular-nums'}}>Mon 8 Feb, 2026</div>
+              <div style={{color:'var(--ink-2)'}}>Next dealing</div><div style={{fontVariantNumeric:'tabular-nums'}}>Mon 4 May, 17:00 UTC</div>
+              <div style={{color:'var(--ink-2)'}}>Cutoff</div><div style={{fontVariantNumeric:'tabular-nums'}}>Sun 03 May, 17:00 UTC</div>
+              <div style={{color:'var(--ink-2)'}}>Settlement</div><div style={{fontVariantNumeric:'tabular-nums'}}>Mon 4 May, 2026</div>
             </div>
           </div>
         </div>
 
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:16}}>
           <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'16px 20px'}}>
-            <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>Coverage of avg daily withdrawal</div>
+            <div style={{fontSize:14,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>Coverage of avg daily withdrawal</div>
             <div style={{fontSize:24,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>52×</div>
-            <div style={{fontSize:11.5,color:'var(--ink-2)',marginTop:6}}>$6.25M cash ÷ $120K avg daily withdrawal</div>
+            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:10}}>$6.25M cash ÷ $120K avg daily withdrawal</div>
           </div>
           <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'16px 20px'}}>
-            <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>Coverage of next notice period</div>
+            <div style={{fontSize:14,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>Coverage of next notice period</div>
             <div style={{fontSize:24,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>8.4×</div>
-            <div style={{fontSize:11.5,color:'var(--ink-2)',marginTop:6}}>$6.25M cash ÷ $745K max plausible withdrawals</div>
+            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:10}}>$6.25M cash ÷ $745K max plausible withdrawals</div>
           </div>
         </div>
       </section>
@@ -344,7 +344,7 @@ function CollateralView({ onNav }) {
         <div style={{display:'grid',gridTemplateColumns:'repeat(4, 1fr)',gap:16}} data-kpi-grid>
           <Kpi l="Pending subscriptions" v="+$150,000" s="5 orders" pos/>
           <Kpi l="Pending redemptions" v="−$320,000" s="2 orders" neg/>
-          <Kpi l="Projected post-dealing cash" v="$2,476,000" s="after settlement Mon 8 Feb"/>
+          <Kpi l="Projected post-dealing cash" v="$2,476,000" s="after settlement Mon 4 May"/>
           <Kpi l="Net cash required" v="$170,000" s="outflow at settlement"/>
         </div>
       </section>
@@ -357,7 +357,7 @@ function CollateralView({ onNav }) {
 
         <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'18px 22px',marginBottom:16}}>
           <div style={{fontSize:12,color:'var(--ink-2)',fontWeight:500,marginBottom:6}}>Queued order amount</div>
-          <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>$4.50M</div>
+          <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums'}}>$4.50M</div>
           <div style={{fontSize:12,color:'var(--ink-3)',marginTop:4}}>5 orders</div>
         </div>
 
@@ -728,50 +728,50 @@ function ShareRegisterView({ onNav }) {
         </div>
       </div>
 
+      {/* ===== Blended measures ===== */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:48}}>
+        {blended.map((k,i) => (
+          <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'14px 18px'}}>
+            <div style={{fontSize:14,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
+            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
+            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:10}}>{k.s}</div>
+          </div>
+        ))}
+      </div>
+
       {/* ===== Manager + POD holdings ===== */}
-      <div style={{fontSize:15,fontWeight:600,marginBottom:12}}>Manager &amp; POD holdings</div>
-      <div style={{border:'1px solid var(--line-1)',borderRadius:10,overflow:'hidden',marginBottom:32}}>
+      <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',marginBottom:20}}>Manager &amp; POD holdings</div>
+      <div style={{marginBottom:48}}>
         <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
           <thead>
-            <tr style={{fontSize:10.5,color:'var(--ink-3)',fontWeight:500,background:'var(--bg-subtle)'}}>
-              <th style={{...th,padding:'10px 16px'}}>Holder</th>
-              <th style={{...th,padding:'10px 16px',textAlign:'right'}}>Units</th>
-              <th style={{...th,padding:'10px 16px',textAlign:'right'}}>Value</th>
-              <th style={{...th,padding:'10px 16px',textAlign:'right'}}>% of fund</th>
-              <th style={{...th,padding:'10px 16px'}}>Duration profile</th>
-              <th style={{...th,padding:'10px 16px',textAlign:'right'}}>Returns earned</th>
+            <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>
+              <th style={{textAlign:'left',padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Holder</th>
+              <th style={{textAlign:'right',padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Units</th>
+              <th style={{textAlign:'right',padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Value</th>
+              <th style={{textAlign:'right',padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>% of fund</th>
+              <th style={{textAlign:'left',padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Duration profile</th>
+              <th style={{textAlign:'right',padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Returns earned</th>
             </tr>
           </thead>
           <tbody>
             {ownHoldings.map((r,i) => (
-              <tr key={i} style={{fontSize:13,borderTop:'1px solid var(--line-1)'}}>
-                <td style={{...td,padding:'12px 16px',fontWeight:500}}>{r.who}</td>
-                <td style={{...td,padding:'12px 16px',textAlign:'right'}}>{r.units}</td>
-                <td style={{...td,padding:'12px 16px',textAlign:'right'}}>{r.value}</td>
-                <td style={{...td,padding:'12px 16px',textAlign:'right',color:'var(--ink-2)'}}>{r.pct}</td>
-                <td style={{...td,padding:'12px 16px',color:'var(--ink-2)'}}>{r.duration}</td>
-                <td style={{...td,padding:'12px 16px',textAlign:'right',color:'var(--pos)',fontWeight:500}}>{r.returns}</td>
+              <tr key={i} style={{fontSize:13}}>
+                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',fontWeight:500}}>{r.who}</td>
+                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right'}}>{r.units}</td>
+                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right'}}>{r.value}</td>
+                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right',color:'var(--ink-2)'}}>{r.pct}</td>
+                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color:'var(--ink-2)'}}>{r.duration}</td>
+                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right',color:'var(--pos)',fontWeight:500}}>{r.returns}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* ===== Blended measures ===== */}
-      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:40}}>
-        {blended.map((k,i) => (
-          <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'14px 18px'}}>
-            <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
-            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
-            <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
-          </div>
-        ))}
-      </div>
-
       {/* ===== Summary charts: Duration profile + Concentration ===== */}
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32,marginBottom:40}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32,marginBottom:48}}>
         <div>
-          <div style={{fontSize:15,fontWeight:600,marginBottom:14}}>Duration profile</div>
+          <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',marginBottom:20}}>Duration profile</div>
           <div style={{display:'flex',height:38,borderRadius:8,overflow:'hidden',border:'1px solid var(--line-1)'}}>
             <div style={{width:'24.1%',background:'var(--accent-plum)',color:'var(--accent-plum-on)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:600}}>24.1%</div>
             <div style={{width:'13.5%',background:'color-mix(in oklab, var(--accent-plum) 55%, var(--bg-canvas))',color:'var(--ink-1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:600}}>13.5%</div>
@@ -783,7 +783,7 @@ function ShareRegisterView({ onNav }) {
             <span style={{display:'inline-flex',alignItems:'center',gap:6}}><span style={{width:8,height:8,borderRadius:'50%',background:'color-mix(in oklab, var(--accent-plum) 28%, var(--bg-canvas))'}}/> Locked · 62.4%</span>
           </div>
 
-          <div style={{fontSize:15,fontWeight:600,margin:'28px 0 12px'}}>Holding period</div>
+          <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',margin:'40px 0 20px'}}>Holding period</div>
           <div style={{display:'inline-flex',padding:3,background:'var(--bg-subtle)',borderRadius:8,marginBottom:16}}>
             <button onClick={()=>setHoldingBy('capital')} style={{border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,fontSize:12,fontWeight:500,background:holdingBy==='capital'?'var(--bg-canvas)':'transparent',color:holdingBy==='capital'?'var(--ink-1)':'var(--ink-2)',boxShadow:holdingBy==='capital'?'0 1px 2px rgba(0,0,0,0.06)':'none'}}>By Capital</button>
             <button onClick={()=>setHoldingBy('investor')} style={{border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,fontSize:12,fontWeight:500,background:holdingBy==='investor'?'var(--bg-canvas)':'transparent',color:holdingBy==='investor'?'var(--ink-1)':'var(--ink-2)',boxShadow:holdingBy==='investor'?'0 1px 2px rgba(0,0,0,0.06)':'none'}}>By Investor</button>
@@ -805,27 +805,36 @@ function ShareRegisterView({ onNav }) {
         </div>
 
         <div>
-          <div style={{fontSize:15,fontWeight:600,marginBottom:14}}>Concentration</div>
-          <div style={{display:'flex',alignItems:'center',gap:28}}>
-            <ConcentrationPie slices={concSlices}/>
-            <div style={{flex:1}}>
-              <div style={{display:'inline-block',padding:'4px 12px',borderRadius:999,background:'#FFF2E8',color:'#e13733',fontSize:11,fontWeight:600,marginBottom:14}}>Moderate concentration</div>
-              {concSlices.map((s,i) => (
-                <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'5px 0',fontSize:12.5}}>
-                  <span style={{width:10,height:10,borderRadius:'50%',background:s.color}}/>
-                  <span style={{color:'var(--ink-1)'}}>{s.label}</span>
-                  <span style={{marginLeft:'auto',color:'var(--ink-3)',fontVariantNumeric:'tabular-nums'}}>{s.pct}%</span>
-                </div>
-              ))}
-            </div>
+          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:14}}>
+            <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em'}}>Concentration</div>
+            <div style={{display:'inline-block',padding:'3px 10px',borderRadius:999,background:'#FFF2E8',color:'#e13733',fontSize:11,fontWeight:600}}>Moderate concentration</div>
+          </div>
+          <div style={{display:'flex',height:38,borderRadius:8,overflow:'hidden',border:'1px solid var(--line-1)'}}>
+            {concSlices.map((s,i) => (
+              <div key={i} style={{
+                width:`${s.pct}%`,
+                background:s.color,
+                color: i === 0 ? 'var(--accent-plum-on)' : i < 3 ? 'var(--ink-1)' : 'var(--ink-2)',
+                display:'flex',alignItems:'center',justifyContent:'center',
+                fontSize:11,fontWeight:600,
+              }}>{s.pct}%</div>
+            ))}
+          </div>
+          <div style={{display:'flex',gap:18,marginTop:12,fontSize:12,color:'var(--ink-2)',flexWrap:'wrap'}}>
+            {concSlices.map((s,i) => (
+              <span key={i} style={{display:'inline-flex',alignItems:'center',gap:6}}>
+                <span style={{width:8,height:8,borderRadius:'50%',background:s.color}}/>
+                {s.label} · {s.pct}%
+              </span>
+            ))}
           </div>
         </div>
       </div>
 
       {/* ===== Results delivered for investors ===== */}
-      <div style={{display:'flex',alignItems:'flex-end',justifyContent:'space-between',gap:24,marginBottom:14}}>
+      <div style={{display:'flex',alignItems:'flex-end',justifyContent:'space-between',gap:24,marginBottom:20}}>
         <div>
-          <div style={{fontSize:15,fontWeight:600,marginBottom:4}}>Results delivered for investors</div>
+          <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',marginBottom:4}}>Results delivered for investors</div>
           <div style={{fontSize:12,color:'var(--ink-3)'}}>Distribution of investor returns across the {resultsBy === 'book' ? 'book' : 'dealings'}.</div>
         </div>
         <div style={{display:'inline-flex',padding:3,background:'var(--bg-subtle)',borderRadius:8}}>
@@ -854,7 +863,7 @@ function ShareRegisterView({ onNav }) {
       </div>
 
       {/* ===== Share Classes ===== */}
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20}}>
         <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em'}}>Share Classes</div>
         <div style={{display:'flex',alignItems:'center',gap:8}}>
           <button style={{...btnOutline,height:30,fontSize:12.5}}>+ Create class</button>
@@ -894,7 +903,7 @@ function ShareRegisterView({ onNav }) {
       <div style={{overflow:'hidden'}}>
         <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
           <thead>
-            <tr style={{fontSize:10.5,color:'var(--ink-3)',fontWeight:500,background:'var(--bg-subtle)'}}>
+            <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,background:'var(--bg-subtle)'}}>
               <th style={{...th,padding:'10px 16px'}}>Investor</th>
               <th style={{...th,padding:'10px 16px'}}>Class</th>
               <th style={{...th,textAlign:'right',padding:'10px 16px'}}>Units</th>
@@ -942,7 +951,7 @@ function ShareRegisterView({ onNav }) {
       {/* ===== Tail: Top Jurisdictions + Entity Type (preserved, may drop on review) ===== */}
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32}}>
         <div>
-          <div style={{fontSize:15,fontWeight:600,marginBottom:14}}>Top Jurisdictions</div>
+          <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',marginBottom:20}}>Top Jurisdictions</div>
           {jurisdictions.map((j,i) => (
             <div key={i} style={{display:'flex',alignItems:'center',gap:12,padding:'11px 0',borderBottom:i<jurisdictions.length-1?'1px solid var(--line-1)':'none',fontSize:13}}>
               <span style={{fontSize:16,width:22,textAlign:'center'}}>{j.flag}</span>
@@ -952,7 +961,7 @@ function ShareRegisterView({ onNav }) {
           ))}
         </div>
         <div>
-          <div style={{fontSize:15,fontWeight:600,marginBottom:14}}>Entity Type</div>
+          <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',marginBottom:20}}>Entity Type</div>
           {entityTypes.map((e,i) => (
             <div key={i} style={{display:'flex',alignItems:'center',gap:12,padding:'11px 0',borderBottom:i<entityTypes.length-1?'1px solid var(--line-1)':'none',fontSize:13}}>
               <EntityIcon name={e.icon}/>
@@ -1037,11 +1046,11 @@ function EntityIcon({ name }) {
 // ============================================================================
 function ReconciliationView({ onNav }) {
   const strikes = [
-    { d: '07 Feb 16:00', nav: '$47,463,210', ch: '+$2,342,110', checks: '6 / 6', status: 'verified', hash: '0x3b7d…a0c5' },
-    { d: '06 Feb 16:00', nav: '$45,121,100', ch: '−$380,400', checks: '6 / 6', status: 'verified', hash: '0xc9a1…4b88' },
-    { d: '05 Feb 16:00', nav: '$45,501,500', ch: '+$910,220', checks: '6 / 6', status: 'verified', hash: '0x7e22…9f31' },
-    { d: '04 Feb 16:00', nav: '$44,591,280', ch: '+$210,090', checks: '5 / 6', status: 'pending', hash: '0x1abc…d7e4' },
-    { d: '03 Feb 16:00', nav: '$44,381,190', ch: '−$122,400', checks: '6 / 6', status: 'verified', hash: '0x66f0…02aa' },
+    { d: '30 Apr 16:00', nav: '$47,463,210', ch: '+$2,342,110', checks: '6 / 6', status: 'verified', hash: '0x3b7d…a0c5' },
+    { d: '29 Apr 16:00', nav: '$45,121,100', ch: '−$380,400', checks: '6 / 6', status: 'verified', hash: '0xc9a1…4b88' },
+    { d: '28 Apr 16:00', nav: '$45,501,500', ch: '+$910,220', checks: '6 / 6', status: 'verified', hash: '0x7e22…9f31' },
+    { d: '27 Apr 16:00', nav: '$44,591,280', ch: '+$210,090', checks: '5 / 6', status: 'pending', hash: '0x1abc…d7e4' },
+    { d: '26 Apr 16:00', nav: '$44,381,190', ch: '−$122,400', checks: '6 / 6', status: 'verified', hash: '0x66f0…02aa' },
   ];
   return (
     <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
@@ -1055,19 +1064,19 @@ function ReconciliationView({ onNav }) {
           { l: 'Strikes YTD', v: '27', s: 'All settled on time' },
           { l: 'Price sources', v: '3', s: 'Coinbase · Kraken · Binance' },
           { l: 'Mean dispersion', v: '0.018%', s: 'Well within 0.25% tolerance' },
-          { l: 'Variances flagged', v: '1', s: '07 Feb · dust on Binance' },
+          { l: 'Variances flagged', v: '1', s: '30 Apr · dust on Binance' },
         ].map((k,i) => (
           <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'16px 20px'}}>
-            <div style={{fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
-            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.05em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
-            <div style={{fontSize:12,color:'var(--ink-2)',marginTop:6}}>{k.s}</div>
+            <div style={{fontSize:14,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
+            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
+            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:10}}>{k.s}</div>
           </div>
         ))}
       </div>
 
       <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
         <thead>
-          <tr style={{fontSize:10.5,color:'var(--ink-3)',fontWeight:500}}>
+          <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>
             <th style={th}>Strike</th>
             <th style={{...th,textAlign:'right'}}>NAV</th>
             <th style={{...th,textAlign:'right'}}>Change</th>
@@ -1083,7 +1092,7 @@ function ReconciliationView({ onNav }) {
               <td style={{...td,textAlign:'right',fontWeight:500}}>{s.nav}</td>
               <td style={{...td,textAlign:'right',color: s.ch.startsWith('+')?'var(--pos)':'var(--neg)',fontWeight:500}}>{s.ch}</td>
               <td style={{...td,textAlign:'center'}}>{s.checks}</td>
-              <td style={{...td,fontFamily:'JetBrains Mono, monospace',fontSize:11.5,color:'var(--ink-2)'}}>{s.hash}</td>
+              <td style={{...td,fontSize:11.5,color:'var(--ink-2)'}}>{s.hash}</td>
               <td style={td}><StatusChipX status={s.status}/></td>
             </tr>
           ))}
