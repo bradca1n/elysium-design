@@ -59,12 +59,11 @@ function ProfitLossView({ onNav }) {
           { k: 'fees', l: 'Fees & expenses' },
           { k: 'attribution', l: 'Attribution' },
         ].map(t => (
-          <button key={t.k} onClick={()=>setTab(t.k)} style={{
+          <button key={t.k} onClick={()=>setTab(t.k)} className="tab-btn" style={{
             background:'transparent',border:'none',padding:'10px 14px',cursor:'pointer',fontFamily:'inherit',
             fontSize:13,fontWeight: tab===t.k?600:500,
             color: tab===t.k?'var(--ink-1)':'var(--ink-2)',
             borderBottom: tab===t.k?'2px solid var(--ink-1)':'2px solid transparent',
-            borderRadius:0,
             marginBottom:-1,
           }}>{t.l}</button>
         ))}
@@ -98,38 +97,36 @@ function IncomeStatement() {
   ];
   return (
     <div>
-      <div style={{border:'1px solid var(--line-1)',borderRadius:12,overflow:'hidden',background:'var(--bg-canvas)'}}>
-        <div style={{display:'flex',alignItems:'center',padding:'10px 20px',background:'var(--bg-subtle)',borderBottom:'1px solid var(--line-1)',gap:16,fontSize:11.5,fontWeight:500,color:'var(--ink-3)'}}>
+      <div>
+        <div style={{display:'flex',alignItems:'center',padding:'10px 4px',borderBottom:'1px solid var(--line-1)',gap:16,fontSize:11.5,fontWeight:500,color:'var(--ink-3)'}}>
           <div style={{flex:1}}>Line</div>
           <div style={{width:160,textAlign:'right'}}>Amount</div>
           <div style={{width:90,textAlign:'right'}}>% of gross</div>
         </div>
         {rows.map((grp, gi) => (
           <React.Fragment key={gi}>
-            <div style={{padding:'12px 20px',background:'var(--bg-subtle)',fontSize:11,fontWeight:600,color:'var(--ink-2)',borderBottom:'1px solid var(--line-1)'}}>{grp.g}</div>
+            <div style={{padding:'14px 4px 8px',fontSize:12,fontWeight:600,color:'var(--ink-2)'}}>{grp.g}</div>
             {grp.items.map((r,i) => (
-              <div key={i} style={{display:'flex',alignItems:'center',padding:'14px 20px',borderBottom:'1px solid var(--line-1)',gap:16}}>
-                <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontSize:14,fontWeight:500,color:'var(--ink-1)'}}>{r.l}</div>
-                  <div style={{fontSize:12,color:'var(--ink-2)',marginTop:2}}>{r.sub}</div>
-                </div>
-                <div style={{width:160,textAlign:'right',fontSize:15,fontWeight:500,fontVariantNumeric:'tabular-nums',color: r.v.startsWith('+')?'var(--pos)':'var(--neg)'}}>{r.v}</div>
+              <div key={i} style={{display:'flex',alignItems:'baseline',padding:'12px 4px',borderBottom:'1px solid var(--line-1)',gap:16}}>
+                <div style={{flex:1,minWidth:0,fontSize:13,fontWeight:500,color:'var(--ink-1)'}}>{r.l}</div>
+                <div style={{width:160,textAlign:'right',fontSize:13,fontWeight:500,fontVariantNumeric:'tabular-nums',color: r.v.startsWith('+')?'var(--pos)':'var(--neg)'}}>{r.v}</div>
                 <div style={{width:90,textAlign:'right',fontSize:13,fontVariantNumeric:'tabular-nums',color:'var(--ink-3)'}}>{r.pct}</div>
               </div>
             ))}
-            <div style={{display:'flex',alignItems:'center',padding:'14px 20px',background:'var(--bg-subtle)',borderBottom: gi===rows.length-1?'none':'1px solid var(--line-1)',gap:16}}>
+            <div style={{display:'flex',alignItems:'baseline',padding:'12px 4px',borderBottom: gi===rows.length-1?'none':'1px solid var(--line-1)',gap:16}}>
               <div style={{flex:1,fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>{grp.totalLabel}</div>
-              <div style={{width:160,textAlign:'right',fontSize:15,fontWeight:600,fontVariantNumeric:'tabular-nums',color: grp.total.startsWith('+')?'var(--pos)':'var(--neg)'}}>{grp.total}</div>
+              <div style={{width:160,textAlign:'right',fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color: grp.total.startsWith('+')?'var(--pos)':'var(--neg)'}}>{grp.total}</div>
               <div style={{width:90,textAlign:'right',fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--ink-2)'}}>{grp.totalPct}</div>
             </div>
           </React.Fragment>
         ))}
-        <div style={{display:'flex',alignItems:'center',padding:'14px 20px',gap:16,background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,marginTop:4}}>
+        <div style={{display:'flex',alignItems:'center',padding:'14px 20px',gap:16,background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,marginTop:8}}>
           <div style={{flex:1,fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>Net P&amp;L for period</div>
           <div style={{width:160,textAlign:'right',fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>+$2,258,400</div>
           <div style={{width:90,textAlign:'right',fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>+80.4%</div>
         </div>
       </div>
+      <NotesBlock items={[...rows[0].items, ...rows[1].items]}/>
       <div style={{marginTop:16,fontSize:12,color:'var(--ink-3)'}}>Figures reconcile to NAV strike 30 Apr 16:00 UTC · base currency USD · IFRS 9 fair value through P&amp;L</div>
     </div>
   );
@@ -144,10 +141,10 @@ function ByStrategy() {
     { name: 'Tactical hedges', alloc: '7%', pnl: '−$146,000', contrib: '−0.32%', win: '38%', bar: -6, pos: false },
   ];
   return (
-    <div style={{border:'1px solid var(--line-1)',borderRadius:12,overflow:'hidden'}}>
+    <div>
       <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
         <thead>
-          <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,background:'var(--bg-subtle)'}}>
+          <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>
             <th style={pbTh}>Strategy</th>
             <th style={{...pbTh,textAlign:'right'}}>Allocation</th>
             <th style={{...pbTh,textAlign:'right'}}>P&amp;L</th>
@@ -192,10 +189,10 @@ function ByAsset() {
     { n: 'Cash & T-bills', s: 'USD', g: '$', c: '#2775CA', qty: '6.25M', px: '—', realised: '+$8,200', mtm: '$0', total: '+$8,200', pos: true },
   ];
   return (
-    <div style={{border:'1px solid var(--line-1)',borderRadius:12,overflow:'hidden'}}>
+    <div>
       <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
         <thead>
-          <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,background:'var(--bg-subtle)'}}>
+          <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>
             <th style={pbTh}>Asset</th>
             <th style={{...pbTh,textAlign:'right'}}>Quantity</th>
             <th style={{...pbTh,textAlign:'right'}}>Price</th>
@@ -262,15 +259,14 @@ function FeesExpenses() {
           </div>
         ))}
       </div>
-      <div style={{border:'1px solid var(--line-1)',borderRadius:12,overflow:'hidden'}}>
+      <div>
         <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
           <thead>
-            <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,background:'var(--bg-subtle)'}}>
+            <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>
               <th style={pbTh}>Line</th>
               <th style={pbTh}>Rate</th>
               <th style={{...pbTh,textAlign:'right'}}>Period</th>
               <th style={{...pbTh,textAlign:'right'}}>YTD</th>
-              <th style={pbTh}>Note</th>
             </tr>
           </thead>
           <tbody>
@@ -280,11 +276,11 @@ function FeesExpenses() {
                 <td style={{...pbTd,color:'var(--ink-2)'}}>{f.rate}</td>
                 <td style={{...pbTd,textAlign:'right',color:'var(--neg)',fontWeight:500}}>{f.period}</td>
                 <td style={{...pbTd,textAlign:'right',color:'var(--ink-2)'}}>{f.ytd}</td>
-                <td style={{...pbTd,color:'var(--ink-2)',fontSize:12}}>{f.note}</td>
               </tr>
             ))}
           </tbody>
         </table>
+        <NotesBlock items={fees.map(f => ({ l: f.l, sub: f.note }))}/>
       </div>
     </div>
   );
@@ -299,9 +295,9 @@ function Attribution() {
     { l: 'Hedge drag', v: '−$42,000', pct: 2, pos: false },
   ];
   return (
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
-      <div style={{border:'1px solid var(--line-1)',borderRadius:12,padding:'20px 24px'}}>
-        <div style={{fontSize:13,fontWeight:600,marginBottom:16,color:'var(--ink-1)'}}>Attribution breakdown</div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32}}>
+      <div>
+        <div style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',marginBottom:16}}>Attribution breakdown</div>
         {items.map((it,i) => (
           <div key={i} style={{marginBottom:14}}>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:6}}>
@@ -314,8 +310,8 @@ function Attribution() {
           </div>
         ))}
       </div>
-      <div style={{border:'1px solid var(--line-1)',borderRadius:12,padding:'20px 24px'}}>
-        <div style={{fontSize:13,fontWeight:600,marginBottom:16,color:'var(--ink-1)'}}>vs benchmark (CCI 30)</div>
+      <div>
+        <div style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',marginBottom:12}}>vs benchmark (CCI 30)</div>
         <div style={{display:'flex',alignItems:'baseline',gap:12,marginBottom:20}}>
           <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',color:'var(--pos)',fontVariantNumeric:'tabular-nums'}}>+1.82%</div>
           <div style={{fontSize:13,color:'var(--ink-2)'}}>excess return, period</div>
@@ -407,66 +403,36 @@ function BalanceSheetView({ onNav }) {
       </div>
 
       {/* Two-column layout */}
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:24}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32,marginBottom:24}}>
         {/* Assets */}
-        <div style={{border:'1px solid var(--line-1)',borderRadius:12,overflow:'hidden'}}>
-          <div style={{padding:'14px 20px',borderBottom:'1px solid var(--line-1)',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-            <div style={{fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>Assets</div>
-            <div style={{fontSize:15,fontWeight:600,fontVariantNumeric:'tabular-nums'}}>$48,173,000</div>
-          </div>
+        <div>
+          <BSSectionHead title="Assets" total="$48,173,000"/>
           {assets.map((grp,gi) => (
             <React.Fragment key={gi}>
-              <div style={{padding:'10px 20px',background:'var(--bg-subtle)',fontSize:11,fontWeight:600,color:'var(--ink-2)'}}>{grp.g}</div>
-              {grp.items.map((r,i) => (
-                <div key={i} style={{display:'flex',padding:'12px 20px',borderBottom:'1px solid var(--line-1)',gap:16}}>
-                  <div style={{flex:1,minWidth:0}}>
-                    <div style={{fontSize:13,fontWeight:500,color:'var(--ink-1)'}}>{r.l}</div>
-                    <div style={{fontSize:11.5,color:'var(--ink-3)',marginTop:2}}>{r.sub}</div>
-                  </div>
-                  <div style={{fontSize:14,fontWeight:500,fontVariantNumeric:'tabular-nums'}}>{r.v}</div>
-                </div>
-              ))}
+              <div style={{padding:'14px 4px 8px',fontSize:12,fontWeight:600,color:'var(--ink-2)'}}>{grp.g}</div>
+              {grp.items.map((r,i) => <BSRow key={i} {...r}/>)}
             </React.Fragment>
           ))}
+          <NotesBlock items={assets.flatMap(g => g.items)}/>
         </div>
 
         {/* Liabilities + Equity */}
-        <div style={{display:'flex',flexDirection:'column',gap:20}}>
-          <div style={{border:'1px solid var(--line-1)',borderRadius:12,overflow:'hidden'}}>
-            <div style={{padding:'14px 20px',borderBottom:'1px solid var(--line-1)',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-              <div style={{fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>Liabilities</div>
-              <div style={{fontSize:15,fontWeight:600,fontVariantNumeric:'tabular-nums'}}>$384,400</div>
-            </div>
+        <div style={{display:'flex',flexDirection:'column',gap:32}}>
+          <div>
+            <BSSectionHead title="Liabilities" total="$384,400"/>
             {liabilities.map((grp,gi) => (
               <React.Fragment key={gi}>
-                <div style={{padding:'10px 20px',background:'var(--bg-subtle)',fontSize:11,fontWeight:600,color:'var(--ink-2)'}}>{grp.g}</div>
-                {grp.items.map((r,i) => (
-                  <div key={i} style={{display:'flex',padding:'12px 20px',borderBottom:'1px solid var(--line-1)',gap:16}}>
-                    <div style={{flex:1,minWidth:0}}>
-                      <div style={{fontSize:13,fontWeight:500,color:'var(--ink-1)'}}>{r.l}</div>
-                      <div style={{fontSize:11.5,color:'var(--ink-3)',marginTop:2}}>{r.sub}</div>
-                    </div>
-                    <div style={{fontSize:14,fontWeight:500,fontVariantNumeric:'tabular-nums'}}>{r.v}</div>
-                  </div>
-                ))}
+                <div style={{padding:'14px 4px 8px',fontSize:12,fontWeight:600,color:'var(--ink-2)'}}>{grp.g}</div>
+                {grp.items.map((r,i) => <BSRow key={i} {...r}/>)}
               </React.Fragment>
             ))}
+            <NotesBlock items={liabilities.flatMap(g => g.items)}/>
           </div>
 
-          <div style={{border:'1px solid var(--line-1)',borderRadius:12,overflow:'hidden'}}>
-            <div style={{padding:'14px 20px',borderBottom:'1px solid var(--line-1)',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-              <div style={{fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>Net assets / Equity</div>
-              <div style={{fontSize:15,fontWeight:600,fontVariantNumeric:'tabular-nums'}}>$47,270,400</div>
-            </div>
-            {equity.map((r,i) => (
-              <div key={i} style={{display:'flex',padding:'12px 20px',borderBottom: i===equity.length-1?'none':'1px solid var(--line-1)',gap:16}}>
-                <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontSize:13,fontWeight:500,color:'var(--ink-1)'}}>{r.l}</div>
-                  <div style={{fontSize:11.5,color:'var(--ink-3)',marginTop:2}}>{r.sub}</div>
-                </div>
-                <div style={{fontSize:14,fontWeight:500,fontVariantNumeric:'tabular-nums',color: r.v.startsWith('−')?'var(--neg)':'var(--ink-1)'}}>{r.v}</div>
-              </div>
-            ))}
+          <div>
+            <BSSectionHead title="Net assets / Equity" total="$47,270,400"/>
+            {equity.map((r,i) => <BSRow key={i} {...r} negColor/>)}
+            <NotesBlock items={equity}/>
           </div>
         </div>
       </div>
@@ -542,7 +508,35 @@ function FilterBar({ range, setRange, ranges, chips = [] }) {
 // Scoped styles (renamed to avoid collision with views-other)
 const pbBtnOutline = { background:'var(--bg-canvas)',border:'1px solid var(--line-2)',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,color:'var(--ink-1)',display:'inline-flex',alignItems:'center',gap:6,fontFamily:'inherit' };
 const pbBtnPrimary = { background:'var(--accent-plum)',color:'var(--accent-plum-on)',border:'none',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,fontFamily:'inherit' };
-const pbTh = { textAlign:'left',padding:'10px 16px',fontWeight:500 };
-const pbTd = { padding:'12px 16px',borderTop:'1px solid var(--line-1)' };
+const pbTh = { textAlign:'left',padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)' };
+const pbTd = { padding:'12px 4px',borderBottom:'1px solid var(--line-1)' };
+
+function BSSectionHead({ title, total }) {
+  return (
+    <div style={{display:'flex',alignItems:'baseline',justifyContent:'space-between',padding:'4px 4px 8px',borderBottom:'1px solid var(--line-1)'}}>
+      <div style={{fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>{title}</div>
+      <div style={{fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums'}}>{total}</div>
+    </div>
+  );
+}
+
+function BSRow({ l, v, negColor }) {
+  return (
+    <div style={{display:'flex',padding:'12px 4px',borderBottom:'1px solid var(--line-1)',gap:16,alignItems:'baseline'}}>
+      <div style={{flex:1,minWidth:0,fontSize:13,fontWeight:500,color:'var(--ink-1)'}}>{l}</div>
+      <div style={{fontSize:13,fontWeight:500,fontVariantNumeric:'tabular-nums',color: negColor && v.startsWith('−') ? 'var(--neg)' : 'var(--ink-1)'}}>{v}</div>
+    </div>
+  );
+}
+
+function NotesBlock({ items }) {
+  return (
+    <div style={{marginTop:16,display:'flex',flexDirection:'column',gap:6,fontSize:12,color:'var(--ink-3)'}}>
+      {items.filter(it => it.sub || it.s).map((it,i) => (
+        <div key={i}><span style={{color:'var(--ink-2)',fontWeight:500}}>{it.l}</span> · {it.sub || it.s}</div>
+      ))}
+    </div>
+  );
+}
 
 Object.assign(window, { ProfitLossView, BalanceSheetView });
