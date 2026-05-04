@@ -184,13 +184,13 @@ function CollateralView({ onNav }) {
   const [sheetOpen, setSheetOpen] = _s1(false);
 
   const collateral = [
-    { asset:'BTC', venue:'Coinbase Prime', type:'Custody', posted:'$4.1M', util:68, fee: 0.08, income: 0.42 },
-    { asset:'ETH', venue:'Copper.co', type:'Clearloop', posted:'$1.6M', util:41, fee: 0.12, income: 0.30 },
-    { asset:'USDC', venue:'Binance', type:'Margin', posted:'$2.7M', util:22, fee: 0.18, income: 0.06 },
-    { asset:'SOL', venue:'OKX', type:'Perp', posted:'$0.8M', util:57, fee: 0.22, income: 0.00 },
-    { asset:'USDT', venue:'Binance', type:'Margin', posted:'$1.2M', util:18, fee: 0.18, income: 0.06 },
+    { asset:'BTC',  venue:'Copper', type:'Clearloop', exchange:'OKX',     posted:'$4.1M', fee: 0.65, income: 0.00 },
+    { asset:'ETH',  venue:'Copper', type:'Clearloop', exchange:'Bybit',   posted:'$1.6M', fee: 0.65, income: 0.00 },
+    { asset:'SOL',  venue:'Copper', type:'Clearloop', exchange:'Deribit', posted:'$0.8M', fee: 0.65, income: 0.00 },
+    { asset:'USDC', venue:'Copper', type:'Clearloop', exchange:'OKX',     posted:'$2.7M', fee: 0.65, income: 3.00 },
+    { asset:'ETH',  venue:'Ceffu',  type:'MirrorX',   exchange:'Binance', posted:'$1.6M', fee: 0.60, income: 0.00 },
   ];
-  // Computed blended rates (weighted by posted value): fee 0.13%, income 0.20%, net +0.07%
+  // Total posted $10.8M. Weighted blended: fee 0.64%, income 0.75%, net +0.11%
   const redemptions = [
     { inv:'@NovaTechFund', cls:'Class A', units:'904.76', amt:'$950,000' },
     { inv:'@GlobalVest', cls:'Class B', units:'3,492.01', amt:'$350,000' },
@@ -276,7 +276,7 @@ function CollateralView({ onNav }) {
           <div>
             <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em',display:'flex',alignItems:'baseline',gap:10}}>
               Collateral position
-              <span style={{fontSize:11.5,fontWeight:500,color:'var(--green-700)',background:'var(--green-50)',padding:'3px 8px',borderRadius:999}}>68% utilised · 5 venues</span>
+              <span style={{fontSize:11.5,fontWeight:500,color:'var(--green-700)',background:'var(--green-50)',padding:'3px 8px',borderRadius:999}}>$10.8M posted · 2 custodians · 4 exchanges</span>
             </div>
           </div>
           <button onClick={()=>setSheetOpen(true)} style={btnOutline}>Move collateral</button>
@@ -294,8 +294,8 @@ function CollateralView({ onNav }) {
                 <th style={th}>Asset</th>
                 <th style={th}>Venue</th>
                 <th style={th}>Account type</th>
-                <th style={th}>Posted</th>
-                <th style={{...th,textAlign:'right'}}>Utilization</th>
+                <th style={th}>Exchange</th>
+                <th style={{...th,textAlign:'right'}}>Posted</th>
                 <th style={{...th,textAlign:'right'}}>Fee</th>
                 <th style={{...th,textAlign:'right'}}>Income</th>
                 <th style={{...th,textAlign:'right'}}>Net rate</th>
@@ -309,10 +309,8 @@ function CollateralView({ onNav }) {
                     <td style={{...td,fontWeight:500}}>{r.asset}</td>
                     <td style={td}>{r.venue}</td>
                     <td style={td}>{r.type}</td>
-                    <td style={td}>{r.posted}</td>
-                    <td style={{...td,textAlign:'right'}}>
-                      <span style={{display:'inline-flex',fontSize:12,fontWeight:500,color:'var(--green-700)',background:'var(--green-50)',padding:'3px 10px',borderRadius:999}}>{r.util}%</span>
-                    </td>
+                    <td style={td}>{r.exchange}</td>
+                    <td style={{...td,textAlign:'right'}}>{r.posted}</td>
                     <td style={{...td,textAlign:'right',color:'var(--ink-2)'}}>{r.fee.toFixed(2)}%</td>
                     <td style={{...td,textAlign:'right',color:'var(--ink-2)'}}>{r.income.toFixed(2)}%</td>
                     <td style={{...td,textAlign:'right',fontWeight:500,color: net >= 0 ? 'var(--pos)' : 'var(--neg)'}}>{net >= 0 ? '+' : ''}{net.toFixed(2)}%</td>
@@ -321,10 +319,10 @@ function CollateralView({ onNav }) {
               })}
               <tr style={{background:'var(--bg-subtle)',fontSize:13,fontWeight:600}}>
                 <td style={{...td,fontWeight:600}} colSpan={4}>Blended (weighted by posted value)</td>
-                <td style={{...td,textAlign:'right',color:'var(--ink-3)'}}>—</td>
-                <td style={{...td,textAlign:'right'}}>0.13%</td>
-                <td style={{...td,textAlign:'right'}}>0.20%</td>
-                <td style={{...td,textAlign:'right',color:'var(--pos)'}}>+0.07%</td>
+                <td style={{...td,textAlign:'right'}}>$10.8M</td>
+                <td style={{...td,textAlign:'right'}}>0.64%</td>
+                <td style={{...td,textAlign:'right'}}>0.75%</td>
+                <td style={{...td,textAlign:'right',color:'var(--pos)'}}>+0.11%</td>
               </tr>
             </tbody>
           </table>
@@ -622,9 +620,20 @@ function VenuePicker({ label, value, setValue }) {
 // ============================================================================
 // SHARE REGISTER
 // ============================================================================
-function ShareRegisterView({ onNav }) {
+function ShareRegisterView({ onNav, shareClasses, setShareClasses }) {
   const [holdingBy, setHoldingBy] = _s1('capital');
   const [resultsBy, setResultsBy] = _s1('book');
+  const [sheetState, setSheetState] = _s1({ open: false, mode: 'create', data: null });
+  const openCreate = () => setSheetState({ open: true, mode: 'create', data: null });
+  const closeSheet = () => setSheetState(s => ({ ...s, open: false }));
+  const onSheetSave = (next) => {
+    setShareClasses(curr => {
+      const idx = curr.findIndex(c => c.code === next.code);
+      if (idx >= 0) { const copy = [...curr]; copy[idx] = next; return copy; }
+      return [...curr, next];
+    });
+    closeSheet();
+  };
 
   // Investor rows — deterministic palette per avatar
   const palette = ['#D97A5B','#6E8AB5','#1d7d59','#9B6BA8','#C09A3C','#4A6B85','#8E5948','#5edaa6','#B06A7E','#4C8D93'];
@@ -641,12 +650,13 @@ function ShareRegisterView({ onNav }) {
     { name: 'Vela Asset Mgmt',       loc: 'Boston, US · Institutional',      cls: 'Class A', units: '103,650', value: '$15,298,090', lockup: 'Free',         kyc: 'verified',  last: 'Sub · 05 Apr' },
   ];
 
-  // Share classes — shape matches Overview's ClassCard
-  const classes = [
-    { name: 'Class A', navShare: '$100.20',    units: '3.20 M', total: '$10,050,200', mgmt: '4.50%', perf: '20%', investors: 85, change: '+5.2%' },
-    { name: 'Class B', navShare: '$1,050.20',  units: '1.0 M',  total: '$10,050,200', mgmt: '1.00%', perf: '20%', investors: 40, change: '+4.8%' },
-    { name: 'Class I', navShare: '$10,050.20', units: '1.0 M',  total: '$10,050,200', mgmt: '0.50%', perf: '30%', investors: 20, change: '+5.5%' },
-  ];
+  // Share classes — derived from shared store, active classes only, mapped to card shape
+  const cardChange = { 'POD-A': '+5.2%', 'POD-B': '+4.8%', 'POD-I': '+5.5%' };
+  const classes = (shareClasses || []).filter(c => c.status === 'active').map(c => ({
+    name: c.name, navShare: c.navShare, units: c.units, total: c.aum,
+    mgmt: c.mgmt, perf: c.perf, investors: c.investors,
+    change: cardChange[c.code] || '+0.0%',
+  }));
 
   // Blended measures (replaces old KPI strip; KYC health dropped per ptl-pod)
   const blended = [
@@ -720,7 +730,7 @@ function ShareRegisterView({ onNav }) {
         </div>
         <div style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
           <button onClick={()=>onNav('share-classes')} style={{...btnOutline,height:32,fontSize:12.5}}>Manage classes</button>
-          <button onClick={()=>onNav('share-classes')} style={{...btnPrimary,height:32}}>+ New Share Class</button>
+          <button onClick={openCreate} style={{...btnPrimary,height:32}}>+ New Share Class</button>
           <button aria-label="More" style={{width:32,height:32,border:'1px solid var(--line-2)',background:'var(--bg-canvas)',borderRadius:8,cursor:'pointer',color:'var(--ink-2)',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
           </button>
@@ -728,7 +738,7 @@ function ShareRegisterView({ onNav }) {
       </div>
 
       {/* ===== Blended measures ===== */}
-      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:70}}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:12}}>
         {blended.map((k,i) => (
           <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'14px 18px'}}>
             <div style={{fontSize:14,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{k.l}</div>
@@ -738,14 +748,16 @@ function ShareRegisterView({ onNav }) {
         ))}
       </div>
 
-      {/* ===== Manager + POD holdings ===== */}
-      <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',marginBottom:20}}>Manager &amp; POD holdings</div>
-      <div style={{marginBottom:70,display:'flex',flexDirection:'column',gap:12}}>
+      {/* ===== Manager + POD holdings (KPI tiles, side-by-side) ===== */}
+      <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:12,marginBottom:70}}>
         {ownHoldings.map((r,i) => (
-          <div key={i} style={{display:'flex',alignItems:'center',padding:'14px 20px',gap:16,background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8}}>
-            <div style={{flex:1,fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>{r.who}</div>
-            <div style={{width:160,textAlign:'right',fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>{r.value}</div>
-            <div style={{width:90,textAlign:'right',fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>{r.returns}</div>
+          <div key={i} style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'14px 18px'}}>
+            <div style={{fontSize:14,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>{r.who}</div>
+            <div style={{display:'flex',alignItems:'baseline',gap:10,flexWrap:'wrap'}}>
+              <span style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>{r.value}</span>
+              <span style={{fontSize:13,fontWeight:500,fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>{r.returns}</span>
+            </div>
+            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:10}}>{r.pct} of fund · {r.duration}</div>
           </div>
         ))}
       </div>
@@ -849,7 +861,7 @@ function ShareRegisterView({ onNav }) {
         <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em'}}>Share Classes</div>
         <div style={{display:'flex',alignItems:'center',gap:8}}>
           <button onClick={()=>onNav('share-classes')} style={{...btnOutline,height:30,fontSize:12.5}}>Manage classes</button>
-          <button onClick={()=>onNav('share-classes')} style={{...btnOutline,height:30,fontSize:12.5}}>+ Create class</button>
+          <button onClick={openCreate} style={{...btnOutline,height:30,fontSize:12.5}}>+ Create class</button>
         </div>
       </div>
       <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:70}}>
@@ -952,6 +964,8 @@ function ShareRegisterView({ onNav }) {
           ))}
         </div>
       </div>
+
+      <ShareClassSheet open={sheetState.open} mode={sheetState.mode} initialData={sheetState.data} onClose={closeSheet} onSave={onSheetSave}/>
     </div>
   );
 }
@@ -959,18 +973,10 @@ function ShareRegisterView({ onNav }) {
 // ============================================================================
 // SHARE CLASSES (sub-page of Share Register)
 // ============================================================================
-function ShareClassesView({ onNav }) {
+function ShareClassesView({ onNav, shareClasses, setShareClasses }) {
   const [filter, setFilter] = _s1('all');
-
-  const allClasses = [
-    { name: 'Class A', code: 'POD-A', status: 'active',   navShare: '$100.20',     units: '3.20 M', aum: '$320.64 M', mgmt: '4.50%', perf: '20%', investors: 85, lockup: '270d notice',     launched: 'Launched 12 Mar 2023',  activity: 'Subscription · 12 Apr' },
-    { name: 'Class B', code: 'POD-B', status: 'active',   navShare: '$1,050.20',   units: '1.00 M', aum: '$1.05 B',   mgmt: '1.00%', perf: '20%', investors: 40, lockup: '180d notice',     launched: 'Launched 12 Mar 2023',  activity: 'Subscription · 11 Apr' },
-    { name: 'Class I', code: 'POD-I', status: 'active',   navShare: '$10,050.20',  units: '1.00 M', aum: '$10.05 B',  mgmt: '0.50%', perf: '30%', investors: 20, lockup: '365d hard lock',  launched: 'Launched 01 Jul 2023',  activity: 'Distribution · 31 Mar' },
-    { name: 'Class C', code: 'POD-C', status: 'draft',    navShare: '—',           units: '—',      aum: '—',         mgmt: '0.75%', perf: '25%', investors: 0,  lockup: '90d notice',      launched: 'IC approval pending',   activity: 'Edited · 28 Apr' },
-    { name: 'Class S', code: 'POD-S', status: 'draft',    navShare: '—',           units: '—',      aum: '—',         mgmt: '2.00%', perf: '25%', investors: 0,  lockup: '720d hard lock',  launched: 'Term sheet · drafting', activity: 'Created · 22 Apr' },
-    { name: 'Class P', code: 'POD-P', status: 'inactive', navShare: 'Final $98.40',units: '0',      aum: '$0',        mgmt: '3.00%', perf: '15%', investors: 0,  lockup: '—',               launched: 'Wound down 18 Dec 2024',activity: 'Wound down · 18 Dec 2024' },
-    { name: 'Class L', code: 'POD-L', status: 'inactive', navShare: '$112.50',     units: '420 K',  aum: '$47.25 M',  mgmt: '2.50%', perf: '20%', investors: 8,  lockup: 'Frozen',          launched: 'Closed to new subs · 30 Sep 2024', activity: 'Closed · 30 Sep 2024' },
-  ];
+  const [sheetState, setSheetState] = _s1({ open: false, mode: 'create', data: null });
+  const allClasses = shareClasses;
 
   const filtered = filter === 'all' ? allClasses : allClasses.filter(c => c.status === filter);
   const counts = {
@@ -978,6 +984,20 @@ function ShareClassesView({ onNav }) {
     draft: allClasses.filter(c => c.status === 'draft').length,
     active: allClasses.filter(c => c.status === 'active').length,
     inactive: allClasses.filter(c => c.status === 'inactive').length,
+  };
+
+  const openCreate = () => setSheetState({ open: true, mode: 'create', data: null });
+  const openEdit = (c) => setSheetState({ open: true, mode: 'edit', data: c });
+  const closeSheet = () => setSheetState(s => ({ ...s, open: false }));
+  const onSave = (next) => {
+    setShareClasses(curr => {
+      const idx = curr.findIndex(c => c.code === next.code);
+      if (idx >= 0) {
+        const copy = [...curr]; copy[idx] = next; return copy;
+      }
+      return [...curr, next];
+    });
+    closeSheet();
   };
 
   const summary = [
@@ -1003,7 +1023,7 @@ function ShareClassesView({ onNav }) {
           <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Define, activate and retire share classes for the fund.</div>
         </div>
         <div style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
-          <button style={{...btnPrimary,height:32}}>+ New share class</button>
+          <button onClick={openCreate} style={{...btnPrimary,height:32}}>+ New share class</button>
         </div>
       </div>
 
@@ -1069,7 +1089,7 @@ function ShareClassesView({ onNav }) {
             {filtered.map((c,i) => {
               const muted = c.status !== 'active';
               return (
-                <tr key={i} data-row style={{fontSize:13,cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                <tr key={i} data-row style={{fontSize:13,cursor:'pointer'}} onClick={()=>openEdit(c)} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
                   <td style={{...td,padding:'14px 16px',fontWeight:500,color:'var(--ink-1)'}}>{c.name}</td>
                   <td style={{...td,padding:'14px 16px',color:'var(--ink-2)',fontSize:12.5}}>{c.code} · {c.launched}</td>
                   <td style={{...td,padding:'14px 16px',textAlign:'right',color: muted ? 'var(--ink-3)' : 'var(--ink-1)'}}>{c.navShare}</td>
@@ -1080,7 +1100,7 @@ function ShareClassesView({ onNav }) {
                   <td style={{...td,padding:'14px 16px',color:'var(--ink-2)'}}>{c.lockup}</td>
                   <td style={{...td,padding:'14px 16px',color:'var(--ink-2)',fontSize:12.5}}>{c.activity}</td>
                   <td style={{...td,padding:'14px 16px'}}><ClassStatusChip status={c.status}/></td>
-                  <td style={{...td,padding:'14px 16px',textAlign:'right',color:'var(--ink-3)'}}>
+                  <td style={{...td,padding:'14px 16px',textAlign:'right',color:'var(--ink-3)'}} onClick={(e)=>{e.stopPropagation(); openEdit(c);}}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
                   </td>
                 </tr>
@@ -1096,7 +1116,321 @@ function ShareClassesView({ onNav }) {
       <div style={{fontSize:12,color:'var(--ink-3)'}}>
         Showing {filtered.length} of {allClasses.length} classes
       </div>
+
+      <ShareClassSheet open={sheetState.open} mode={sheetState.mode} initialData={sheetState.data} onClose={closeSheet} onSave={onSave}/>
     </div>
+  );
+}
+
+// ============================================================================
+// SHARE CLASS SIDE SHEET (Create / Edit)
+// ============================================================================
+function FloatingField({ label, value, onChange, type='text', step, min, prefix, suffix, options, hint, autoFocus }) {
+  const [focused, setFocused] = _s1(false);
+  const isSelect = !!options;
+  const hasValue = value !== '' && value !== null && value !== undefined;
+  const float = focused || hasValue;
+  const wrapperS = {
+    position:'relative', height:56,
+    border:'1px solid '+(focused ? 'var(--ink-1)' : 'var(--line-2)'),
+    borderRadius:8, background:'var(--bg-canvas)',
+    transition:'border-color 0.12s',
+  };
+  const labelS = {
+    position:'absolute', left:14,
+    top: float ? 9 : '50%',
+    transform: float ? 'none' : 'translateY(-50%)',
+    fontSize: float ? 11 : 14,
+    color: focused ? 'var(--ink-1)' : 'var(--ink-3)',
+    fontWeight: float ? 500 : 400,
+    transition: 'top 0.12s, font-size 0.12s, color 0.12s, transform 0.12s, font-weight 0.12s',
+    pointerEvents:'none', whiteSpace:'nowrap',
+  };
+  const prefixPad = prefix ? (prefix.length > 2 ? 50 : 26) : 0;
+  const fieldS = {
+    width:'100%', height:'100%', border:'none', background:'transparent',
+    fontSize:14, color:'var(--ink-1)',
+    paddingLeft: 14 + prefixPad,
+    paddingRight: isSelect ? 32 : (suffix ? 30 : 14),
+    paddingTop: float ? 20 : 0,
+    paddingBottom: 0,
+    fontFamily:'inherit', outline:'none', boxShadow:'none', boxSizing:'border-box',
+    fontVariantNumeric:'tabular-nums',
+    appearance: isSelect ? 'none' : undefined,
+    WebkitAppearance: isSelect ? 'none' : undefined,
+    cursor: isSelect ? 'pointer' : 'text',
+  };
+  return (
+    <React.Fragment>
+      <div style={wrapperS}>
+        <label style={labelS}>{label}</label>
+        {prefix && float && <span style={{position:'absolute', left:14, top:28, fontSize:14, color:'var(--ink-1)', pointerEvents:'none', fontVariantNumeric:'tabular-nums'}}>{prefix}</span>}
+        {suffix && float && <span style={{position:'absolute', right:14, top:28, fontSize:14, color:'var(--ink-3)', pointerEvents:'none', fontVariantNumeric:'tabular-nums'}}>{suffix}</span>}
+        {isSelect ? (
+          <select autoFocus={autoFocus} value={value || ''} onChange={onChange} onFocus={()=>setFocused(true)} onBlur={()=>setFocused(false)} style={fieldS}>
+            <option value="" disabled hidden></option>
+            {options.map(o => typeof o === 'string' ? <option key={o} value={o}>{o}</option> : <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        ) : (
+          <input autoFocus={autoFocus} type={type} step={step} min={min} value={value} onChange={onChange} onFocus={()=>setFocused(true)} onBlur={()=>setFocused(false)} style={fieldS}/>
+        )}
+        {isSelect && (
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="var(--ink-3)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{position:'absolute', right:14, top:'50%', transform:'translateY(-50%)', pointerEvents:'none'}}>
+            <path d="M3 4.5 6 7.5 9 4.5"/>
+          </svg>
+        )}
+      </div>
+      {hint && <div style={{fontSize:11.5, color:'var(--ink-3)', marginTop:6, paddingLeft:2}}>{hint}</div>}
+    </React.Fragment>
+  );
+}
+
+
+const SHARE_CLASS_EMPTY = {
+  name: '', feeTier: '', income: 'accumulation', distFreq: '',
+  currency: 'USD', hedging: 'unhedged',
+  mgmtNum: '', perfNum: '', subFee: '', redFee: '',
+  minInvestment: '', lockupNum: '', lockupUnit: 'Months',
+  noticeNum: '', noticeUnit: 'Days', dealing: '', voting: true,
+  hwm: 'Per class', dilution: false, swing: '', gates: '',
+};
+const CURRENCY_PREFIX = { USD: '$', EUR: '€', GBP: '£', CHF: 'CHF ', JPY: '¥', AUD: 'A$', CAD: 'C$', SGD: 'S$', HKD: 'HK$' };
+
+function ShareClassSheet({ open, mode, initialData, onClose, onSave }) {
+  const [form, setForm] = _s1(SHARE_CLASS_EMPTY);
+
+  React.useEffect(() => {
+    if (!open) return;
+    if (mode === 'edit' && initialData) {
+      const merged = { ...SHARE_CLASS_EMPTY };
+      Object.keys(SHARE_CLASS_EMPTY).forEach(k => {
+        if (initialData[k] !== undefined && initialData[k] !== null) merged[k] = initialData[k];
+      });
+      setForm(merged);
+    } else {
+      setForm(SHARE_CLASS_EMPTY);
+    }
+  }, [open, mode, initialData]);
+
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = ''; window.removeEventListener('keydown', onKey); };
+  }, [open, onClose]);
+
+  const set = (k) => (e) => {
+    const v = e && e.target ? (e.target.type === 'checkbox' ? e.target.checked : e.target.value) : e;
+    setForm(f => ({ ...f, [k]: v }));
+  };
+  const setVal = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const isValid = form.name.trim().length > 0 && !!form.feeTier;
+  const prefix = CURRENCY_PREFIX[form.currency] || '$';
+
+  const buildClass = (status) => {
+    const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    const fallbackCode = 'POD-' + ((form.name.match(/Class\s+(\w)/i) || [])[1] || form.name[0] || 'X').toUpperCase();
+    const code = mode === 'edit' && initialData ? initialData.code : fallbackCode;
+    const days = (n, unit) => n * (unit === 'Years' ? 365 : unit === 'Months' ? 30 : 1);
+    const lockDays = days(parseFloat(form.lockupNum) || 0, form.lockupUnit);
+    const noticeDays = days(parseFloat(form.noticeNum) || 0, form.noticeUnit);
+    const lockupText = lockDays > 0 ? `${lockDays}d hard lock` : noticeDays > 0 ? `${noticeDays}d notice` : '—';
+    const base = mode === 'edit' && initialData
+      ? { ...initialData }
+      : { navShare: '—', units: '—', aum: '—', investors: 0, launched: status === 'draft' ? 'Term sheet · drafting' : `Launched ${today}` };
+    return {
+      ...base,
+      ...form,
+      code,
+      status,
+      mgmt: `${(parseFloat(form.mgmtNum) || 0).toFixed(2)}%`,
+      perf: `${parseInt(form.perfNum) || 0}%`,
+      lockup: lockupText,
+      activity: mode === 'edit' ? `Edited · ${today}` : `Created · ${today}`,
+    };
+  };
+
+  const onCancel = () => onClose();
+  const onCreate = () => { if (isValid) onSave(buildClass('active')); };
+  const onDraft = () => { if (form.name.trim()) onSave(buildClass('draft')); };
+  const onSaveChanges = () => { if (isValid) onSave(buildClass(initialData?.status || 'draft')); };
+
+  // Styles (scoped, all use manager-os-nav tokens)
+  const overlayS = { position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', zIndex:60, opacity: open ? 1 : 0, pointerEvents: open ? 'auto' : 'none', transition:'opacity 0.2s ease' };
+  const panelS = { position:'fixed', top:0, right:0, bottom:0, width:660, maxWidth:'100vw', background:'var(--bg-canvas)', borderLeft:'1px solid var(--line-1)', zIndex:61, transform: open ? 'translateX(0)' : 'translateX(100%)', transition:'transform 0.3s ease', display:'flex', flexDirection:'column', boxShadow:'-24px 0 48px rgba(0,0,0,0.18)' };
+  const topbarS = { padding:'16px 48px', flexShrink:0 };
+  const cancelBtnS = { display:'inline-flex', alignItems:'center', gap:6, padding:'6px 12px', border:'none', background:'var(--bg-subtle)', cursor:'pointer', borderRadius:999, fontFamily:'inherit', fontSize:12, fontWeight:500, color:'var(--ink-1)' };
+  const bodyS = { flex:1, overflowY:'auto', padding:'0 48px 48px' };
+  const footerS = { padding:'20px 48px', flexShrink:0, borderTop:'1px solid var(--line-1)', display:'flex', gap:8 };
+
+  const sectionLabelS = { fontSize:13, fontWeight:600, color:'var(--ink-1)', marginTop:40, marginBottom:14, paddingTop:24, borderTop:'1px solid var(--line-1)' };
+  const groupS = { marginTop:16 };
+  const rowS = { display:'grid', gridTemplateColumns:'1fr 1fr', gap:14 };
+  const fInputBox = { ...fInput };
+  const fSelectS = { ...fInput, appearance:'none', WebkitAppearance:'none', paddingRight:36, cursor:'pointer', backgroundImage:`url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='%2382858B' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4.5 6 7.5 9 4.5'/%3E%3C/svg%3E")`, backgroundRepeat:'no-repeat', backgroundPosition:'right 12px center' };
+
+  const pillBtn = (active) => ({
+    flex:1, padding:'9px 14px', borderRadius:8, border:'1px solid '+(active?'var(--ink-1)':'var(--line-2)'), background: active?'var(--ink-1)':'var(--bg-canvas)', color: active?'var(--bg-canvas)':'var(--ink-1)', cursor:'pointer', fontSize:13, fontWeight:500, fontFamily:'inherit',
+  });
+  const Toggle = ({ on, onChange }) => (
+    <button type="button" onClick={()=>onChange(!on)} style={{
+      width:36, height:20, borderRadius:10, border:'none', cursor:'pointer', padding:0,
+      background: on ? 'var(--accent-plum)' : 'var(--line-2)', position:'relative', transition:'background 0.15s'
+    }}>
+      <span style={{position:'absolute', top:2, left: on?18:2, width:16, height:16, borderRadius:'50%', background:'#fff', transition:'left 0.15s'}}/>
+    </button>
+  );
+
+  const InputSuffix = ({ children, suffix }) => (
+    <div style={{position:'relative'}}>
+      {children}
+      <span style={{position:'absolute', right:14, top:'50%', transform:'translateY(-50%)', color:'var(--ink-3)', fontSize:13, fontVariantNumeric:'tabular-nums', pointerEvents:'none'}}>{suffix}</span>
+    </div>
+  );
+  const InputPrefix = ({ children, prefix }) => (
+    <div style={{position:'relative'}}>
+      <span style={{position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'var(--ink-3)', fontSize:13, fontVariantNumeric:'tabular-nums', pointerEvents:'none'}}>{prefix}</span>
+      {children}
+    </div>
+  );
+
+  return ReactDOM.createPortal(
+    <React.Fragment>
+      <div style={overlayS} onClick={onCancel}/>
+      <div style={panelS} role="dialog" aria-label={mode==='edit'?'Edit share class':'Add share class'}>
+        <div style={topbarS}>
+          <button style={cancelBtnS} onClick={onCancel} aria-label="Cancel">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Cancel
+          </button>
+        </div>
+
+        <div style={bodyS}>
+          <div style={{paddingBottom:24}}>
+            <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>
+              {mode==='edit' ? `Edit ${initialData?.name || 'share class'}` : 'Add share class'}
+            </div>
+            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>
+              {mode==='edit' ? 'Update terms for this share class.' : 'Define the terms for a new share class in this fund.'}
+            </div>
+          </div>
+
+          {/* Identity */}
+          <div style={{...sectionLabelS, marginTop:0, paddingTop:0, borderTop:'none'}}>Identity</div>
+          <div style={groupS}>
+            <FloatingField label="Class name" value={form.name} onChange={set('name')}/>
+          </div>
+          <div style={groupS}>
+            <FloatingField label="Fee tier" value={form.feeTier} onChange={set('feeTier')} options={['Retail','Institutional','Seed','Platform','Bundled']}/>
+          </div>
+          <div style={groupS}>
+            <label style={fLabel}>Income treatment</label>
+            <div style={{display:'flex', gap:8}}>
+              <button type="button" style={pillBtn(form.income==='accumulation')} onClick={()=>setVal('income','accumulation')}>Accumulation</button>
+              <button type="button" style={pillBtn(form.income==='distribution')} onClick={()=>setVal('income','distribution')}>Distribution</button>
+            </div>
+          </div>
+          {form.income === 'distribution' && (
+            <div style={groupS}>
+              <FloatingField label="Distribution frequency" value={form.distFreq} onChange={set('distFreq')} options={['Monthly','Quarterly','Semi-annual','Annual']}/>
+            </div>
+          )}
+
+          {/* Currency & Hedging */}
+          <div style={sectionLabelS}>Currency &amp; Hedging</div>
+          <div style={groupS}>
+            <FloatingField label="Denomination currency" value={form.currency} onChange={set('currency')} options={[
+              {value:'USD',label:'USD — US Dollar'},
+              {value:'EUR',label:'EUR — Euro'},
+              {value:'GBP',label:'GBP — British Pound'},
+              {value:'CHF',label:'CHF — Swiss Franc'},
+              {value:'JPY',label:'JPY — Japanese Yen'},
+              {value:'AUD',label:'AUD — Australian Dollar'},
+              {value:'CAD',label:'CAD — Canadian Dollar'},
+              {value:'SGD',label:'SGD — Singapore Dollar'},
+              {value:'HKD',label:'HKD — Hong Kong Dollar'},
+            ]}/>
+          </div>
+          <div style={groupS}>
+            <FloatingField label="FX hedging model" value={form.hedging} onChange={set('hedging')} options={[
+              {value:'unhedged',label:'Unhedged'},
+              {value:'passive',label:'Passive'},
+              {value:'active',label:'Active'},
+            ]}/>
+          </div>
+
+          {/* Fees */}
+          <div style={sectionLabelS}>Fees</div>
+          <div style={{...groupS, ...rowS}}>
+            <FloatingField label="Management fee" type="number" step="0.01" min="0" suffix="%" value={form.mgmtNum} onChange={set('mgmtNum')}/>
+            <FloatingField label="Performance fee" type="number" step="0.01" min="0" suffix="%" value={form.perfNum} onChange={set('perfNum')}/>
+          </div>
+          <div style={{...groupS, ...rowS}}>
+            <FloatingField label="Subscription fee" type="number" step="0.01" min="0" suffix="%" value={form.subFee} onChange={set('subFee')}/>
+            <FloatingField label="Redemption fee" type="number" step="0.01" min="0" suffix="%" value={form.redFee} onChange={set('redFee')}/>
+          </div>
+
+          {/* Dealing & Liquidity */}
+          <div style={sectionLabelS}>Dealing &amp; Liquidity</div>
+          <div style={groupS}>
+            <FloatingField label="Minimum investment" type="number" min="0" prefix={prefix} value={form.minInvestment} onChange={set('minInvestment')}/>
+          </div>
+          <div style={{...groupS, ...rowS}}>
+            <div style={{display:'grid', gridTemplateColumns:'1fr 110px', gap:8}}>
+              <FloatingField label="Lock-up period" type="number" min="0" value={form.lockupNum} onChange={set('lockupNum')}/>
+              <FloatingField label="Unit" value={form.lockupUnit} onChange={set('lockupUnit')} options={['Days','Months','Years']}/>
+            </div>
+            <div style={{display:'grid', gridTemplateColumns:'1fr 110px', gap:8}}>
+              <FloatingField label="Notice period" type="number" min="0" value={form.noticeNum} onChange={set('noticeNum')}/>
+              <FloatingField label="Unit" value={form.noticeUnit} onChange={set('noticeUnit')} options={['Days','Months']}/>
+            </div>
+          </div>
+          <div style={groupS}>
+            <FloatingField label="Dealing schedule" value={form.dealing} onChange={set('dealing')} options={['Daily','Weekly','Monthly']}/>
+          </div>
+          <div style={groupS}>
+            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'18px 14px', border:'1px solid var(--line-2)', borderRadius:8}}>
+              <span style={{fontSize:14, color:'var(--ink-1)'}}>Shareholders can vote</span>
+              <Toggle on={form.voting} onChange={(v)=>setVal('voting', v)}/>
+            </div>
+          </div>
+
+          {/* Advanced */}
+          <div style={sectionLabelS}>Advanced</div>
+          <div style={groupS}>
+            <FloatingField label="High water mark scope" value={form.hwm} onChange={set('hwm')} options={['Per class','Per dealing']}/>
+          </div>
+          <div style={groupS}>
+            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'18px 14px', border:'1px solid var(--line-2)', borderRadius:8}}>
+              <span style={{fontSize:14, color:'var(--ink-1)'}}>Enable dilution adjustment</span>
+              <Toggle on={form.dilution} onChange={(v)=>setVal('dilution', v)}/>
+            </div>
+          </div>
+          {form.dilution && (
+            <div style={groupS}>
+              <FloatingField label="Swing pricing threshold" type="number" step="0.01" min="0" suffix="%" value={form.swing} onChange={set('swing')}/>
+            </div>
+          )}
+          <div style={groupS}>
+            <FloatingField label="Redemption gates" type="number" step="0.01" min="0" suffix="%" value={form.gates} onChange={set('gates')} hint="Max % of NAV per dealing day"/>
+          </div>
+        </div>
+
+        <div style={footerS}>
+          {mode === 'edit' ? (
+            <button style={{...btnPrimary, flex:1, height:40, opacity: isValid?1:0.5, cursor: isValid?'pointer':'not-allowed'}} onClick={onSaveChanges} disabled={!isValid}>Save Changes</button>
+          ) : (
+            <React.Fragment>
+              <button style={{...btnOutline, flex:1, height:40, opacity: form.name.trim()?1:0.5, cursor: form.name.trim()?'pointer':'not-allowed'}} onClick={onDraft} disabled={!form.name.trim()}>Save Draft</button>
+              <button style={{...btnPrimary, flex:1, height:40, opacity: isValid?1:0.5, cursor: isValid?'pointer':'not-allowed'}} onClick={onCreate} disabled={!isValid}>Create Class</button>
+            </React.Fragment>
+          )}
+        </div>
+      </div>
+    </React.Fragment>,
+    document.body
   );
 }
 

@@ -41,32 +41,27 @@ function EconomicsView({ onNav }) {
     {
       g: 'Custody',
       items: [
-        { name: 'Coinbase Prime', detail: '$18.0M held · 8 bps',  monthly: '$12,000', ytd: '$48,000',  logoBg: '#0E4FE3' },
-        { name: 'Copper.co',      detail: '$9.5M held · 12 bps',  monthly: '$9,500',  ytd: '$38,000',  logoBg: '#111111' },
-        { name: 'BitGo',          detail: '$4.2M held · 10 bps',  monthly: '$3,500',  ytd: '$14,000',  logoBg: '#0B1A33' },
-        { name: 'Fireblocks',     detail: '$3.8M held · 14 bps',  monthly: '$4,430',  ytd: '$17,720',  logoBg: '#F06536' },
-        { name: 'Self-custody',   detail: '$7.5M held · no fee',  monthly: '—',       ytd: '—',        logoBg: '#5edaa6' },
+        { name: 'Copper',  detail: '$9.2M held · 0.65% p.a.',  monthly: '$4,983',  ytd: '$19,933', logoBg: '#111111' },
+        { name: 'Ceffu',   detail: '$1.6M held · 0.60% p.a.',  monthly: '$800',    ytd: '$3,200',  logoBg: '#F0B90B' },
+        { name: 'BitGo',   detail: '$4.2M held · 0.45% p.a.',  monthly: '$1,575',  ytd: '$6,300',  logoBg: '#0B1A33' },
       ],
-      monthlyTotal: '$29,430', ytdTotal: '$117,720',
+      monthlyTotal: '$7,358', ytdTotal: '$29,433',
     },
     {
       g: 'Service providers',
       items: [
-        { name: 'Apex Fund Services', detail: 'Administration · Monthly',   monthly: '$4,200', ytd: '$16,800', logoBg: '#1F3C9E' },
-        { name: 'Clifford Chance',    detail: 'Legal · Quarterly',          monthly: '$2,067', ytd: '$18,600', logoBg: '#0B1A33' },
-        { name: 'PwC',                detail: 'Audit · Quarterly',          monthly: '$2,567', ytd: '$15,400', logoBg: '#D04A02' },
-        { name: 'KPMG',               detail: 'Tax review · Annual',        monthly: '—',      ytd: '$4,400',  logoBg: '#00338D' },
+        { name: 'Elysium Fund Services (EFS)', detail: 'Administration · 0.20% p.a.', monthly: '$3,467', ytd: '$13,867', logoBg: '#1d7d59' },
+        { name: 'PwC',                         detail: 'Audit · Annual',              monthly: '—',      ytd: '$26,000', logoBg: '#D04A02' },
+        { name: 'KPMG',                        detail: 'Tax review · Annual',         monthly: '—',      ytd: '$4,400',  logoBg: '#00338D' },
       ],
-      monthlyTotal: '$8,834', ytdTotal: '$55,200',
+      monthlyTotal: '$3,467', ytdTotal: '$44,267',
     },
     {
-      g: 'Trading',
+      g: 'Admin',
       items: [
-        { name: 'Binance',  detail: 'Spot + perps', monthly: '$2,800', ytd: '$11,200', logoBg: '#F0B90B' },
-        { name: 'OKX',      detail: 'Spot',         monthly: '$1,400', ytd: '$5,600',  logoBg: '#000000' },
-        { name: 'Coinbase', detail: 'Spot',         monthly: '$980',   ytd: '$3,920',  logoBg: '#0052FF' },
+        { name: 'Initial Setup', detail: 'Legal & Regulatory · One-off', monthly: '—', ytd: '$8,000', logoBg: '#0B1A33' },
       ],
-      monthlyTotal: '$5,180', ytdTotal: '$20,720',
+      monthlyTotal: '—', ytdTotal: '$8,000',
     },
   ];
 
@@ -98,7 +93,7 @@ function EconomicsView({ onNav }) {
         <KpiCard l="Fees earned · YTD"        pct="1.78%" v="$844,200"  s={<><span style={{color:'var(--pos)',fontWeight:500}}>+12.4%</span> vs. prior YTD</>}/>
         <KpiCard l="Available for withdrawal" pct="0.25%" v="$118,400"  s="Swept to Operating monthly"/>
         <KpiCard l="Invested in the fund"     pct="1.50%" v="$711,763"  s={<><span style={{color:'var(--pos)',fontWeight:500}}>+12.8%</span> return on basis</>}/>
-        <KpiCard l="Expenses · YTD"           pct="0.41%" v="$193,640"  s="Custody · service providers · trading" neg/>
+        <KpiCard l="Expenses · YTD"           pct="0.17%" v="$81,700"   s="Custody · service providers · admin" neg/>
       </div>
 
       {/* ===== Fees earned ===== */}
@@ -184,9 +179,9 @@ function EconomicsView({ onNav }) {
 
       <SubCard
         title="Expenses paid YTD"
-        amount="$193,640"
-        pct="0.41%"
-        sub="Custody, service providers and trading costs paid year-to-date"
+        amount="$81,700"
+        pct="0.17%"
+        sub="Custody, service providers and admin costs paid year-to-date"
         action="View invoices"
       >
         <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums',marginTop:8}}>
@@ -206,12 +201,7 @@ function EconomicsView({ onNav }) {
                 </tr>
                 {grp.items.map((it, i) => (
                   <tr key={i} style={{fontSize:13,borderTop:'1px solid var(--line-1)'}}>
-                    <td style={{padding:'12px 0'}}>
-                      <div style={{display:'flex',alignItems:'center',gap:12}}>
-                        <span style={{width:26,height:26,borderRadius:6,background:it.logoBg,color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:10.5,fontWeight:600,flexShrink:0}}>{it.name.split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase()}</span>
-                        <span style={{fontWeight:500}}>{it.name}</span>
-                      </div>
-                    </td>
+                    <td style={{padding:'12px 0',fontWeight:500}}>{it.name}</td>
                     <td style={{padding:'12px 12px',color:'var(--ink-2)'}}>{it.detail}</td>
                     <td style={{padding:'12px 0',textAlign:'right',fontWeight:500,color:it.monthly==='—'?'var(--ink-3)':'var(--ink-1)'}}>{it.monthly}</td>
                     <td style={{padding:'12px 0',textAlign:'right',fontWeight:500,color:it.ytd==='—'?'var(--ink-3)':'var(--ink-1)'}}>{it.ytd}</td>

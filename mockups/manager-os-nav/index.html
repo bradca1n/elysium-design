@@ -80,6 +80,9 @@
   button { font-family: inherit; }
   input, select { font-family: inherit; outline: none; }
   input:focus, select:focus { border-color: var(--ink-1) !important; box-shadow: 0 0 0 3px var(--bg-card); }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type="number"] { -moz-appearance: textfield; }
   table td, table th { vertical-align: middle; }
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 6px; border: 2px solid var(--bg-canvas); }
@@ -313,10 +316,42 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "density": "comfortable"
 }/*EDITMODE-END*/;
 
+const INITIAL_SHARE_CLASSES = [
+  { name: 'Class A', code: 'POD-A', status: 'active',   navShare: '$100.20',     units: '3.20 M', aum: '$320.64 M', mgmt: '4.50%', perf: '20%', investors: 85, lockup: '270d notice',     launched: 'Launched 12 Mar 2023',  activity: 'Subscription · 12 Apr',
+    feeTier: 'Retail',          income: 'accumulation', distFreq: '',         currency: 'USD', hedging: 'unhedged',
+    mgmtNum: 4.50, perfNum: 20, subFee: 0,    redFee: 0,    minInvestment: 100000, lockupNum: 0,  lockupUnit: 'Months', noticeNum: 270, noticeUnit: 'Days', dealing: 'Daily',     voting: true,
+    hwm: 'Per class', dilution: false, swing: 0,    gates: 10 },
+  { name: 'Class B', code: 'POD-B', status: 'active',   navShare: '$1,050.20',   units: '1.00 M', aum: '$1.05 B',   mgmt: '1.00%', perf: '20%', investors: 40, lockup: '180d notice',     launched: 'Launched 12 Mar 2023',  activity: 'Subscription · 11 Apr',
+    feeTier: 'Institutional',   income: 'accumulation', distFreq: '',         currency: 'USD', hedging: 'passive',
+    mgmtNum: 1.00, perfNum: 20, subFee: 0,    redFee: 0,    minInvestment: 1000000, lockupNum: 0, lockupUnit: 'Months', noticeNum: 180, noticeUnit: 'Days', dealing: 'Weekly',    voting: true,
+    hwm: 'Per class', dilution: true,  swing: 0.5,  gates: 15 },
+  { name: 'Class I', code: 'POD-I', status: 'active',   navShare: '$10,050.20',  units: '1.00 M', aum: '$10.05 B',  mgmt: '0.50%', perf: '30%', investors: 20, lockup: '365d hard lock',  launched: 'Launched 01 Jul 2023',  activity: 'Distribution · 31 Mar',
+    feeTier: 'Seed',            income: 'distribution', distFreq: 'Quarterly', currency: 'USD', hedging: 'active',
+    mgmtNum: 0.50, perfNum: 30, subFee: 0,    redFee: 0,    minInvestment: 25000000, lockupNum: 12, lockupUnit: 'Months', noticeNum: 0, noticeUnit: 'Days', dealing: 'Monthly',   voting: true,
+    hwm: 'Per dealing', dilution: false, swing: 0, gates: 5 },
+  { name: 'Class C', code: 'POD-C', status: 'draft',    navShare: '—',           units: '—',      aum: '—',         mgmt: '0.75%', perf: '25%', investors: 0,  lockup: '90d notice',      launched: 'IC approval pending',   activity: 'Edited · 28 Apr',
+    feeTier: 'Platform',        income: 'accumulation', distFreq: '',         currency: 'EUR', hedging: 'passive',
+    mgmtNum: 0.75, perfNum: 25, subFee: 0.25, redFee: 0.25, minInvestment: 250000, lockupNum: 0, lockupUnit: 'Months', noticeNum: 90,  noticeUnit: 'Days', dealing: 'Weekly',    voting: false,
+    hwm: 'Per class', dilution: true,  swing: 0.3,  gates: 10 },
+  { name: 'Class S', code: 'POD-S', status: 'draft',    navShare: '—',           units: '—',      aum: '—',         mgmt: '2.00%', perf: '25%', investors: 0,  lockup: '720d hard lock',  launched: 'Term sheet · drafting', activity: 'Created · 22 Apr',
+    feeTier: 'Bundled',         income: 'accumulation', distFreq: '',         currency: 'USD', hedging: 'unhedged',
+    mgmtNum: 2.00, perfNum: 25, subFee: 0,    redFee: 0,    minInvestment: 5000000, lockupNum: 24, lockupUnit: 'Months', noticeNum: 0,  noticeUnit: 'Days', dealing: 'Monthly',   voting: true,
+    hwm: 'Per class', dilution: false, swing: 0,    gates: 0 },
+  { name: 'Class P', code: 'POD-P', status: 'inactive', navShare: 'Final $98.40',units: '0',      aum: '$0',        mgmt: '3.00%', perf: '15%', investors: 0,  lockup: '—',               launched: 'Wound down 18 Dec 2024',activity: 'Wound down · 18 Dec 2024',
+    feeTier: 'Retail',          income: 'accumulation', distFreq: '',         currency: 'USD', hedging: 'unhedged',
+    mgmtNum: 3.00, perfNum: 15, subFee: 0,    redFee: 0,    minInvestment: 10000, lockupNum: 0,  lockupUnit: 'Months', noticeNum: 0,  noticeUnit: 'Days', dealing: 'Daily',     voting: true,
+    hwm: 'Per class', dilution: false, swing: 0,    gates: 0 },
+  { name: 'Class L', code: 'POD-L', status: 'inactive', navShare: '$112.50',     units: '420 K',  aum: '$47.25 M',  mgmt: '2.50%', perf: '20%', investors: 8,  lockup: 'Frozen',          launched: 'Closed to new subs · 30 Sep 2024', activity: 'Closed · 30 Sep 2024',
+    feeTier: 'Retail',          income: 'accumulation', distFreq: '',         currency: 'USD', hedging: 'unhedged',
+    mgmtNum: 2.50, perfNum: 20, subFee: 0,    redFee: 0,    minInvestment: 50000, lockupNum: 0,  lockupUnit: 'Months', noticeNum: 0,  noticeUnit: 'Days', dealing: 'Daily',     voting: true,
+    hwm: 'Per class', dilution: false, swing: 0,    gates: 0 },
+];
+
 function App() {
   const [route, setRoute] = React.useState(() => localStorage.getItem('mos.route') || 'nav');
   const [showTweaks, setShowTweaks] = React.useState(false);
   const [tweaks, setTweaks] = React.useState(TWEAK_DEFAULTS);
+  const [shareClasses, setShareClasses] = React.useState(INITIAL_SHARE_CLASSES);
 
   React.useEffect(() => { localStorage.setItem('mos.route', route); }, [route]);
 
@@ -377,8 +412,8 @@ function App() {
   if (route === 'overview') view = <OverviewView onNav={setRoute}/>;
   else if (route === 'order-book') view = <OrderBookView onNav={setRoute}/>;
   else if (route === 'collateral') view = <CollateralView onNav={setRoute}/>;
-  else if (route === 'share-register') view = <ShareRegisterView onNav={setRoute}/>;
-  else if (route === 'share-classes') view = <ShareClassesView onNav={setRoute}/>;
+  else if (route === 'share-register') view = <ShareRegisterView onNav={setRoute} shareClasses={shareClasses} setShareClasses={setShareClasses}/>;
+  else if (route === 'share-classes') view = <ShareClassesView onNav={setRoute} shareClasses={shareClasses} setShareClasses={setShareClasses}/>;
   else if (route === 'reconciliation') view = <ReconciliationView onNav={setRoute}/>;
   else if (route === 'pnl') view = <ProfitLossView onNav={setRoute}/>;
   else if (route === 'balance-sheet') view = <BalanceSheetView onNav={setRoute}/>;

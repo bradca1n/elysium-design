@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1728">
+<title>Pending Redemptions — POD Crypto Fund | Elysium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./elysium.css">
+<style>
+:root { --headline-cols: 4; }
+
+/* Page-specific size — 22px like kpi-strip */
+.headline-value { font-size: 22px; line-height: 28px; }
+
+/* Gate banner — uses shared note styling but at larger scale */
+.gate-banner { display: flex; align-items: center; gap: var(--space-16); padding: 14px 20px; background: var(--status-info-bg); border: 1px solid #C7E5F6; border-radius: var(--radius-l); margin-bottom: var(--space-24); }
+.gate-icon { flex-shrink: 0; color: var(--status-info); }
+.gate-body { flex: 1; font-size: 13px; line-height: 20px; }
+.gate-body strong { color: var(--status-info); }
+
+/* Bulk action bar */
+.bulk-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border: 1px solid var(--text-color-primary); border-radius: var(--radius-l); background: var(--text-color-primary); color: #fff; margin-bottom: var(--space-12); }
+.bulk-meta { font-size: 13px; line-height: 18px; }
+.bulk-meta strong { font-weight: 600; }
+.bulk-actions { display: flex; align-items: center; gap: 8px; }
+.bulk-actions .btn { height: 28px; }
+.bulk-actions .btn-ghost { color: #fff; }
+.bulk-actions .btn-ghost:hover { background: rgba(255,255,255,0.1); }
+
+/* Row selection */
+.table tr.selected td { background: rgba(11, 141, 205, 0.04); }
+
+/* Checkbox */
+.check { width: 16px; height: 16px; border-radius: 3px; border: 1.5px solid var(--border-strong); background: var(--bg-canvas); display: inline-block; vertical-align: middle; cursor: pointer; position: relative; }
+.check.checked { background: var(--text-color-primary); border-color: var(--text-color-primary); }
+.check.checked::after { content: "✓"; color: #fff; position: absolute; left: 2px; top: -1px; font-size: 11px; }
+
+/* Investor cell */
+.inv-cell { display: inline-flex; align-items: center; gap: 10px; }
+.inv-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--bg-surface); color: var(--text-color-primary); display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border-default); font-size: 10px; line-height: 12px; font-weight: 600; }
+.inv-name { font-size: 13px; line-height: 18px; font-weight: 500; }
+.inv-sub { color: var(--text-color-secondary); margin-top: 1px; font-size: 11px; line-height: 14px; }
+
+.class-tag { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: var(--radius-xs); background: var(--bg-surface); color: var(--text-color-primary); margin-right: 6px; font-size: 11px; line-height: 14px; font-weight: 600; }
+
+/* Settlement cell */
+.settle-cell { display: inline-flex; flex-direction: column; gap: 2px; }
+.settle-date { font-size: 13px; line-height: 18px; font-weight: 500; }
+.settle-sub { color: var(--text-color-secondary); font-size: 11px; line-height: 14px; }
+
+/* Age bar */
+.age-bar { display: inline-flex; flex-direction: column; gap: 3px; width: 80px; }
+.age-bar-track { height: 4px; border-radius: 2px; background: var(--status-neutral-bg); overflow: hidden; }
+.age-bar-fill { height: 100%; background: var(--text-color-primary); border-radius: 2px; }
+.age-bar-fill.warn { background: var(--status-warning); }
+.age-bar-fill.neg { background: var(--status-negative); }
+.age-bar-label { color: var(--text-color-secondary); font-variant-numeric: tabular-nums; font-size: 11px; line-height: 14px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="navbar" data-elysium-navbar></header>
+
+  <div class="body">
+    <nav class="sidebar" data-elysium-sidebar data-active="collateral-treasury"></nav>
+
+    <main class="main">
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <div class="breadcrumb-nav">
+            <span class="fund-dot"></span>
+            <a href="./nav-collateral.html">POD Crypto Fund</a>
+            <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            <a href="./collateral-treasury.html">Collateral &amp; Treasury</a>
+            <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            <span class="current">Pending redemptions</span>
+          </div>
+          <div class="page-title text-heading-xl-semibold">Pending redemptions<span class="page-as-of">17 orders · $820K aggregate</span></div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-outline">Liquidity forecast →</button>
+          <button class="btn btn-outline">Export</button>
+          <button class="btn btn-primary">Process queue →</button>
+        </div>
+      </div>
+
+      <!-- Liquidity gate banner -->
+      <div class="gate-banner">
+        <svg class="gate-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <div class="gate-body">
+          <strong>Liquidity healthy.</strong> Available free cash of <span class="num" style="font-weight:500;">$6,246,000</span> covers pending redemptions 7.6× over. No gate triggered.
+          Policy threshold: gate engages if pending redemptions &gt; 5% of NAV per dealing day.
+        </div>
+        <button class="btn btn-outline btn-sm">Policy detail</button>
+      </div>
+
+      <!-- Headline -->
+      <div class="headline">
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Pending redemptions</div>
+          <div class="headline-value neg num">−$820,000</div>
+          <div class="headline-sub">17 orders · 5 holders</div>
+        </div>
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Awaiting approval</div>
+          <div class="headline-value warn num">3</div>
+          <div class="headline-sub">$242,000 total</div>
+        </div>
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Settling this week</div>
+          <div class="headline-value num">$420,000</div>
+          <div class="headline-sub">12 orders · Mon 8 Feb dealing</div>
+        </div>
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Oldest open</div>
+          <div class="headline-value num">4 days</div>
+          <div class="headline-sub">within 10-day SLA</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-strip">
+        <div class="tab-strip-tab active">All pending <span class="tab-count">17</span></div>
+        <div class="tab-strip-tab">Awaiting approval <span class="tab-count">3</span></div>
+        <div class="tab-strip-tab">In dealing window <span class="tab-count">7</span></div>
+        <div class="tab-strip-tab">Settling <span class="tab-count">5</span></div>
+        <div class="tab-strip-tab">Paused <span class="tab-count">2</span></div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-bar">
+        <span class="filter-group-label">Class</span>
+        <button class="filter-pill active">All</button>
+        <button class="filter-pill">A</button>
+        <button class="filter-pill">B</button>
+        <button class="filter-pill">C</button>
+        <button class="filter-pill">D</button>
+        <span class="filter-group-label">Age</span>
+        <button class="filter-pill">Any <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <span class="filter-group-label">Holder size</span>
+        <button class="filter-pill">Any <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="filter-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-color-muted);"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" placeholder="Search investor, ref…">
+        </div>
+      </div>
+
+      <!-- Bulk action bar (shown when rows selected) -->
+      <div class="bulk-bar">
+        <div class="bulk-meta">3 orders selected · <strong class="num">$220,000</strong> total · Class A (2), Class C (1)</div>
+        <div class="bulk-actions">
+          <button class="btn btn-outline btn-sm" style="background: transparent; color: #fff; border-color: rgba(255,255,255,0.3);">Approve selected</button>
+          <button class="btn btn-outline btn-sm" style="background: transparent; color: #fff; border-color: rgba(255,255,255,0.3);">Assign approver</button>
+          <button class="btn btn-outline btn-sm" style="background: transparent; color: #fff; border-color: rgba(255,255,255,0.3);">Pause</button>
+          <button class="btn btn-ghost btn-sm">Clear selection</button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:30px;"><span class="check"></span></th>
+              <th>Investor</th>
+              <th>Class</th>
+              <th>Ref</th>
+              <th class="right">Shares</th>
+              <th class="right">Amount</th>
+              <th>Settle</th>
+              <th>Status</th>
+              <th>Age</th>
+              <th style="width:40px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="selected">
+              <td><span class="check checked"></span></td>
+              <td><span class="inv-cell"><span class="inv-avatar">LS</span><span><div class="inv-name">Leo Sato</div><div class="inv-sub">INV-0228 · Individual</div></span></span></td>
+              <td><span class="class-tag">A</span>Class A</td>
+              <td>RED-0142</td>
+              <td class="right num">6,087.2</td>
+              <td class="right strong num neg">−$220,000</td>
+              <td><span class="settle-cell"><span class="settle-date">Mon 8 Feb</span><span class="settle-sub">T+1 · AUD wire</span></span></td>
+              <td><span class="chip chip-info chip-dot">In window</span></td>
+              <td><span class="age-bar"><span class="age-bar-track"><span class="age-bar-fill" style="width:20%;"></span></span><span class="age-bar-label">2d / 10d</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr class="selected">
+              <td><span class="check checked"></span></td>
+              <td><span class="inv-cell"><span class="inv-avatar">RF</span><span><div class="inv-name">Rosewood Family Trust</div><div class="inv-sub">INV-0082 · Trust</div></span></span></td>
+              <td><span class="class-tag">A</span>Class A</td>
+              <td>RED-0141</td>
+              <td class="right num">2,767.0</td>
+              <td class="right strong num neg">−$100,000</td>
+              <td><span class="settle-cell"><span class="settle-date">Mon 8 Feb</span><span class="settle-sub">T+1 · AUD wire</span></span></td>
+              <td><span class="chip chip-info chip-dot">In window</span></td>
+              <td><span class="age-bar"><span class="age-bar-track"><span class="age-bar-fill" style="width:30%;"></span></span><span class="age-bar-label">3d / 10d</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr class="selected">
+              <td><span class="check checked"></span></td>
+              <td><span class="inv-cell"><span class="inv-avatar">JM</span><span><div class="inv-name">James McCormick</div><div class="inv-sub">INV-0217 · Individual</div></span></span></td>
+              <td><span class="class-tag">C</span>Class C</td>
+              <td>RED-0140</td>
+              <td class="right num">2,062.0</td>
+              <td class="right strong num neg">−$80,000</td>
+              <td><span class="settle-cell"><span class="settle-date">Mon 8 Feb</span><span class="settle-sub">T+1 · AUD wire</span></span></td>
+              <td><span class="chip chip-warning chip-dot">Pending approval</span></td>
+              <td><span class="age-bar"><span class="age-bar-track"><span class="age-bar-fill warn" style="width:40%;"></span></span><span class="age-bar-label">4d / 10d</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td><span class="check"></span></td>
+              <td><span class="inv-cell"><span class="inv-avatar">DH</span><span><div class="inv-name">Daniel Hartley</div><div class="inv-sub">INV-0301 · Individual</div></span></span></td>
+              <td><span class="class-tag">C</span>Class C</td>
+              <td>RED-0139</td>
+              <td class="right num">1,547.7</td>
+              <td class="right strong num neg">−$60,000</td>
+              <td><span class="settle-cell"><span class="settle-date">Mon 15 Feb</span><span class="settle-sub">T+1 · AUD wire</span></span></td>
+              <td><span class="chip">Scheduled</span></td>
+              <td><span class="age-bar"><span class="age-bar-track"><span class="age-bar-fill" style="width:10%;"></span></span><span class="age-bar-label">1d / 10d</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td><span class="check"></span></td>
+              <td><span class="inv-cell"><span class="inv-avatar">AK</span><span><div class="inv-name">Asher Kwan</div><div class="inv-sub">INV-0174 · Individual</div></span></span></td>
+              <td><span class="class-tag">A</span>Class A</td>
+              <td>RED-0138</td>
+              <td class="right num">1,384.5</td>
+              <td class="right strong num neg">−$50,000</td>
+              <td><span class="settle-cell"><span class="settle-date">Mon 8 Feb</span><span class="settle-sub">T+1 · AUD wire</span></span></td>
+              <td><span class="chip chip-info chip-dot">In window</span></td>
+              <td><span class="age-bar"><span class="age-bar-track"><span class="age-bar-fill" style="width:20%;"></span></span><span class="age-bar-label">2d / 10d</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td><span class="check"></span></td>
+              <td><span class="inv-cell"><span class="inv-avatar">KP</span><span><div class="inv-name">Kestrel Partners LP</div><div class="inv-sub">INV-0042 · Institutional</div></span></span></td>
+              <td><span class="class-tag">D</span>Class D</td>
+              <td>RED-0137</td>
+              <td class="right num">3,469.0</td>
+              <td class="right strong num neg">−$200,000</td>
+              <td><span class="settle-cell"><span class="settle-date">Mon 8 Feb</span><span class="settle-sub">T+2 · USD wire</span></span></td>
+              <td><span class="chip chip-warning chip-dot">Pending approval</span></td>
+              <td><span class="age-bar"><span class="age-bar-track"><span class="age-bar-fill warn" style="width:50%;"></span></span><span class="age-bar-label">5d / 10d</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td><span class="check"></span></td>
+              <td><span class="inv-cell"><span class="inv-avatar">PN</span><span><div class="inv-name">Priya Nair</div><div class="inv-sub">INV-0268 · Individual</div></span></span></td>
+              <td><span class="class-tag">A</span>Class A</td>
+              <td>RED-0136</td>
+              <td class="right num">830.7</td>
+              <td class="right strong num neg">−$30,000</td>
+              <td><span class="settle-cell"><span class="settle-date">Mon 8 Feb</span><span class="settle-sub">T+1 · AUD wire</span></span></td>
+              <td><span class="chip chip-info chip-dot">In window</span></td>
+              <td><span class="age-bar"><span class="age-bar-track"><span class="age-bar-fill" style="width:20%;"></span></span><span class="age-bar-label">2d / 10d</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td><span class="check"></span></td>
+              <td><span class="inv-cell"><span class="inv-avatar">OM</span><span><div class="inv-name">Oliver Marchetti</div><div class="inv-sub">INV-0311 · Individual</div></span></span></td>
+              <td><span class="class-tag">B</span>Class B</td>
+              <td>RED-0135</td>
+              <td class="right num">1,556.8</td>
+              <td class="right strong num neg">−$60,000</td>
+              <td><span class="settle-cell"><span class="settle-date">Mon 8 Feb</span><span class="settle-sub">T+2 · USD wire</span></span></td>
+              <td><span class="chip">Settling</span></td>
+              <td><span class="age-bar"><span class="age-bar-track"><span class="age-bar-fill" style="width:30%;"></span></span><span class="age-bar-label">3d / 10d</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td><span class="check"></span></td>
+              <td><span class="inv-cell"><span class="inv-avatar">NV</span><span><div class="inv-name">Noor Vahid</div><div class="inv-sub">INV-0155 · Individual</div></span></span></td>
+              <td><span class="class-tag">C</span>Class C</td>
+              <td>RED-0134</td>
+              <td class="right num">1,289.7</td>
+              <td class="right strong num neg">−$50,000</td>
+              <td><span class="settle-cell"><span class="settle-date">Mon 8 Feb</span><span class="settle-sub">T+1 · AUD wire</span></span></td>
+              <td><span class="chip">Settling</span></td>
+              <td><span class="age-bar"><span class="age-bar-track"><span class="age-bar-fill" style="width:40%;"></span></span><span class="age-bar-label">4d / 10d</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td><span class="check"></span></td>
+              <td><span class="inv-cell"><span class="inv-avatar">TV</span><span><div class="inv-name">Tavita Vaitai</div><div class="inv-sub">INV-0088 · Individual</div></span></span></td>
+              <td><span class="class-tag">A</span>Class A</td>
+              <td>RED-0133</td>
+              <td class="right num">554.0</td>
+              <td class="right strong num neg">−$20,000</td>
+              <td><span class="settle-cell"><span class="settle-date">Mon 8 Feb</span><span class="settle-sub">T+1 · AUD wire</span></span></td>
+              <td><span class="chip" style="background:var(--status-negative-bg); color:var(--status-negative);"><span style="width:6px; height:6px; border-radius:50%; background:currentColor;"></span>Paused — AML recheck</span></td>
+              <td><span class="age-bar"><span class="age-bar-track"><span class="age-bar-fill neg" style="width:70%;"></span></span><span class="age-bar-label">7d / 10d</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td><span class="check"></span></td>
+              <td><span class="inv-cell"><span class="inv-avatar">HL</span><span><div class="inv-name">Hannah Lindqvist</div><div class="inv-sub">INV-0240 · Individual</div></span></span></td>
+              <td><span class="class-tag">A</span>Class A</td>
+              <td>RED-0132</td>
+              <td class="right num">1,107.9</td>
+              <td class="right strong num neg">−$40,000</td>
+              <td><span class="settle-cell"><span class="settle-date">Mon 15 Feb</span><span class="settle-sub">T+1 · AUD wire</span></span></td>
+              <td><span class="chip">Scheduled</span></td>
+              <td><span class="age-bar"><span class="age-bar-track"><span class="age-bar-fill" style="width:10%;"></span></span><span class="age-bar-label">1d / 10d</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td><span class="check"></span></td>
+              <td><span class="inv-cell"><span class="inv-avatar">MT</span><span><div class="inv-name">Marcus Tan</div><div class="inv-sub">INV-0310 · SMSF</div></span></span></td>
+              <td><span class="class-tag">B</span>Class B</td>
+              <td>RED-0131</td>
+              <td class="right num">2,597.5</td>
+              <td class="right strong num neg">−$100,000</td>
+              <td><span class="settle-cell"><span class="settle-date">Mon 15 Feb</span><span class="settle-sub">T+2 · USD wire</span></span></td>
+              <td><span class="chip">Scheduled</span></td>
+              <td><span class="age-bar"><span class="age-bar-track"><span class="age-bar-fill" style="width:10%;"></span></span><span class="age-bar-label">1d / 10d</span></span></td>
+              <td class="right">→</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pagination">
+          <div>Showing 12 of 17 pending redemptions</div>
+          <div class="page-ctrls">
+            <button>‹</button>
+            <button class="active">1</button>
+            <button>2</button>
+            <button>›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </main>
+  </div>
+</div>
+<script src="./elysium-chrome.js" defer></script>
+</body>
+</html>

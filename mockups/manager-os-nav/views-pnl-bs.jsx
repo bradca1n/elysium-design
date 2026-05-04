@@ -88,12 +88,13 @@ function IncomeStatement() {
       { l: 'FX & other',               v: '+$8,200',     pct: '+0.3%',  sub: 'USDC/USDT basis capture' },
     ], total: '+$2,810,200', totalPct: '+100.0%', totalLabel: 'Gross income' },
     { g: 'Costs', items: [
-      { l: 'Management fee (1.50% p.a. accrual)', v: '−$312,400', pct: '−11.1%', sub: 'Accrued daily · billed quarterly' },
-      { l: 'Performance fee (20% over HWM)',      v: '−$156,800', pct: '−5.6%',  sub: 'Above high-water mark' },
-      { l: 'Trading costs',                       v: '−$42,100',  pct: '−1.5%',  sub: 'Spread + exchange fees (3 venues)' },
-      { l: 'Custody & audit',                     v: '−$21,900',  pct: '−0.8%',  sub: 'Coinbase Prime · Copper · PwC' },
-      { l: 'Administration',                      v: '−$18,600',  pct: '−0.7%',  sub: 'Apex · legal · compliance' },
-    ], total: '−$551,800', totalPct: '−19.6%', totalLabel: 'Total costs' },
+      { l: 'Management fee (1.50% p.a. accrual)',   v: '−$312,400', pct: '−11.1%', sub: 'Accrued daily · billed quarterly' },
+      { l: 'Performance fee (20% over HWM)',        v: '−$156,800', pct: '−5.6%',  sub: 'Above high-water mark' },
+      { l: 'Custody (0.60% p.a.)',                  v: '−$125,000', pct: '−4.4%',  sub: 'Copper + Ceffu' },
+      { l: 'Administration (0.20% p.a.)',           v: '−$41,600',  pct: '−1.5%',  sub: 'EFS' },
+      { l: 'Audit & Tax (flat annually)',           v: '−$13,000',  pct: '−0.5%',  sub: 'PwC · KPMG tax review' },
+      { l: 'Initial Setup (Legal & Regulatory)',    v: '−$8,000',   pct: '−0.3%',  sub: 'One-off' },
+    ], total: '−$656,800', totalPct: '−23.4%', totalLabel: 'Total costs' },
   ];
   return (
     <div>
@@ -122,8 +123,8 @@ function IncomeStatement() {
         ))}
         <div style={{display:'flex',alignItems:'center',padding:'14px 20px',gap:16,background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,marginTop:8}}>
           <div style={{flex:1,fontSize:13,fontWeight:600,color:'var(--ink-1)'}}>Net P&amp;L for period</div>
-          <div style={{width:160,textAlign:'right',fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>+$2,258,400</div>
-          <div style={{width:90,textAlign:'right',fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>+80.4%</div>
+          <div style={{width:160,textAlign:'right',fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>+$2,153,400</div>
+          <div style={{width:90,textAlign:'right',fontSize:13,fontWeight:600,fontVariantNumeric:'tabular-nums',color:'var(--pos)'}}>+76.6%</div>
         </div>
       </div>
       <NotesBlock items={[...rows[0].items, ...rows[1].items]}/>
@@ -238,11 +239,10 @@ function FeesExpenses() {
   const fees = [
     { l: 'Management fee', rate: '1.50% p.a.', period: '−$312,400', ytd: '−$625,300', note: 'Accrued daily on NAV, billed quarterly' },
     { l: 'Performance fee', rate: '20% over HWM', period: '−$156,800', ytd: '−$156,800', note: 'Crystallised on NAV strike' },
-    { l: 'Trading costs', rate: 'Variable', period: '−$42,100', ytd: '−$88,700', note: 'Spread + 3 venue fees' },
-    { l: 'Custody', rate: '0.08% p.a.', period: '−$14,200', ytd: '−$28,900', note: 'Coinbase Prime + Copper' },
-    { l: 'Audit & tax', rate: 'Flat quarterly', period: '−$7,700', ytd: '−$15,400', note: 'PwC · KPMG tax review' },
-    { l: 'Administration', rate: 'Flat monthly', period: '−$12,400', ytd: '−$24,800', note: 'Apex fund services' },
-    { l: 'Legal & compliance', rate: 'Hourly', period: '−$6,200', ytd: '−$18,600', note: 'Clifford Chance · ASIC filings' },
+    { l: 'Custody', rate: '0.60% p.a.', period: '−$125,000', ytd: '−$248,500', note: 'Copper + Ceffu' },
+    { l: 'Administration', rate: '0.20% p.a.', period: '−$41,600', ytd: '−$82,800', note: 'EFS (Elysium Fund Services)' },
+    { l: 'Audit & Tax', rate: 'Flat annually', period: '−$13,000', ytd: '−$26,000', note: 'PwC · KPMG tax review' },
+    { l: 'Initial Setup (Legal & Regulatory)', rate: 'One-off', period: '−$8,000', ytd: '−$8,000', note: 'Sub-fund setup' },
   ];
   return (
     <div>

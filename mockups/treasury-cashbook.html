@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1728">
+<title>Treasury Cashbook — POD Crypto Fund | Elysium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./elysium.css">
+<style>
+:root { --headline-cols: 4; }
+.headline-value { font-size: 20px; line-height: 26px; }
+
+/* Balance cards row (by currency) — unique 5-col pattern with flags */
+.bal-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--border-default); border: 1px solid var(--border-default); border-radius: var(--radius-l); overflow: hidden; margin-bottom: 16px; }
+.bal-item { background: var(--bg-canvas); padding: 14px 16px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.bal-item.active { background: var(--bg-subtle); }
+.bal-info { min-width: 0; }
+.bal-ccy { color: var(--text-color-muted); margin-bottom: 4px; font-size: 11px; line-height: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.bal-value { font-variant-numeric: tabular-nums; font-size: 18px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em; }
+.bal-usd { color: var(--text-color-secondary); font-variant-numeric: tabular-nums; margin-top: 2px; font-size: 11px; line-height: 14px; }
+.bal-flag { width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; font-size: 10px; line-height: 12px; font-weight: 600; }
+.bf-aud { background: #D81E27; }
+.bf-usd { background: #3B6EC7; }
+.bf-eur { background: #6B3FA0; }
+.bf-usdc { background: #2775CA; }
+.bf-usdt { background: #26A17B; }
+
+/* Cashflow table extras */
+.cf-row { display: inline-flex; align-items: center; gap: 10px; }
+.cf-icon { width: 26px; height: 26px; border-radius: var(--radius-s); background: var(--bg-surface); display: inline-flex; align-items: center; justify-content: center; color: var(--text-color-secondary); }
+.cf-sub { color: var(--text-color-secondary); margin-top: 2px; font-size: 11px; line-height: 14px; }
+
+.amount-cell { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.amount-ccy { color: var(--text-color-secondary); text-transform: uppercase; letter-spacing: 0.04em; font-size: 11px; line-height: 14px; }
+
+/* Running balance pill in group-date header */
+.group-running { color: var(--text-color-primary); font-variant-numeric: tabular-nums; text-transform: none; letter-spacing: 0; font-size: 12px; line-height: 16px; font-weight: 600; }
+
+/* Segmented tab row in filter bar */
+.tab-row { display: inline-flex; align-items: center; padding: 3px; border-radius: var(--radius-m); background: var(--bg-surface); border: 1px solid var(--border-default); margin-left: auto; }
+.tab-row button { background: transparent; border: none; font-family: inherit; color: var(--text-color-secondary); padding: 5px 12px; border-radius: var(--radius-s); cursor: pointer; font-size: 12px; line-height: 16px; font-weight: 500; }
+.tab-row button.active { background: var(--bg-canvas); color: var(--text-color-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="navbar" data-elysium-navbar></header>
+
+  <div class="body">
+    <nav class="sidebar" data-elysium-sidebar data-active="collateral-treasury"></nav>
+
+    <main class="main">
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <div class="breadcrumb-nav">
+            <span class="fund-dot"></span>
+            <a href="./nav-collateral.html">POD Crypto Fund</a>
+            <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            <a href="./collateral-treasury.html">Collateral &amp; Treasury</a>
+            <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            <span class="current">Cashbook</span>
+          </div>
+          <div class="page-title text-heading-xl-semibold">Cashbook<span class="page-as-of">Last 30 days · all venues · 142 movements</span></div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-outline">Import statement</button>
+          <button class="btn btn-outline">Export</button>
+          <button class="btn btn-primary">Book movement →</button>
+        </div>
+      </div>
+
+      <!-- Balance by currency -->
+      <div class="bal-strip">
+        <div class="bal-item active">
+          <div class="bal-info">
+            <div class="bal-ccy text-label-xs-semibold">AUD</div>
+            <div class="bal-value">$1,842,400</div>
+            <div class="bal-usd">$1,210,450 USD</div>
+          </div>
+          <div class="bal-flag bf-aud">A</div>
+        </div>
+        <div class="bal-item">
+          <div class="bal-info">
+            <div class="bal-ccy text-label-xs-semibold">USD</div>
+            <div class="bal-value">$412,880</div>
+            <div class="bal-usd">$412,880 USD</div>
+          </div>
+          <div class="bal-flag bf-usd">$</div>
+        </div>
+        <div class="bal-item">
+          <div class="bal-info">
+            <div class="bal-ccy text-label-xs-semibold">EUR</div>
+            <div class="bal-value">€128,400</div>
+            <div class="bal-usd">$139,400 USD</div>
+          </div>
+          <div class="bal-flag bf-eur">€</div>
+        </div>
+        <div class="bal-item">
+          <div class="bal-info">
+            <div class="bal-ccy text-label-xs-semibold">USDC</div>
+            <div class="bal-value">3,820,000</div>
+            <div class="bal-usd">$3,820,000 USD</div>
+          </div>
+          <div class="bal-flag bf-usdc">C</div>
+        </div>
+        <div class="bal-item">
+          <div class="bal-info">
+            <div class="bal-ccy text-label-xs-semibold">USDT</div>
+            <div class="bal-value">642,100</div>
+            <div class="bal-usd">$642,150 USD</div>
+          </div>
+          <div class="bal-flag bf-usdt">T</div>
+        </div>
+      </div>
+
+      <!-- Flow summary KPI tiles -->
+      <div class="headline">
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Inflows (30d)</div>
+          <div class="headline-value num pos">+$8,410,220</div>
+          <div class="headline-sub">47 movements</div>
+        </div>
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Outflows (30d)</div>
+          <div class="headline-value num neg">−$5,892,100</div>
+          <div class="headline-sub">38 movements</div>
+        </div>
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Net movement</div>
+          <div class="headline-value num pos">+$2,518,120</div>
+          <div class="headline-sub">across 5 currencies</div>
+        </div>
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Interest earned</div>
+          <div class="headline-value num pos">+$24,160</div>
+          <div class="headline-sub">blended 4.2% APY · 6 accounts</div>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <span class="filter-group-label">Currency</span>
+        <button class="filter-pill active">All</button>
+        <button class="filter-pill">AUD</button>
+        <button class="filter-pill">USD</button>
+        <button class="filter-pill">EUR</button>
+        <button class="filter-pill">USDC</button>
+        <button class="filter-pill">USDT</button>
+        <div style="width: 1px; height: 20px; background: var(--border-default);"></div>
+        <span class="filter-group-label">Direction</span>
+        <button class="filter-pill">All</button>
+        <button class="filter-pill">In</button>
+        <button class="filter-pill">Out</button>
+        <span class="filter-group-label">Category</span>
+        <button class="filter-pill">All types <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <span class="filter-group-label">Range</span>
+        <button class="filter-pill">Last 30 days <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="tab-row">
+          <button class="active">Ledger</button>
+          <button>By account</button>
+          <button>By category</button>
+        </div>
+      </div>
+
+      <!-- Ledger table -->
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:140px;">Date</th>
+              <th>Description</th>
+              <th>Account</th>
+              <th>Category</th>
+              <th>Ref</th>
+              <th class="right">Amount</th>
+              <th class="right">Running bal.</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="7" style="padding:0;">
+                <div class="group-date">07 Feb 2026 <span class="group-date-count">· 3 entries</span><span class="group-date-bar"></span><span class="group-running">Running: $6.75M</span></div>
+              </td>
+            </tr>
+            <tr>
+              <td>07 Feb 14:22</td>
+              <td><span class="cf-row"><span class="cf-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 3 21 3 21 7"/><line x1="21" y1="3" x2="14" y2="10"/><polyline points="7 21 3 21 3 17"/><line x1="3" y1="21" x2="10" y2="14"/></svg></span>Binance → Kraken collateral transfer</span></td>
+              <td>Kraken — USDC</td>
+              <td><span class="chip chip-info">Internal transfer</span></td>
+              <td>COLL-2026-0142</td>
+              <td class="right"><span class="amount-cell"><span class="num pos">+2,500,000</span><span class="amount-ccy">USDC</span></span></td>
+              <td class="right num">3,820,000</td>
+            </tr>
+            <tr>
+              <td>07 Feb 13:50</td>
+              <td><span class="cf-row"><span class="cf-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>Subscription — A. Bennett</span></td>
+              <td>CBA — AUD Main</td>
+              <td><span class="chip chip-positive">Subscription</span></td>
+              <td>SUB-0281</td>
+              <td class="right"><span class="amount-cell"><span class="num pos">+$50,000</span><span class="amount-ccy">AUD</span></span></td>
+              <td class="right num">1,842,400</td>
+            </tr>
+            <tr>
+              <td>07 Feb 10:14</td>
+              <td><span class="cf-row"><span class="cf-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><polyline points="7 12 11 8 15 12 21 6"/></svg></span>Yield accrual — Anchorage cash</span></td>
+              <td>Anchorage — USD</td>
+              <td><span class="chip chip-positive">Interest</span></td>
+              <td>INT-240207</td>
+              <td class="right"><span class="amount-cell"><span class="num pos">+$1,240</span><span class="amount-ccy">USD</span></span></td>
+              <td class="right num">412,880</td>
+            </tr>
+
+            <tr>
+              <td colspan="7" style="padding:0;">
+                <div class="group-date">06 Feb 2026 <span class="group-date-count">· 4 entries</span><span class="group-date-bar"></span><span class="group-running">Running: $6.70M</span></div>
+              </td>
+            </tr>
+            <tr>
+              <td>06 Feb 16:40</td>
+              <td><span class="cf-row"><span class="cf-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>Redemption payout — L. Sato</span></td>
+              <td>CBA — AUD Main</td>
+              <td><span class="chip chip-negative">Redemption</span></td>
+              <td>RED-0142</td>
+              <td class="right"><span class="amount-cell"><span class="num neg">−$220,000</span><span class="amount-ccy">AUD</span></span></td>
+              <td class="right num">1,792,400</td>
+            </tr>
+            <tr>
+              <td>06 Feb 13:22</td>
+              <td><span class="cf-row"><span class="cf-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg></span>Management fee accrual — Class A</span></td>
+              <td>Fund ops — USD</td>
+              <td><span class="chip">Fee accrual</span></td>
+              <td>MFEE-0206A</td>
+              <td class="right"><span class="amount-cell"><span class="num neg">−$4,120</span><span class="amount-ccy">USD</span></span></td>
+              <td class="right num">411,640</td>
+            </tr>
+            <tr>
+              <td>06 Feb 11:02</td>
+              <td><span class="cf-row"><span class="cf-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>FX — USD → AUD spot</span></td>
+              <td>Standard Chartered — FX</td>
+              <td><span class="chip chip-info">FX</span></td>
+              <td>FX-2026-0042</td>
+              <td class="right"><span class="amount-cell"><span class="num neg">−$400,000</span><span class="amount-ccy">USD</span></span></td>
+              <td class="right num">415,760</td>
+            </tr>
+            <tr>
+              <td>06 Feb 11:02</td>
+              <td><span class="cf-row"><span class="cf-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>FX — USD → AUD spot (settle)</span></td>
+              <td>CBA — AUD Main</td>
+              <td><span class="chip chip-info">FX</span></td>
+              <td>FX-2026-0042</td>
+              <td class="right"><span class="amount-cell"><span class="num pos">+$608,200</span><span class="amount-ccy">AUD</span></span></td>
+              <td class="right num">2,012,400</td>
+            </tr>
+
+            <tr>
+              <td colspan="7" style="padding:0;">
+                <div class="group-date">05 Feb 2026 <span class="group-date-count">· 5 entries</span><span class="group-date-bar"></span><span class="group-running">Running: $6.80M</span></div>
+              </td>
+            </tr>
+            <tr>
+              <td>05 Feb 15:14</td>
+              <td><span class="cf-row"><span class="cf-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>Subscription — M. Tan (Class B)</span></td>
+              <td>Wells Fargo — USD</td>
+              <td><span class="chip chip-positive">Subscription</span></td>
+              <td>SUB-0280</td>
+              <td class="right"><span class="amount-cell"><span class="num pos">+$100,000</span><span class="amount-ccy">USD</span></span></td>
+              <td class="right num">815,760</td>
+            </tr>
+            <tr>
+              <td>05 Feb 09:30</td>
+              <td><span class="cf-row"><span class="cf-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/></svg></span>BTC purchase — Coinbase Prime</span></td>
+              <td>Coinbase — USD settlement</td>
+              <td><span class="chip">Investment</span></td>
+              <td>TRD-2026-0118</td>
+              <td class="right"><span class="amount-cell"><span class="num neg">−$1,410,060</span><span class="amount-ccy">USD</span></span></td>
+              <td class="right num">715,760</td>
+            </tr>
+            <tr>
+              <td>05 Feb 08:22</td>
+              <td><span class="cf-row"><span class="cf-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>FX — AUD → USD spot</span></td>
+              <td>CBA — AUD Main</td>
+              <td><span class="chip chip-info">FX</span></td>
+              <td>FX-2026-0041</td>
+              <td class="right"><span class="amount-cell"><span class="num neg">−$2,150,000</span><span class="amount-ccy">AUD</span></span></td>
+              <td class="right num">1,404,200</td>
+            </tr>
+            <tr>
+              <td>05 Feb 08:22</td>
+              <td><span class="cf-row"><span class="cf-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>FX — AUD → USD spot (settle)</span></td>
+              <td>Anchorage — USD</td>
+              <td><span class="chip chip-info">FX</span></td>
+              <td>FX-2026-0041</td>
+              <td class="right"><span class="amount-cell"><span class="num pos">+$1,415,820</span><span class="amount-ccy">USD</span></span></td>
+              <td class="right num">2,125,820</td>
+            </tr>
+            <tr>
+              <td>05 Feb 07:01</td>
+              <td><span class="cf-row"><span class="cf-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v6l3-3"/><path d="M12 22a10 10 0 1 1 0-20"/></svg></span>Interest accrual — BMO</span></td>
+              <td>BMO — USD</td>
+              <td><span class="chip chip-positive">Interest</span></td>
+              <td>INT-240205</td>
+              <td class="right"><span class="amount-cell"><span class="num pos">+$1,080</span><span class="amount-ccy">USD</span></span></td>
+              <td class="right num">710,000</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pagination">
+          <div>Showing 12 of 142 movements · filtered</div>
+          <div class="page-ctrls">
+            <button>‹</button>
+            <button class="active">1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>…</button>
+            <button>12</button>
+            <button>›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </main>
+  </div>
+</div>
+<script src="./elysium-chrome.js" defer></script>
+</body>
+</html>

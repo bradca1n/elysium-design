@@ -2,12 +2,12 @@
 const { useState: _u1, useMemo: _u2 } = React;
 
 const RISKS_BY_RANGE = {
-  '1M':  { sharpe: 0.15,  sortino: 0.20,  btcSharpe: 0.30, btcSortino: 0.45 },
+  '1M':  { sharpe: 0.42,  sortino: 0.55,  btcSharpe: 0.30, btcSortino: 0.45 },
   '3M':  { sharpe: 1.42,  sortino: 2.10,  btcSharpe: 0.85, btcSortino: 1.10 },
-  '6M':  { sharpe: -0.85, sortino: -0.92, btcSharpe: 0.45, btcSortino: 0.65 },
-  'YTD': { sharpe: -0.92, sortino: -1.04, btcSharpe: 0.55, btcSortino: 0.78 },
-  '1Y':  { sharpe: 0.62,  sortino: 0.84,  btcSharpe: 0.92, btcSortino: 1.18 },
-  'All': { sharpe: 0.65,  sortino: 0.92,  btcSharpe: 0.78, btcSortino: 1.02 },
+  '6M':  { sharpe: 1.18,  sortino: 1.55,  btcSharpe: 0.45, btcSortino: 0.65 },
+  'YTD': { sharpe: 1.05,  sortino: 1.40,  btcSharpe: 0.55, btcSortino: 0.78 },
+  '1Y':  { sharpe: 1.36,  sortino: 1.82,  btcSharpe: 0.92, btcSortino: 1.18 },
+  'All': { sharpe: 1.40,  sortino: 1.88,  btcSharpe: 0.78, btcSortino: 1.02 },
 };
 
 function sharpeVerdict(v) {
@@ -24,12 +24,12 @@ function sortinoVerdict(v) {
 }
 
 const RANGE_DEFS = [
-  { k: '1M',  label: '1 month',      days: 22,  pct: '+0.17%',   pos: true  },
-  { k: '3M',  label: '3 months',     days: 66,  pct: '+13.42%',  pos: true  },
-  { k: '6M',  label: '6 months',     days: 130, pct: '−18.75%',  pos: false },
-  { k: 'YTD', label: 'Year to date', days: 85,  pct: '−17.45%',  pos: false },
-  { k: '1Y',  label: '1 year',       days: 260, pct: '+4.93%',   pos: true  },
-  { k: 'All', label: 'All time',     days: 260, pct: '+4.93%',   pos: true  },
+  { k: '1M',  label: '1 month',      days: 22,  pct: '+6.30%',   pos: true  },
+  { k: '3M',  label: '3 months',     days: 66,  pct: '+20.00%',  pos: true  },
+  { k: '6M',  label: '6 months',     days: 130, pct: '+27.00%',  pos: true  },
+  { k: 'YTD', label: 'Year to date', days: 85,  pct: '+33.00%',  pos: true  },
+  { k: '1Y',  label: '1 year',       days: 260, pct: '+55.00%',  pos: true  },
+  { k: 'All', label: 'All time',     days: 260, pct: '+55.00%',  pos: true  },
 ];
 
 // Synthetic master series — ~261 daily points expressed as % from series start.
@@ -48,7 +48,7 @@ function buildSeries(anchors, jitter) {
 }
 
 const MASTER_PORTFOLIO = buildSeries(
-  [[0,0],[22,8],[44,30],[66,50],[88,70],[110,80],[132,65],[154,45],[176,28],[198,25],[220,20],[240,-20],[250,-10],[260,5]],
+  [[0,0],[15,8],[35,10],[50,4],[70,18],[90,20],[110,30],[130,28],[150,18],[175,22],[195,35],[215,32],[230,42],[245,52],[260,55]],
   i => Math.sin(i*0.7)*2.5 + Math.sin(i*1.7+1)*1.5,
 );
 const MASTER_BENCHMARK = buildSeries(

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1440">
-<title>NAV — POD Crypto Fund</title>
+<title>Collateral &amp; Treasury — POD Crypto Fund</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -545,69 +545,38 @@
 
   .divider { height: 1px; background: var(--line-1); margin: 32px 0 0; }
 
-  /* ========== P&L section ========== */
-  .kpi-row.pnl-kpis { grid-template-columns: repeat(4, 1fr); }
-  .kpi-value.pos { color: var(--pos); }
-  .kpi-value.neg { color: var(--neg); }
-
-  .attr-list { border: 1px solid var(--line-1); border-radius: var(--r-l); overflow: hidden; margin-top: 10px; }
-  .attr-row {
-    display: grid; grid-template-columns: 1fr auto auto;
-    align-items: center; gap: 16px; padding: 12px 18px;
-    border-bottom: 1px solid var(--line-1);
-    font-size: 13px;
-  }
-  .attr-row:last-child { border-bottom: none; }
-  .attr-row.total { background: var(--bg-card); font-weight: 600; }
-  .attr-label { display: flex; align-items: center; gap: 10px; color: var(--ink-1); }
-  .attr-marker { width: 6px; height: 22px; border-radius: 2px; background: var(--bg-subtle); }
-  .attr-marker.pos { background: var(--green-500); }
-  .attr-marker.neg { background: var(--neg); }
-  .attr-marker.neu { background: var(--ink-3); }
-  .attr-delta { font-variant-numeric: tabular-nums; font-weight: 500; }
-  .attr-delta.pos { color: var(--pos); }
-  .attr-delta.neg { color: var(--neg); }
-  .attr-amt { font-variant-numeric: tabular-nums; color: var(--ink-3); font-size: 12px; min-width: 180px; text-align: right; }
-
-  /* ========== Balance sheet ========== */
-  .bs-table {
-    margin-top: 12px;
-    border: 1px solid var(--line-1); border-radius: var(--r-l); overflow: hidden;
-  }
-  .bs-section-row {
-    padding: 10px 18px;
-    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
-    color: var(--ink-3); font-weight: 600;
+  /* Pending redemption orders section */
+  .queued-card {
     background: var(--bg-card);
-    border-bottom: 1px solid var(--line-1);
+    border: 1px solid var(--line-1);
+    border-radius: var(--r-l);
+    padding: 14px 18px 16px;
+    margin-top: 14px;
   }
-  .bs-row {
-    display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.5fr) 160px;
-    gap: 16px; align-items: center;
-    padding: 12px 18px;
-    border-bottom: 1px solid var(--line-1);
+  .queued-label { font-size: 11.5px; color: var(--ink-2); font-weight: 500; margin-bottom: 6px; }
+  .queued-val { font-size: 22px; font-weight: 600; letter-spacing: -0.015em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .queued-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 6px; }
+
+  .orders-table {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) 110px 110px 120px 110px;
+    gap: 0;
+    margin-top: 20px;
+  }
+  .orders-table .hcell, .orders-table .cell {
+    padding: 12px 4px;
     font-size: 13px;
-  }
-  .bs-label { font-weight: 500; color: var(--ink-1); }
-  .bs-detail { color: var(--ink-3); font-size: 12.5px; }
-  .bs-val { font-variant-numeric: tabular-nums; text-align: right; }
-  .bs-val.neg { color: var(--neg); }
-  .bs-subtotal {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 10px 18px;
-    background: var(--bg-card);
     border-bottom: 1px solid var(--line-1);
-    font-size: 13px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
   }
-  .bs-subtotal .num { font-variant-numeric: tabular-nums; }
-  .bs-subtotal .num.neg { color: var(--neg); }
-  .bs-net {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 14px 18px;
-    font-size: 15px; font-weight: 600; color: var(--ink-1);
-    border-top: 2px solid var(--ink-1);
+  .orders-table .hcell {
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-3); font-weight: 500;
+    padding: 6px 4px 8px;
   }
-  .bs-net .num { font-variant-numeric: tabular-nums; }
+  .orders-table .hcell.right, .orders-table .cell.right { text-align: right; }
+  .orders-table .investor { font-weight: 500; color: var(--ink-1); }
+  .orders-table .last { border-bottom: none; }
 </style>
 </head>
 <body>
@@ -618,7 +587,7 @@
 
   <div class="body">
 
-    <nav class="sidebar" data-elysium-sidebar data-active="nav"></nav>
+    <nav class="sidebar" data-elysium-sidebar data-active="collateral-treasury"></nav>
 
     <main class="main">
       <div class="content">
@@ -629,7 +598,7 @@
             <span class="fund-dot" aria-hidden="true"></span>
             <span>POD Crypto Fund</span>
             <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
-            <span class="current">NAV</span>
+            <span class="current">Collateral &amp; Treasury</span>
           </div>
           <div class="page-head-right">
             <button class="more-btn" aria-label="More">
@@ -638,376 +607,254 @@
           </div>
         </div>
 
-        <!-- Headline KPIs — NAV + drivers of NAV change -->
+        <!-- Headline KPIs — operational liquidity view -->
         <div class="kpi-row">
           <div class="kpi">
-            <div class="kpi-label">NAV</div>
-            <div class="kpi-value">$47,460,000</div>
-            <div class="kpi-sub"><span class="pos">+5.2%</span> vs. prior NAV</div>
+            <div class="kpi-label">Collateral posted</div>
+            <div class="kpi-value">$15.20M</div>
+            <div class="kpi-sub">68% utilised <span class="muted">·</span> 5 venues</div>
           </div>
           <div class="kpi">
-            <div class="kpi-label">Period P&amp;L (MTD)</div>
-            <div class="kpi-value pos">+$2,340,000</div>
-            <div class="kpi-sub"><span class="pos">+5.2%</span> on opening NAV</div>
+            <div class="kpi-label">Free cash</div>
+            <div class="kpi-value">$6.25M</div>
+            <div class="kpi-sub">Earning <span class="pos">4.2% APY</span> <span class="muted">·</span> 13.2% of NAV</div>
           </div>
           <div class="kpi">
-            <div class="kpi-label">NAV per share</div>
-            <div class="kpi-value">$104.27</div>
-            <div class="kpi-sub"><span class="pos">+$5.18</span> vs. prior NAV</div>
+            <div class="kpi-label">Net flow (next dealing)</div>
+            <div class="kpi-value">−$170,000</div>
+            <div class="kpi-sub">5 subs <span class="muted">·</span> 2 redemptions <span class="muted">·</span> settles Mon 8 Feb</div>
           </div>
         </div>
 
-        <!-- ================= NET ASSET VALUE ================= -->
+        <!-- ================= COLLATERAL ================= -->
         <section class="block">
           <div class="section-head">
             <div class="section-head-row">
               <div>
-                <div class="section-title">Net Asset Value</div>
-                <div class="section-desc">Portfolio allocation and live market values across custody &amp; exchanges.</div>
+                <div class="section-title">
+                  Collateral position
+                  <span class="count" style="font-size:11.5px; color: var(--ink-3); font-weight:400; margin-left:6px;">68% utilised · 5 venues</span>
+                </div>
+                <div class="section-desc">Assets posted to exchanges to support trading. Not part of free cash — moves with positions and prices.</div>
               </div>
+              <a href="./move-collateral.html" class="link">Move collateral</a>
             </div>
           </div>
 
-          <!-- Portfolio composition -->
-          <div class="sub-title">
-            Portfolio composition
-            <span class="count" style="margin-left:auto;">Total assets: 5</span>
+          <div class="note">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div>Collateral is required margin at exchanges, posted to back open positions. It's <em>not</em> available as free cash — see Treasury below for unencumbered liquidity.</div>
           </div>
 
-          <div class="composition">
-            <div class="donut-wrap">
-              <div class="donut">
-                <div class="donut-center">
-                  <div class="label">NAV</div>
-                  <div class="val">$47.46M</div>
-                  <div class="sub">5 assets</div>
-                </div>
-              </div>
+          <div class="ctable">
+            <div class="hcell">Asset</div>
+            <div class="hcell">Venue</div>
+            <div class="hcell">Account type</div>
+            <div class="hcell right">Posted</div>
+            <div class="hcell right">Utilization</div>
+
+            <div class="cell">
+              <span class="coin-cell"><span class="coin-icon btc">₿</span> BTC</span>
+            </div>
+            <div class="cell">Coinbase Prime</div>
+            <div class="cell">Custody</div>
+            <div class="cell right">$4.1M</div>
+            <div class="cell right">
+              <span class="util-wrap">
+                <span class="util-bar"><span class="util-fill high" style="width:85%"></span></span>
+                <span class="util-pct">85%</span>
+              </span>
             </div>
 
-            <div class="alloc">
-              <div class="alloc-head">
-                <div></div>
-                <div>Asset</div>
-                <div>Allocation</div>
-                <div class="right">Value</div>
-                <div class="right">24h</div>
-              </div>
-
-              <a class="alloc-row" href="./portfolio-asset-detail.html?asset=btc">
-                <span class="coin-icon btc" title="BTC">₿</span>
-                <div class="alloc-name">Bitcoin<span class="sub">323.80 BTC · $68,992</span></div>
-                <div class="bar-cell">
-                  <span class="pct">47.1%</span>
-                  <span class="bar-track"><span class="bar-fill" style="width:47.1%; background: var(--green-700);"></span></span>
-                </div>
-                <div class="alloc-val">$22,340,000</div>
-                <div class="alloc-delta">+0.8%</div>
-              </a>
-
-              <a class="alloc-row" href="./portfolio-asset-detail.html?asset=eth">
-                <span class="coin-icon eth" title="ETH">Ξ</span>
-                <div class="alloc-name">Ethereum<span class="sub">1,094.00 ETH · $2,011</span></div>
-                <div class="bar-cell">
-                  <span class="pct">4.6%</span>
-                  <span class="bar-track"><span class="bar-fill" style="width:15%; background: var(--green-500);"></span></span>
-                </div>
-                <div class="alloc-val">$2,200,000</div>
-                <div class="alloc-delta">+3.5%</div>
-              </a>
-
-              <a class="alloc-row" href="./portfolio-asset-detail.html?asset=link">
-                <span class="coin-icon link" title="LINK">L</span>
-                <div class="alloc-name">Chainlink<span class="sub">109,489.00 LINK · $13.70</span></div>
-                <div class="bar-cell">
-                  <span class="pct">3.2%</span>
-                  <span class="bar-track"><span class="bar-fill" style="width:10%; background: var(--green-400);"></span></span>
-                </div>
-                <div class="alloc-val">$1,500,000</div>
-                <div class="alloc-delta">+1.5%</div>
-              </a>
-
-              <a class="alloc-row" href="./portfolio-asset-detail.html?asset=ltc">
-                <span class="coin-icon ltc" title="LTC">Ł</span>
-                <div class="alloc-name">Litecoin<span class="sub">20,362.82 LTC · $54.02</span></div>
-                <div class="bar-cell">
-                  <span class="pct">2.3%</span>
-                  <span class="bar-track"><span class="bar-fill" style="width:7%; background: var(--green-300);"></span></span>
-                </div>
-                <div class="alloc-val">$1,100,000</div>
-                <div class="alloc-delta">+2.0%</div>
-              </a>
-
-              <a class="alloc-row" href="./portfolio-asset-detail.html?asset=ada">
-                <span class="coin-icon ada" title="ADA">₳</span>
-                <div class="alloc-name">Cardano<span class="sub">3,653,846.15 ADA · $0.26</span></div>
-                <div class="bar-cell">
-                  <span class="pct">2.0%</span>
-                  <span class="bar-track"><span class="bar-fill" style="width:6%; background: var(--green-200);"></span></span>
-                </div>
-                <div class="alloc-val">$950,000</div>
-                <div class="alloc-delta">+4.1%</div>
-              </a>
+            <div class="cell">
+              <span class="coin-cell"><span class="coin-icon eth">Ξ</span> ETH</span>
             </div>
-          </div>
-
-          <!-- Venue breakdown -->
-          <div class="sub-title-row">
-            <div class="sub-title" style="margin:0;">
-              Venue breakdown
-              <span class="count">5 venues · $47.46M</span>
-            </div>
-            <a href="./venue-reconciliation-log.html" class="link">Reconciliation log</a>
-          </div>
-
-          <div class="venue-wrap">
-            <div class="venue-head">
-              <div>Venue</div>
-              <div>Holdings</div>
-              <div class="right">Value</div>
-              <div class="right">Share</div>
-              <div class="right">Status</div>
+            <div class="cell">Copper.co</div>
+            <div class="cell">Clearloop</div>
+            <div class="cell right">$1.6M</div>
+            <div class="cell right">
+              <span class="util-wrap">
+                <span class="util-bar"><span class="util-fill high" style="width:41%"></span></span>
+                <span class="util-pct">41%</span>
+              </span>
             </div>
 
-            <div class="venue-group">
-              <div class="v-name">Custody</div>
-              <div></div>
-              <div class="v-val right">$27.5M</div>
-              <div class="v-share right">58%</div>
-              <div></div>
+            <div class="cell">
+              <span class="coin-cell"><span class="coin-icon usdc">U</span> USDC</span>
             </div>
-            <div class="venue-row">
-              <div class="v-name">Coinbase Prime</div>
-              <div class="v-holdings">BTC, ETH, USDC</div>
-              <div class="v-val right">$18.0M</div>
-              <div class="v-share right">38.0%</div>
-              <div class="right"><span class="chip verified">Verified</span></div>
-            </div>
-            <div class="venue-row">
-              <div class="v-name">Copper.co</div>
-              <div class="v-holdings">BTC, SOL</div>
-              <div class="v-val right">$9.5M</div>
-              <div class="v-share right">20.0%</div>
-              <div class="right"><span class="chip verified">Verified</span></div>
+            <div class="cell">Binance</div>
+            <div class="cell">Margin</div>
+            <div class="cell right">$2.7M</div>
+            <div class="cell right">
+              <span class="util-wrap">
+                <span class="util-bar"><span class="util-fill high" style="width:22%"></span></span>
+                <span class="util-pct">22%</span>
+              </span>
             </div>
 
-            <div class="venue-group">
-              <div class="v-name">Exchange</div>
-              <div></div>
-              <div class="v-val right">$12.4M</div>
-              <div class="v-share right">26%</div>
-              <div></div>
+            <div class="cell">
+              <span class="coin-cell"><span class="coin-icon sol">S</span> SOL</span>
             </div>
-            <div class="venue-row">
-              <div class="v-name">Binance</div>
-              <div class="v-holdings">Mixed</div>
-              <div class="v-val right">$7.1M</div>
-              <div class="v-share right">15.0%</div>
-              <div class="right"><span class="chip verified">Verified</span></div>
-            </div>
-            <div class="venue-row">
-              <div class="v-name">OKX</div>
-              <div class="v-holdings">Mixed</div>
-              <div class="v-val right">$5.3M</div>
-              <div class="v-share right">11.0%</div>
-              <div class="right"><span class="chip verified">Verified</span></div>
+            <div class="cell">OKX</div>
+            <div class="cell">Perp</div>
+            <div class="cell right">$0.8M</div>
+            <div class="cell right">
+              <span class="util-wrap">
+                <span class="util-bar"><span class="util-fill high" style="width:57%"></span></span>
+                <span class="util-pct">57%</span>
+              </span>
             </div>
 
-            <div class="venue-group">
-              <div class="v-name">Cold</div>
-              <div></div>
-              <div class="v-val right">$7.5M</div>
-              <div class="v-share right">16%</div>
-              <div></div>
+            <div class="cell last">
+              <span class="coin-cell"><span class="coin-icon usdt">U</span> USDT</span>
             </div>
-            <div class="venue-row">
-              <div class="v-name">Self custody</div>
-              <div class="v-holdings">BTC</div>
-              <div class="v-val right">$7.5M</div>
-              <div class="v-share right">16.0%</div>
-              <div class="right"><span class="chip verified">Verified</span></div>
+            <div class="cell last">Binance</div>
+            <div class="cell last">Margin</div>
+            <div class="cell right last">$1.2M</div>
+            <div class="cell right last">
+              <span class="util-wrap">
+                <span class="util-bar"><span class="util-fill high" style="width:18%"></span></span>
+                <span class="util-pct">18%</span>
+              </span>
             </div>
           </div>
         </section>
 
-        <!-- ================= P&L ================= -->
+        <!-- ================= TREASURY ================= -->
         <section class="block">
           <div class="section-head">
             <div class="section-head-row">
               <div>
-                <div class="section-title">Profit &amp; Loss</div>
-                <div class="section-desc">Drivers of NAV change this period. Month-to-date as of 07 Feb 16:00 UTC.</div>
+                <div class="section-title">Treasury</div>
+                <div class="section-desc">Free cash available for trading positions, and upcoming fund flows.</div>
+              </div>
+              <a href="./treasury-cashbook.html" class="link">View Cashbook</a>
+            </div>
+          </div>
+
+          <!-- Treasury: Free cash + USD/EUR stacked on the left; Next dealing tile spans full height on the right -->
+          <div class="treasury-grid">
+            <div class="treasury-left">
+              <div class="tile">
+                <div class="tile-row-top">
+                  <div>
+                    <div class="tile-label">Free cash position</div>
+                    <div class="tile-val">$6,246,000</div>
+                    <div class="tile-sub"><span class="pos" style="color: var(--pos); font-weight: 500;">13.2%</span> of NAV</div>
+                  </div>
+                  <span class="yield-pill">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                    +4.2% APY on T-bills · ~$26,200 / mo
+                  </span>
+                </div>
+              </div>
+
+              <div class="tile-split">
+                <div class="tile-mini">
+                  <div class="mini-label">USD</div>
+                  <div class="mini-val">$5,966,000</div>
+                </div>
+                <div class="tile-mini">
+                  <div class="mini-label">EUR</div>
+                  <div class="mini-val">€280,000</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tile">
+              <div class="tile-row-top">
+                <div>
+                  <div class="tile-label">Next dealing in</div>
+                  <div class="tile-val">03d 14h 22m</div>
+                  <div class="tile-sub">Window opens Mon 8 Feb, 17:00 UTC</div>
+                </div>
+                <span class="pulse-dot" aria-hidden="true"></span>
+              </div>
+              <div class="dealing-meta">
+                <span class="k">Next dealing</span><span class="v">Mon 8 Feb, 17:00 UTC</span>
+                <span class="k">Cutoff</span><span class="v">Sun 7 Feb, 17:00 UTC</span>
+                <span class="k">Settlement</span><span class="v">Mon 8 Feb, 2026</span>
               </div>
             </div>
           </div>
 
-          <!-- P&L KPIs -->
-          <div class="kpi-row pnl-kpis">
-            <div class="kpi">
-              <div class="kpi-label">Realized P&amp;L</div>
-              <div class="kpi-value pos">+$612,400</div>
-              <div class="kpi-sub">8 trades settled</div>
-            </div>
-            <div class="kpi">
-              <div class="kpi-label">Unrealized P&amp;L</div>
-              <div class="kpi-value pos">+$1,720,000</div>
-              <div class="kpi-sub">Mark-to-market on open positions</div>
-            </div>
-            <div class="kpi">
-              <div class="kpi-label">Income</div>
-              <div class="kpi-value pos">+$26,200</div>
-              <div class="kpi-sub">T-bill yield on free cash</div>
-            </div>
-            <div class="kpi">
-              <div class="kpi-label">Fees &amp; expenses</div>
-              <div class="kpi-value neg">−$18,540</div>
-              <div class="kpi-sub">Mgmt + perf accrued</div>
-            </div>
-          </div>
-
-          <!-- NAV attribution waterfall -->
+          <!-- Upcoming fund flows -->
           <div class="sub-title-row">
-            <div class="sub-title" style="margin:0;">NAV attribution</div>
-            <span class="count" style="font-size:11.5px; color: var(--ink-3);">01 Feb → 07 Feb</span>
+            <div class="sub-title" style="margin:0;">Upcoming fund flows</div>
+            <a href="./order-book.html" class="link">View full order book</a>
           </div>
 
-          <div class="attr-list">
-            <div class="attr-row">
-              <div class="attr-label"><span class="attr-marker neu"></span> Opening NAV · 01 Feb</div>
-              <div class="attr-delta num">—</div>
-              <div class="attr-amt num">$45,100,000</div>
+          <div class="flow-grid">
+            <div class="flow-tile pos">
+              <div class="ftl">Pending Subscriptions</div>
+              <div class="fv">+$150,000</div>
+              <div class="fs">5 orders</div>
             </div>
-            <div class="attr-row">
-              <div class="attr-label"><span class="attr-marker pos"></span> Unrealized P&amp;L · BTC</div>
-              <div class="attr-delta pos num">+$1,085,400</div>
-              <div class="attr-amt num">price $97,840 → $101,220</div>
+            <div class="flow-tile neg">
+              <div class="ftl">Pending Redemptions</div>
+              <div class="fv">−$320,000</div>
+              <div class="fs">2 orders</div>
             </div>
-            <div class="attr-row">
-              <div class="attr-label"><span class="attr-marker pos"></span> Unrealized P&amp;L · ETH</div>
-              <div class="attr-delta pos num">+$428,310</div>
-              <div class="attr-amt num">price $2,780 → $2,918</div>
+            <div class="flow-tile neutral">
+              <div class="ftl">Projected post-dealing cash</div>
+              <div class="fv">$2,476,000</div>
+              <div class="fs">after settlement Mon 8 Feb</div>
             </div>
-            <div class="attr-row">
-              <div class="attr-label"><span class="attr-marker pos"></span> Unrealized P&amp;L · other</div>
-              <div class="attr-delta pos num">+$206,290</div>
-              <div class="attr-amt num">XRP / LTC / ADA aggregate</div>
-            </div>
-            <div class="attr-row">
-              <div class="attr-label"><span class="attr-marker pos"></span> Realized P&amp;L</div>
-              <div class="attr-delta pos num">+$612,400</div>
-              <div class="attr-amt num">8 trades settled</div>
-            </div>
-            <div class="attr-row">
-              <div class="attr-label"><span class="attr-marker pos"></span> Income · T-bills</div>
-              <div class="attr-delta pos num">+$26,200</div>
-              <div class="attr-amt num">4.2% APY on $6.25M free cash</div>
-            </div>
-            <div class="attr-row">
-              <div class="attr-label"><span class="attr-marker neg"></span> Management fees</div>
-              <div class="attr-delta neg num">−$15,200</div>
-              <div class="attr-amt num">daily pro-rata across classes</div>
-            </div>
-            <div class="attr-row">
-              <div class="attr-label"><span class="attr-marker neg"></span> Performance fee accrual</div>
-              <div class="attr-delta neg num">−$3,340</div>
-              <div class="attr-amt num">Class A + C above HWM</div>
-            </div>
-            <div class="attr-row">
-              <div class="attr-label"><span class="attr-marker pos"></span> Subscriptions</div>
-              <div class="attr-delta pos num">+$150,000</div>
-              <div class="attr-amt num">5 orders settled</div>
-            </div>
-            <div class="attr-row">
-              <div class="attr-label"><span class="attr-marker neg"></span> Redemptions</div>
-              <div class="attr-delta neg num">−$130,000</div>
-              <div class="attr-amt num">capital outflow</div>
-            </div>
-            <div class="attr-row total">
-              <div class="attr-label">Closing NAV · 07 Feb</div>
-              <div class="attr-delta pos num">+$2,360,060</div>
-              <div class="attr-amt num" style="color: var(--ink-1);">$47,460,060</div>
+            <div class="flow-tile neutral">
+              <div class="ftl">Net cash required</div>
+              <div class="fv">$170,000</div>
+              <div class="fs">outflow at settlement</div>
             </div>
           </div>
         </section>
 
-        <!-- ================= BALANCE SHEET ================= -->
+        <!-- ================= PENDING REDEMPTION ORDERS ================= -->
         <section class="block">
           <div class="section-head">
             <div class="section-head-row">
               <div>
-                <div class="section-title">Balance sheet</div>
-                <div class="section-desc">Net assets snapshot reconciling to NAV. As of 07 Feb 16:00 UTC.</div>
+                <div class="section-title">Pending redemption orders</div>
               </div>
+              <a href="./pending-redemptions.html" class="link">View all</a>
             </div>
           </div>
 
-          <!-- Summary cards -->
-          <div class="kpi-row">
-            <div class="kpi">
-              <div class="kpi-label">Total assets</div>
-              <div class="kpi-value">$47,803,000</div>
-              <div class="kpi-sub">Investments + cash + receivables</div>
-            </div>
-            <div class="kpi">
-              <div class="kpi-label">Total liabilities</div>
-              <div class="kpi-value neg">−$343,000</div>
-              <div class="kpi-sub">Payables + settlements</div>
-            </div>
-            <div class="kpi">
-              <div class="kpi-label">Net assets (NAV)</div>
-              <div class="kpi-value">$47,460,000</div>
-              <div class="kpi-sub">Assets − liabilities</div>
-            </div>
+          <div class="queued-card">
+            <div class="queued-label">Queued order amount</div>
+            <div class="queued-val">$4.50M</div>
+            <div class="queued-sub">5 orders</div>
           </div>
 
-          <!-- Line items -->
-          <div class="bs-table">
-            <div class="bs-section-row">Assets</div>
-            <div class="bs-row">
-              <div class="bs-label">Investments at fair value</div>
-              <div class="bs-detail">5 crypto positions · portfolio composition</div>
-              <div class="bs-val num">$41,213,790</div>
-            </div>
-            <div class="bs-row">
-              <div class="bs-label">Cash &amp; equivalents</div>
-              <div class="bs-detail">Free cash across 4 venues · earning 4.2% APY</div>
-              <div class="bs-val num">$6,246,000</div>
-            </div>
-            <div class="bs-row">
-              <div class="bs-label">Receivables</div>
-              <div class="bs-detail">Subscriptions due to settle at next dealing</div>
-              <div class="bs-val num">$343,210</div>
-            </div>
-            <div class="bs-subtotal">
-              <div>Total assets</div>
-              <div class="num">$47,803,000</div>
-            </div>
+          <div class="orders-table">
+            <div class="hcell">Investor</div>
+            <div class="hcell">Class</div>
+            <div class="hcell right">Units</div>
+            <div class="hcell right">Amount</div>
+            <div class="hcell">Status</div>
 
-            <div class="bs-section-row">Liabilities</div>
-            <div class="bs-row">
-              <div class="bs-label">Redemptions payable</div>
-              <div class="bs-detail">2 orders queued at next dealing</div>
-              <div class="bs-val num neg">−$320,000</div>
-            </div>
-            <div class="bs-row">
-              <div class="bs-label">Fees payable</div>
-              <div class="bs-detail">Management + performance accrued this period</div>
-              <div class="bs-val num neg">−$18,000</div>
-            </div>
-            <div class="bs-row">
-              <div class="bs-label">Trading settlements</div>
-              <div class="bs-detail">Open trades pending settle · T+1</div>
-              <div class="bs-val num neg">−$5,000</div>
-            </div>
-            <div class="bs-subtotal">
-              <div>Total liabilities</div>
-              <div class="num neg">−$343,000</div>
-            </div>
+            <div class="cell investor">@NovaTechFund</div>
+            <div class="cell">Class A</div>
+            <div class="cell right">904.76</div>
+            <div class="cell right">$950,000</div>
+            <div class="cell"><span class="chip pending">Pending</span></div>
 
-            <div class="bs-net">
-              <div>Net assets</div>
-              <div class="num">$47,460,000</div>
-            </div>
+            <div class="cell investor">@GlobalVest</div>
+            <div class="cell">Class B</div>
+            <div class="cell right">3,492.01</div>
+            <div class="cell right">$350,000</div>
+            <div class="cell"><span class="chip pending">Pending</span></div>
+
+            <div class="cell investor">@ApexHoldings</div>
+            <div class="cell">Class C</div>
+            <div class="cell right">1,428.57</div>
+            <div class="cell right">$1,500,000</div>
+            <div class="cell"><span class="chip pending">Pending</span></div>
+
+            <div class="cell investor last">@ZenithCapital</div>
+            <div class="cell last">Class A</div>
+            <div class="cell right last">571.43</div>
+            <div class="cell right last">$600,000</div>
+            <div class="cell last"><span class="chip pending">Pending</span></div>
           </div>
         </section>
 

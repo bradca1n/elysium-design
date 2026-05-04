@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1728">
+<title>Order Book — POD Crypto Fund | Elysium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./elysium.css">
+<style>
+:root { --headline-cols: 4; }
+
+/* Override headline value size — this page uses smaller 22px like kpi-strip */
+.headline-value { font-size: 22px; line-height: 28px; }
+
+/* Countdown banner */
+.countdown-banner { display: flex; align-items: center; gap: var(--space-16); padding: 14px 20px; background: var(--status-warning-bg); border: 1px solid #FAD7A8; border-radius: var(--radius-l); margin-bottom: var(--space-24); }
+.cb-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--status-warning); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.4; } }
+.cb-body { flex: 1; color: var(--text-color-primary); font-size: 13px; line-height: 18px; }
+.cb-body strong { font-weight: 600; color: var(--status-warning); }
+.cb-timer { color: var(--status-warning); font-variant-numeric: tabular-nums; font-size: 16px; line-height: 22px; font-weight: 600; }
+
+/* Investor cell */
+.inv-cell { display: inline-flex; align-items: center; gap: 10px; }
+.inv-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--bg-surface); color: var(--text-color-primary); display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border-default); font-size: 10px; line-height: 12px; font-weight: 600; }
+.inv-meta { min-width: 0; }
+.inv-name { font-size: 13px; line-height: 18px; font-weight: 500; }
+.inv-sub { color: var(--text-color-secondary); font-size: 11px; line-height: 14px; }
+
+.class-tag { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: var(--radius-xs); background: var(--bg-surface); color: var(--text-color-primary); margin-right: 6px; font-size: 11px; line-height: 14px; font-weight: 600; }
+
+.row-actions { display: inline-flex; align-items: center; gap: 6px; opacity: 0; transition: opacity 0.1s; }
+.table tr:hover .row-actions { opacity: 1; }
+
+/* Dealing day divider (like group-date but with pill for dealing date) */
+.group-dealing { display: flex; align-items: center; gap: 12px; padding: 16px 16px 12px; color: var(--text-color-muted); background: var(--bg-subtle); border-top: 1px solid var(--border-default); font-size: 11px; line-height: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.group-dealing-bar { flex: 1; height: 1px; background: var(--border-subtle); }
+.group-dealing-pill { background: var(--text-color-primary); color: #fff; padding: 3px 10px; border-radius: var(--radius-full); text-transform: none; letter-spacing: 0; font-size: 11px; line-height: 14px; font-weight: 600; }
+.group-dealing-meta { color: var(--text-color-secondary); text-transform: none; letter-spacing: 0; font-size: 12px; line-height: 16px; font-weight: 500; }
+
+.flag-icon { width: 14px; height: 14px; border-radius: 2px; display: inline-block; vertical-align: middle; margin-right: 4px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="navbar" data-elysium-navbar></header>
+
+  <div class="body">
+    <nav class="sidebar" data-elysium-sidebar data-active="collateral-treasury"></nav>
+
+    <main class="main">
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <div class="breadcrumb-nav">
+            <span class="fund-dot"></span>
+            <a href="./nav-collateral.html">POD Crypto Fund</a>
+            <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            <a href="./collateral-treasury.html">Collateral &amp; Treasury</a>
+            <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            <span class="current">Order book</span>
+          </div>
+          <div class="page-title text-heading-xl-semibold">Order book<span class="page-as-of">All dealing days · 48 orders</span></div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-outline">Export CSV</button>
+          <button class="btn btn-outline">Approval queue <span class="chip chip-warning" style="margin-left:6px;">3</span></button>
+          <button class="btn btn-primary">New order →</button>
+        </div>
+      </div>
+
+      <!-- Countdown -->
+      <div class="countdown-banner">
+        <div class="cb-dot"></div>
+        <div class="cb-body"><strong>Cutoff Mon 8 Feb 14:00 UTC</strong> — orders for the next strike lock in <span class="cb-timer">18h 42m</span>. 12 orders currently in window.</div>
+        <button class="btn btn-outline btn-sm">View cutoff policy</button>
+      </div>
+
+      <!-- Headline -->
+      <div class="headline">
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Pending subscriptions</div>
+          <div class="headline-value pos">+$1,420,000</div>
+          <div class="headline-sub">12 orders · 8 investors</div>
+        </div>
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Pending redemptions</div>
+          <div class="headline-value neg">−$820,000</div>
+          <div class="headline-sub">7 orders · 5 holders</div>
+        </div>
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Net flow (next dealing)</div>
+          <div class="headline-value pos">+$600,000</div>
+          <div class="headline-sub">Mon 8 Feb strike</div>
+        </div>
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Net flow (next 30 days)</div>
+          <div class="headline-value pos">+$2,812,000</div>
+          <div class="headline-sub">across 4 dealing days</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-strip">
+        <div class="tab-strip-tab active">All <span class="tab-count">48</span></div>
+        <div class="tab-strip-tab">Subscriptions <span class="tab-count">31</span></div>
+        <div class="tab-strip-tab">Redemptions <span class="tab-count">17</span></div>
+        <div class="tab-strip-tab">Pending approval <span class="tab-count">3</span></div>
+        <div class="tab-strip-tab">Scheduled <span class="tab-count">6</span></div>
+        <div class="tab-strip-tab">Cancelled <span class="tab-count">2</span></div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-bar">
+        <span class="filter-group-label">Class</span>
+        <button class="filter-pill active">All</button>
+        <button class="filter-pill">A</button>
+        <button class="filter-pill">B</button>
+        <button class="filter-pill">C</button>
+        <button class="filter-pill">D</button>
+        <span class="filter-group-label">Status</span>
+        <button class="filter-pill">Any <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <span class="filter-group-label">Dealing day</span>
+        <button class="filter-pill">Next 30d <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="filter-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-color-muted);"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" placeholder="Search investor, ref, or adviser…">
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:120px;">Submitted</th>
+              <th>Investor</th>
+              <th>Class</th>
+              <th>Type</th>
+              <th class="right">Amount</th>
+              <th class="right">Est. shares</th>
+              <th>Status</th>
+              <th>Adviser</th>
+              <th style="width:60px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Mon 8 Feb -->
+            <tr>
+              <td colspan="9" style="padding:0;">
+                <div class="group-dealing"><span class="group-dealing-pill">Mon 8 Feb 16:00 UTC</span><span class="group-dealing-meta">Cutoff 14:00 · 12 orders · net +$600K</span><span class="group-dealing-bar"></span></div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>07 Feb 13:50</td>
+              <td><span class="inv-cell"><span class="inv-avatar">AB</span><span class="inv-meta"><div class="inv-name">Allegra Bennett</div><div class="inv-sub">INV-0412 · Individual</div></span></span></td>
+              <td><span class="class-tag">A</span>Class A · AUD</td>
+              <td><span class="chip chip-positive">Subscribe</span></td>
+              <td class="right strong num pos">+$50,000</td>
+              <td class="right num">~1,310.1</td>
+              <td><span class="chip chip-positive chip-dot">Cash received</span></td>
+              <td>—</td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>07 Feb 11:20</td>
+              <td><span class="inv-cell"><span class="inv-avatar">MT</span><span class="inv-meta"><div class="inv-name">Marcus Tan</div><div class="inv-sub">INV-0310 · SMSF</div></span></span></td>
+              <td><span class="class-tag">B</span>Class B · USD</td>
+              <td><span class="chip chip-positive">Subscribe</span></td>
+              <td class="right strong num pos">+$100,000</td>
+              <td class="right num">~2,597.5</td>
+              <td><span class="chip chip-positive chip-dot">Cash received</span></td>
+              <td>Cygnet Capital</td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>06 Feb 16:40</td>
+              <td><span class="inv-cell"><span class="inv-avatar">LS</span><span class="inv-meta"><div class="inv-name">Leo Sato</div><div class="inv-sub">INV-0228 · Individual</div></span></span></td>
+              <td><span class="class-tag">A</span>Class A · AUD</td>
+              <td><span class="chip chip-negative">Redeem</span></td>
+              <td class="right strong num neg">−$220,000</td>
+              <td class="right num">~6,087.2</td>
+              <td><span class="chip chip-info chip-dot">In window</span></td>
+              <td>—</td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>06 Feb 09:12</td>
+              <td><span class="inv-cell"><span class="inv-avatar">OW</span><span class="inv-meta"><div class="inv-name">Olivia Whitlock</div><div class="inv-sub">INV-0198 · Individual</div></span></span></td>
+              <td><span class="class-tag">C</span>Class C · AUD</td>
+              <td><span class="chip chip-positive">Subscribe</span></td>
+              <td class="right strong num pos">+$25,000</td>
+              <td class="right num">~644.3</td>
+              <td><span class="chip chip-positive chip-dot">Cash received</span></td>
+              <td>Ord Minnett</td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>05 Feb 14:30</td>
+              <td><span class="inv-cell"><span class="inv-avatar">HC</span><span class="inv-meta"><div class="inv-name">Helio Capital</div><div class="inv-sub">INV-0104 · Institutional</div></span></span></td>
+              <td><span class="class-tag">B</span>Class B · USD</td>
+              <td><span class="chip chip-positive">Subscribe</span></td>
+              <td class="right strong num pos">+$500,000</td>
+              <td class="right num">~12,987.5</td>
+              <td><span class="chip chip-warning chip-dot">Awaiting wire</span></td>
+              <td>—</td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>05 Feb 10:12</td>
+              <td><span class="inv-cell"><span class="inv-avatar">RF</span><span class="inv-meta"><div class="inv-name">Rosewood Family Trust</div><div class="inv-sub">INV-0082 · Trust</div></span></span></td>
+              <td><span class="class-tag">A</span>Class A · AUD</td>
+              <td><span class="chip chip-negative">Redeem</span></td>
+              <td class="right strong num neg">−$100,000</td>
+              <td class="right num">~2,767.0</td>
+              <td><span class="chip chip-info chip-dot">In window</span></td>
+              <td>Evans Dixon</td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>04 Feb 15:02</td>
+              <td><span class="inv-cell"><span class="inv-avatar">KP</span><span class="inv-meta"><div class="inv-name">Kestrel Partners LP</div><div class="inv-sub">INV-0042 · Institutional</div></span></span></td>
+              <td><span class="class-tag">D</span>Class D · USD</td>
+              <td><span class="chip chip-positive">Subscribe</span></td>
+              <td class="right strong num pos">+$750,000</td>
+              <td class="right num">~13,009.3</td>
+              <td><span class="chip chip-warning chip-dot">Awaiting wire</span></td>
+              <td>—</td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>04 Feb 12:40</td>
+              <td><span class="inv-cell"><span class="inv-avatar">JM</span><span class="inv-meta"><div class="inv-name">James McCormick</div><div class="inv-sub">INV-0217 · Individual</div></span></span></td>
+              <td><span class="class-tag">C</span>Class C · AUD</td>
+              <td><span class="chip chip-negative">Redeem</span></td>
+              <td class="right strong num neg">−$80,000</td>
+              <td class="right num">~2,062.0</td>
+              <td><span class="chip" style="background:var(--status-warning-bg); color:var(--status-warning);"><span style="width:6px; height:6px; border-radius:50%; background:currentColor;"></span>Pending approval</span></td>
+              <td>—</td>
+              <td class="right">→</td>
+            </tr>
+
+            <!-- Mon 15 Feb -->
+            <tr>
+              <td colspan="9" style="padding:0;">
+                <div class="group-dealing"><span class="group-dealing-pill" style="background:var(--bg-elevated); color:var(--text-color-primary);">Mon 15 Feb 16:00 UTC</span><span class="group-dealing-meta">Cutoff 14:00 · 14 orders · net +$420K</span><span class="group-dealing-bar"></span></div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>07 Feb 08:40</td>
+              <td><span class="inv-cell"><span class="inv-avatar">EC</span><span class="inv-meta"><div class="inv-name">Ember Capital</div><div class="inv-sub">INV-0051 · Institutional</div></span></span></td>
+              <td><span class="class-tag">B</span>Class B · USD</td>
+              <td><span class="chip chip-positive">Subscribe</span></td>
+              <td class="right strong num pos">+$300,000</td>
+              <td class="right num">~7,792.5</td>
+              <td><span class="chip">Scheduled</span></td>
+              <td>—</td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>06 Feb 14:05</td>
+              <td><span class="inv-cell"><span class="inv-avatar">TA</span><span class="inv-meta"><div class="inv-name">Tomoko Arai</div><div class="inv-sub">INV-0145 · Individual</div></span></span></td>
+              <td><span class="class-tag">A</span>Class A · AUD</td>
+              <td><span class="chip chip-positive">Subscribe</span></td>
+              <td class="right strong num pos">+$40,000</td>
+              <td class="right num">~1,106.9</td>
+              <td><span class="chip">Scheduled</span></td>
+              <td>Shaw</td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>05 Feb 12:20</td>
+              <td><span class="inv-cell"><span class="inv-avatar">DH</span><span class="inv-meta"><div class="inv-name">Daniel Hartley</div><div class="inv-sub">INV-0301 · Individual</div></span></span></td>
+              <td><span class="class-tag">C</span>Class C · AUD</td>
+              <td><span class="chip chip-negative">Redeem</span></td>
+              <td class="right strong num neg">−$60,000</td>
+              <td class="right num">~1,547.7</td>
+              <td><span class="chip">Scheduled</span></td>
+              <td>—</td>
+              <td class="right">→</td>
+            </tr>
+
+            <!-- Mon 22 Feb -->
+            <tr>
+              <td colspan="9" style="padding:0;">
+                <div class="group-dealing"><span class="group-dealing-pill" style="background:var(--bg-elevated); color:var(--text-color-primary);">Mon 22 Feb 16:00 UTC</span><span class="group-dealing-meta">Cutoff 14:00 · 9 orders · net +$1,190K</span><span class="group-dealing-bar"></span></div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>07 Feb 16:02</td>
+              <td><span class="inv-cell"><span class="inv-avatar">NF</span><span class="inv-meta"><div class="inv-name">Northfield Endowment</div><div class="inv-sub">INV-0012 · Institutional</div></span></span></td>
+              <td><span class="class-tag">D</span>Class D · USD</td>
+              <td><span class="chip chip-positive">Subscribe</span></td>
+              <td class="right strong num pos">+$1,000,000</td>
+              <td class="right num">~17,346.0</td>
+              <td><span class="chip">Scheduled</span></td>
+              <td>—</td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>06 Feb 11:44</td>
+              <td><span class="inv-cell"><span class="inv-avatar">PB</span><span class="inv-meta"><div class="inv-name">Priya Banerjee</div><div class="inv-sub">INV-0256 · Individual</div></span></span></td>
+              <td><span class="class-tag">A</span>Class A · AUD</td>
+              <td><span class="chip chip-positive">Subscribe</span></td>
+              <td class="right strong num pos">+$75,000</td>
+              <td class="right num">~2,075.0</td>
+              <td><span class="chip">Scheduled</span></td>
+              <td>Morgans</td>
+              <td class="right">→</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pagination">
+          <div>Showing 14 of 48 orders · filtered by next 30 days</div>
+          <div class="page-ctrls">
+            <button>‹</button>
+            <button class="active">1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </main>
+  </div>
+</div>
+<script src="./elysium-chrome.js" defer></script>
+</body>
+</html>

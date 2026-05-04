@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Share Register · Layout proposal</title>
+<style>
+  :root {
+    --bg-canvas: #FFFFFF;
+    --bg-surface: #FAF9F7;
+    --bg-card: #FFFFFF;
+    --bg-subtle: #EAEFEC;
+    --ink-1: #0E0F12;
+    --ink-2: #4F5258;
+    --ink-3: #82858B;
+    --line-1: #E4E3DE;
+    --line-2: #D2D1CB;
+    --accent: #1d7d59;
+    --accent-2: #29b07d;
+    --accent-3: #45d59b;
+    --accent-on: #FFFFFF;
+    --green-50: rgba(69,213,155,0.08);
+    --pos: #1d7d59;
+    --neg: #e13733;
+    --warn: #E08A42;
+    --warn-bg: #FFF2E8;
+    --glass-bg: rgba(0,0,0,0.03);
+
+    /* segment colour scale: dark → light */
+    --seg-1: #1d7d59;
+    --seg-2: #4ea585;
+    --seg-3: #82c4ab;
+    --seg-4: #b6dccc;
+    --seg-5: #d8ebde;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg-canvas);
+    color: var(--ink-1);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 13px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 1500px; margin: 0 auto; padding: 48px 40px 80px; }
+
+  .page-head { margin-bottom: 40px; }
+  .page-head h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 6px; }
+  .page-head p { font-size: 13px; color: var(--ink-2); margin: 0; max-width: 720px; }
+
+  .sub-title {
+    font-size: 18px; font-weight: 600; letter-spacing: -0.005em;
+    margin: 0 0 4px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sub-desc { font-size: 13px; color: var(--ink-2); margin: 0 0 20px; }
+
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .pill.warn { background: var(--warn-bg); color: var(--warn); }
+
+  /* ===== Layout: split row (Duration / Holding) ===== */
+  .split-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 56px;
+  }
+  .panel { /* a section block */ }
+
+  /* ===== Donut chart (portfolio-composition style) ===== */
+  .donut-block {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 28px;
+    align-items: center;
+  }
+  .donut-wrap {
+    position: relative;
+    width: 320px; height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .donut-wrap svg { overflow: visible; position: absolute; inset: 0; }
+  .donut-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    pointer-events: none;
+  }
+  .donut-center .top { font-size: 11.5px; color: var(--ink-3); font-weight: 500; }
+  .donut-center .num { font-size: 32px; font-weight: 500; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; margin-top: 2px; }
+  .donut-center .sub { font-size: 12px; color: var(--ink-3); margin-top: 4px; }
+
+  .donut-legend { display: flex; flex-direction: column; gap: 10px; }
+  .donut-legend .row {
+    display: grid;
+    grid-template-columns: 8px 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+  .donut-legend .row i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .donut-legend .row .l { color: var(--ink-1); font-size: 15px; font-weight: 500; }
+  .donut-legend .row .v { font-size: 15px; font-weight: 600; letter-spacing: -0.005em; font-variant-numeric: tabular-nums; color: var(--ink-1); }
+
+  /* ===== Horizontal bars (Holding period) ===== */
+  .hbars {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+  }
+  .hbar-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 60px;
+    gap: 20px;
+    align-items: center;
+    font-variant-numeric: tabular-nums;
+    padding: 6px 0;
+    cursor: default;
+  }
+  .hbar-label { color: var(--ink-1); font-size: 15px; font-weight: 500; }
+
+  .hbar-track-wrap {
+    position: relative;
+  }
+  .hbar-track {
+    position: relative;
+    height: 16px;
+    background: var(--bg-subtle);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .hbar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 5px;
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.18s;
+  }
+  .hbar-row:hover .hbar-fill { filter: brightness(1.08); }
+
+  .hbar-pct {
+    color: var(--ink-1);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  /* Tooltip on hover */
+  .hbar-tooltip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 0;
+    background: var(--ink-1);
+    color: var(--bg-canvas);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s, transform 0.18s;
+    transform: translateY(4px);
+    z-index: 10;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+  .hbar-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%; left: 16px;
+    width: 0; height: 0;
+    border: 5px solid transparent;
+    border-top-color: var(--ink-1);
+  }
+  .hbar-tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+  }
+  .hbar-tooltip-row + .hbar-tooltip-row { margin-top: 4px; }
+  .hbar-tooltip-label { color: rgba(255,255,255,0.65); }
+  .hbar-tooltip-val { color: #fff; font-variant-numeric: tabular-nums; }
+  .hbar-row:hover .hbar-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Axis ticks */
+  .hbar-axis {
+    display: grid;
+    grid-template-columns: 80px 1fr 60px;
+    gap: 20px;
+    margin-top: 4px;
+  }
+  .hbar-axis-track {
+    position: relative;
+    height: 14px;
+    font-size: 10.5px;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .hbar-axis-track > span {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+  }
+  .hbar-axis-track > span:first-child { transform: translateX(0); }
+  .hbar-axis-track > span:last-child { transform: translateX(-100%); }
+
+  /* segmented control */
+  .seg {
+    display: inline-flex;
+    padding: 3px;
+    background: var(--bg-subtle);
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  .seg button {
+    border: none; cursor: pointer;
+    padding: 6px 14px; border-radius: 6px;
+    font-size: 12px; font-weight: 500;
+    background: transparent; color: var(--ink-2);
+  }
+  .seg button.active {
+    background: var(--bg-canvas); color: var(--ink-1);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  }
+
+  /* ===== Full-width Concentration (horizontal stacked bar) ===== */
+  .full-section {
+    margin-bottom: 56px;
+  }
+  .conc-bar {
+    display: flex;
+    height: 64px;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .conc-bar > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter 0.2s;
+  }
+  .conc-bar > div:hover { filter: brightness(0.96); }
+  .conc-pct {
+    font-size: 16px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.005em;
+  }
+  .conc-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--ink-2);
+  }
+  .conc-legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .conc-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+  /* ===== Results KPI tiles ===== */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  .kpi-tile {
+    background: var(--glass-bg);
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  .kpi-tile.neg {
+    background: color-mix(in oklab, var(--neg) 14%, var(--glass-bg));
+    color: var(--neg);
+  }
+  .kpi-label {
+    font-size: 14px;
+    color: var(--ink-2);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .kpi-tile.neg .kpi-label { color: var(--neg); }
+  .kpi-value {
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* head row helper (title + control) */
+  .head-row {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    gap: 16px; margin-bottom: 8px;
+  }
+  .head-row .titles { min-width: 0; }
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-head">
+    <h1>Share Register · Layout proposal</h1>
+    <p>Duration / Holding split horizontally; Concentration and Results delivered each take the full width below.</p>
+  </div>
+
+  <!-- ============== TOP SPLIT: Duration | Holding ============== -->
+  <div class="split-row">
+
+    <!-- Duration profile (donut, portfolio-composition style) -->
+    <div class="panel">
+      <div class="head-row">
+        <div class="titles">
+          <h2 class="sub-title">Duration profile</h2>
+        </div>
+      </div>
+
+      <div class="donut-block">
+        <div class="donut-wrap">
+          <svg width="320" height="320" viewBox="0 0 200 200">
+            <!-- Duration arcs: Available 24.1, In notice 13.5, Locked 62.4. Each segment offset by 1° gap each side.
+                 Start angle = -90 (top). r = 78. Stroke width = 14. -->
+            <!-- Available 24.1% : -89° to -3.74° -->
+            <path d="M 101.36 22.01 A 78 78 0 0 1 177.84 94.91"
+                  fill="none" stroke="#1d7d59" stroke-width="14" stroke-linecap="butt"/>
+            <!-- In notice 13.5% : -2.74° to 44.86° -->
+            <path d="M 177.91 96.27 A 78 78 0 0 1 155.31 155.04"
+                  fill="none" stroke="#82c4ab" stroke-width="14" stroke-linecap="butt"/>
+            <!-- Locked 62.4% : 45.86° to 269.5° -->
+            <path d="M 154.30 155.99 A 78 78 0 1 1 99.32 22.00"
+                  fill="none" stroke="#d8ebde" stroke-width="14" stroke-linecap="butt"/>
+          </svg>
+          <div class="donut-center">
+            <div class="top">Total AUM</div>
+            <div class="num">$150.81M</div>
+            <div class="sub">3 tiers · 1 fund</div>
+          </div>
+        </div>
+
+        <div class="donut-legend">
+          <div class="row">
+            <i style="background:#1d7d59"></i>
+            <span class="l">Available</span>
+            <span class="v">24.1%</span>
+          </div>
+          <div class="row">
+            <i style="background:#82c4ab"></i>
+            <span class="l">In notice</span>
+            <span class="v">13.5%</span>
+          </div>
+          <div class="row">
+            <i style="background:#d8ebde"></i>
+            <span class="l">Locked</span>
+            <span class="v">62.4%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Holding period (horizontal bars, % inside bar) -->
+    <div class="panel">
+      <div class="head-row">
+        <div class="titles">
+          <h2 class="sub-title">Holding period</h2>
+        </div>
+        <div class="seg">
+          <button class="active">By Capital</button>
+          <button>By Investor</button>
+        </div>
+      </div>
+
+      <div class="hbars">
+        <div class="hbar-row">
+          <div class="hbar-label">&lt; 6 m</div>
+          <div class="hbar-track-wrap">
+            <div class="hbar-track">
+              <div class="hbar-fill" style="width:77.75%;"></div>
+            </div>
+            <div class="hbar-tooltip">
+              <div class="hbar-tooltip-row"><span class="hbar-tooltip-label">Capital</span><span class="hbar-tooltip-val">$14.4M</span></div>
+              <div class="hbar-tooltip-row"><span class="hbar-tooltip-label">Investors</span><span class="hbar-tooltip-val">32</span></div>
+              <div class="hbar-tooltip-row"><span class="hbar-tooltip-label">Share</span><span class="hbar-tooltip-val">31.1%</span></div>
+            </div>
+          </div>
+          <div class="hbar-pct">31.1%</div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">6–12 m</div>
+          <div class="hbar-track-wrap">
+            <div class="hbar-track">
+              <div class="hbar-fill" style="width:62%;"></div>
+            </div>
+            <div class="hbar-tooltip">
+              <div class="hbar-tooltip-row"><span class="hbar-tooltip-label">Capital</span><span class="hbar-tooltip-val">$11.5M</span></div>
+              <div class="hbar-tooltip-row"><span class="hbar-tooltip-label">Investors</span><span class="hbar-tooltip-val">18</span></div>
+              <div class="hbar-tooltip-row"><span class="hbar-tooltip-label">Share</span><span class="hbar-tooltip-val">24.8%</span></div>
+            </div>
+          </div>
+          <div class="hbar-pct">24.8%</div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">1–2 y</div>
+          <div class="hbar-track-wrap">
+            <div class="hbar-track">
+              <div class="hbar-fill" style="width:72.25%;"></div>
+            </div>
+            <div class="hbar-tooltip">
+              <div class="hbar-tooltip-row"><span class="hbar-tooltip-label">Capital</span><span class="hbar-tooltip-val">$13.4M</span></div>
+              <div class="hbar-tooltip-row"><span class="hbar-tooltip-label">Investors</span><span class="hbar-tooltip-val">19</span></div>
+              <div class="hbar-tooltip-row"><span class="hbar-tooltip-label">Share</span><span class="hbar-tooltip-val">28.9%</span></div>
+            </div>
+          </div>
+          <div class="hbar-pct">28.9%</div>
+        </div>
+        <div class="hbar-row">
+          <div class="hbar-label">2 y +</div>
+          <div class="hbar-track-wrap">
+            <div class="hbar-track">
+              <div class="hbar-fill" style="width:38%;"></div>
+            </div>
+            <div class="hbar-tooltip">
+              <div class="hbar-tooltip-row"><span class="hbar-tooltip-label">Capital</span><span class="hbar-tooltip-val">$7.0M</span></div>
+              <div class="hbar-tooltip-row"><span class="hbar-tooltip-label">Investors</span><span class="hbar-tooltip-val">14</span></div>
+              <div class="hbar-tooltip-row"><span class="hbar-tooltip-label">Share</span><span class="hbar-tooltip-val">15.2%</span></div>
+            </div>
+          </div>
+          <div class="hbar-pct">15.2%</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============== Concentration (full width) ============== -->
+  <div class="full-section">
+    <div class="head-row" style="margin-bottom:20px;">
+      <div class="titles">
+        <h2 class="sub-title">Concentration <span class="pill warn">Moderate concentration</span></h2>
+      </div>
+    </div>
+
+    <div class="conc-bar">
+      <div style="flex:29; background:#4e9c79;"><span class="conc-pct" style="color:#fff;">29%</span></div>
+      <div style="flex:19; background:#85b89d;"><span class="conc-pct" style="color:#fff;">19%</span></div>
+      <div style="flex:22; background:#a9cdb6;"><span class="conc-pct" style="color:#0E0F12;">22%</span></div>
+      <div style="flex:30; background:#cee3d2;"><span class="conc-pct" style="color:#0E0F12;">30%</span></div>
+    </div>
+    <div class="conc-legend">
+      <span><i style="background:#4e9c79"></i>Top 5 · 29%</span>
+      <span><i style="background:#85b89d"></i>Next 5 (6–10) · 19%</span>
+      <span><i style="background:#a9cdb6"></i>Next 10 (11–20) · 22%</span>
+      <span><i style="background:#cee3d2"></i>Remaining 115 · 30%</span>
+    </div>
+  </div>
+
+  <!-- ============== Results delivered (full width) ============== -->
+  <div class="full-section">
+    <div class="head-row" style="margin-bottom:20px;">
+      <div class="titles">
+        <h2 class="sub-title">Results delivered for investors</h2>
+      </div>
+      <div class="seg">
+        <button class="active">By Book</button>
+        <button>By Dealings</button>
+      </div>
+    </div>
+
+    <div class="results-grid">
+      <div class="kpi-tile neg">
+        <div class="kpi-label">&lt; 0% return</div>
+        <div class="kpi-value">4%</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-label">0–10% return</div>
+        <div class="kpi-value">22%</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-label">10–25% return</div>
+        <div class="kpi-value">41%</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-label">25–50% return</div>
+        <div class="kpi-value">26%</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-label">&gt; 50% return</div>
+        <div class="kpi-value">7%</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

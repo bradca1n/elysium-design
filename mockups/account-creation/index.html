@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Manager OS — Account Creation · POD</title>
+<meta name="viewport" content="width=1440">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tiempos+Headline:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<style>
+  :root {
+    --bg-canvas: #FBFBF9;
+    --bg-surface: #F4F2EC;
+    --bg-card: #FFFFFF;
+    --bg-subtle: #EFEDE7;
+    --bg-brand: #1C1A17;
+    --ink-1: #14130F;
+    --ink-2: #4F4D47;
+    --ink-3: #8C8A82;
+    --line-1: #E6E3DC;
+    --line-2: #D5D1C7;
+    --accent: #2E5F3A;
+    --accent-soft: rgba(46,95,58,0.10);
+    --accent-on: #FFFFFF;
+    --pos: #2E5F3A;
+    --neg: #A14133;
+    --warn: #B5781E;
+    --on-brand: #F5F2EA;
+    --on-brand-2: #B6B0A2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-canvas);
+    color: var(--ink-1);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font-family: inherit; cursor: pointer; }
+  input, select { font-family: inherit; outline: none; }
+  input::placeholder { color: var(--ink-3); }
+
+  @keyframes pageRise {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  [data-page] { animation: pageRise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+  /* Tweaks panel */
+  .tweaks-panel {
+    position: fixed; bottom: 20px; right: 20px; width: 280px;
+    background: var(--bg-card); border: 1px solid var(--line-1);
+    border-radius: 12px; box-shadow: 0 16px 40px rgba(0,0,0,0.14);
+    padding: 14px 14px 12px; z-index: 90; font-size: 12.5px;
+  }
+  .tweaks-panel h4 { margin: 0 0 10px; font-size: 12px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; color: var(--ink-2); }
+  .tweaks-panel .row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
+  .tweaks-panel label { color: var(--ink-2); }
+  .tweak-select { height: 28px; border-radius: 6px; border: 1px solid var(--line-2); background: var(--bg-card); color: var(--ink-1); padding: 0 8px; font-size: 12px; max-width: 160px; }
+
+  /* Comments thread */
+  .comments { max-width: 1200px; margin: 0 auto; padding: 48px 40px 96px; border-top: 1px solid var(--line-1); background: var(--bg-canvas); font-family: 'Inter', sans-serif; }
+  .comments h2 { font-size: 22px; font-weight: 600; margin: 0 0 6px; color: var(--ink-1); letter-spacing: -0.01em; }
+  .comments .comments-sub { font-size: 13px; color: var(--ink-2); margin-bottom: 28px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<div class="comments">
+  <h2>Comments</h2>
+  <div class="comments-sub">Sign in with GitHub to leave feedback on this design.</div>
+  <script src="https://giscus.app/client.js"
+          data-repo="bradca1n/elysium-design"
+          data-repo-id="R_kgDORi_KEA"
+          data-category="General"
+          data-category-id="DIC_kwDORi_KEM4C7aes"
+          data-mapping="specific"
+          data-term="bradca1n/elysium-design/main/mockups/account-creation/index"
+          data-strict="0"
+          data-reactions-enabled="1"
+          data-emit-metadata="0"
+          data-input-position="top"
+          data-theme="preferred_color_scheme"
+          data-lang="en"
+          crossorigin="anonymous"
+          async>
+  </script>
+</div>
+
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel" src="views-account.jsx"></script>
+<script type="text/babel" src="views-org.jsx"></script>
+
+<script type="text/babel">
+const ROUTES = [
+  { v: 'ac1',       l: 'AC1 — Sign up' },
+  { v: 'ac1-email', l: 'AC1 — Sign up email' },
+  { v: 'ac2',       l: 'AC2 — Verify email' },
+  { v: 'ac4',       l: 'AC4 — Secure with phone' },
+  { v: 'ac5',       l: 'AC5 — Verify phone' },
+  { v: 'ao1',       l: 'AO01 — Create or join' },
+  { v: 'a05',       l: 'A05 — Tell us' },
+  { v: 'a06',       l: 'A06 — Registered address' },
+  { v: 'a07',       l: 'A07 — Admin role' },
+  { v: 'j01',       l: 'J01 — Find org' },
+  { v: 'j02',       l: 'J02 — Matching workspaces' },
+  { v: 'j03',       l: 'J03 — Request sent' },
+  { v: 'ao2',       l: 'AO02 — Accept invite' },
+  { v: 'ao3',       l: 'AO03 — MFA method' },
+  { v: 'ao4',       l: 'AO04 — Invite team' },
+];
+
+function App() {
+  const [route, setRoute] = React.useState(() => localStorage.getItem('mos.account-creation.route') || 'ac1');
+  const [showTweaks, setShowTweaks] = React.useState(false);
+
+  React.useEffect(() => { localStorage.setItem('mos.account-creation.route', route); }, [route]);
+
+  // Tweaks toggle: cmd+. or ctrl+.
+  React.useEffect(() => {
+    const onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === '.') {
+        e.preventDefault();
+        setShowTweaks(s => !s);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  const views = {
+    'ac1':       AC1View,
+    'ac1-email': AC1EmailView,
+    'ac2':       AC2View,
+    'ac4':       AC4View,
+    'ac5':       AC5View,
+    'ao1':       AO01View,
+    'a05':       A05View,
+    'a06':       A06View,
+    'a07':       A07View,
+    'j01':       J01View,
+    'j02':       J02View,
+    'j03':       J03View,
+    'ao2':       AO02View,
+    'ao3':       AO03View,
+    'ao4':       AO04View,
+  };
+  const View = views[route] || AC1View;
+
+  return (
+    <div style={{minHeight:'100vh',background:'var(--bg-canvas)'}}>
+      <div key={route}><View onNav={setRoute}/></div>
+      {showTweaks && (
+        <div className="tweaks-panel">
+          <h4>Jump to
+            <button onClick={()=>setShowTweaks(false)} style={{background:'transparent',border:'none',color:'var(--ink-3)',cursor:'pointer',fontSize:16,padding:0,lineHeight:1}}>×</button>
+          </h4>
+          <div className="row">
+            <label>Screen</label>
+            <select className="tweak-select" value={route} onChange={e=>setRoute(e.target.value)}>
+              {ROUTES.map(r => <option key={r.v} value={r.v}>{r.l}</option>)}
+            </select>
+          </div>
+          <div style={{fontSize:11,color:'var(--ink-3)',marginTop:8,paddingTop:8,borderTop:'1px solid var(--line-1)'}}>⌘. to toggle</div>
+        </div>
+      )}
+      {!showTweaks && (
+        <button onClick={()=>setShowTweaks(true)} title="Open route picker (⌘.)" style={{
+          position:'fixed',bottom:20,right:20,zIndex:80,
+          width:36,height:36,borderRadius:18,
+          border:'1px solid var(--line-2)',background:'var(--bg-card)',
+          display:'inline-flex',alignItems:'center',justifyContent:'center',
+          color:'var(--ink-2)',fontSize:14,fontWeight:500,
+          boxShadow:'0 4px 12px rgba(0,0,0,0.06)',
+        }}>⌘</button>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

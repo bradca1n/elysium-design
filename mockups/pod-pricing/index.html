@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POD — Pricing & Fee Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-canvas: #FFFFFF;
+    --bg-glass: #FAF9F7;
+    --bg-card: #FFFFFF;
+    --bg-subtle: #EAEFEC;
+    --ink-1: #0E0F12;
+    --ink-2: #4F5258;
+    --ink-3: #82858B;
+    --line-1: #E4E3DE;
+    --line-2: #D2D1CB;
+    --accent: #45d59b;
+    --accent-soft: rgba(69,213,155,0.16);
+    --accent-on: #FFFFFF;
+    --accent-grad: linear-gradient(135deg,#5edaa6,#45d59b);
+    --green-300: #82e0b9;
+    --green-400: #5edaa6;
+    --green-500: #45d59b;
+    --green-600: #29b07d;
+    --green-700: #1d7d59;
+    --pos: #45d59b;
+    --neg: #e13733;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-canvas);
+    color: var(--ink-1);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    padding: 48px 16px 96px;
+  }
+  .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum", "ss01"; }
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  /* Pill segmented toggle */
+  .seg-toggle {
+    display: inline-flex;
+    background: var(--bg-glass);
+    border-radius: 999px;
+    padding: 5px;
+    gap: 0;
+  }
+  .seg-btn {
+    border: none;
+    background: transparent;
+    padding: 10px 22px;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink-2);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+    font-family: inherit;
+  }
+  .seg-btn:hover:not(.active) { color: var(--ink-1); }
+  .seg-btn.active {
+    background: var(--bg-card);
+    color: var(--ink-1);
+    box-shadow: 0 1px 2px rgba(14,15,18,0.06), 0 0 0 0.5px rgba(14,15,18,0.04);
+  }
+
+  /* Section blocks — flowing content on white, no card chrome */
+  .card {
+    background: transparent;
+    margin-bottom: 56px;
+  }
+  .card-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 44px;
+    margin-bottom: 48px;
+  }
+  .card-header h1 {
+    font-size: 40px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    color: var(--ink-1);
+  }
+  .pod-logo {
+    height: 28px;
+    width: auto;
+    flex-shrink: 0;
+    display: block;
+  }
+  .card-body { padding: 0; }
+
+  /* Section labels — sentence case, weight-driven hierarchy */
+  .section-label {
+    font-size: 16px;
+    color: var(--ink-1);
+    font-weight: 600;
+    margin: 24px 0 12px;
+    letter-spacing: -0.01em;
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  /* Form fields */
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label {
+    font-size: 12px;
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+  .field .hint { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+  .iw { position: relative; }
+  .iw .sym {
+    position: absolute;
+    font-size: 12px;
+    color: var(--ink-3);
+    pointer-events: none;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .iw .sym.l { left: 12px; }
+  .iw .sym.r { right: 12px; }
+  .iw input {
+    width: 100%;
+    height: 38px;
+    border: 1px solid var(--line-1);
+    border-radius: 6px;
+    background: var(--bg-canvas);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-1);
+    font-variant-numeric: tabular-nums;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .iw input:focus { border-color: var(--ink-1); box-shadow: 0 0 0 3px var(--bg-glass); }
+  .iw.sl input { padding: 0 12px 0 24px; }
+  .iw.sr input { padding: 0 28px 0 12px; }
+
+  /* Dividers */
+  .divider { border: none; border-top: 1px solid var(--line-1); margin: 24px 0; }
+
+  /* Section headings — subtle divider above, 100px total gap */
+  h2 {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    color: var(--ink-1);
+    margin: 50px 0 36px;
+    padding-top: 29px;
+    border-top: 1px solid var(--line-1);
+  }
+  h2:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+  h2.spaced { margin-bottom: 40px; }
+
+  /* Centered pill toggle wrapper with ample vertical breathing room */
+  .toggle-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 32px 0 40px;
+  }
+
+  /* Calculator pane — bordered container matching the tier cards */
+  #calc-pane {
+    background: var(--bg-card);
+    border: 1px solid var(--line-1);
+    border-radius: 14px;
+    padding: 28px;
+  }
+  #calc-pane > .section-label:first-child { margin-top: 0; }
+
+  /* Results title */
+  .results-title {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink-1);
+    margin-bottom: 16px;
+  }
+
+  /* Stacked bar chart */
+  .bar-chart { margin-bottom: 24px; }
+  .bar-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  .dc-lbl {
+    font-size: 13px;
+    color: var(--ink-3);
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .dc-num {
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--ink-1);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    font-variant-numeric: tabular-nums;
+    transition: color 0.2s;
+  }
+  .dc-sub {
+    font-size: 13px;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+    transition: color 0.2s;
+  }
+  .bar-track {
+    display: flex;
+    height: 32px;
+    gap: 2px;
+    border-radius: 6px;
+    background: var(--bg-card);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .bar-seg {
+    height: 100%;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    min-width: 6px;
+  }
+  .legend { display: flex; flex-direction: column; gap: 14px; flex: 1; min-width: 0; }
+  .leg {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .leg.dim { opacity: 0.35; }
+  .leg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; margin-top: 4px; }
+  .leg-name { font-size: 13px; color: var(--ink-1); font-weight: 500; }
+  .leg-val { font-size: 12px; color: var(--ink-3); margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+  /* KPI / stat tiles — hairline border, optional accent highlight */
+  .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .stat {
+    background: var(--bg-card);
+    border: 1px solid var(--line-1);
+    border-radius: 10px;
+    padding: 14px 16px;
+    position: relative;
+  }
+  .stat.accent {
+    background: var(--accent-soft);
+    border-color: transparent;
+  }
+  .stat-lbl {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-3);
+    margin-bottom: 12px;
+  }
+  .stat.accent .stat-lbl { color: var(--accent); }
+  .stat-val {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--ink-1);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat.accent .stat-val { color: var(--accent); }
+
+  /* Breakdown rows */
+  .bk {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin-bottom: 16px;
+  }
+  .br { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 14px; }
+  .br-k { color: var(--ink-2); }
+  .br-v { font-weight: 500; color: var(--ink-1); font-variant-numeric: tabular-nums; }
+  .br-v.g { color: var(--accent); font-weight: 600; }
+  .br-v.n { color: var(--ink-1); }
+  .br-v.p { color: var(--ink-2); }
+
+  /* Tier breakdown table — borderless container, internal hairlines retained */
+  .table-wrap { margin-bottom: 16px; }
+  .tier-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .tier-table th {
+    font-size: 11.5px;
+    color: var(--ink-3);
+    font-weight: 500;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--line-1);
+    background: var(--bg-glass);
+  }
+  .tier-table th:last-child { text-align: right; }
+  .tier-table td {
+    padding: 10px 14px;
+    color: var(--ink-1);
+    border-bottom: 1px solid var(--line-1);
+  }
+  .tier-table td:last-child {
+    text-align: right;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .tier-table td:nth-child(2) {
+    color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .tier-table tbody tr:last-child td { border-bottom: 1px solid var(--line-1); }
+  .tier-table .total-row td {
+    background: var(--bg-glass);
+    font-weight: 600;
+    color: var(--ink-1);
+    border-bottom: none;
+    border-top: 1px solid var(--line-1);
+  }
+  .tier-rate-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10.5px;
+    font-weight: 600;
+    background: var(--accent-soft);
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .ci-section { display: none; }
+
+  .note {
+    font-size: 11.5px;
+    color: var(--ink-3);
+    line-height: 1.7;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line-1);
+  }
+
+  /* Explainer-specific elements */
+  .explainer-intro {
+    font-size: 19px;
+    color: var(--ink-1);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+  }
+  .explainer-prose {
+    font-size: 14.5px;
+    color: var(--ink-2);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  /* Tier feature cards */
+  .tier-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 20px 0 12px;
+  }
+  .tier-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line-1);
+    border-radius: 14px;
+    padding: 28px 28px 26px;
+    display: flex;
+    flex-direction: column;
+    min-height: 280px;
+  }
+  .tier-card-eyebrow {
+    font-size: 13.5px;
+    color: var(--ink-3);
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+  .tier-card-title {
+    font-size: 36px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    color: var(--ink-1);
+    line-height: 1;
+    margin-bottom: 18px;
+    font-variant-numeric: tabular-nums;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .tier-card-title .unit {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .tier-card-desc {
+    font-size: 14.5px;
+    color: var(--ink-3);
+    line-height: 1.55;
+    margin-bottom: 24px;
+  }
+  .tier-card-meta { margin-top: auto; }
+  .tier-card-meta-lbl {
+    font-size: 13.5px;
+    font-weight: 400;
+    color: var(--ink-3);
+    margin-bottom: 6px;
+  }
+  .tier-card-meta-val {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-1);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ci-explainer {
+    background: transparent;
+    padding: 0;
+    margin: 16px 0;
+  }
+  .ci-explainer-title {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ink-1);
+    margin-bottom: 8px;
+  }
+  .ci-explainer-body { font-size: 14.5px; color: var(--ink-2); line-height: 1.7; }
+  .ci-explainer-body strong { color: var(--ink-1); font-weight: 600; }
+
+  .third-party {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 16px 0;
+  }
+  .third-party-title {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ink-1);
+    margin-bottom: 8px;
+  }
+
+  .check-list { list-style: none; padding: 0; margin: 8px 0 0; }
+  .check-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14.5px;
+    color: var(--ink-2);
+    padding: 6px 0;
+    line-height: 1.65;
+  }
+  .check-list li::before {
+    content: '';
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    background: var(--accent-soft);
+    flex-shrink: 0;
+    margin-top: 4px;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 7.5l2.5 2.5L11 4.5' stroke='%2345d59b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- EXPLAINER CARD -->
+  <div class="card">
+    <div class="card-header">
+      <img class="pod-logo" src="pod-logo.svg" alt="POD">
+      <h1>How our pricing works</h1>
+    </div>
+    <div class="card-body">
+
+      <p class="explainer-intro">No upfront fees, no fixed fees, no minimum fees.<br>You only pay POD as you earn. We win when you win.</p>
+
+      <p class="explainer-prose">POD charges a percentage of gross manager fees — management fee plus performance fee. This percentage reduces as your AUM grows.</p>
+
+      <h2 class="spaced">Setup costs</h2>
+      <p class="explainer-prose">Pay only legal &amp; registration fees (approx $7k, passed through at cost by POD). After that, you face no further fixed fees, and are charged only via POD's fee sharing structure.</p>
+
+      <h2>Base fee structure</h2>
+
+      <p class="explainer-prose">Our base fee is a percentage of your fund's total gross manager fees, applied progressively across AUM tiers. The more AUM you manage, the lower our blended take rate.</p>
+
+      <div class="toggle-wrap">
+        <div class="seg-toggle" id="fee-toggle" role="tablist">
+          <button class="seg-btn active" data-target="tier" type="button">Tier overview</button>
+          <button class="seg-btn" data-target="calc" type="button">Fee calculator</button>
+        </div>
+      </div>
+
+      <div id="tier-pane">
+      <div class="tier-grid">
+        <div class="tier-card">
+          <div class="tier-card-eyebrow">Launch stage</div>
+          <div class="tier-card-title">$0-10M<span class="unit">AUM</span></div>
+          <div class="tier-card-desc">POD's highest take rate, applied while your fund is finding its footing.</div>
+          <div class="tier-card-meta">
+            <div class="tier-card-meta-lbl">Take rate</div>
+            <div class="tier-card-meta-val">25% of gross fees</div>
+          </div>
+        </div>
+        <div class="tier-card">
+          <div class="tier-card-eyebrow">Early growth</div>
+          <div class="tier-card-title">$10-25M<span class="unit">AUM</span></div>
+          <div class="tier-card-desc">A reduced rate as your fund builds traction past its first decade of AUM.</div>
+          <div class="tier-card-meta">
+            <div class="tier-card-meta-lbl">Take rate</div>
+            <div class="tier-card-meta-val">20% of gross fees</div>
+          </div>
+        </div>
+        <div class="tier-card">
+          <div class="tier-card-eyebrow">Scaling</div>
+          <div class="tier-card-title">$25-75M<span class="unit">AUM</span></div>
+          <div class="tier-card-desc">A further reduction across mid-market AUM as you approach institutional scale.</div>
+          <div class="tier-card-meta">
+            <div class="tier-card-meta-lbl">Take rate</div>
+            <div class="tier-card-meta-val">15% of gross fees</div>
+          </div>
+        </div>
+        <div class="tier-card">
+          <div class="tier-card-eyebrow">Institutional</div>
+          <div class="tier-card-title">$75M+<span class="unit">AUM</span></div>
+          <div class="tier-card-desc">POD's lowest take rate, applied to all AUM above seventy-five million.</div>
+          <div class="tier-card-meta">
+            <div class="tier-card-meta-lbl">Take rate</div>
+            <div class="tier-card-meta-val">10% of gross fees</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="explainer-prose" style="font-size:12px;color:var(--ink-3);margin-top:12px">Tiers are applied progressively, like income tax brackets. A $30m fund pays 25% on the first $10m of fees, 20% on the next $15m, and 15% on the final $5m, resulting in a blended rate between 15% and 20%.</p>
+      </div><!-- /tier-pane -->
+
+      <div id="calc-pane" hidden>
+
+        <div class="section-label">Fund details</div>
+        <div class="row">
+          <div class="field">
+            <label>Total AUM (M)</label>
+            <div class="iw sl"><span class="sym l">$</span><input type="number" id="aum" value="10" min="0" step="1"></div>
+          </div>
+          <div class="field">
+            <label>Expected Annual Return</label>
+            <div class="iw sr"><span class="sym r">%</span><input type="number" id="ret" value="20" min="0" max="500" step="1"></div>
+            <span class="hint">net of mgmt fee, on AUM</span>
+          </div>
+        </div>
+
+        <div class="section-label">Your fee structure</div>
+        <div class="row">
+          <div class="field">
+            <label>Management fee</label>
+            <div class="iw sr"><span class="sym r">%</span><input type="number" id="mgmt" value="2" min="0" max="10" step="0.1"></div>
+          </div>
+          <div class="field">
+            <label>Performance fee</label>
+            <div class="iw sr"><span class="sym r">%</span><input type="number" id="perf" value="20" min="0" max="50" step="1"></div>
+          </div>
+        </div>
+
+        <div class="section-label">Capital introduction</div>
+        <div style="max-width:280px">
+          <div class="field">
+            <label>Cap Intro AUM (M)</label>
+            <div class="iw sl"><span class="sym l">$</span><input type="number" id="ci" value="0" min="0" step="1"></div>
+            <span class="hint">capital coming from POD's Discover platform</span>
+          </div>
+        </div>
+
+        <hr class="divider">
+        <div class="results-title">Fee Income Distribution</div>
+
+        <div class="bar-chart">
+          <div class="bar-header">
+            <div class="dc-lbl" id="dc-lbl">Your fee share</div>
+            <div class="dc-num" id="dc-pct">-</div>
+            <div class="dc-sub" id="dc-sub">of gross fees</div>
+          </div>
+          <div class="bar-track" id="bar"></div>
+          <div class="legend" id="legend">
+            <div class="leg" data-key="keep"><div class="leg-dot" style="background:#45d59b"></div><div><div class="leg-name">Your net fee income</div><div class="leg-val" id="lg-keep">-</div></div></div>
+            <div class="leg" data-key="base"><div class="leg-dot" style="background:#0E0F12"></div><div><div class="leg-name">POD base take</div><div class="leg-val" id="lg-base">-</div></div></div>
+            <div class="leg" data-key="ci" id="lg-ci-row"><div class="leg-dot" style="background:#82858B"></div><div><div class="leg-name">POD cap intro take</div><div class="leg-val" id="lg-ci">-</div></div></div>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat">
+            <div class="stat-lbl">Gross Fees</div>
+            <div class="stat-val" id="s-gross">-</div>
+          </div>
+          <div class="stat accent">
+            <div class="stat-lbl">Your Net Fee Income</div>
+            <div class="stat-val" id="s-keep">-</div>
+          </div>
+        </div>
+
+        <div class="bk">
+          <div class="br"><span class="br-k">Management fee income</span><span class="br-v" id="b-mgmt">-</span></div>
+          <div class="br"><span class="br-k">Performance fee income</span><span class="br-v" id="b-perf">-</span></div>
+          <div class="br"><span class="br-k">Total gross fees</span><span class="br-v n" id="b-gross">-</span></div>
+          <div class="br"><span class="br-k">POD base take</span><span class="br-v p" id="b-base">-</span></div>
+          <div class="br" id="b-ci-row"><span class="br-k">POD cap intro take</span><span class="br-v p" id="b-ci">-</span></div>
+          <div class="br"><span class="br-k" style="font-weight:600;color:var(--ink-1)">Your Net Fee Income</span><span class="br-v g" id="b-keep">-</span></div>
+        </div>
+
+        <div class="section-label">AUM tier breakdown</div>
+        <div class="table-wrap">
+          <table class="tier-table">
+            <thead>
+              <tr>
+                <th>Tier</th>
+                <th>AUM in tier</th>
+                <th>Take rate</th>
+                <th>POD fee</th>
+              </tr>
+            </thead>
+            <tbody id="tier-tbody"></tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td colspan="2">Blended base rate</td>
+                <td id="tf-blended" colspan="2" style="text-align:right">-</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="ci-section" id="ci-section">
+          <div class="section-label">Cap intro fee breakdown</div>
+          <div class="table-wrap">
+            <table class="tier-table">
+              <thead>
+                <tr>
+                  <th>Cap Intro AUM</th>
+                  <th>% of Total AUM</th>
+                  <th>Additional take rate</th>
+                  <th>POD fee</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td id="ci-t-aum">-</td>
+                  <td id="ci-t-pct">-</td>
+                  <td><span class="tier-rate-pill">20%</span></td>
+                  <td id="ci-t-fees">-</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr class="total-row">
+                  <td colspan="2">Cap intro take</td>
+                  <td id="ci-t-rate" colspan="2" style="text-align:right">-</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <div class="bk">
+          <div class="br"><span class="br-k">Blended POD take rate on gross fees</span><span class="br-v n" id="b-blended">-</span></div>
+        </div>
+
+        <p class="note">POD's fee is charged as a percentage of your total manager fees — no upfront or fixed costs. The blended base rate is calculated progressively across AUM tiers. Cap intro fees (an additional 20% of fees proportional to cap intro AUM) apply only to capital sourced via POD's Discover platform. Leave cap intro AUM at 0 if not applicable. Performance fee is calculated on return net of management fee.</p>
+
+      </div><!-- /calc-pane -->
+
+      <h2 class="spaced">Capital introduction fee</h2>
+
+      <div class="ci-explainer">
+        <div class="ci-explainer-title">POD Discover · built-in allocator network</div>
+        <div class="ci-explainer-body">POD operates a growing network of allocators who can browse and invest in funds directly through the platform. If capital comes to your fund via POD's Discover platform, an additional fee applies on the fees generated by that capital only.<br><br>
+        <strong>Cap intro fee: 20%</strong> of gross fees attributable to capital introduced via POD Discover. This is charged on top of the base take rate, and only on the portion of your AUM that came through the network. Capital you raise independently is not subject to this fee.</div>
+      </div>
+
+      <h2 class="spaced">Third-party costs</h2>
+
+      <div class="third-party">
+        <div class="third-party-title">What you pay to third parties</div>
+        <ul class="check-list">
+          <li>POD is a licensed Fund Administrator, so no additional third-party fund admin is required. We do not charge any minimum fee for admin services, simply a flat 0.20% on AUM, which you pass through to investors as an expense line item. With all other savings, we expect your investor expense ratio to be well below 1%.</li>
+          <li>Any minimum fees charged by third-party providers (e.g. custodians, banks, auditors) are absorbed by POD at the umbrella level. You never face a third-party minimum fee.</li>
+          <li>Variable costs we do pass through (custody, banking, audit) are charged at wholesale rates negotiated at the umbrella level, significantly cheaper than fees charged to an individual fund.</li>
+          <li>Trading volumes are also merged at the umbrella level, resulting in lower trading fees for managers on the POD platform.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+var tiers = [
+  {label:'$0 – 10m',   min:0,  max:10,   rate:.25},
+  {label:'$10 – 25m',  min:10, max:25,   rate:.20},
+  {label:'$25 – 75m',  min:25, max:75,   rate:.15},
+  {label:'$75m+',      min:75, max:1e12, rate:.10}
+];
+
+var COLORS = {
+  keep:    '#45d59b',
+  base:    '#0E0F12',
+  ci:      '#82858B',
+  empty:   '#E4E3DE'
+};
+
+var currentSegs = [];
+var defaultCenter = { lbl: 'Your fee share', num: '-', sub: 'of gross fees' };
+
+var fmt = function(n){ return '$'+Math.round(n).toLocaleString(); };
+var pct = function(n,d){ return n.toFixed(d===undefined?1:d)+'%'; };
+var g   = function(id){ return document.getElementById(id); };
+
+function calcTiers(aum){
+  var res=[], rem=aum, prev=0;
+  for(var i=0;i<tiers.length;i++){
+    var slice=Math.min(Math.max(tiers[i].max-prev,0),rem);
+    res.push(slice);
+    rem-=slice; prev=tiers[i].max;
+    if(rem<=0) break;
+  }
+  while(res.length<tiers.length) res.push(0);
+  return res;
+}
+
+function resetOutputs(){
+  var ids=['s-gross','s-keep','b-mgmt','b-perf','b-gross','b-base','b-keep','b-blended','lg-keep','lg-base','dc-pct'];
+  ids.forEach(function(id){ var el=g(id); if(el) el.textContent='-'; });
+  g('b-ci-row').style.display='none';
+  g('lg-ci-row').style.display='none';
+  g('ci-section').style.display='none';
+  g('tier-tbody').innerHTML='';
+  g('tf-blended').textContent='-';
+  g('dc-sub').textContent='of gross fees';
+  renderBar([]);
+}
+
+function renderBar(segs){
+  currentSegs = segs;
+  var bar = g('bar');
+  bar.innerHTML = '';
+  if(!segs.length){
+    var empty = document.createElement('div');
+    empty.className = 'bar-seg';
+    empty.style.background = COLORS.empty;
+    empty.style.flex = '1';
+    bar.appendChild(empty);
+    return;
+  }
+  var total = segs.reduce(function(s,x){return s+x.v;}, 0);
+  segs.forEach(function(s){
+    var seg = document.createElement('div');
+    seg.className = 'bar-seg';
+    seg.style.background = s.c;
+    seg.style.flex = (s.v / total).toString();
+    seg.dataset.key = s.k;
+    seg.addEventListener('mouseenter', function(){ setActive(s.k); });
+    seg.addEventListener('mouseleave', function(){ setActive(null); });
+    bar.appendChild(seg);
+  });
+}
+
+function setActive(key){
+  g('bar').querySelectorAll('.bar-seg').forEach(function(seg){
+    if(!seg.dataset.key) return;
+    seg.style.opacity = (key === null || seg.dataset.key === key) ? 1 : 0.3;
+  });
+  document.querySelectorAll('#legend .leg').forEach(function(leg){
+    leg.classList.toggle('dim', key !== null && leg.dataset.key !== key);
+  });
+  var lblEl = g('dc-lbl'), numEl = g('dc-pct'), subEl = g('dc-sub');
+  var s = key ? currentSegs.find(function(x){return x.k === key;}) : null;
+  if(!s){
+    lblEl.textContent = defaultCenter.lbl;
+    numEl.textContent = defaultCenter.num;
+    numEl.style.color = '';
+    subEl.textContent = defaultCenter.sub;
+    return;
+  }
+  var total = currentSegs.reduce(function(a,x){return a+x.v;}, 0);
+  var pctOfTotal = total > 0 ? (s.v/total)*100 : 0;
+  lblEl.textContent = s.l;
+  numEl.textContent = fmt(s.v);
+  numEl.style.color = s.c === COLORS.keep ? COLORS.keep : 'var(--ink-1)';
+  subEl.textContent = pct(pctOfTotal, 0) + ' of total';
+}
+
+function calc(){
+  var aum  = parseFloat(g('aum').value)  || 0;
+  var ret  = parseFloat(g('ret').value)  || 0;
+  var mgmt = parseFloat(g('mgmt').value) || 0;
+  var perf = parseFloat(g('perf').value) || 0;
+  var ci   = Math.min(parseFloat(g('ci').value)||0, aum);
+
+  var aumV = aum*1e6, ciV=ci*1e6;
+  if(aum<=0){ resetOutputs(); return; }
+
+  var mgmtInc = aumV*(mgmt/100);
+  var netRet  = Math.max(ret-mgmt,0);
+  var perfInc = aumV*(netRet/100)*(perf/100);
+  var total   = mgmtInc+perfInc;
+
+  var tierAmts = calcTiers(aum);
+  var podFeePerTier = [];
+  var podBaseTotal  = 0;
+  for(var i=0;i<tiers.length;i++){
+    var feesInSlice = (aum>0 && tierAmts[i]>0) ? total*(tierAmts[i]/aum) : 0;
+    var fee = feesInSlice*tiers[i].rate;
+    podFeePerTier.push(fee);
+    podBaseTotal += fee;
+  }
+
+  var bf      = total>0 ? podBaseTotal/total : 0;
+  var ciFrac  = aum>0 ? ciV/aumV : 0;
+  var podCI   = total*ciFrac*0.20;
+  var podTot  = podBaseTotal+podCI;
+  var keeps   = total-podTot;
+  var blended = total>0 ? (podTot/total)*100 : 0;
+  var keepPF  = total>0 ? (keeps/total)*100 : 0;
+
+  g('s-gross').textContent = fmt(total);
+  g('s-keep').textContent  = fmt(keeps);
+  g('b-mgmt').textContent  = fmt(mgmtInc);
+  g('b-perf').textContent  = fmt(perfInc);
+  g('b-gross').textContent = fmt(total);
+  g('b-base').textContent  = fmt(podBaseTotal);
+  g('b-keep').textContent  = fmt(keeps);
+  g('b-blended').textContent = pct(blended);
+  g('lg-keep').textContent = fmt(keeps);
+  g('lg-base').textContent = fmt(podBaseTotal)+' · '+pct(bf*100)+' blended';
+
+  defaultCenter.lbl = 'Your fee share';
+  defaultCenter.num = Math.round(keepPF)+'%';
+  defaultCenter.sub = fmt(keeps)+' of '+fmt(total);
+  g('dc-lbl').textContent = defaultCenter.lbl;
+  g('dc-pct').textContent = defaultCenter.num;
+  g('dc-pct').style.color = '';
+  g('dc-sub').textContent = defaultCenter.sub;
+
+  var showCI = ci>0;
+  g('b-ci-row').style.display   = showCI?'flex':'none';
+  g('lg-ci-row').style.display  = showCI?'flex':'none';
+  g('ci-section').style.display = showCI?'block':'none';
+  if(showCI){
+    g('b-ci').textContent   = fmt(podCI);
+    g('lg-ci').textContent  = fmt(podCI)+' · 20% of fees related to cap intro AUM';
+    var ciFeesBase = aum>0 ? total*(ci/aum) : 0;
+    g('ci-t-aum').textContent   = '$'+ci.toFixed(1)+'m';
+    g('ci-t-pct').textContent   = aum>0?pct((ci/aum)*100,0):'-';
+    g('ci-t-fees').textContent  = fmt(podCI);
+    g('ci-t-rate').textContent  = '20% × '+fmt(ciFeesBase)+' fees attributable = '+fmt(podCI);
+  }
+
+  var tbody = g('tier-tbody');
+  tbody.innerHTML='';
+  for(var i=0;i<tiers.length;i++){
+    if(tierAmts[i]<=0) continue;
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+tiers[i].label+'</td>'+
+      '<td>$'+tierAmts[i].toFixed(1)+'m</td>'+
+      '<td><span class="tier-rate-pill">'+pct(tiers[i].rate*100,0)+'</span></td>'+
+      '<td>'+fmt(podFeePerTier[i])+'</td>';
+    tbody.appendChild(tr);
+  }
+  g('tf-blended').textContent = pct(bf*100)+' ('+fmt(podBaseTotal)+')';
+
+  var segs=[
+    {k:'keep', v:keeps>0?keeps:0,               c:COLORS.keep, l:'Your net fee income'},
+    {k:'base', v:podBaseTotal>0?podBaseTotal:0, c:COLORS.base, l:'POD base take'},
+    {k:'ci',   v:podCI>0?podCI:0,               c:COLORS.ci,   l:'POD cap intro take'}
+  ].filter(function(s){return s.v>0;});
+  renderBar(segs);
+}
+
+['aum','ret','mgmt','perf','ci'].forEach(function(id){
+  document.getElementById(id).addEventListener('input',calc);
+});
+document.querySelectorAll('#legend .leg').forEach(function(leg){
+  leg.addEventListener('mouseenter', function(){
+    if(currentSegs.some(function(s){return s.k === leg.dataset.key;})) setActive(leg.dataset.key);
+  });
+  leg.addEventListener('mouseleave', function(){ setActive(null); });
+});
+
+document.querySelectorAll('#fee-toggle .seg-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var target = btn.dataset.target;
+    document.querySelectorAll('#fee-toggle .seg-btn').forEach(function(b){
+      b.classList.toggle('active', b === btn);
+    });
+    g('tier-pane').hidden = target !== 'tier';
+    g('calc-pane').hidden = target !== 'calc';
+  });
+});
+
+calc();
+</script>
+</body>
+</html>

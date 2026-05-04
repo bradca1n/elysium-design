@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1728">
+<title>Reconciliation Log — POD Crypto Fund | Elysium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./elysium.css">
+<style>
+:root { --headline-cols: 4; }
+
+/* Local headline-value size override for this page */
+.headline-value { font-size: 22px; line-height: 28px; }
+
+/* Venue cell (in table row) */
+.venue-cell { display: inline-flex; align-items: center; gap: 10px; }
+.venue-icon { width: 24px; height: 24px; border-radius: var(--radius-s); background: var(--bg-surface); display: inline-flex; align-items: center; justify-content: center; color: var(--text-color-primary); font-size: 11px; line-height: 14px; font-weight: 600; }
+
+/* Variance (in table cell) */
+.variance-cell { display: inline-flex; align-items: center; gap: 6px; justify-content: flex-end; }
+.variance-bps { color: var(--text-color-secondary); font-size: 11px; line-height: 14px; }
+
+/* Sign-off avatar stack */
+.mini-avatar { width: 22px; height: 22px; border-radius: 50%; background: #E5E5E5; color: var(--text-color-primary); display: inline-flex; align-items: center; justify-content: center; margin-right: -6px; border: 2px solid var(--bg-canvas); font-size: 10px; line-height: 12px; font-weight: 600; }
+.signoff-stack { display: inline-flex; align-items: center; }
+.signoff-stack .mini-avatar:last-child { margin-right: 0; }
+
+/* Section head tuning (page uses 20px instead of 22px title) */
+.primary-head .primary-title { font-size: 20px; line-height: 26px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="navbar" data-elysium-navbar></header>
+
+  <div class="body">
+    <nav class="sidebar" data-elysium-sidebar data-active="nav"></nav>
+
+    <main class="main">
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <div class="breadcrumb-nav">
+            <span class="fund-dot"></span>
+            <a href="./nav-collateral.html">POD Crypto Fund</a>
+            <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            <a href="./nav-collateral.html">NAV</a>
+            <svg class="sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            <span class="current">Reconciliation log</span>
+          </div>
+          <div class="page-title text-heading-xl-semibold">Reconciliation log<span class="page-as-of">Last 90 days · 412 events</span></div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-outline">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export
+          </button>
+          <button class="btn btn-outline">Schedule</button>
+          <button class="btn btn-primary">New reconciliation →</button>
+        </div>
+      </div>
+
+      <!-- KPI tiles -->
+      <div class="headline">
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Events (90d)</div>
+          <div class="headline-value num text-heading-lg-semibold">412</div>
+          <div class="headline-sub">avg 4.6 / day</div>
+        </div>
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Auto-matched</div>
+          <div class="kpi-value num pos">398</div>
+          <div class="headline-sub">96.6% pass-through</div>
+        </div>
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Variances flagged</div>
+          <div class="kpi-value num warn">11</div>
+          <div class="headline-sub">9 resolved · 2 open</div>
+        </div>
+        <div class="headline-item">
+          <div class="headline-label text-label-xs-medium">Open breaks</div>
+          <div class="kpi-value num neg">3</div>
+          <div class="headline-sub">&gt; 5bps variance</div>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <span class="filter-group-label">Status</span>
+        <button class="filter-pill active">All</button>
+        <button class="filter-pill">Open</button>
+        <button class="filter-pill">Matched</button>
+        <button class="filter-pill">Variance</button>
+        <button class="filter-pill">Signed off</button>
+        <div style="width: 1px; height: 20px; background: var(--border-default); margin: 0 4px;"></div>
+        <span class="filter-group-label">Venue</span>
+        <button class="filter-pill">All venues <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <span class="filter-group-label">Type</span>
+        <button class="filter-pill">All types <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <span class="filter-group-label">Range</span>
+        <button class="filter-pill">Last 90 days <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="filter-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-color-muted);"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" placeholder="Search by ref, venue, or operator…">
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:140px;">When</th>
+              <th>Venue</th>
+              <th>Type</th>
+              <th class="right">Reported</th>
+              <th class="right">Ledger</th>
+              <th class="right">Variance</th>
+              <th>Status</th>
+              <th>Signed off</th>
+              <th style="width:40px;"></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <!-- Today -->
+            <tr>
+              <td colspan="9" style="padding:0;">
+                <div class="group-date">Today · 07 Feb <span class="group-date-count">· 5 events</span><span class="group-date-bar"></span></div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>07 Feb 16:00 UTC</td>
+              <td><span class="venue-cell"><span class="venue-icon">CB</span> Coinbase Prime</span></td>
+              <td><span class="chip chip-info">NAV strike</span></td>
+              <td class="right num">$22,140,510</td>
+              <td class="right num">$22,140,510</td>
+              <td class="right"><span class="variance-cell"><span class="num">$0.00</span></span></td>
+              <td><span class="chip chip-positive chip-dot">Matched</span></td>
+              <td><span class="signoff-stack"><span class="mini-avatar">RM</span><span class="mini-avatar">SP</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>07 Feb 16:00 UTC</td>
+              <td><span class="venue-cell"><span class="venue-icon">BN</span> Binance</span></td>
+              <td><span class="chip chip-info">NAV strike</span></td>
+              <td class="right num">$14,220,000</td>
+              <td class="right num">$14,220,142</td>
+              <td class="right"><span class="variance-cell"><span class="num warn">−$142</span><span class="variance-bps">1bps</span></span></td>
+              <td><span class="chip chip-warning chip-dot">Dust variance</span></td>
+              <td><span class="signoff-stack"><span class="mini-avatar">RM</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>07 Feb 16:00 UTC</td>
+              <td><span class="venue-cell"><span class="venue-icon">KR</span> Kraken</span></td>
+              <td><span class="chip chip-info">NAV strike</span></td>
+              <td class="right num">$5,412,200</td>
+              <td class="right num">$5,412,200</td>
+              <td class="right"><span class="variance-cell"><span class="num">$0.00</span></span></td>
+              <td><span class="chip chip-positive chip-dot">Matched</span></td>
+              <td><span class="signoff-stack"><span class="mini-avatar">RM</span><span class="mini-avatar">SP</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>07 Feb 14:12 UTC</td>
+              <td><span class="venue-cell"><span class="venue-icon">CS</span> Cold storage</span></td>
+              <td><span class="chip">On-chain proof</span></td>
+              <td class="right num">0.684 BTC</td>
+              <td class="right num">0.684 BTC</td>
+              <td class="right"><span class="variance-cell"><span class="num">0.000</span></span></td>
+              <td><span class="chip chip-positive chip-dot">Matched</span></td>
+              <td><span class="signoff-stack"><span class="mini-avatar">RM</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>07 Feb 09:30 UTC</td>
+              <td><span class="venue-cell"><span class="venue-icon">BN</span> Binance</span></td>
+              <td><span class="chip">Intraday</span></td>
+              <td class="right num">$14,218,400</td>
+              <td class="right num">$14,220,100</td>
+              <td class="right"><span class="variance-cell"><span class="num neg">−$1,700</span><span class="variance-bps">12bps</span></span></td>
+              <td><span class="chip chip-negative chip-dot">Open break</span></td>
+              <td><span class="signoff-stack"><span class="mini-avatar" style="background:var(--status-negative-bg); color:var(--status-negative);">!</span></span></td>
+              <td class="right">→</td>
+            </tr>
+
+            <!-- Yesterday -->
+            <tr>
+              <td colspan="9" style="padding:0;">
+                <div class="group-date">Yesterday · 06 Feb <span class="group-date-count">· 5 events</span><span class="group-date-bar"></span></div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>06 Feb 16:00 UTC</td>
+              <td><span class="venue-cell"><span class="venue-icon">CB</span> Coinbase Prime</span></td>
+              <td><span class="chip chip-info">NAV strike</span></td>
+              <td class="right num">$21,882,400</td>
+              <td class="right num">$21,882,400</td>
+              <td class="right"><span class="variance-cell"><span class="num">$0.00</span></span></td>
+              <td><span class="chip chip-positive chip-dot">Matched</span></td>
+              <td><span class="signoff-stack"><span class="mini-avatar">RM</span><span class="mini-avatar">SP</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>06 Feb 16:00 UTC</td>
+              <td><span class="venue-cell"><span class="venue-icon">BN</span> Binance</span></td>
+              <td><span class="chip chip-info">NAV strike</span></td>
+              <td class="right num">$13,890,100</td>
+              <td class="right num">$13,890,100</td>
+              <td class="right"><span class="variance-cell"><span class="num">$0.00</span></span></td>
+              <td><span class="chip chip-positive chip-dot">Matched</span></td>
+              <td><span class="signoff-stack"><span class="mini-avatar">RM</span><span class="mini-avatar">SP</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>06 Feb 16:00 UTC</td>
+              <td><span class="venue-cell"><span class="venue-icon">KR</span> Kraken</span></td>
+              <td><span class="chip chip-info">NAV strike</span></td>
+              <td class="right num">$5,360,050</td>
+              <td class="right num">$5,360,050</td>
+              <td class="right"><span class="variance-cell"><span class="num">$0.00</span></span></td>
+              <td><span class="chip chip-positive chip-dot">Matched</span></td>
+              <td><span class="signoff-stack"><span class="mini-avatar">RM</span><span class="mini-avatar">SP</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>06 Feb 11:04 UTC</td>
+              <td><span class="venue-cell"><span class="venue-icon">CS</span> Cold storage</span></td>
+              <td><span class="chip">On-chain proof</span></td>
+              <td class="right num">0.684 BTC</td>
+              <td class="right num">0.684 BTC</td>
+              <td class="right"><span class="variance-cell"><span class="num">0.000</span></span></td>
+              <td><span class="chip chip-positive chip-dot">Matched</span></td>
+              <td><span class="signoff-stack"><span class="mini-avatar">RM</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>06 Feb 09:02 UTC</td>
+              <td><span class="venue-cell"><span class="venue-icon">BN</span> Binance</span></td>
+              <td><span class="chip" style="background:#EEF2FF; color:#4338CA;">Fee true-up</span></td>
+              <td class="right num">$13,891,840</td>
+              <td class="right num">$13,890,100</td>
+              <td class="right"><span class="variance-cell"><span class="num pos">+$1,740</span><span class="variance-bps">13bps</span></span></td>
+              <td><span class="chip chip-positive chip-dot">Resolved</span></td>
+              <td><span class="signoff-stack"><span class="mini-avatar">SP</span></span></td>
+              <td class="right">→</td>
+            </tr>
+
+            <!-- Earlier week -->
+            <tr>
+              <td colspan="9" style="padding:0;">
+                <div class="group-date">05 Feb <span class="group-date-count">· 4 events</span><span class="group-date-bar"></span></div>
+              </td>
+            </tr>
+
+            <tr>
+              <td>05 Feb 16:00 UTC</td>
+              <td><span class="venue-cell"><span class="venue-icon">CB</span> Coinbase Prime</span></td>
+              <td><span class="chip chip-info">NAV strike</span></td>
+              <td class="right num">$21,102,300</td>
+              <td class="right num">$21,102,300</td>
+              <td class="right"><span class="variance-cell"><span class="num">$0.00</span></span></td>
+              <td><span class="chip chip-positive chip-dot">Matched</span></td>
+              <td><span class="signoff-stack"><span class="mini-avatar">RM</span><span class="mini-avatar">SP</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>05 Feb 16:00 UTC</td>
+              <td><span class="venue-cell"><span class="venue-icon">BN</span> Binance</span></td>
+              <td><span class="chip chip-info">NAV strike</span></td>
+              <td class="right num">$13,408,900</td>
+              <td class="right num">$13,408,900</td>
+              <td class="right"><span class="variance-cell"><span class="num">$0.00</span></span></td>
+              <td><span class="chip chip-positive chip-dot">Matched</span></td>
+              <td><span class="signoff-stack"><span class="mini-avatar">RM</span><span class="mini-avatar">SP</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>05 Feb 14:40 UTC</td>
+              <td><span class="venue-cell"><span class="venue-icon">CB</span> Coinbase Prime</span></td>
+              <td><span class="chip" style="background:#FEF3C7; color:#92400E;">Transfer</span></td>
+              <td class="right num">+12.0 BTC</td>
+              <td class="right num">+12.0 BTC</td>
+              <td class="right"><span class="variance-cell"><span class="num">0.000</span></span></td>
+              <td><span class="chip chip-positive chip-dot">Matched</span></td>
+              <td><span class="signoff-stack"><span class="mini-avatar">RM</span></span></td>
+              <td class="right">→</td>
+            </tr>
+            <tr>
+              <td>05 Feb 07:18 UTC</td>
+              <td><span class="venue-cell"><span class="venue-icon">KR</span> Kraken</span></td>
+              <td><span class="chip chip-info">NAV strike</span></td>
+              <td class="right num">$5,219,400</td>
+              <td class="right num">$5,219,400</td>
+              <td class="right"><span class="variance-cell"><span class="num">$0.00</span></span></td>
+              <td><span class="chip chip-positive chip-dot">Matched</span></td>
+              <td><span class="signoff-stack"><span class="mini-avatar">RM</span><span class="mini-avatar">SP</span></span></td>
+              <td class="right">→</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pagination">
+          <div>Showing 14 of 412 events</div>
+          <div class="page-ctrls">
+            <button>‹</button>
+            <button class="active">1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>…</button>
+            <button>30</button>
+            <button>›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </main>
+  </div>
+</div>
+<script src="./elysium-chrome.js" defer></script>
+</body>
+</html>
