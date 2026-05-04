@@ -90,9 +90,10 @@
     font-weight: 300;
   }
 
-  /* Reserve scrollbar gutter so opening a sheet (which sets body overflow:hidden)
-     doesn't shift viewport-anchored elements like the topbar/sidebar */
-  html { scrollbar-gutter: stable; }
+  /* Force a permanent vertical scrollbar gutter on html so opening a sheet
+     (body overflow:hidden) doesn't disappear the scrollbar and shift viewport-anchored
+     elements like the topbar/sidebar that anchor to calc(50% - 864px + X). */
+  html { overflow-y: scroll; }
 
   /* ============================================================
      PAGE FRAME — fixed 1728 width, content at left:466
@@ -1311,9 +1312,14 @@ function SubPageSheet({ page, onClose }) {
   React.useEffect(() => {
     if (!page) return;
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', onKey);
-    return () => { document.body.style.overflow = ''; window.removeEventListener('keydown', onKey); };
+    return () => {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', onKey);
+    };
   }, [page, onClose]);
 
   const open = !!page;
