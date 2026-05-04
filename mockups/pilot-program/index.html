@@ -90,6 +90,10 @@
     font-weight: 300;
   }
 
+  /* Reserve scrollbar gutter so opening a sheet (which sets body overflow:hidden)
+     doesn't shift viewport-anchored elements like the topbar/sidebar */
+  html { scrollbar-gutter: stable; }
+
   /* ============================================================
      PAGE FRAME — fixed 1728 width, content at left:466
      ============================================================ */
