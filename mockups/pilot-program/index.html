@@ -1,0 +1,2263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>POD · Pilot Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+<style>
+  /* ============================================================
+     Serrif Condensed Light — provided by user, in /assets/
+     ============================================================ */
+  @font-face {
+    font-family: 'Serrif Condensed';
+    src: url('./fonts/SerrifCondensed-Light.woff2') format('woff2'),
+         url('./fonts/SerrifCondensed-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* ============================================================
+     Design tokens — extracted from Figma file
+     ============================================================ */
+  :root {
+    /* Backgrounds */
+    --bg-canvas: #fefeff;
+    --bg-white: #ffffff;
+    --bg-glass: rgba(0,0,0,0.03);
+    --bg-surface: #f8f8f8;
+
+    /* Text */
+    --text-primary: #171717;
+    --text-secondary: #737373;
+    --text-inverse: #fefeff;
+
+    /* Borders */
+    --border-subtle: #e5e5e5;
+    --border-strong: #dbdbdc;
+
+    /* Spacing */
+    --space-2: 2px;
+    --space-4: 4px;
+    --space-7: 7px;
+    --space-8: 8px;
+    --space-12: 12px;
+    --space-16: 16px;
+    --space-24: 24px;
+    --space-32: 32px;
+    --space-48: 48px;
+
+    /* Radius */
+    --radius-s: 6px;
+    --radius-m: 8px;
+    --radius-l: 12px;
+
+    /* Font sizes */
+    --fs-xs: 12px;
+    --fs-sm: 14px;
+    --fs-md: 16px;
+    --fs-lg: 18px;
+    --fs-xl: 20px;
+    --fs-3xl: 30px;
+    --fs-6xl: 48px;
+
+    /* Line heights */
+    --lh-tight: 18px;
+    --lh-normal: 22px;
+    --lh-relaxed: 24px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg-white);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-tight);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .serif {
+    font-family: 'Serrif Condensed', Georgia, 'Times New Roman', serif;
+    font-weight: 300;
+  }
+
+  /* ============================================================
+     PAGE FRAME — fixed 1728 width, content at left:466
+     ============================================================ */
+  .page-frame {
+    position: relative;
+    width: 1728px;
+    min-height: 100vh;
+    background: var(--bg-white);
+    margin: 0 auto;
+    padding-bottom: 100px;
+  }
+
+  /* ============================================================
+     TOP BAR — brand left, "Ready to setup..." right
+     Sticky: anchored to centered 1728px frame via calc(50% - 864px + X)
+     ============================================================ */
+  .topbar-bg {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 88px;
+    background: var(--bg-white);
+    z-index: 4;
+    pointer-events: none;
+  }
+  .brand {
+    position: fixed;
+    left: calc(50% - 864px + 32px);
+    top: 16px;
+    display: flex; gap: 16px; align-items: center;
+    z-index: 5;
+  }
+  .brand-logo {
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 8px;
+    flex-shrink: 0;
+    color: var(--text-primary);
+  }
+  .brand-logo img,
+  .brand-logo svg {
+    width: 110px; height: 26px; display: block;
+  }
+  .brand-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: var(--fs-md);
+    line-height: var(--lh-normal);
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  .topbar-cta {
+    position: fixed;
+    left: calc(50% - 864px + 1060px);
+    top: 27px;
+    display: flex; gap: 16px; align-items: center;
+    justify-content: flex-end;
+    z-index: 5;
+  }
+  .topbar-cta .label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-tight);
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+  .pill-btn {
+    display: inline-flex; gap: var(--space-8);
+    align-items: center; justify-content: center;
+    padding: var(--space-4) var(--space-8);
+    background: var(--bg-glass);
+    border: none;
+    border-radius: var(--radius-m);
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: var(--fs-xs);
+    line-height: var(--lh-tight);
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: background 0.12s;
+  }
+  .pill-btn:hover { background: rgba(0,0,0,0.06); }
+  .pill-btn .icon {
+    width: 16px; height: 16px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .pill-btn .icon svg { width: 100%; height: 100%; display: block; }
+
+
+  /* ============================================================
+     SIDEBAR (NAV expandable) — sticky, aligned to centered frame
+     ============================================================ */
+  .sidebar {
+    position: fixed;
+    left: calc(50% - 864px + 32px);
+    top: 112px;
+    width: 220px;
+    max-height: calc(100vh - 132px);
+    overflow-y: auto;
+    display: flex; flex-direction: column;
+    gap: var(--space-24);
+    z-index: 4;
+  }
+  .sidebar::-webkit-scrollbar { width: 0; }
+  .sb-group { display: flex; flex-direction: column; gap: 2px; width: 100%; }
+
+  .sb-section-header {
+    height: 38px;
+    padding: var(--space-7) 12px;
+    border-radius: var(--radius-m);
+    display: flex; align-items: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: var(--fs-xs);
+    line-height: var(--lh-tight);
+    color: var(--text-primary);
+    cursor: default;
+  }
+
+  .sb-row {
+    height: 38px;
+    padding-right: var(--space-4);
+    width: 100%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sb-row .sb-item {
+    flex: 1; height: 100%;
+    padding: var(--space-7) 12px;
+    border-radius: var(--radius-m);
+    display: flex; align-items: center; gap: 0;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: var(--lh-normal);
+    color: var(--text-secondary);
+    cursor: pointer;
+    text-decoration: none;
+    user-select: none;
+    transition: background 0.1s, color 0.1s;
+  }
+  .sb-row .sb-item:hover { background: var(--bg-glass); color: var(--text-primary); }
+  .sb-row.active .sb-item { background: var(--bg-glass); color: var(--text-primary); }
+  .sb-row .sb-chevron {
+    width: 14px; height: 14px;
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--text-secondary);
+  }
+  .sb-row .sb-chevron svg { width: 100%; height: 100%; }
+
+  /* Sub items wrap: pl=24 pb=12, with border-left at 1px */
+  .sb-sub-wrap { padding: 0 0 12px 24px; width: 100%; }
+  .sb-sub-inner {
+    display: flex; gap: 10px; align-items: stretch;
+    width: 100%; padding-right: 0;
+  }
+  .sb-sub-border { width: 1px; background: var(--border-subtle); align-self: stretch; flex-shrink: 0; }
+  .sb-sub-list { display: flex; flex-direction: column; gap: 1px; flex: 1; }
+  .sb-sub-item {
+    height: 30px;
+    padding: var(--space-7) 10px;
+    border-radius: var(--radius-s);
+    display: flex; align-items: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-tight);
+    color: var(--text-secondary);
+    cursor: pointer;
+    text-decoration: none;
+    user-select: none;
+    transition: background 0.1s, color 0.1s;
+  }
+  .sb-sub-item:hover { background: var(--bg-glass); color: var(--text-primary); }
+  .sb-sub-item.active { background: var(--bg-glass); color: var(--text-primary); }
+
+  /* ============================================================
+     CONTENT AREA — left:466 top:112 width:786
+     ============================================================ */
+  .content {
+    position: absolute;
+    left: 466px;
+    top: 112px;
+    width: 870px;
+    display: flex; flex-direction: column;
+    gap: 80px;
+    padding-bottom: 100px;
+  }
+
+  /* ============================================================
+     HERO BANNER — 785x200, image background + serif title overlay
+     ============================================================ */
+  .hero {
+    width: 870px;
+    height: 200px;
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    position: relative;
+    background-color: #f0f0f0;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero h1 {
+    font-family: 'Serrif Condensed', Georgia, 'Times New Roman', serif;
+    font-weight: 300;
+    font-size: var(--fs-6xl);
+    line-height: 1;
+    color: #fefeff;
+    margin: 0;
+    z-index: 2;
+    text-align: center;
+    letter-spacing: 0;
+  }
+  body.dark .hero h1 { color: #ffffff; }
+
+  /* ============================================================
+     TYPOGRAPHY
+     ============================================================ */
+  .lead {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: var(--fs-lg);
+    line-height: var(--lh-normal);
+    color: var(--text-primary);
+    margin: 0;
+    width: 810px;
+  }
+
+  .body-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-tight);
+    color: var(--text-secondary);
+    margin: 0;
+  }
+  .body-text + .body-text { margin-top: 14px; }
+
+  h2.section-title {
+    font-family: 'Serrif Condensed', 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    font-weight: 300;
+    font-size: 36px;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin: 0 0 32px 0;
+    letter-spacing: -0.005em;
+  }
+
+  h3.subsection-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: var(--fs-md);
+    color: var(--text-primary);
+    margin: 0 0 32px 0;
+  }
+
+  /* Hero → first sibling = 48px (overrides .content gap of 80px → effective 48px) */
+  .content > .hero + * { margin-top: -32px; }
+
+  /* ============================================================
+     CARDS / KPI Tiles
+     ============================================================ */
+  .callout {
+    width: 870px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-m);
+    padding: 32px 40px;
+    background: transparent;
+  }
+  .callout .q {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-tight);
+    color: var(--text-primary);
+    margin: 0 0 14px;
+  }
+  .callout .a {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-tight);
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .cta-card {
+    background: var(--bg-glass);
+    border-radius: var(--radius-m);
+    padding: var(--space-16) var(--space-24);
+    display: flex; flex-direction: column;
+    gap: var(--space-24);
+    cursor: pointer;
+    transition: background 0.12s;
+    text-decoration: none;
+  }
+  .cta-card:hover { background: rgba(0,0,0,0.06); }
+  .cta-card .label,
+  .cta-card-wide .label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-tight);
+    color: var(--text-secondary);
+    margin: 0;
+  }
+  .cta-card .title,
+  .cta-card-wide .title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: var(--fs-xl);
+    line-height: var(--lh-relaxed);
+    color: var(--text-primary);
+    margin: 0;
+  }
+  .cta-card .arrow,
+  .cta-card-wide .arrow {
+    width: 16px; height: 16px;
+    color: var(--text-primary);
+  }
+
+  /* "What POD provides" 2-column grid filling 870px content width */
+  .provides-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 17px 17px;
+  }
+  .provides-grid .cta-card.muted { opacity: 0.3; pointer-events: none; }
+
+  /* Pilot role row (3 columns) */
+  .pilot-row {
+    display: flex; gap: var(--space-48);
+    align-items: flex-start;
+  }
+  .pilot-col {
+    width: 230px;
+    display: flex; flex-direction: column;
+    gap: var(--space-24);
+  }
+  .pilot-col .label {
+    font-family: 'Inter', sans-serif; font-weight: 400;
+    font-size: var(--fs-sm); line-height: var(--lh-tight);
+    color: var(--text-secondary);
+  }
+  .pilot-col .title {
+    font-family: 'Inter', sans-serif; font-weight: 500;
+    font-size: var(--fs-xl); line-height: var(--lh-relaxed);
+    color: var(--text-primary);
+  }
+  .pilot-col .desc {
+    font-family: 'Inter', sans-serif; font-weight: 400;
+    font-size: var(--fs-xs); line-height: var(--lh-tight);
+    color: var(--text-secondary);
+  }
+
+  /* Relationship row (3 KPIs) */
+  .rel-row {
+    display: flex; gap: var(--space-48);
+    align-items: flex-start;
+  }
+  .rel-kpi {
+    width: 230px;
+    display: flex; flex-direction: column;
+    gap: var(--space-24);
+  }
+  .rel-kpi .label {
+    font-family: 'Inter', sans-serif; font-weight: 400;
+    font-size: var(--fs-sm); line-height: var(--lh-tight);
+    color: var(--text-secondary);
+  }
+  .rel-kpi .value {
+    font-family: 'Inter', sans-serif; font-weight: 500;
+    font-size: var(--fs-3xl); line-height: 1;
+    color: var(--text-primary);
+  }
+  .rel-kpi .note {
+    font-family: 'Inter', sans-serif; font-weight: 400;
+    font-size: var(--fs-xs); line-height: var(--lh-tight);
+    color: var(--text-secondary);
+  }
+
+  /* "Where your SP fits" CTA card (large, bg-glass) */
+  .cta-card-wide {
+    width: 870px;
+    background: var(--bg-glass);
+    border-radius: var(--radius-m);
+    padding: var(--space-16) var(--space-24);
+    display: flex; flex-direction: column;
+    gap: var(--space-24);
+    cursor: pointer;
+    transition: background 0.12s;
+    text-decoration: none;
+  }
+  .cta-card-wide:hover { background: rgba(0,0,0,0.06); }
+
+  /* ============================================================
+     FOOTER
+     ============================================================ */
+  .page-footer {
+    width: 870px;
+    margin-top: 0;
+    display: flex; flex-direction: column;
+    gap: 22px;
+  }
+  .page-footer .conf {
+    font-family: 'Inter', sans-serif; font-weight: 400;
+    font-size: var(--fs-sm); line-height: var(--lh-tight);
+    color: var(--text-secondary);
+  }
+  .page-footer .legal {
+    font-family: 'Inter', sans-serif; font-weight: 400;
+    font-size: var(--fs-xs); line-height: var(--lh-tight);
+    color: var(--text-secondary);
+  }
+  .page-footer .legal p { margin: 0 0 14px; }
+  .page-footer .legal p:last-child { margin: 0; }
+
+  /* ============================================================
+     FAQ accordion / How-it-works accordion
+     ============================================================ */
+  .accordion-row {
+    width: 870px;
+    padding: var(--space-16) var(--space-4);
+    cursor: pointer;
+    user-select: none;
+  }
+  .accordion-head {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-tight);
+    color: var(--text-primary);
+  }
+  .accordion-head .chev { color: var(--text-secondary); transition: transform 0.18s; }
+  .accordion-row.open .accordion-head .chev { transform: rotate(180deg); }
+  .accordion-body {
+    margin-top: 12px;
+    padding-bottom: 24px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-tight);
+    color: var(--text-secondary);
+  }
+
+  /* ============================================================
+     TABS (Pricing) — grouped pill toggle
+     ============================================================ */
+  .tabs {
+    display: inline-flex;
+    align-items: stretch;
+    background: var(--bg-glass);
+    border-radius: var(--radius-m);
+    padding: 4px;
+    gap: 4px;
+  }
+  .tabs button {
+    height: 34px;
+    border: 1px solid transparent;
+    background: transparent;
+    font-family: 'Inter', sans-serif; font-weight: 500;
+    font-size: var(--fs-sm);
+    line-height: 1;
+    color: var(--text-secondary);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 0 16px;
+    transition: background 0.12s, color 0.12s;
+  }
+  .tabs button:hover { color: var(--text-primary); }
+  .tabs button.active {
+    background: var(--bg-white);
+    color: var(--text-primary);
+    border-color: var(--border-subtle);
+    box-shadow: 0 1px 2px 0 rgba(10,13,18,0.05);
+  }
+  body.dark .tabs button.active {
+    background: var(--bg-canvas);
+    border-color: var(--border-subtle);
+  }
+
+  /* Pricing fee tier card uses .kpi-tile with screenshot */
+  .fee-tier-circle {
+    width: 163px; height: 172px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .fee-tier-circle img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+
+  /* ============================================================
+     STRUCTURE PAGE — corporate diagram
+     ============================================================ */
+  .struct-diagram {
+    background: var(--bg-canvas);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-m);
+    padding: 24px;
+  }
+
+  table.legal-table {
+    width: 870px;
+    border-collapse: collapse;
+    font-size: var(--fs-sm);
+  }
+  table.legal-table th {
+    text-align: left;
+    padding: 8px 6px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: 11px;
+    border-bottom: 1px solid var(--border-strong);
+  }
+  table.legal-table td {
+    padding: 16px 6px;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+  table.legal-table td.label-cell { color: var(--text-primary); font-weight: 500; }
+
+  /* Identification table (How it works · Identification body) */
+  table.id-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-sm);
+  }
+  table.id-table td {
+    padding: 12px 8px 12px 0;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  table.id-table td:first-child {
+    color: var(--text-primary); font-weight: 500;
+    width: 200px;
+  }
+  table.id-table td:last-child {
+    color: var(--text-secondary); line-height: 1.6;
+  }
+
+  /* Glossary CTA (How it works) */
+  .glossary-cta {
+    background: var(--text-primary);
+    color: #fff;
+    padding: 14px 18px;
+    border-radius: var(--radius-m);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Inter', sans-serif; font-weight: 500;
+    font-size: var(--fs-sm); line-height: var(--lh-tight);
+    cursor: pointer;
+    width: 870px;
+  }
+
+  /* CTA card dark (Create a fund) — uses header-4 image as background */
+  .cta-dark {
+    background-image: url('./assets/header-4.png');
+    background-size: cover;
+    background-position: center;
+    background-color: #1a1c20;
+    border-radius: var(--radius-m);
+    padding: 48px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    color: #fff;
+    width: 870px;
+    height: 200px;
+    overflow: hidden;
+  }
+  .cta-dark .title {
+    font-family: 'Serrif Condensed', Georgia, serif;
+    font-weight: 300;
+    font-size: var(--fs-6xl);
+    color: #fff;
+    line-height: 1;
+  }
+  .cta-dark .pill-btn {
+    background: #fff;
+    color: var(--text-primary);
+    padding: 8px 14px;
+    height: 34px;
+    font-size: 13px;
+  }
+
+  /* Download buttons row */
+  .download-row {
+    display: flex;
+    gap: 12px;
+    margin: 24px 0;
+  }
+  .download-btn {
+    display: inline-flex; gap: 8px;
+    align-items: center;
+    padding: 8px 14px; height: 34px;
+    background: var(--text-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-m);
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .download-btn .download-icon { width: 16px; height: 16px; color: currentColor; }
+  .download-btn.outline {
+    background: var(--bg-canvas);
+    color: var(--text-primary);
+    border: 1px solid var(--border-strong);
+  }
+
+  section { scroll-margin-top: 80px; }
+
+  /* ============================================================
+     DOWNLOAD CARD (Term sheet)
+     ============================================================ */
+  .download-card {
+    width: 870px;
+    background: var(--bg-glass);
+    border-radius: var(--radius-m);
+    padding: var(--space-16) var(--space-24);
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .download-card:hover { background: rgba(0,0,0,0.06); }
+  .download-card-left { display: flex; align-items: center; gap: var(--space-16); }
+  .download-card-text { display: flex; flex-direction: column; gap: var(--space-4); }
+  .download-card-title {
+    font-family: 'Inter', sans-serif; font-weight: 500;
+    font-size: var(--fs-lg); line-height: var(--lh-normal);
+    color: var(--text-primary);
+  }
+  .download-card-meta {
+    font-family: 'Inter', sans-serif; font-weight: 400;
+    font-size: var(--fs-sm); line-height: var(--lh-tight);
+    color: var(--text-secondary);
+  }
+  .download-icon {
+    width: 24px; height: 24px;
+    color: var(--text-primary);
+    flex-shrink: 0;
+  }
+
+  /* File-type doc icon — uses provided SVGs */
+  .doc-icon {
+    width: 40px; height: 40px;
+    flex-shrink: 0;
+    display: block;
+  }
+
+  /* ============================================================
+     RIGHT-SIDE PAGE ANCHORS (TOC)
+     ============================================================ */
+  .page-anchors {
+    position: fixed;
+    right: 32px;
+    top: 112px;
+    width: 200px;
+    z-index: 4;
+    display: flex; flex-direction: column;
+    gap: 2px;
+    padding: 0 0 16px 16px;
+    border-left: 1px solid var(--border-subtle);
+  }
+  .page-anchors a {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--text-secondary);
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .page-anchors a:hover { background: var(--bg-glass); color: var(--text-primary); }
+  .page-anchors a.active { background: var(--bg-glass); color: var(--text-primary); }
+
+  /* ============================================================
+     THEME TOGGLE
+     ============================================================ */
+  .theme-toggle {
+    position: fixed;
+    top: 24px; right: 36px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    background: var(--bg-canvas);
+    cursor: pointer;
+    padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--text-primary);
+    flex-shrink: 0;
+    overflow: hidden;
+    z-index: 6;
+    transform: rotate(0deg);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .theme-toggle::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 50%; bottom: 0;
+    background: var(--text-primary);
+  }
+  body.dark .theme-toggle {
+    transform: rotate(180deg);
+  }
+
+  /* Dark mode */
+  body.dark {
+    --bg-canvas: #171717;
+    --bg-white: #171717;
+    --bg-glass: rgba(255,255,255,0.06);
+    --bg-surface: #1f1f1f;
+    --text-primary: #F4F5F4;
+    --text-secondary: #9DA0A4;
+    --text-inverse: #171717;
+    --border-subtle: #2A2D33;
+    --border-strong: #3A3D45;
+  }
+  body.dark .theme-toggle::before {
+    right: 0; left: 50%;
+  }
+  body.dark .download-card,
+  body.dark .cta-card,
+  body.dark .cta-card-wide {
+    background: var(--bg-glass);
+  }
+  body.dark .pill-btn { background: var(--bg-glass); color: var(--text-primary); }
+  body.dark .download-card:hover,
+  body.dark .cta-card:hover,
+  body.dark .cta-card-wide:hover,
+  body.dark .pill-btn:hover { background: rgba(255,255,255,0.10); }
+  body.dark .glossary-cta { background: var(--bg-white); color: var(--text-primary); border: 1px solid var(--border-subtle); }
+  body.dark .cta-dark .pill-btn { background: var(--text-primary); color: var(--bg-canvas); }
+
+  /* Glossary table (Term sheet) */
+  .glossary {
+    width: 870px;
+    display: flex; flex-direction: column;
+  }
+  .glossary-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: var(--space-32);
+  }
+  .glossary-header h3 {
+    font-family: 'Inter', sans-serif; font-weight: 500;
+    font-size: var(--fs-lg); line-height: var(--lh-normal);
+    color: var(--text-primary);
+    margin: 0;
+  }
+  .glossary-row {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .glossary-row .term {
+    padding: 12px 16px;
+    font-family: 'Inter', sans-serif; font-weight: 400;
+    font-size: var(--fs-sm); line-height: var(--lh-tight);
+    color: var(--text-primary);
+  }
+  .glossary-row .definition {
+    padding: 12px 16px;
+    font-family: 'Inter', sans-serif; font-weight: 400;
+    font-size: var(--fs-xs); line-height: var(--lh-tight);
+    color: var(--text-primary);
+  }
+
+  /* ============================================================
+     SIDE SHEET (sub-page panel)
+     ============================================================ */
+  .sheet-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 60;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .sheet-overlay.open { opacity: 1; pointer-events: auto; }
+
+  .sheet-panel {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: 33.333vw;
+    min-width: 480px;
+    max-width: 100vw;
+    background: var(--bg-white);
+    z-index: 61;
+    transform: translateX(100%);
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    box-shadow: -24px 0 48px rgba(0,0,0,0.18);
+  }
+  .sheet-panel.open { transform: translateX(0); }
+
+  .sheet-topbar {
+    padding: 20px 48px;
+    flex-shrink: 0;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .sheet-close {
+    display: inline-flex; gap: 6px; align-items: center;
+    padding: 6px 12px;
+    background: var(--bg-glass);
+    border: none; border-radius: var(--radius-m);
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: var(--fs-xs);
+    color: var(--text-primary);
+  }
+  .sheet-close:hover { background: rgba(0,0,0,0.08); }
+
+  .sheet-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 48px 100px;
+  }
+
+  /* Reuse most styles inside the sheet, but tighten widths to fit panel */
+  .sheet-body .hero { width: 100%; }
+  .sheet-body .lead,
+  .sheet-body .callout,
+  .sheet-body .page-footer { width: 100%; }
+  .sheet-body .provides-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .sheet-body .page-footer { margin-top: 70px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+/* =============================================================
+   ASSET MAP — pre-composited 785x200 hero banners + flower icons
+   ============================================================= */
+const HEADER = {
+  welcome:           { img: 'header-2.png' }, // blue/pink
+  administration:    { img: 'header-1.png' }, // green
+  'fund-structure':  { img: 'header-1.png' },
+  'investor-base':   { img: 'header-1.png' },
+  identity:          { img: 'header-1.png' },
+  structure:         { img: 'header-3.png' }, // pink
+  howitworks:        { img: 'header-4.png' }, // dark
+  'create-fund':     { img: 'header-4.png' },
+  'term-sheet':      { img: 'header-1.png' }, // green (per design)
+  faqs:              { img: 'header-5.png' }, // silver
+  pricing:           { img: 'header-6.png' }, // purple
+};
+const FLOWER_LIGHT = '22435a29-eb3d-4891-9b39-e1af12968c5e.png';
+const FLOWER_DARK  = 'a35ca6bb-6224-4fe9-a0d4-63f4dccad1f0.png';
+
+/* =============================================================
+   SHARED COMPONENTS
+   ============================================================= */
+function PodLogo({ src }) {
+  // SVG logo asset from Figma. If src not provided, fall back to inline POD SVG.
+  if (src) return <img src={src} alt="POD" />;
+  return (
+    <svg viewBox="0 0 116 28" fill="none">
+      <path d="M18.52 14.51c0 2.96-2.4 5.35-5.35 5.35s-5.36-2.4-5.36-5.35 2.4-5.36 5.36-5.36 5.35 2.4 5.35 5.36Zm6.21-3.74a13.54 13.54 0 0 1 .3 9.62l-.45.92c-1.73 3.55-4.95 5.81-8.9 5.81h-5.07c-3.95 0-7.13-2.26-8.86-5.81l-.45-.92a13.54 13.54 0 0 1 .3-9.62l2.54-5.26A9.21 9.21 0 0 1 8.92 1.16c2.69-1.2 5.76-1.2 8.44 0 2.02.91 3.69 2.43 4.78 4.36l2.59 5.26M20.43 16.09c-.85-.85-.85-2.22 0-3.07 1.58-1.58 1.58-4.15 0-5.74-1.59-1.59-4.16-1.59-5.74 0a2.18 2.18 0 0 1-3.07 0c-1.59-1.59-4.16-1.59-5.74 0l-.06.06c-1.58 1.58-1.5 4.1.07 5.7.83.85.83 2.22-.01 3.06-1.59 1.58-1.59 4.15 0 5.74 1.58 1.58 4.15 1.58 5.74 0 .84-.84 2.22-.84 3.06 0 1.59 1.58 4.16 1.58 5.75 0 1.58-1.58 1.58-4.15 0-5.74Z" fill="currentColor"/>
+      <path d="M40.98 16.86v6.33h-5.95V4.2h14.25c6.82 0 8.86 2.7 8.86 6.17v.25c0 3.4-2.07 6.23-8.86 6.23h-8.3Zm0-4.26h8.2c1.86 0 2.75-.72 2.75-2v-.08c0-1.27-.87-2.01-2.76-2.01h-8.2V12.6ZM87 13.26v.77c0 3.34-1.38 9.49-13.35 9.49h-1.1c-12.02 0-13.37-6.15-13.37-9.49v-.77c0-3.4 1.35-9.4 13.37-9.4h1.1c11.94 0 13.35 6 13.35 9.4ZM65.4 13.44v.31c0 2.17 1.28 5.15 7.69 5.15s7.68-2.91 7.68-5.1v-.36c0-2.19-1.27-4.97-7.68-4.97s-7.69 2.78-7.69 4.97Zm36.18-9.24c11 0 13.4 4.72 13.4 8.99v.76c0 4.08-2.27 9.27-13.38 9.24H88.99V4.2h12.59Zm-.46 14.42c6.74 0 7.63-2.96 7.63-4.9v-.15c0-1.94-.82-4.88-7.63-4.88h-6.18v9.93h6.18Z" fill="currentColor"/>
+    </svg>
+  );
+}
+
+function Brand() {
+  return (
+    <div className="brand">
+      <div className="brand-logo">
+        <PodLogo/>
+      </div>
+      <span className="brand-name">Pilot Program</span>
+    </div>
+  );
+}
+
+function ArrowIcon({ direction = 'right' }) {
+  const path = direction === 'left' ? "M13 8H3M7 4 3 8l4 4" : "M3 8h10M9 4l4 4-4 4";
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d={path}/>
+    </svg>
+  );
+}
+
+function ChevronIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 5.5 7 9.5 11 5.5"/>
+    </svg>
+  );
+}
+
+/* =============================================================
+   TOP BAR — brand + back + ready/get started + theme toggle
+   ============================================================= */
+function ThemeToggle({ dark, onToggle }) {
+  return (
+    <button className="theme-toggle" onClick={onToggle} aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'} title={dark ? 'Light mode' : 'Dark mode'}/>
+  );
+}
+
+function TopBar() {
+  return (
+    <React.Fragment>
+      <Brand/>
+      <div className="topbar-cta">
+        <span className="label">Ready to setup a fund?</span>
+        <button className="pill-btn">
+          Get started
+          <span className="icon"><ArrowIcon/></span>
+        </button>
+      </div>
+    </React.Fragment>
+  );
+}
+
+/* =============================================================
+   RIGHT-SIDE PAGE ANCHORS
+   ============================================================= */
+function PageAnchors({ items }) {
+  const [active, setActive] = useState(items[0]?.id);
+  React.useEffect(() => {
+    const onScroll = () => {
+      // Find the section whose top is closest to (but above) the viewport top + 120px
+      let current = items[0]?.id;
+      for (const it of items) {
+        const el = document.getElementById(it.id);
+        if (!el) continue;
+        const r = el.getBoundingClientRect();
+        if (r.top <= 140) current = it.id;
+      }
+      setActive(current);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [items]);
+
+  if (!items || !items.length) return null;
+  return (
+    <nav className="page-anchors">
+      {items.map(it => (
+        <a key={it.id} href={'#' + it.id}
+           className={active === it.id ? 'active' : ''}
+           onClick={(e)=>{e.preventDefault(); const el=document.getElementById(it.id); if(el) el.scrollIntoView({behavior:'smooth', block:'start'});}}>
+          {it.label}
+        </a>
+      ))}
+    </nav>
+  );
+}
+
+/* =============================================================
+   SIDEBAR
+   ============================================================= */
+function Sidebar({ route, onNav }) {
+  const Row = ({ id, label }) => (
+    <div className={'sb-row' + (route === id ? ' active' : '')}>
+      <a className="sb-item" href="#" onClick={(e)=>{e.preventDefault(); onNav(id);}}>{label}</a>
+    </div>
+  );
+
+  return (
+    <nav className="sidebar">
+      <div className="sb-group">
+        <div className="sb-section-header">Overview</div>
+        <Row id="welcome"    label="Welcome"/>
+        <Row id="term-sheet" label="Term sheet"/>
+        <Row id="structure"  label="Structure"/>
+        <Row id="pricing"    label="Pricing"/>
+        <Row id="faq"        label="FAQ"/>
+      </div>
+      <div className="sb-group">
+        <div className="sb-section-header">Fund Creation</div>
+        <Row id="how-it-works" label="How it works"/>
+        <button className="pill-btn" style={{marginTop: 8, marginLeft: 12, alignSelf: 'flex-start'}} onClick={()=>onNav('create-fund')}>
+          Create a fund
+          <span className="icon"><ArrowIcon/></span>
+        </button>
+      </div>
+    </nav>
+  );
+}
+
+/* =============================================================
+   HERO BANNER — uses page P3 jpg as background
+   ============================================================= */
+function Hero({ page, title }) {
+  const h = HEADER[page] || HEADER.welcome;
+  return (
+    <div className="hero" style={{ backgroundImage: `url(./assets/${h.img})` }}>
+      <h1 className="serif">{title}</h1>
+    </div>
+  );
+}
+
+/* =============================================================
+   PAGE FOOTER
+   ============================================================= */
+function PageFooter() {
+  return (
+    <div className="page-footer">
+      <div className="conf">Confidential · For prospective Investment Advisors</div>
+      <div className="legal">
+        <p>Lorem ipsum dolor sit amet consectetur. Eget tellus sed porttitor elementum in non amet. Leo tortor mattis adipiscing lacus venenatis duis. Pulvinar fermentum vehicula a cras eleifend nisi auctor quis. Nec nullam a laoreet at nulla mi vitae.</p>
+        <p>Odio tincidunt viverra mi adipiscing hac consectetur tempus vel lobortis. Ac tortor lobortis non a eu pharetra elit ipsum. Pellentesque vulputate ultrices donec sapien. Nunc duis tempus tincidunt sodales amet. Bibendum nisl odio amet sem fermentum etiam aliquet. Diam blandit diam ut urna lacus aliquet. Phasellus elementum turpis mauris lorem urna morbi ipsum.</p>
+      </div>
+    </div>
+  );
+}
+
+/* =============================================================
+   NEXT-PAGE CTA — small "Next page" card at bottom of each page
+   ============================================================= */
+const NEXT_PAGE = {
+  welcome:        { id: 'term-sheet',   label: 'Term sheet',    title: 'Read the term sheet' },
+  'term-sheet':   { id: 'structure',    label: 'Structure',     title: 'Where your SP fits' },
+  structure:      { id: 'pricing',      label: 'Pricing',       title: "How POD's fees work" },
+  pricing:        { id: 'faq',          label: 'FAQ',           title: 'Common questions' },
+  faq:            { id: 'how-it-works', label: 'How it works',  title: 'Define your SP' },
+  'how-it-works': { id: 'create-fund',  label: 'Fund creation', title: 'Create a fund' },
+};
+function NextPageCta({ from, onNav }) {
+  const next = NEXT_PAGE[from];
+  if (!next) return null;
+  return (
+    <a className="cta-card-wide" onClick={(e)=>{e.preventDefault(); onNav(next.id);}} href="#">
+      <div className="label">{next.label}</div>
+      <div className="title">{next.title}</div>
+      <div className="arrow"><ArrowIcon/></div>
+    </a>
+  );
+}
+
+/* =============================================================
+   "Circle" decoration (Pilot role + Pricing fee tier)
+   140x140, white bg, with mix-blend-exclusion image overlay
+   ============================================================= */
+function Circle({ src }) {
+  return (
+    <div className="kpi-tile-circle">
+      <img src={src} alt=""/>
+    </div>
+  );
+}
+
+/* =============================================================
+   PAGE: WELCOME
+   ============================================================= */
+function WelcomePage({ onNav }) {
+  return (
+    <div className="content">
+      <div>
+        <Hero page="welcome" title="Welcome, Pilot"/>
+        <p className="lead" style={{marginTop: 48}}>Let's build something together — a long-term partnership where both of us win when your fund grows.</p>
+      </div>
+
+      <section id="partnership">
+        <h2 className="section-title">Partnership</h2>
+        <p className="body-text">POD is a regulated, technology-driven fund administration platform. We give Pilots — emerging investment advisors — the regulatory umbrella, administration, distribution, and brand to launch and run a Segregated Portfolio (SP) without the cost and complexity of a traditional fund setup.</p>
+        <p className="body-text">In return, you commit to running your fund within POD for an initial Partnership Period. The economic terms are calibrated so we both have enough runway to recoup our respective investments and grow together.</p>
+        <div className="callout" style={{marginTop: 24}}>
+          <div className="q">Why we frame it as a partnership?</div>
+          <div className="a">POD absorbs material upfront costs to launch your fund (~USD 100k–250k of work normally paid piecemeal). We don't charge you for any of it. In exchange, the long-term commitment ensures we both benefit from your fund's success — rather than you outgrowing us before we recoup.</div>
+        </div>
+      </section>
+
+      <section id="what-pod-provides">
+        <h2 className="section-title">What POD provides</h2>
+        <div className="provides-grid">
+          <a className="cta-card" onClick={()=>onNav('fund-structure')}>
+            <div className="label">Regulatory</div>
+            <div className="title">Fund structure</div>
+            <div className="arrow"><ArrowIcon/></div>
+          </a>
+          <a className="cta-card" onClick={()=>onNav('administration')}>
+            <div className="label">Operations</div>
+            <div className="title">Administration</div>
+            <div className="arrow"><ArrowIcon/></div>
+          </a>
+          <a className="cta-card" onClick={()=>onNav('investor-base')}>
+            <div className="label">Distribution</div>
+            <div className="title">Investor base</div>
+            <div className="arrow"><ArrowIcon/></div>
+          </a>
+          <a className="cta-card" onClick={()=>onNav('identity')}>
+            <div className="label">Brand</div>
+            <div className="title">Identity & reporting</div>
+            <div className="arrow"><ArrowIcon/></div>
+          </a>
+        </div>
+      </section>
+
+      <section id="pilot-role">
+        <h2 className="section-title">Pilot role</h2>
+        <p className="body-text">You manage the SP's investment strategy — the platform handles everything else.</p>
+        <div className="pilot-row" style={{marginTop: 24}}>
+          <div className="pilot-col">
+            <div className="label">Strategy</div>
+            <div className="title">Define & run</div>
+            <div className="desc">Set the investment objective, mandate, and risk framework. Make portfolio decisions in real time within the IAA's policy.</div>
+          </div>
+          <div className="pilot-col">
+            <div className="label">Stewardship</div>
+            <div className="title">Manage capital</div>
+            <div className="desc">Steward investor capital with care — execute trades, manage risk, and stay within the investment restrictions agreed at signing.</div>
+          </div>
+          <div className="pilot-col">
+            <div className="label">Communication</div>
+            <div className="title">Report</div>
+            <div className="desc">Communicate performance and commentary to your investors via the Investor Portal — and beyond, on third-party platforms (Telegram, X) under your Brand.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="relationship">
+        <h2 className="section-title">The Relationship</h2>
+        <p className="body-text">Three commitments shape the partnership.</p>
+        <div className="rel-row" style={{marginTop: 32}}>
+          <div className="rel-kpi">
+            <div className="label">No fixed costs</div>
+            <div className="value">$0</div>
+            <div className="note">Zero setup fees, zero monthly minimums, no per-investor or per-SP charges. We win when you win.</div>
+          </div>
+          <div className="rel-kpi">
+            <div className="label">Revenue share</div>
+            <div className="value">%</div>
+            <div className="note">POD's economics are a tiered share of management + performance fees, reducing as your AUM scales.</div>
+          </div>
+          <div className="rel-kpi">
+            <div className="label">Long term partnership</div>
+            <div className="value">5 years</div>
+            <div className="note">5-year firm Partnership Period with mutual extension. Designed to give both sides runway to grow.</div>
+          </div>
+        </div>
+      </section>
+
+      <NextPageCta from="welcome" onNav={onNav}/>
+
+      <PageFooter/>
+    </div>
+  );
+}
+
+/* =============================================================
+   PAGE: ADMINISTRATION (and placeholder pages reuse this layout)
+   ============================================================= */
+/* SUB-PAGE CONTENT (rendered inside SubPageSheet OR full page — same body) */
+const SUB_PAGES = {
+  'fund-structure': {
+    title: 'Fund structure',
+    lead: "The legal and regulatory wrapper. POD's BVI Segregated Portfolio Company gives your strategy the umbrella it needs — without the cost or runway of a standalone fund.",
+    body: ['Lorem ipsum dolor sit amet consectetur. Sed molestie a lorem tincidunt. Urna morbi at amet amet id. Tortor massa vulputate laoreet nullam. Pretium risus platea feugiat viverra sit.', "Enim dictum venenatis amet diam. Volutpat nisi cras dui cras. Varius enim at fringilla id blandit ultrices ac nisl. Pharetra vitae egestas amet facilisis. Pharetra risus fringilla id fringilla faucibus eget quam. A tincidunt cursus magna amet."],
+  },
+  administration: {
+    title: 'Administration',
+    lead: 'EFS handles NAV calculation, share register, transfer agency, and KYC. The Investor Portal handles subscriptions and reporting. You focus on managing the strategy.',
+    body: ['Lorem ipsum dolor sit amet consectetur. Sed molestie a lorem tincidunt. Urna morbi at amet amet id. Tortor massa vulputate laoreet nullam. Pretium risus platea feugiat viverra sit.', "Enim dictum venenatis amet diam. Volutpat nisi cras dui cras. Varius enim at fringilla id blandit ultrices ac nisl. Pharetra vitae egestas amet facilisis. Pharetra risus fringilla id fringilla faucibus eget quam."],
+  },
+  'investor-base': {
+    title: 'Investor base',
+    lead: "POD's distribution channels surface your fund to qualified investors. We help raise the first capital so you can focus on running the strategy, not chasing checks.",
+    body: ['Lorem ipsum dolor sit amet consectetur. Sed molestie a lorem tincidunt. Urna morbi at amet amet id. Tortor massa vulputate laoreet nullam. Pretium risus platea feugiat viverra sit.', "Enim dictum venenatis amet diam. Volutpat nisi cras dui cras. Varius enim at fringilla id blandit ultrices ac nisl. Pharetra vitae egestas amet facilisis. Pharetra risus fringilla id fringilla faucibus eget quam."],
+  },
+  identity: {
+    title: 'Identity & reporting',
+    lead: "POD's brand team helps your fund develop an identity that resonates with investors. Reporting flows out through the Investor Portal and beyond — Telegram, X, custom channels — under your Brand.",
+    body: ['Lorem ipsum dolor sit amet consectetur. Sed molestie a lorem tincidunt. Urna morbi at amet amet id. Tortor massa vulputate laoreet nullam. Pretium risus platea feugiat viverra sit.', "Enim dictum venenatis amet diam. Volutpat nisi cras dui cras. Varius enim at fringilla id blandit ultrices ac nisl. Pharetra vitae egestas amet facilisis. Pharetra risus fringilla id fringilla faucibus eget quam."],
+  },
+};
+
+function ProvidesContent({ page }) {
+  const data = SUB_PAGES[page];
+  if (!data) return null;
+  return (
+    <div style={{display:'flex', flexDirection:'column', gap:40, paddingTop:8}}>
+      <Hero page={page} title={data.title}/>
+      <p className="lead">{data.lead}</p>
+      <div style={{display:'flex', flexDirection:'column', gap:14}}>
+        <p className="body-text">{data.body[0]}</p>
+        {data.body[1] && <p className="body-text">{data.body[1]}</p>}
+      </div>
+      <div className="callout">
+        <div className="q">Sed molestie a lorem tincidunt?</div>
+        <div className="a">Lorem ipsum dolor sit amet consectetur. Sed molestie a lorem tincidunt. Urna morbi at amet amet id. Tortor massa vulputate laoreet nullam. Pretium risus platea feugiat viverra sit.</div>
+      </div>
+    </div>
+  );
+}
+
+function SubPageSheet({ page, onClose }) {
+  // ESC closes
+  React.useEffect(() => {
+    if (!page) return;
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = ''; window.removeEventListener('keydown', onKey); };
+  }, [page, onClose]);
+
+  const open = !!page;
+  return ReactDOM.createPortal(
+    <React.Fragment>
+      <div className={'sheet-overlay' + (open ? ' open' : '')} onClick={onClose}/>
+      <aside className={'sheet-panel' + (open ? ' open' : '')} role="dialog" aria-label={page ? SUB_PAGES[page]?.title : ''}>
+        <div className="sheet-topbar">
+          <button className="sheet-close" onClick={onClose}>
+            <ArrowIcon direction="left"/> Close
+          </button>
+        </div>
+        <div className="sheet-body">
+          {open && <ProvidesContent page={page}/>}
+        </div>
+      </aside>
+    </React.Fragment>,
+    document.body
+  );
+}
+
+/* =============================================================
+   PAGE: TERM SHEET
+   ============================================================= */
+function DownloadIcon() {
+  return (
+    <svg className="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 4v12M7 11l5 5 5-5M4 20h16"/>
+    </svg>
+  );
+}
+
+function TermSheetPage({ onNav }) {
+  const glossary = [
+    { term: 'Parties',                            def: "Who's involved: POD as the regulated Manager, EFS as the Administrator, the Fund itself, and you (the Pilot — your IA entity and Key Persons)." },
+    { term: 'Recitals',                           def: 'The backstory — why this Agreement exists, what each party undertakes, and the partnership intent that frames everything that follows.' },
+    { term: 'Spirit of the Agreement',            def: 'How to read the rest of this document. POD invests material upfront resources in launching your fund; the partnership terms exist to give both sides enough runway to recoup and grow together. Legal language is for clarity, not distrust.' },
+    { term: 'Structure & Delegation',             def: 'How your Segregated Portfolio (SP) sits in the legal stack. POD owns the Fund, appoints itself as Manager (under the IMA), and sub-delegates portfolio management to you (under the IAA). You manage assets; POD holds title and regulatory accountability.' },
+    { term: 'Platform Services',                  def: 'Everything POD provides as part of the partnership at no additional cost: the BVI fund structure, FSC regulatory umbrella, EFS administration platform, registered office, brand creation, distribution, and IR support.' },
+    { term: 'Partnership Period & Continuity',    def: "Your 5-year commitment from launch of the most recent SP. Mutual extension by agreement only — no unilateral right. Two automatic extension triggers: the Partnership Period extends by 2 years on each of $25M and $50M of POD Distributed Investment (capital subscribed via POD Discovery — return-driven AUM growth doesn't count). Scope is Competing Funds only — your SMAs and pre-existing platform relationships are fully grandfathered. Personal accounts under $1M and family offices under $25M sit outside. Continuity Event provisions cover what happens if a Key Person leaves." },
+    { term: 'Deferred Distribution & Forfeiture', def: 'A 90-day deferral on your performance fees (industry standard, aligns with investor outcomes). If POD has to terminate the Agreement for cause due to your material breach, deferred fees in the deferral cycle are forfeited. Your invested principal is never affected. Termination for any other reason — mutual agreement, end of partnership, POD convenience — does not trigger forfeiture.' },
+    { term: 'Referral Scheme',                    def: "What you earn for bringing investors and PMs to POD. Stepped revenue share to you: 20% of POD's revenue in Year 1, 10% in Year 2, on (a) investors you refer who subscribe to other Pilots' SPs, and (b) PMs you refer who go live on the platform." },
+    { term: "What's Included in the Partnership", def: "The plain-language list of items POD bears or absorbs that you'd typically pay piecemeal under a traditional administrator: setup fees, ManCo retainers, transfer agency, KYC fees, registered office, NAV reporting, audit liaison, marketing collateral. Aggregate value: ~$100k–250k per year. Net effect: your fixed cost faced is <$10k (pure pass-through legal & registration), and POD's economics are entirely AUM-linked." },
+    { term: 'Term & Termination',                 def: 'How the Agreement starts, runs, and ends. Continues for as long as the IAA is in force. Either party can terminate for cause (material breach, insolvency, regulatory disqualification). POD can terminate for convenience on notice; you cannot terminate for convenience during the Partnership Period. Termination by POD for cause due to your breach triggers forfeiture of fees in deferral — your invested principal is never affected.' },
+    { term: 'General',                            def: 'Standard boilerplate — governing law (BVI), dispute resolution (BVI IAC arbitration), assignment, confidentiality, notices.' },
+    { term: 'Next Steps',                         def: 'What happens after you sign. Confirm Revenue Share tier rates; disclose pre-existing relationships for the Grandfathering Schedule; sign — at which point sections 5–10 become binding; KYC begins; SP creation in BVI; account opening; production testing; go-live (typically 6–9 weeks from term sheet signing).' },
+  ];
+  return (
+    <div className="content">
+      <div>
+        <Hero page="term-sheet" title="Term sheet"/>
+        <p className="lead" style={{marginTop: 48}}>Download the Term sheet in either PDF or word format below. We've also included a summary of all terms below for your convenience.</p>
+      </div>
+
+      <div id="downloads" style={{display: 'flex', flexDirection: 'column', gap: 8}}>
+        <a className="download-card" download>
+          <div className="download-card-left">
+            <img className="doc-icon" src="./assets/docx.svg" alt="DOCX"/>
+            <div className="download-card-text">
+              <div className="download-card-title">POD Term sheet</div>
+              <div className="download-card-meta">800 KB</div>
+            </div>
+          </div>
+          <DownloadIcon/>
+        </a>
+        <a className="download-card" download>
+          <div className="download-card-left">
+            <img className="doc-icon" src="./assets/pdf.svg" alt="PDF"/>
+            <div className="download-card-text">
+              <div className="download-card-title">POD Term sheet</div>
+              <div className="download-card-meta">800 KB</div>
+            </div>
+          </div>
+          <DownloadIcon/>
+        </a>
+      </div>
+
+      <div id="terms-glossary" className="glossary">
+        <div className="glossary-header">
+          <h3>Terms glossary</h3>
+        </div>
+        <div>
+          {glossary.map((g, i) => (
+            <div key={i} className="glossary-row">
+              <div className="term">{g.term}</div>
+              <div className="definition">{g.def}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <NextPageCta from="term-sheet" onNav={onNav}/>
+      <PageFooter/>
+    </div>
+  );
+}
+
+/* =============================================================
+   PAGE: STRUCTURE
+   ============================================================= */
+function StructurePage({ onNav }) {
+  const onceOff = [
+    { agree: 'Memorandum & Articles of Association', parties: 'SPC', purpose: 'Constitutional documents of the SPC. Establishes the fund as a BVI segregated portfolio company; defines the powers of the directors, issuance of shares, and creation of segregated portfolios.' },
+    { agree: 'Offering Memorandum', parties: 'Issued by SPC', purpose: 'Primary disclosure document. Explains fund structure, investment objectives, risk factors, fees, service providers, subscription/redemption procedures, and tax considerations. Not a bilateral agreement.' },
+    { agree: 'Administration Agreement', parties: 'SPC; EFS', purpose: 'Fund appoints EFS as administrator. Covers NAV calculation, record-keeping, transfer agency, investor communications, AML/KYC delegation, and reporting obligations.' },
+    { agree: 'Custody / Safekeeping Agreement(s)', parties: 'SPC; Custodian (Copper, Ceffu); Banking Partner (FundBank)', purpose: 'Appoints custodians and banking partner for fund assets. Copper/Ceffu as crypto custodians, FundBank as banking partner for fiat. Defines custody terms, security arrangements, liability, and reporting. Disclosed in the OM.' },
+    { agree: 'Investment Management Agreement', parties: 'SPC; POD AM', purpose: 'Fund appoints POD AM as manager of the SPC. Defines management authority and discretion, fee architecture, liability and indemnification terms.' },
+    { agree: 'Client Agreement', parties: 'Investor; EFS', purpose: 'Investor opens account at EFS. Establishes the investor\'s relationship with EFS, covers AML/KYC obligations, and authorises EFS to act on subscription/redemption instructions.' },
+    { agree: 'Subscription Agreement', parties: 'SPC; Investor', purpose: 'Umbrella agreement between SPC and investor. Permits individual SP subscriptions. Contains investor representations & warranties (qualified/accredited status, source of funds, tax status, etc).' },
+  ];
+  const perSP = [
+    { agree: 'Investment Advisor Agreement', parties: 'POD AM; Investment Advisor Entity/Person', purpose: 'POD AM delegates investment discretion to the IA in respect of a specific SP. Defines advisor prerogatives and reporting obligations, and fee sharing.' },
+    { agree: 'Supplement + Subscription Form', parties: 'Issued by SPC/SP; Form completed by Investor', purpose: 'Supplement: discloses SP-specific document defining each SP (investment mandate, strategy, leverage, liquidity terms) and commercial terms (fees per SP and Share Class).' },
+  ];
+  return (
+    <div className="content">
+      <Hero page="structure" title="Corporate Structure"/>
+
+      <div id="where-sp-fits" style={{display:'flex', flexDirection:'column', gap:32}}>
+        <div>
+          <h2 style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '1.125rem',
+            fontStyle: 'normal',
+            fontWeight: 500,
+            lineHeight: '1.375rem',
+            color: 'var(--text-primary)',
+            margin: '0 0 32px 0',
+          }}>Where your SP fits</h2>
+          <p className="body-text">A regulated BVI Segregated Portfolio Company with VASP fund administration. Your Segregated Portfolio sits inside the SPC; POD acts as Manager and sub-delegates portfolio management to you under the IAA.</p>
+        </div>
+        <img src="./assets/Structure.svg" data-light="./assets/Structure.svg" data-dark="./assets/Structure, dark mode.svg" alt="Corporate structure diagram" className="theme-aware-img" style={{width: 870, height: 'auto', display: 'block'}}/>
+        <ol style={{
+          fontFamily: 'Inter, sans-serif',
+          fontWeight: 400,
+          fontSize: 12,
+          lineHeight: '18px',
+          color: 'var(--text-secondary)',
+          paddingLeft: 18,
+          margin: 0,
+        }}>
+          <li style={{marginBottom: 6}}>Fund admin completes CDD (KYC, AML) to on-board investor.</li>
+          <li style={{marginBottom: 6}}>Investor subscribes to "Base Funds" in USD, BTC, ETH: investor deposits to custodian, either directly (crypto) or via banking partner (fiat); shares issued to investor (simply the reverse for redemptions). Key step for security purposes.</li>
+          <li style={{marginBottom: 6}}>Investor subscribes to IA's Strategy via POD app. Funds settle into Manager's Segregated Portfolio "POD-N" whose management is delegated to IA via Investment Advisor agreement.</li>
+          <li>Manager executes trades directly with crypto exchange(s) and manages collateral via the POD Manager App.</li>
+        </ol>
+      </div>
+
+      <div id="once-off-setup">
+        <h3 className="subsection-title">One-time setup & client onboarding</h3>
+        <table className="legal-table">
+          <thead>
+            <tr><th>Legal Agreement</th><th>Parties</th><th>Purpose</th></tr>
+          </thead>
+          <tbody>
+            {onceOff.map((r,i) => (
+              <tr key={i}>
+                <td className="label-cell">{r.agree}</td>
+                <td>{r.parties}</td>
+                <td>{r.purpose}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div id="per-sp">
+        <h3 className="subsection-title">Specific for each Manager / Segregated Portfolio</h3>
+        <table className="legal-table">
+          <thead>
+            <tr><th>Legal Agreement</th><th>Parties</th><th>Purpose</th></tr>
+          </thead>
+          <tbody>
+            {perSP.map((r,i) => (
+              <tr key={i}>
+                <td className="label-cell">{r.agree}</td>
+                <td>{r.parties}</td>
+                <td>{r.purpose}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="download-row">
+        <button className="download-btn"><DownloadIcon/> Download PPTX</button>
+        <button className="download-btn outline"><DownloadIcon/> Download PDF</button>
+      </div>
+
+      <NextPageCta from="structure" onNav={onNav}/>
+      <PageFooter/>
+    </div>
+  );
+}
+
+/* =============================================================
+   PAGE: HOW IT WORKS
+   ============================================================= */
+function HowItWorksPage({ onNav }) {
+  const sections = [
+    'Identification', 'Investment Mandate', 'Dealing & Liquidity',
+    'Fees & Economics', 'Share Class Parameters',
+    'SP-Specific Risk Factors', 'Other / Special Situations',
+  ];
+  const [openSec, setOpenSec] = useState('Identification');
+  const SECTION_DATA = {
+    'Identification': {
+      intro: 'Who you are, how the SP will be named, and the base currency.',
+      fields: [
+        { l: 'SP Name', d: "Your strategy gets a name. It will appear on the Investor Portal, in reporting, and on subscription documents. POD's brand team can work with you to develop a name that fits both your team and the platform." },
+        { l: 'Investment Advisor entity', d: 'The legal entity managing the SP under the IAA. Must match the entity that has cleared KYC. Include jurisdiction (e.g., "[Name] Capital Limited, BVI").' },
+        { l: 'Key Person(s)', d: 'Named individuals whose continued active involvement is a condition of the IAA. Trigger Continuity Event if they leave or step away.' },
+        { l: 'Currency', d: 'Base currency for NAV reporting, fees, and investor reporting. USD is the platform default. EUR/GBP require additional FX accommodation; allow a 2–3 week lead-time.' },
+      ],
+    },
+    'Investment Mandate': {
+      intro: 'What the SP will do, how it will do it, and what it will not do.',
+      fields: [
+        { l: 'Investment Objective', d: "What return is the SP seeking, in one sentence? Examples: 'To deliver absolute returns through a long/short equity strategy in [region].'" },
+        { l: 'Investment Strategy', d: 'How will you achieve the objective? 2–4 sentences covering position sizing, instrument selection, holding period, signal generation.' },
+        { l: 'Portfolio Investments', d: 'What asset classes / instruments the SP may hold. Be specific enough to be informative; broad enough not to box yourself in unintentionally.' },
+        { l: 'Investment Restrictions', d: 'Explicit prohibitions or limits — concentration, geographic exclusions, instrument exclusions.' },
+        { l: 'Leverage', d: "Maximum leverage as % of NAV. 'None' if not employed; otherwise specify maximum (e.g., '200% of NAV gross')." },
+      ],
+    },
+    'Dealing & Liquidity': {
+      intro: 'When investors can subscribe, redeem, and how NAV is calculated.',
+      fields: [
+        { l: 'Subscription Point', d: "'Continuous' (any Business Day) is the platform default and most flexible. Alternatives: weekly, monthly, quarterly." },
+        { l: 'Valuation Frequency', d: 'How often NAV is calculated. Default is Daily or Weekly.' },
+        { l: 'Redemption Point', d: 'How often investors can redeem. Should match Subscription Point unless the strategy has materially less redemption liquidity.' },
+        { l: 'Redemption Gate', d: "Cap on aggregate redemptions per period. 'None' for highly liquid strategies; e.g., '10% of NAV per quarter' for less-liquid strategies." },
+        { l: 'Redemption Notice Period', d: 'How much notice investors must give before a redemption settles. Range: 1 Business Day (very liquid) to 90 days.' },
+      ],
+    },
+    'Fees & Economics': {
+      intro: 'Management fee, performance fee, and how each accrues.',
+      fields: [
+        { l: 'Management Fee', d: 'Annual % of NAV charged to the SP. Industry ranges: 0% for cash strategies; 0.5–1% for systematic / passive; 1.5–2% for active equity.' },
+        { l: 'Performance Fee', d: '% of returns above hurdle (or HWM if no hurdle). Industry standard: 10–20%.' },
+        { l: 'Performance Period', d: 'How often performance fee crystallises. Most common: Quarterly (POD platform default — aligns with the 90-day deferral cycle).' },
+        { l: 'Hurdle Rate', d: "Threshold return that must be exceeded before performance fee accrues. 'None', or specify (e.g., risk-free rate, 5% absolute)." },
+        { l: 'High Water Mark', d: "'Yes' (full HWM, platform default) or describe alternative mechanism for performance fee accrual." },
+      ],
+    },
+    'Share Class Parameters': {
+      intro: 'The mechanics of the Share Class(es) you are launching.',
+      fields: [
+        { l: 'Class designation', d: "Most SPs launch with Class A. Use 'Class A' unless you have a specific reason." },
+        { l: 'Sub-Class', d: 'Used to differentiate within a class (e.g., currency tranches, founder-friendly fees). Most launch with no sub-classes.' },
+        { l: 'Minimum Initial Investment', d: 'Common: USD 50–100k for individual-friendly classes; USD 500k–1M+ for institutional-only.' },
+        { l: 'Minimum Additional Investment', d: "Often 'None' to encourage continued allocation." },
+        { l: 'Subscription Price', d: 'Initial Offer Period: fixed (typically USD 1.00 per Share). Thereafter: NAV per Share at preceding Valuation Point.' },
+        { l: 'Distribution Type', d: 'Distributing (income paid out) or Accumulating (income retained in NAV).' },
+        { l: 'Subscription Fee', d: "Usually 'None' for POD-platform investors — platform fees cover setup." },
+        { l: 'Redemption Price', d: 'NAV per Share at the preceding Valuation Point (default).' },
+        { l: 'Redemption Fee', d: "Usually 'None'." },
+        { l: 'Lock-up Period', d: 'Mandatory holding period before first redemption. None to 12 months. Lock-ups common for less-liquid strategies.' },
+        { l: 'Minimum Holding', d: "Minimum holding amount post any partial redemption. 'Not applicable' if no minimum." },
+        { l: 'Minimum Redemption Amount', d: 'Minimum size of any redemption order.' },
+        { l: 'Expenses Cap', d: 'Maximum costs (% of AUM) per annum passed through to investors as a line item, separate to mgmt + perf fees.' },
+      ],
+    },
+    'SP-Specific Risk Factors': {
+      intro: 'Short bold title + 2–4 sentences for each. POD will edit for legal style.',
+      fields: [
+        { l: 'Strategy risks', d: 'Market direction, liquidity of underlying instruments, dependence on specific signals or data sources.' },
+        { l: 'Counterparty risks', d: 'Specific exchanges, brokers, or trading venues your strategy depends on.' },
+        { l: 'Instrument risks', d: 'If you trade specific derivatives, structured products, or off-the-run instruments — note their unique risk profile.' },
+        { l: 'Operational risks', d: 'Anything specific to how your strategy executes that creates non-standard risk.' },
+        { l: 'Regulatory risks', d: 'If your strategy is exposed to specific regulatory regimes (e.g., spot crypto in jurisdictions reviewing classification).' },
+      ],
+    },
+    'Other / Special Situations': {
+      intro: 'Edge-case provisions and any anchor-investor structuring.',
+      fields: [
+        { l: 'Special Situation Shares', d: "'Not applicable' for clean liquid strategies, or describe ring-fenced illiquid sleeves." },
+        { l: 'Dividend Policy', d: 'Distributing or Accumulating. Should match the Distribution Type chosen for your Share Class.' },
+        { l: 'Initial Offer Period', d: 'Window during which investors subscribe at the fixed initial price. Common: 30 days from SP launch.' },
+        { l: 'Anchor investor terms', d: "If you have anchor investors with bespoke economics, describe here. POD will help structure a Founder's Class." },
+      ],
+    },
+  };
+  return (
+    <div className="content">
+      <div id="define-sp">
+        <Hero page="howitworks" title="Fund creation"/>
+        <h2 style={{
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '1.125rem',
+          fontStyle: 'normal',
+          fontWeight: 500,
+          lineHeight: '1.375rem',
+          color: 'var(--text-primary)',
+          margin: '48px 0 12px 0',
+        }}>Define your SP</h2>
+        <p className="body-text">This worksheet captures the parameters of your Segregated Portfolio and Share Class(es). On completion, it becomes the Supplement to the Offering Memorandum — the legally binding statement of your SP's mandate, terms, and economics.</p>
+      </div>
+
+      <div id="how-this-works">
+        <h2 className="section-title" style={{margin:'0 0 32px 0'}}>How this works</h2>
+        <p className="body-text">Your SP is governed by three layered documents, from most general to most specific:</p>
+        <p className="body-text"><strong style={{color:'var(--text-primary)', fontWeight:500}}>1. Offering Memorandum (OM)</strong> — fund-wide structure, service providers, taxation. Common across all SPs.</p>
+        <p className="body-text"><strong style={{color:'var(--text-primary)', fontWeight:500}}>2. Supplement</strong> — your SP and your Share Class(es). Investment mandate, dealing terms, SP-specific risks. This is what this form produces.</p>
+        <p className="body-text"><strong style={{color:'var(--text-primary)', fontWeight:500}}>3. Subscription Documents</strong> — what each investor signs to subscribe to your SP.</p>
+        <div className="callout" style={{marginTop:24}}>
+          <div className="q">What happens after you submit:</div>
+          <div className="a">POD reviews each section with you, raises any clarifications, then drafts the formal Supplement based on your inputs. Once both sides sign off, the Supplement is filed and your SP is ready for FSC notification, OM supplement publication, and KYC onboarding.</div>
+        </div>
+      </div>
+
+      <div id="sp-sections">
+        {sections.map((s, i) => {
+          const data = SECTION_DATA[s];
+          const open = openSec === s;
+          return (
+            <div key={i} className={'accordion-row' + (open ? ' open' : '')} onClick={()=>setOpenSec(open ? '' : s)}>
+              <div className="accordion-head">
+                <span style={{fontSize:15, fontWeight:500}}>{s}</span>
+                <span className="chev"><ChevronIcon/></span>
+              </div>
+              {open && data && (
+                <div className="accordion-body">
+                  <p style={{marginBottom:12}}>{data.intro}</p>
+                  <table className="id-table">
+                    <tbody>
+                      {data.fields.map((r,j) => (
+                        <tr key={j}><td>{r.l}</td><td>{r.d}</td></tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="cta-dark">
+        <div className="title serif">Create a fund</div>
+        <button className="pill-btn">Get started <ArrowIcon/></button>
+      </div>
+
+      <div>
+        <button className="download-btn outline"><DownloadIcon/> Download PDF</button>
+      </div>
+
+      <NextPageCta from="how-it-works" onNav={onNav}/>
+      <PageFooter/>
+    </div>
+  );
+}
+
+/* =============================================================
+   PAGE: FAQ
+   ============================================================= */
+function FAQPage({ onNav }) {
+  const groups = [
+    { title: 'POD and the platform', items: [
+      { q: 'What is POD?', a: 'POD is a regulated, technology-driven fund administration platform enabling investment advisors to launch and operate a Segregated Portfolio within a BVI fund for minimal setup costs and zero platform minimums. It acts as Manager under the IMA and delegates portfolio management to advisors via the IAA.' },
+      { q: 'Where is POD regulated?', a: 'The Fund (POD Emerging Alpha 1 Fund SPC) is a BVI professional fund recognised by the Financial Services Commission (FSC) under SIBA. POD\'s manager entity is FSC-approved, and the administrator is regulated in Ireland.' },
+      { q: 'Why would I pick POD over a traditional Cayman/BVI ManCo and Administrator?', a: 'POD reduces annual fixed costs by ~$100k–250k by absorbing setup, ManCo retainers, NAV, transfer agency, KYC, and registered-office fees. It provides access to POD\'s investor base through a single channel and typically delivers live SPs within 12–16 weeks.' },
+      { q: 'How does POD differ from a standard Reg Hosting Platform?', a: 'Traditional platforms use manual handoffs via email and spreadsheets. POD integrates the administrator into a single automated system with API connectivity, offering daily NAVs, instant settlement, and frictionless operations versus monthly reporting and error-prone manual processes.' },
+      { q: 'Is POD just a platform for fund operations, or can you help me grow?', a: "POD supports growth through audited track records, Discovery visibility to allocators, and brand/marketing assistance, optimizing for SP capacity achievement alongside AUM expansion." },
+    ]},
+    { title: 'Structure and legal', items: [
+      { q: 'Where does my SP sit in the legal stack?', a: 'Your SP is a Segregated Portfolio within POD Emerging Alpha 1 Fund SPC, a BVI Segregated Portfolio Company. The SPC appoints POD as Manager under the IMA, which sub-delegates to the advisor under the IAA. EFS administers NAV, share register, transfer agency, and KYC.' },
+      { q: 'Who owns the SP assets?', a: 'Legal title sits with the SPC, segregated to your SP. Assets are custodied with named custodians (FundBank for fiat; Copper/Ceffu or comparable for crypto) under custody agreements between the SPC and the custodian.' },
+      { q: 'Can I have multiple SPs?', a: 'Yes. Each strategy gets its own SP within the Fund via the Fund Creation Form. New SPs require a fresh Supplement to the OM and trigger a new Partnership Period from creation date.' },
+      { q: 'Can I charge different fees to different investors?', a: 'Yes. Create new share classes within your existing SP with different management fees, performance fees, investor eligibility, minimums, withdrawal notice periods, and lockup terms.' },
+    ]},
+    { title: 'Economics', items: [
+      { q: 'What do I pay POD?', a: "You don't pay POD directly. POD's compensation is the Revenue Share — a tiered percentage of the management and performance fees collected by the SP from Shareholders." },
+      { q: "What's the Platform Fee?", a: 'A flat 20 basis points per annum (0.20%) of SP AUM, charged directly to the Fund as a Shareholder-borne expense and disclosed in the Offering Memorandum supplement.' },
+      { q: "What's the Distribution Share?", a: '20% of the gross management and performance fees on POD-Sourced Subscribers — investors who subscribe to your SP via POD Discovery (POD\'s platform investor base). This applies for the investor\'s lifetime and only to POD-sourced capital.' },
+      { q: 'Can I see who my POD-Sourced investors are?', a: 'No. POD-Sourced Subscriber identities are technically gated in the Investor Portal. You see aggregate AUM and metrics but not individual identities; IA-sourced investors remain fully visible.' },
+      { q: 'Are there any minimum fees?', a: "No. There are no monthly, quarterly, or annual minimums. POD's economics scale with your SP's AUM." },
+      { q: 'What about third-party costs (custody, prime brokerage, KYC, audit)?', a: 'POD aggregates SP volumes across the Group to negotiate wholesale pricing and passes through 100% of the cost benefit to your SP on a pro-rata basis.' },
+    ]},
+    { title: 'Partnership Period and commitment', items: [
+      { q: 'How long is the Partnership Period?', a: '5 years firm from the creation of your most recent SP. Mutual extension only — no unilateral right. Two automatic 2-year extensions trigger at $25M and $50M of POD Distributed Investment milestones.' },
+      { q: 'What does the partnership commitment actually cover?', a: 'Only Competing Funds — pooled investment vehicles or trust structures that perform the same economic function as your SP. SMAs, advisory mandates, family offices, and personal accounts remain unrestricted.' },
+      { q: 'What about my existing fund or platform relationships?', a: 'Pre-existing fund and platform relationships at signing are fully grandfathered. You may continue and grow them without restriction.' },
+      { q: 'What if my Key Person leaves the IA?', a: 'A Continuity Event allows POD to suspend subscriptions and performance crystallisation, require an acceptable replacement within 90 days, or terminate the IAA for cause.' },
+      { q: "What's my walk-away leverage at end of partnership?", a: 'There is no unilateral extension by POD and no termination penalty. If performance is strong and economics feel unfair, you can renegotiate or leave, though POD-sourced subscribers typically remain with POD.' },
+    ]},
+    { title: 'Brand and distribution', items: [
+      { q: 'Who owns the Brand?', a: 'POD creates and owns the Brand IP for your SP. You receive a perpetual, royalty-free licence to use it within the SP and on POD-linked channels during the term.' },
+      { q: 'Can I distribute on Telegram, X, or other channels?', a: 'Yes, under the Brand and subject to marketing and securities-promotion regulations, with POD providing collateral and you controlling distribution cadence and content.' },
+      { q: 'Can I send custom reports to investors?', a: "Yes. The Administration Platform supports both standard and custom Shareholder reports, delivered directly to investor inboxes via the Investor Portal's distribution mechanism." },
+    ]},
+    { title: 'Operational and regulatory', items: [
+      { q: 'How long does onboarding take?', a: 'Approximately 12–16 weeks from discovery call to live SP. After term sheet signing, an SP can go live within 6–9 weeks.' },
+      { q: 'What investor jurisdictions are accepted?', a: "This is governed by the Fund's offering perimeter and the Investor Passport KYC framework, with certain jurisdictions subject to enhanced diligence or refusal." },
+      { q: 'What happens if EFS is replaced?', a: 'POD has an obligation under the agreement to use reasonable endeavours to maintain the Platform Services and to notify you promptly of any material change of administrator.' },
+      { q: 'What if POD goes out of business?', a: "The Fund and your SP exist independently of POD's commercial entity. The Fund would continue to be administered by EFS, and a new manager would be appointed by the Fund's directors with FSC consent." },
+      { q: 'Are performance fees deferred, locked up, or subject to clawback?', a: 'Performance fees are crystallised quarterly with a 90-day deferral cycle before payment to you. Material breach triggers forfeiture of deferred fees; other terminations do not.' },
+    ]},
+  ];
+  const [openKey, setOpenKey] = useState(null);
+
+  return (
+    <div className="content">
+      <div>
+        <Hero page="faqs" title="FAQ"/>
+        <p style={{
+          marginTop: 48,
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '1.125rem',
+          fontStyle: 'normal',
+          fontWeight: 500,
+          lineHeight: '1.375rem',
+          color: 'var(--text-primary)',
+          margin: '48px 0 0',
+        }}>Questions Pilots most commonly ask when evaluating POD. Reflects the current term sheet (v0.7) and is non-binding pending the IAA, asked.</p>
+      </div>
+
+      {groups.map((g, gi) => (
+        <div key={gi} id={g.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}>
+          <h2 className="section-title">{g.title}</h2>
+          {g.items.map((it, i) => {
+            const k = g.title + '|' + it.q;
+            const open = openKey === k;
+            return (
+              <div key={i} className={'accordion-row' + (open ? ' open' : '')} onClick={()=>setOpenKey(open ? null : k)}>
+                <div className="accordion-head">
+                  <span style={{fontSize:'1.125rem', fontWeight:500, lineHeight:'1.375rem'}}>{it.q}</span>
+                  <span className="chev"><ChevronIcon/></span>
+                </div>
+                {open && it.a && <div className="accordion-body">{it.a}</div>}
+                {open && !it.a && <div className="accordion-body" style={{color:'var(--text-secondary)', fontStyle:'italic'}}>Answer placeholder.</div>}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+
+      <NextPageCta from="faq" onNav={onNav}/>
+      <PageFooter/>
+    </div>
+  );
+}
+
+/* =============================================================
+   PAGE: PRICING — Fee Tiers + working Calculator
+   ============================================================= */
+const PRICING_TIERS = [
+  { label: 'Launch stage',  range: '$0–10M',   min: 0,  max: 10,   rate: 0.25, slug: 'launch',        desc: "For the early stages of your fund growth when POD's value to you is highest." },
+  { label: 'Early growth',  range: '$10–25M',  min: 10, max: 25,   rate: 0.20, slug: 'grow',          desc: "A reduced rate as your fund gains traction. Maximize on investment while minimizing costs." },
+  { label: 'Scaling',       range: '$25–75M',  min: 25, max: 75,   rate: 0.15, slug: 'scale',         desc: "A further reduction across mid-market AUM as you approach institutional scale." },
+  { label: 'Institutional', range: '$75M+',    min: 75, max: 1e12, rate: 0.10, slug: 'institutional', desc: "POD's lowest take rate, applied to all AUM above seventy-five million." },
+];
+
+function calcTierSlices(aum) {
+  const res = []; let rem = aum, prev = 0;
+  for (let i = 0; i < PRICING_TIERS.length; i++) {
+    const slice = Math.min(Math.max(PRICING_TIERS[i].max - prev, 0), rem);
+    res.push(slice);
+    rem -= slice; prev = PRICING_TIERS[i].max;
+    if (rem <= 0) break;
+  }
+  while (res.length < PRICING_TIERS.length) res.push(0);
+  return res;
+}
+function currentTier(aum) {
+  for (let i = 0; i < PRICING_TIERS.length; i++) {
+    if (aum >= PRICING_TIERS[i].min && aum < PRICING_TIERS[i].max) return PRICING_TIERS[i];
+  }
+  return PRICING_TIERS[PRICING_TIERS.length - 1];
+}
+
+const fmtMoney = n => '$' + Math.round(n).toLocaleString();
+const fmtPct = (n, d) => n.toFixed(d === undefined ? 1 : d) + '%';
+
+function FeeTiersGrid() {
+  return (
+    <div>
+      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:8}}>
+        {PRICING_TIERS.map((t, i) => (
+          <div key={i} style={{
+            border: '1px solid var(--border-strong)',
+            borderRadius: 'var(--radius-m)',
+            padding: '32px 48px 32px 24px',
+            display: 'flex', flexDirection: 'column',
+            gap: 24, justifyContent: 'flex-start',
+          }}>
+            <img
+              src={`./assets/illos/illo-${t.slug}.jpg`}
+              data-light={`./assets/illos/illo-${t.slug}.jpg`}
+              data-dark={`./assets/illos/illo-${t.slug}-dark.jpg`}
+              alt=""
+              className="theme-aware-img"
+              style={{width:150, height:150, display:'block', objectFit:'contain', borderRadius:'var(--radius-s)'}}
+            />
+            <div style={{display:'flex', flexDirection:'column', gap:24}}>
+              <div style={{fontSize:14, fontWeight:400, color:'var(--text-secondary)'}}>{t.label}</div>
+              <div style={{display:'flex', alignItems:'baseline', gap:8}}>
+                <span style={{fontSize:30, fontWeight:500, color:'var(--text-primary)'}}>{t.range}</span>
+                <span style={{fontSize:14, fontWeight:500, color:'var(--text-primary)'}}>AUM</span>
+              </div>
+              <div style={{fontSize:14, color:'var(--text-secondary)', lineHeight:'18px'}}>{t.desc}</div>
+              <div style={{fontSize:14}}>
+                <span style={{fontWeight:500, color:'var(--text-primary)'}}>{Math.round(t.rate*100)}% </span>
+                <span style={{color:'var(--text-secondary)'}}>of gross fees</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p style={{fontSize:12, color:'var(--text-secondary)', marginTop:24, lineHeight:'18px'}}>
+        Tiers are applied progressively, like income tax brackets. A $30m fund pays 25% on the first $10m of fees, 20% on the next $15m, and 15% on the final $5m, resulting in a blended rate between 15% and 20%.
+      </p>
+    </div>
+  );
+}
+
+function NumberInput({ label, value, onChange, prefix, suffix, step = 1, min = 0, max }) {
+  return (
+    <div style={{display:'flex', flexDirection:'column', gap:4, flex:1, minWidth:0}}>
+      <label style={{fontSize:12, color:'var(--text-secondary)'}}>{label}</label>
+      <div style={{
+        background: 'var(--bg-canvas)',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: 'var(--radius-m)',
+        padding: '12px 16px',
+        display: 'flex', alignItems: 'center', gap: 8,
+      }}>
+        {prefix && <span style={{color:'var(--text-secondary)', fontSize:14}}>{prefix}</span>}
+        <input
+          type="number" step={step} min={min} max={max}
+          value={value} onChange={(e)=>onChange(e.target.value)}
+          style={{
+            flex:1, border:'none', outline:'none', background:'transparent',
+            fontFamily:'inherit', fontSize:14, color:'var(--text-primary)',
+            padding:0, minWidth:0, boxShadow:'none',
+          }}/>
+        {suffix && <span style={{color:'var(--text-secondary)', fontSize:14}}>{suffix}</span>}
+      </div>
+    </div>
+  );
+}
+
+function FeeCalculator() {
+  const [aumStr, setAumStr] = useState('10');
+  const [retStr, setRetStr] = useState('20');
+  const [mgmtStr, setMgmtStr] = useState('2');
+  const [perfStr, setPerfStr] = useState('20');
+  const [ciStr, setCiStr]    = useState('0');
+
+  const aum = Math.max(parseFloat(aumStr) || 0, 0);
+  const ret = Math.max(parseFloat(retStr) || 0, 0);
+  const mgmt = Math.max(parseFloat(mgmtStr) || 0, 0);
+  const perf = Math.max(parseFloat(perfStr) || 0, 0);
+  const ci = Math.min(Math.max(parseFloat(ciStr) || 0, 0), aum);
+
+  const aumV = aum * 1e6;
+  const ciV = ci * 1e6;
+  const mgmtInc = aumV * (mgmt / 100);
+  const netRet  = Math.max(ret - mgmt, 0);
+  const perfInc = aumV * (netRet / 100) * (perf / 100);
+  const total   = mgmtInc + perfInc;
+
+  const tierAmts = calcTierSlices(aum);
+  let podBaseTotal = 0;
+  const podFeePerTier = [];
+  for (let i = 0; i < PRICING_TIERS.length; i++) {
+    const feesInSlice = aum > 0 && tierAmts[i] > 0 ? total * (tierAmts[i] / aum) : 0;
+    const fee = feesInSlice * PRICING_TIERS[i].rate;
+    podFeePerTier.push(fee);
+    podBaseTotal += fee;
+  }
+  const blendedBase = total > 0 ? podBaseTotal / total : 0;
+  const ciFrac = aum > 0 ? ciV / aumV : 0;
+  const podCI = total * ciFrac * 0.20;
+  const podTotal = podBaseTotal + podCI;
+  const keeps = Math.max(total - podTotal, 0);
+  const keepPct = total > 0 ? (keeps / total) * 100 : 0;
+
+  const tier = currentTier(aum);
+
+  React.useEffect(() => {
+    const isDark = document.body.classList.contains('dark');
+    document.querySelectorAll('img.theme-aware-img').forEach(img => {
+      const src = isDark ? img.getAttribute('data-dark') : img.getAttribute('data-light');
+      if (src) img.setAttribute('src', src);
+    });
+  }, [tier.slug]);
+
+  // Bar segments
+  const segs = [
+    { k: 'keep', v: keeps,        c: '#45d59b', l: 'Your net fee income' },
+    { k: 'base', v: podBaseTotal, c: '#0E0F12', l: 'POD base take' },
+    { k: 'ci',   v: podCI,        c: '#82858B', l: 'POD cap intro take' },
+  ].filter(s => s.v > 0);
+  const segTotal = segs.reduce((a, s) => a + s.v, 0);
+
+  return (
+    <div style={{
+      border: '1px solid var(--border-subtle)',
+      borderRadius: 'var(--radius-m)',
+      padding: 32,
+      display: 'flex', flexDirection: 'column', gap: 40,
+    }}>
+      <div style={{display:'flex', flexDirection:'column', gap:24}}>
+        <div style={{fontSize:18, fontWeight:500, color:'var(--text-primary)'}}>Fund details</div>
+        <div style={{display:'flex', gap:16}}>
+          <NumberInput label="Total AUM (millions)" value={aumStr} onChange={setAumStr} prefix="$" step={1}/>
+          <NumberInput label="Expected Annual Return" value={retStr} onChange={setRetStr} suffix="%" step={1}/>
+        </div>
+      </div>
+
+      <div style={{display:'flex', flexDirection:'column', gap:24}}>
+        <div style={{fontSize:18, fontWeight:500, color:'var(--text-primary)'}}>Fee structure</div>
+        <div style={{display:'flex', gap:16}}>
+          <NumberInput label="Management fee" value={mgmtStr} onChange={setMgmtStr} suffix="%" step={0.1}/>
+          <NumberInput label="Performance fee" value={perfStr} onChange={setPerfStr} suffix="%" step={1}/>
+        </div>
+      </div>
+
+      <div style={{display:'flex', flexDirection:'column', gap:24}}>
+        <div style={{fontSize:18, fontWeight:500, color:'var(--text-primary)'}}>Capital introduction</div>
+        <div style={{display:'flex', gap:16}}>
+          <NumberInput label="POD-introduced AUM (millions)" value={ciStr} onChange={setCiStr} prefix="$" step={1} max={aum}/>
+          <div style={{flex:1}}/>
+        </div>
+      </div>
+
+      <p style={{fontSize:14, color:'var(--text-secondary)', lineHeight:'18px', margin:0}}>
+        Note: This calculator makes the simplifying assumption that the average fees paid by POD-introduced investors are identical to the average fees paid across your entire investor base.
+      </p>
+
+      <div style={{display:'flex', flexDirection:'column', gap:24}}>
+        <div style={{fontSize:18, fontWeight:500, color:'var(--text-primary)'}}>Fee Income Distribution</div>
+        <div style={{display:'flex', flexDirection:'column', gap:10}}>
+          <div style={{fontSize:12, color:'var(--text-secondary)'}}>Your fee share</div>
+          <div style={{fontSize:30, fontWeight:500, color:'var(--text-primary)', lineHeight:1}}>{total > 0 ? Math.round(keepPct) + '%' : '–'}</div>
+          <div style={{fontSize:12, color:'var(--text-secondary)'}}>{total > 0 ? `${fmtMoney(keeps)} of ${fmtMoney(total)}` : ''}</div>
+        </div>
+
+        {/* Stacked horizontal bar */}
+        <div style={{
+          display:'flex', height:32, borderRadius:6, overflow:'hidden',
+          background: segs.length === 0 ? '#E4E3DE' : 'transparent',
+        }}>
+          {segs.map((s, i) => (
+            <div key={i} style={{flex: s.v / (segTotal || 1), background: s.c}} title={`${s.l}: ${fmtMoney(s.v)}`}/>
+          ))}
+        </div>
+        {/* Legend */}
+        <div style={{display:'flex', flexDirection:'column', gap:8}}>
+          {keeps > 0 && (
+            <div style={{display:'flex', alignItems:'center', gap:10, fontSize:13}}>
+              <span style={{width:10, height:10, borderRadius:2, background:'#45d59b', flexShrink:0}}/>
+              <span style={{color:'var(--text-primary)'}}>Your net fee income</span>
+              <span style={{marginLeft:'auto', color:'var(--text-secondary)', fontVariantNumeric:'tabular-nums'}}>{fmtMoney(keeps)}</span>
+            </div>
+          )}
+          {podBaseTotal > 0 && (
+            <div style={{display:'flex', alignItems:'center', gap:10, fontSize:13}}>
+              <span style={{width:10, height:10, borderRadius:2, background:'#0E0F12', flexShrink:0}}/>
+              <span style={{color:'var(--text-primary)'}}>POD base take</span>
+              <span style={{marginLeft:'auto', color:'var(--text-secondary)', fontVariantNumeric:'tabular-nums'}}>{fmtMoney(podBaseTotal)} · {fmtPct(blendedBase * 100)} blended</span>
+            </div>
+          )}
+          {podCI > 0 && (
+            <div style={{display:'flex', alignItems:'center', gap:10, fontSize:13}}>
+              <span style={{width:10, height:10, borderRadius:2, background:'#82858B', flexShrink:0}}/>
+              <span style={{color:'var(--text-primary)'}}>POD cap intro take</span>
+              <span style={{marginLeft:'auto', color:'var(--text-secondary)', fontVariantNumeric:'tabular-nums'}}>{fmtMoney(podCI)} · 20% of fees attributable to cap intro AUM</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Itemized list */}
+      <div style={{display:'flex', flexDirection:'column'}}>
+        {[
+          { l: 'Management fee income', v: fmtMoney(mgmtInc) },
+          { l: 'Performance fee income', v: fmtMoney(perfInc) },
+          { l: 'Total gross fees',       v: fmtMoney(total),       bold: true },
+          { l: 'POD base take',          v: '−' + fmtMoney(podBaseTotal), muted: true },
+          ...(podCI > 0 ? [{ l: 'POD cap intro take', v: '−' + fmtMoney(podCI), muted: true }] : []),
+        ].map((r, i) => (
+          <div key={i} style={{
+            display:'flex', justifyContent:'space-between',
+            padding:'10px 0',
+            borderBottom: '1px solid var(--border-subtle)',
+            fontSize: 14,
+            fontWeight: r.bold ? 500 : 400,
+            color: r.muted ? 'var(--text-secondary)' : 'var(--text-primary)',
+          }}>
+            <span>{r.l}</span>
+            <span style={{fontVariantNumeric:'tabular-nums'}}>{r.v}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Two summary KPIs */}
+      <div style={{display:'flex', gap:16}}>
+        <div style={{flex:1, border:'1px solid var(--border-subtle)', borderRadius:'var(--radius-m)', padding:'16px 24px', display:'flex', flexDirection:'column', gap:16}}>
+          <div style={{fontSize:14, color:'var(--text-secondary)'}}>Gross fees</div>
+          <div style={{fontSize:30, fontWeight:500, color:'var(--text-primary)', lineHeight:1}}>{fmtMoney(total)}</div>
+        </div>
+        <div style={{flex:1, border:'1px solid var(--border-subtle)', borderRadius:'var(--radius-m)', padding:'16px 24px', display:'flex', flexDirection:'column', gap:16}}>
+          <div style={{fontSize:14, color:'var(--text-secondary)'}}>Your Net Fee Income</div>
+          <div style={{fontSize:30, fontWeight:500, color:'#00d996', lineHeight:1}}>{fmtMoney(keeps)}</div>
+        </div>
+      </div>
+
+      {/* Current tier card */}
+      <div style={{
+        border: '1px solid var(--border-strong)',
+        borderRadius: 'var(--radius-m)',
+        padding: '32px 48px 32px 24px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <div style={{display:'flex', flexDirection:'column', gap:24, width:293}}>
+          <div style={{fontSize:14, color:'var(--text-secondary)'}}>{tier.label}</div>
+          <div style={{display:'flex', alignItems:'baseline', gap:8}}>
+            <span style={{fontSize:30, fontWeight:500, color:'var(--text-primary)'}}>{tier.range}</span>
+            <span style={{fontSize:14, fontWeight:500, color:'var(--text-primary)'}}>AUM</span>
+          </div>
+          <div style={{fontSize:14, color:'var(--text-secondary)', lineHeight:'18px'}}>{tier.desc}</div>
+          <div style={{fontSize:14}}>
+            <span style={{fontWeight:500, color:'var(--text-primary)'}}>{Math.round(tier.rate * 100)}% </span>
+            <span style={{color:'var(--text-secondary)'}}>of gross fees</span>
+          </div>
+        </div>
+        <img
+          src={`./assets/illos/illo-${tier.slug}.jpg`}
+          data-light={`./assets/illos/illo-${tier.slug}.jpg`}
+          data-dark={`./assets/illos/illo-${tier.slug}-dark.jpg`}
+          alt=""
+          className="theme-aware-img"
+          style={{width:177, height:177, objectFit:'contain', borderRadius:'var(--radius-s)'}}
+        />
+      </div>
+
+      <p style={{fontSize:12, color:'var(--text-secondary)', lineHeight:'18px', margin:0}}>
+        POD's fee is charged as a percentage of your total manager fees — no upfront or fixed costs. The blended base rate is calculated progressively across AUM tiers. Cap intro fees (an additional 20% of fees proportional to cap intro AUM) apply only to capital sourced via POD's Discover platform. Leave cap intro AUM at 0 if not applicable. Performance fee is calculated on return net of management fee.
+      </p>
+    </div>
+  );
+}
+
+function PricingPage({ onNav }) {
+  const [tab, setTab] = useState('tiers');
+  return (
+    <div className="content">
+      <div>
+        <Hero page="pricing" title="Pricing"/>
+        <p className="lead" style={{marginTop: 48}}>No upfront fees, no fixed fees, no minimum fees.<br/>You only pay POD as you earn. We win when you win.</p>
+        <p className="body-text" style={{marginTop: 32}}>POD charges a percentage of gross manager fees — management fee plus performance fee. This percentage reduces as your AUM grows.</p>
+      </div>
+
+      <section id="setup-costs">
+        <h2 className="section-title">Setup costs</h2>
+        <p className="body-text">Pay only legal & registration fees (approx $7k, passed through at cost by POD). After that, you face no further fixed fees, and are charged only via POD's fee sharing structure.</p>
+      </section>
+
+      <section id="base-fee-structure">
+        <h2 className="section-title">Base fee structure</h2>
+        <p className="body-text">Our base fee is a percentage of your fund's total gross manager fees, applied progressively across AUM tiers. The more AUM you manage, the lower our blended take rate.</p>
+        <div className="tabs" style={{marginTop: 24}}>
+          <button className={tab === 'tiers' ? 'active' : ''} onClick={()=>setTab('tiers')}>Fee Tiers</button>
+          <button className={tab === 'calc'  ? 'active' : ''} onClick={()=>setTab('calc')}>Fee Calculator</button>
+        </div>
+        <div style={{marginTop: 32}}>
+          {tab === 'tiers' ? <FeeTiersGrid/> : <FeeCalculator/>}
+        </div>
+      </section>
+
+      <section id="capital-introduction-fee">
+        <h2 className="section-title">Capital introduction fee</h2>
+        <div style={{display:'flex', flexDirection:'column', gap:24, marginTop:24}}>
+          <div>
+            <h3 className="subsection-title" style={{margin:'0 0 32px'}}>POD Discover · built-in allocator network</h3>
+            <p className="body-text">POD operates a growing network of allocators who can browse and invest in funds directly through the platform. If capital comes to your fund via POD's Discover platform, an additional fee applies on the fees generated by that capital only.</p>
+          </div>
+          <div>
+            <h3 className="subsection-title" style={{margin:'0 0 32px'}}>Cap intro fee</h3>
+            <p className="body-text">20% of gross fees attributable to capital introduced via POD Discover. This is charged on top of the base take rate, and only on the portion of your AUM that came through the network. Capital you raise independently is not subject to this fee.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="third-party-costs">
+        <h2 className="section-title">Third-party costs</h2>
+        <div style={{marginTop:24}}>
+          <h3 className="subsection-title" style={{margin:'0 0 32px'}}>What you pay to third parties</h3>
+          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', columnGap:32, rowGap:20}}>
+            {[
+              "Our purpose-built fund administrator, EFS, sits inside the POD Group of companies, so no additional third-party fund admin is required. We do not charge any minimum fee for admin services, simply a flat 0.20% on AUM, which you pass through to investors as an expense line item. With all other savings, we expect your investor expense ratio to be well below 1%.",
+              "Any minimum fees charged by third-party providers (e.g. custodians, banks, auditors) are absorbed by POD at the umbrella level. You never face a third-party minimum fee.",
+              "Variable costs we do pass through (custody, banking, audit) are charged at wholesale rates negotiated at the umbrella level, significantly cheaper than fees charged to an individual fund.",
+              "Trading volumes are also merged at the umbrella level, resulting in lower trading fees for managers on the POD platform.",
+            ].map((txt, i) => (
+              <div key={i} style={{display:'flex', gap:12, alignItems:'flex-start'}}>
+                <span style={{flexShrink:0, marginTop:2, width:20, height:20, borderRadius:'50%', border:'1px solid var(--border-strong)', display:'inline-flex', alignItems:'center', justifyContent:'center', color:'var(--text-secondary)'}}>
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 6l3 3 5-6"/></svg>
+                </span>
+                <p className="body-text" style={{flex:1}}>{txt}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <NextPageCta from="pricing" onNav={onNav}/>
+      <PageFooter/>
+    </div>
+  );
+}
+
+/* =============================================================
+   APP
+   ============================================================= */
+const PAGE_ANCHORS = {
+  welcome: [
+    { id: 'partnership',        label: 'Partnership' },
+    { id: 'what-pod-provides',  label: 'What POD provides' },
+    { id: 'pilot-role',         label: 'Pilot role' },
+    { id: 'relationship',       label: 'The Relationship' },
+  ],
+  pricing: [
+    { id: 'setup-costs',              label: 'Setup costs' },
+    { id: 'base-fee-structure',       label: 'Base fee structure' },
+    { id: 'capital-introduction-fee', label: 'Capital introduction fee' },
+    { id: 'third-party-costs',        label: 'Third-party costs' },
+  ],
+  'term-sheet': [
+    { id: 'downloads',     label: 'Downloads' },
+    { id: 'terms-glossary', label: 'Terms glossary' },
+  ],
+  structure: [
+    { id: 'where-sp-fits',  label: 'Where your SP fits' },
+    { id: 'once-off-setup', label: 'One-time setup' },
+    { id: 'per-sp',         label: 'Per Segregated Portfolio' },
+  ],
+  'how-it-works': [
+    { id: 'define-sp',     label: 'Define your SP' },
+    { id: 'how-this-works', label: 'How this works' },
+    { id: 'sp-sections',   label: 'SP sections' },
+  ],
+  faq: [
+    { id: 'pod-and-the-platform',         label: 'POD and the platform' },
+    { id: 'structure-and-legal',          label: 'Structure and legal' },
+    { id: 'economics',                    label: 'Economics' },
+    { id: 'partnership-period-and-commitment', label: 'Partnership Period' },
+    { id: 'brand-and-distribution',       label: 'Brand and distribution' },
+    { id: 'operational-and-regulatory',   label: 'Operational and regulatory' },
+  ],
+};
+
+function App() {
+  const [route, setRoute] = useState(() => {
+    const hash = window.location.hash.replace('#', '');
+    return hash || 'welcome';
+  });
+  const [sheet, setSheet] = useState(null);  // null | 'fund-structure' | 'administration' | 'investor-base' | 'identity'
+  const [dark, setDark] = useState(() => localStorage.getItem('pilot.theme') === 'dark');
+
+  const SUB_KEYS = ['fund-structure','administration','investor-base','identity'];
+
+  React.useEffect(() => {
+    document.body.classList.toggle('dark', dark);
+    localStorage.setItem('pilot.theme', dark ? 'dark' : 'light');
+    document.querySelectorAll('img.theme-aware-img').forEach(img => {
+      const src = dark ? img.getAttribute('data-dark') : img.getAttribute('data-light');
+      if (src) img.setAttribute('src', src);
+    });
+  }, [dark, route]);
+
+  const setRouteAndScroll = (id) => {
+    // Sub-pages now open as side sheet instead of routing
+    if (SUB_KEYS.includes(id)) {
+      setSheet(id);
+      return;
+    }
+    if (['partnership','pilot-role','relationship','what-pod-provides'].includes(id)) {
+      if (route !== 'welcome') {
+        setRoute('welcome');
+        setTimeout(() => {
+          const el = document.getElementById(id);
+          if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+        }, 50);
+      } else {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+      return;
+    }
+    setRoute(id);
+    window.scrollTo({top:0, behavior:'instant'});
+    window.location.hash = id;
+  };
+
+  // Cross-sheet navigation via custom event
+  React.useEffect(() => {
+    const handler = (e) => setSheet(e.detail);
+    window.addEventListener('open-subsheet', handler);
+    return () => window.removeEventListener('open-subsheet', handler);
+  }, []);
+
+  // If hash points at a sub-page, open the sheet
+  React.useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (SUB_KEYS.includes(hash)) { setSheet(hash); setRoute('welcome'); }
+  }, []);
+
+  let view;
+  switch (route) {
+    case 'welcome':         view = <WelcomePage onNav={setRouteAndScroll}/>; break;
+    case 'structure':       view = <StructurePage onNav={setRouteAndScroll}/>; break;
+    case 'how-it-works':    view = <HowItWorksPage onNav={setRouteAndScroll}/>; break;
+    case 'create-fund':     view = (
+      <div className="content">
+        <div>
+          <Hero page="howitworks" title="Create a fund"/>
+          <p className="lead" style={{marginTop: 48}}>Fund creation flow — separate design in progress.</p>
+        </div>
+        <PageFooter/>
+      </div>
+    ); break;
+    case 'term-sheet':      view = <TermSheetPage onNav={setRouteAndScroll}/>; break;
+    case 'faq':             view = <FAQPage onNav={setRouteAndScroll}/>; break;
+    case 'pricing':         view = <PricingPage onNav={setRouteAndScroll}/>; break;
+    default:                view = <WelcomePage onNav={setRouteAndScroll}/>;
+  }
+
+  const anchors = PAGE_ANCHORS[route] || [];
+
+  return (
+    <React.Fragment>
+      <div className="topbar-bg"/>
+      <div className="page-frame">
+        <TopBar/>
+        <Sidebar route={route} onNav={setRouteAndScroll}/>
+        {view}
+        {anchors.length > 0 && <PageAnchors items={anchors}/>}
+        <ThemeToggle dark={dark} onToggle={()=>setDark(d => !d)}/>
+      </div>
+      <SubPageSheet page={sheet} onClose={()=>setSheet(null)}/>
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
