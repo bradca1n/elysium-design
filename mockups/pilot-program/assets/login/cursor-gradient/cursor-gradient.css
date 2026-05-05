@@ -1,0 +1,62 @@
+/* ============================================================
+   Cursor-following radial gradient
+   ============================================================ */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0a0a0a;
+  cursor: none; /* hide native cursor — the dark core IS the cursor.
+                   Remove this line to keep the OS cursor visible. */
+}
+
+.stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #d6dfd5;
+}
+
+/* The gradient itself. JS updates --mx / --my as percentages on every
+   animation frame so the browser doesn't re-parse the gradient string. */
+.radial {
+  position: absolute;
+  inset: -10%; /* extends past viewport edges so the gradient never cuts off */
+  --mx: 50%;
+  --my: 50%;
+  background:
+    radial-gradient(
+      circle at var(--mx) var(--my),
+      #0e1416 0%,
+      #1a2326 18%,
+      #2f3c3d 28%,
+      #5d6f6a 40%,
+      #9eb1a7 52%,
+      #c8d4cb 65%,
+      #d8e1d6 78%,
+      #dde5da 100%
+    );
+  will-change: background;
+}
+
+/* Hint label — fades after first interaction */
+.hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.55);
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  z-index: 10;
+  pointer-events: none;
+  transition: opacity 1.2s ease-out;
+  mix-blend-mode: difference;
+}
+.hint.hide { opacity: 0; }
