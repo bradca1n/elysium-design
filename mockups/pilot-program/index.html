@@ -2165,15 +2165,10 @@ function FeeCalculator() {
   const keeps = Math.max(total - podTotal, 0);
   const keepPct = total > 0 ? (keeps / total) * 100 : 0;
 
-  const tier = currentTier(aum);
-
-  React.useEffect(() => {
-    const isDark = document.body.classList.contains('dark');
-    document.querySelectorAll('img.theme-aware-img').forEach(img => {
-      const src = isDark ? img.getAttribute('data-dark') : img.getAttribute('data-light');
-      if (src) img.setAttribute('src', src);
-    });
-  }, [tier.slug]);
+  const blendedTotal = total > 0 ? (podBaseTotal + podCI) / total : 0;
+  const feesAttributable = total * ciFrac;
+  const fmtTierRange = (t) => t.max >= 1e10 ? `$${t.min}m+` : `$${t.min} – ${t.max}m`;
+  const fmtAum = (m) => `$${m.toFixed(1)}m`;
 
   // Bar segments
   const segs = [
@@ -2298,7 +2293,53 @@ function FeeCalculator() {
           ))}
         </div>
 
-        {/* Blended base rate elevated pill */}
+        {/* AUM tier breakdown */}
+        {total > 0 && (
+          <div style={{display:'flex', flexDirection:'column', gap:8, marginTop:8}}>
+            <div style={{fontSize:11, fontWeight:600, letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--text-secondary)'}}>AUM tier breakdown</div>
+            <div style={{border:'1px solid var(--border-subtle)', borderRadius:'var(--radius-m)', overflow:'hidden'}}>
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr 1fr', alignItems:'center', padding:'12px 16px', fontSize:11, fontWeight:500, letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--text-secondary)'}}>
+                <span>Tier</span><span>AUM in tier</span><span>Take rate</span><span style={{textAlign:'right'}}>POD fee</span>
+              </div>
+              {PRICING_TIERS.map((t, i) => tierAmts[i] > 0 ? (
+                <div key={i} style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr 1fr', alignItems:'center', padding:'12px 16px', fontSize:14, borderTop:'1px solid var(--border-subtle)'}}>
+                  <span style={{color:'var(--text-secondary)'}}>{fmtTierRange(t)}</span>
+                  <span style={{color:'var(--text-secondary)', fontVariantNumeric:'tabular-nums'}}>{fmtAum(tierAmts[i])}</span>
+                  <span><span style={{display:'inline-flex', alignItems:'center', padding:'2px 10px', borderRadius:999, background:'var(--bg-glass)', fontSize:12, fontWeight:500, color:'var(--text-primary)'}}>{Math.round(t.rate*100)}%</span></span>
+                  <span style={{textAlign:'right', fontWeight:500, color:'var(--text-primary)', fontVariantNumeric:'tabular-nums'}}>{fmtMoney(podFeePerTier[i])}</span>
+                </div>
+              ) : null)}
+              <div style={{display:'flex', padding:'14px 16px', fontSize:14, fontWeight:600, color:'var(--text-primary)', borderTop:'1px solid var(--border-subtle)', background:'var(--bg-glass)'}}>
+                <span style={{flex:1}}>Blended base rate</span>
+                <span style={{fontVariantNumeric:'tabular-nums'}}>{fmtPct(blendedBase * 100)} ({fmtMoney(podBaseTotal)})</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Cap intro fee breakdown (only when cap intro AUM > 0) */}
+        {podCI > 0 && (
+          <div style={{display:'flex', flexDirection:'column', gap:8}}>
+            <div style={{fontSize:11, fontWeight:600, letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--text-secondary)'}}>Cap intro fee breakdown</div>
+            <div style={{border:'1px solid var(--border-subtle)', borderRadius:'var(--radius-m)', overflow:'hidden'}}>
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr 1fr', alignItems:'center', padding:'12px 16px', fontSize:11, fontWeight:500, letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--text-secondary)'}}>
+                <span>Cap intro AUM</span><span>% of total AUM</span><span>Additional take rate</span><span style={{textAlign:'right'}}>POD fee</span>
+              </div>
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr 1fr', alignItems:'center', padding:'12px 16px', fontSize:14, borderTop:'1px solid var(--border-subtle)'}}>
+                <span style={{color:'var(--text-secondary)', fontVariantNumeric:'tabular-nums'}}>{fmtAum(ci)}</span>
+                <span style={{color:'var(--text-secondary)'}}>{Math.round(ciFrac*100)}%</span>
+                <span><span style={{display:'inline-flex', alignItems:'center', padding:'2px 10px', borderRadius:999, background:'var(--bg-glass)', fontSize:12, fontWeight:500, color:'var(--text-primary)'}}>20%</span></span>
+                <span style={{textAlign:'right', fontWeight:500, color:'var(--text-primary)', fontVariantNumeric:'tabular-nums'}}>{fmtMoney(podCI)}</span>
+              </div>
+              <div style={{display:'flex', padding:'14px 16px', fontSize:14, fontWeight:600, color:'var(--text-primary)', borderTop:'1px solid var(--border-subtle)', background:'var(--bg-glass)'}}>
+                <span style={{flex:1}}>Cap intro take</span>
+                <span style={{fontVariantNumeric:'tabular-nums'}}>20% × {fmtMoney(feesAttributable)} fees attributable = {fmtMoney(podCI)}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Blended POD take rate on gross fees */}
         <div style={{
           background: 'var(--bg-surface)',
           color: 'var(--text-primary)',
@@ -2308,42 +2349,8 @@ function FeeCalculator() {
           display: 'flex', alignItems: 'center', gap: 20,
           fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: 14,
         }}>
-          <span style={{flex: 1, minWidth: 0}}>Blended base rate</span>
-          <span style={{textAlign: 'right', width: 220, fontVariantNumeric: 'tabular-nums'}}>
-            {fmtPct(blendedBase * 100)} ({fmtMoney(podBaseTotal)})
-          </span>
-        </div>
-      </div>
-
-      {/* "Your tier" section */}
-      <div style={{display:'flex', flexDirection:'column', gap:16}}>
-        <div style={{fontSize:18, fontWeight:500, color:'var(--text-primary)', lineHeight:'22px'}}>Your tier</div>
-        <div style={{
-          border: '1px solid var(--border-strong)',
-          borderRadius: 'var(--radius-m)',
-          padding: '32px 48px 32px 24px',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        }}>
-        <div style={{display:'flex', flexDirection:'column', gap:24, width:293}}>
-          <div style={{fontSize:14, color:'var(--text-secondary)'}}>{tier.label}</div>
-          <div style={{display:'flex', alignItems:'baseline', gap:8}}>
-            <span style={{fontSize:30, fontWeight:500, color:'var(--text-primary)'}}>{tier.range}</span>
-            <span style={{fontSize:14, fontWeight:500, color:'var(--text-primary)'}}>AUM</span>
-          </div>
-          <div style={{fontSize:14, color:'var(--text-secondary)', lineHeight:'18px'}}>{tier.desc}</div>
-          <div style={{fontSize:14}}>
-            <span style={{fontWeight:500, color:'var(--text-primary)'}}>{Math.round(tier.rate * 100)}% </span>
-            <span style={{color:'var(--text-secondary)'}}>of gross fees</span>
-          </div>
-        </div>
-        <img
-          src={`./assets/illos/illo-${tier.slug}.jpg`}
-          data-light={`./assets/illos/illo-${tier.slug}.jpg`}
-          data-dark={`./assets/illos/illo-${tier.slug}-dark.jpg`}
-          alt=""
-          className="theme-aware-img"
-          style={{width:177, height:177, objectFit:'contain', borderRadius:'var(--radius-s)'}}
-        />
+          <span style={{flex: 1, minWidth: 0}}>Blended POD take rate on gross fees</span>
+          <span style={{textAlign: 'right', fontVariantNumeric: 'tabular-nums'}}>{fmtPct(blendedTotal * 100)}</span>
         </div>
       </div>
 
