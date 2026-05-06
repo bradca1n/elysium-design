@@ -93,7 +93,7 @@
   /* Force a permanent vertical scrollbar gutter on html so opening a sheet
      (body overflow:hidden) doesn't disappear the scrollbar and shift viewport-anchored
      elements like the topbar/sidebar that anchor to calc(50% - 864px + X). */
-  html { overflow-y: scroll; }
+  html { overflow-y: scroll; overflow-x: clip; }
 
   /* ============================================================
      PAGE FRAME — fixed 1728 width, content at left:466
@@ -103,7 +103,14 @@
     width: 1728px;
     min-height: 100vh;
     background: var(--bg-white);
-    margin: 0 auto;
+    /* Force visual centering even when frame is wider than viewport.
+       margin:0 auto leaves wider-than-viewport elements at left:0 in most
+       browsers; explicit negative calc margins force the frame to slide
+       so .content slides with it. overflow-x:clip on html prevents the
+       horizontal scrollbar that would otherwise appear.
+       Clamped at -182px so body (.content at frame+466) never crosses
+       viewport coord 284 = sidebar.right (252) + 32px gap. */
+    margin: 0 max(-182px, calc(50% - 864px));
     padding-bottom: 100px;
   }
 
@@ -121,7 +128,7 @@
   }
   .brand {
     position: fixed;
-    left: calc(50% - 864px + 32px);
+    left: max(32px, calc(50% - 864px + 32px));
     top: 16px;
     display: flex; gap: 16px; align-items: center;
     z-index: 5;
@@ -193,7 +200,7 @@
      ============================================================ */
   .sidebar {
     position: fixed;
-    left: calc(50% - 864px + 32px);
+    left: max(32px, calc(50% - 864px + 32px));
     top: 112px;
     width: 220px;
     height: calc(100vh - 132px);
@@ -771,7 +778,7 @@
      ============================================================ */
   .page-anchors {
     position: fixed;
-    right: calc(50% - 864px + 32px);
+    right: max(32px, calc(50% - 864px + 32px));
     top: 112px;
     width: 200px;
     z-index: 4;
@@ -799,12 +806,18 @@
   .page-anchors a:hover { background: var(--bg-glass); color: var(--text-primary); }
   .page-anchors a.active { background: var(--bg-glass); color: var(--text-primary); }
 
+  /* Anchor list hides below 1500px (per Figma 13" breakpoint — no anchors
+     shown at 1440-wide). The sidebar handles primary nav at smaller sizes. */
+  @media (max-width: 1499px) {
+    .page-anchors { display: none; }
+  }
+
   /* ============================================================
      THEME TOGGLE
      ============================================================ */
   .theme-toggle {
     position: fixed;
-    top: 24px; right: calc(50% - 864px + 32px);
+    top: 24px; right: max(32px, calc(50% - 864px + 32px));
     width: 22px; height: 22px;
     border-radius: 50%;
     border: 1px solid var(--border-strong);
