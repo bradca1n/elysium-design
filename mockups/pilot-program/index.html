@@ -10,7 +10,6 @@
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js" crossorigin="anonymous"></script>
 
 <style>
   /* ============================================================
@@ -417,6 +416,7 @@
     color: var(--text-secondary);
     margin: 0;
   }
+  .cta-card-wide .label { color: #fefeff; }
   .cta-card .title,
   .cta-card-wide .title {
     font-family: 'Inter', sans-serif;
@@ -495,16 +495,18 @@
   /* "Where your SP fits" CTA card (large, bg-glass) */
   .cta-card-wide {
     width: 870px;
-    background: var(--bg-glass);
+    background-color: var(--bg-glass);
+    background-size: cover;
+    background-position: center;
     border-radius: var(--radius-m);
     padding: var(--space-16) var(--space-24);
     display: flex; flex-direction: column;
     gap: var(--space-24);
     cursor: pointer;
-    transition: background 0.12s;
+    transition: filter 0.12s, background-color 0.12s;
     text-decoration: none;
   }
-  .cta-card-wide:hover { background: rgba(0,0,0,0.06); }
+  .cta-card-wide:hover { background-color: rgba(0,0,0,0.06); filter: brightness(0.96); }
 
   /* ============================================================
      FOOTER
@@ -709,7 +711,7 @@
     align-items: center;
     padding: 8px 14px; height: 34px;
     background: var(--text-primary);
-    color: #fff;
+    color: var(--bg-canvas);
     border: none;
     border-radius: var(--radius-m);
     font-family: 'Inter', sans-serif;
@@ -845,13 +847,13 @@
   body.dark .download-card,
   body.dark .cta-card,
   body.dark .cta-card-wide {
-    background: var(--bg-glass);
+    background-color: var(--bg-glass);
   }
   body.dark .pill-btn { background: var(--bg-glass); color: var(--text-primary); }
   body.dark .download-card:hover,
   body.dark .cta-card:hover,
-  body.dark .cta-card-wide:hover,
   body.dark .pill-btn:hover { background: rgba(255,255,255,0.10); }
+  body.dark .cta-card-wide:hover { background-color: rgba(255,255,255,0.10); filter: brightness(1.04); }
   body.dark .glossary-cta { background: var(--bg-white); color: var(--text-primary); border: 1px solid var(--border-subtle); }
   body.dark .cta-dark .pill-btn { background: var(--text-primary); color: var(--bg-canvas); }
 
@@ -1140,19 +1142,6 @@
     transform: translateX(130%);
     opacity: 0;
   }
-  .login-loader {
-    position: fixed; inset: 0;
-    background: var(--bg-canvas);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 200;
-    opacity: 0;
-    animation: loaderFade 0.3s ease-out forwards;
-  }
-  @keyframes loaderFade {
-    to { opacity: 1; }
-  }
-  .login-loader-svg { width: 96px; height: 96px; }
-
   /* Cursor-following radial gradient (used inside .login-hero-pane) */
   .cursor-gradient { position: absolute; inset: 0; overflow: hidden; }
   .cursor-gradient-radial { position: absolute; inset: -10%; will-change: background; }
@@ -1187,8 +1176,6 @@ const HEADER = {
   faqs:              { img: 'header-5.png' }, // silver
   pricing:           { img: 'header-6.png' }, // purple
 };
-const FLOWER_LIGHT = '22435a29-eb3d-4891-9b39-e1af12968c5e.png';
-const FLOWER_DARK  = 'a35ca6bb-6224-4fe9-a0d4-63f4dccad1f0.png';
 
 /* =============================================================
    SHARED COMPONENTS
@@ -1358,8 +1345,8 @@ function PageFooter() {
     <div className="page-footer">
       <div className="conf">Confidential · For prospective Investment Advisors</div>
       <div className="legal">
-        <p>Lorem ipsum dolor sit amet consectetur. Eget tellus sed porttitor elementum in non amet. Leo tortor mattis adipiscing lacus venenatis duis. Pulvinar fermentum vehicula a cras eleifend nisi auctor quis. Nec nullam a laoreet at nulla mi vitae.</p>
-        <p>Odio tincidunt viverra mi adipiscing hac consectetur tempus vel lobortis. Ac tortor lobortis non a eu pharetra elit ipsum. Pellentesque vulputate ultrices donec sapien. Nunc duis tempus tincidunt sodales amet. Bibendum nisl odio amet sem fermentum etiam aliquet. Diam blandit diam ut urna lacus aliquet. Phasellus elementum turpis mauris lorem urna morbi ipsum.</p>
+        <p>This document is confidential and prepared solely for prospective Investment Advisors evaluating partnership with POD. It may not be reproduced, distributed, or transmitted in whole or in part without POD's prior written consent. Nothing in this material constitutes an offer to sell or a solicitation of an offer to buy any security; any such offer will only be made by the Offering Memorandum and applicable Supplement, and only in jurisdictions where lawful. The Fund (POD Emerging Alpha 1 Fund SPC) is a BVI Segregated Portfolio Company recognised by the BVI Financial Services Commission, with portfolio management delegated under the Investment Advisory Agreement and administration provided by Elysium Fund Services, regulated by the Central Bank of Ireland.</p>
+        <p>All commercial terms — including fee tiers, the Partnership Period, Revenue Share, and Continuity provisions — are summary indications based on the current term sheet and are non-binding pending execution of the definitive Investment Advisory Agreement and supporting Fund documents. Calculator outputs, illustrative AUM scenarios, and sample Share Class structures are provided for explanatory purposes only and do not represent forecasts, guarantees, or commitments. Investment in any Segregated Portfolio involves risk, including possible loss of principal, and is suitable only for investors who can bear that risk; prospective Investment Advisors should not rely on this material as a substitute for independent legal, tax, and regulatory advice.</p>
       </div>
     </div>
   );
@@ -1376,11 +1363,22 @@ const NEXT_PAGE = {
   faq:            { id: 'how-it-works', label: 'How it works',  title: 'Define your SP' },
   'how-it-works': { id: 'create-fund',  label: 'Fund creation', title: 'Create a fund' },
 };
+const NEXT_PAGE_HEADER_KEY = {
+  'term-sheet':   'term-sheet',
+  structure:      'structure',
+  pricing:        'pricing',
+  faq:            'faqs',
+  'how-it-works': 'howitworks',
+  'create-fund':  'create-fund',
+};
 function NextPageCta({ from, onNav }) {
   const next = NEXT_PAGE[from];
   if (!next) return null;
+  const headerKey = NEXT_PAGE_HEADER_KEY[next.id] || next.id;
+  const h = HEADER[headerKey];
+  const bgStyle = h ? { backgroundImage: `url(./assets/${h.img})` } : null;
   return (
-    <a className="cta-card-wide" onClick={(e)=>{e.preventDefault(); onNav(next.id);}} href="#">
+    <a className="cta-card-wide" style={bgStyle} onClick={(e)=>{e.preventDefault(); onNav(next.id);}} href="#">
       <div className="label">{next.label}</div>
       <div className="title">{next.title}</div>
       <div className="arrow"><ArrowIcon/></div>
@@ -1407,17 +1405,17 @@ function WelcomePage({ onNav }) {
   return (
     <div className="content">
       <div>
-        <Hero page="welcome" title="Welcome, Pilot"/>
-        <p className="lead" style={{marginTop: 48}}>Let's build something together — a long-term partnership where both of us win when your fund grows.</p>
+        <Hero page="welcome" title="Welcome, Portfolio Manager"/>
+        <p className="lead" style={{marginTop: 48}}>Let's build something together: a long-term partnership where both of us win when your fund grows.</p>
       </div>
 
       <section id="partnership">
         <h2 className="section-title">Partnership</h2>
-        <p className="body-text">POD is a regulated, technology-driven fund administration platform. We give Pilots — emerging investment advisors — the regulatory umbrella, administration, distribution, and brand to launch and run a Segregated Portfolio (SP) without the cost and complexity of a traditional fund setup.</p>
+        <p className="body-text">POD is a regulated, technology-driven platform for creating, operating and growing fund structures. We give Portfolio Managers (PMs) the regulatory umbrella, administration, distribution, and brand to launch and run a Segregated Portfolio (SP) without the cost and complexity of a traditional fund setup.</p>
         <p className="body-text">In return, you commit to running your fund within POD for an initial Partnership Period. The economic terms are calibrated so we both have enough runway to recoup our respective investments and grow together.</p>
         <div className="callout" style={{marginTop: 24}}>
           <div className="q">Why we frame it as a partnership?</div>
-          <div className="a">POD absorbs material upfront costs to launch your fund (~USD 100k–250k of work normally paid piecemeal). We don't charge you for any of it. In exchange, the long-term commitment ensures we both benefit from your fund's success — rather than you outgrowing us before we recoup.</div>
+          <div className="a">POD absorbs material upfront costs to launch your fund (~USD 100k–250k of work normally paid piecemeal). We don't charge you for any of it. In exchange, the long-term commitment ensures we both benefit from your fund's success.</div>
         </div>
       </section>
 
@@ -1439,17 +1437,20 @@ function WelcomePage({ onNav }) {
             <div className="title">Investor base</div>
             <div className="arrow"><ArrowIcon/></div>
           </a>
+          {/* HIDDEN: 4th card "Brand / Identity & reporting" — pending copy */}
+          {false && (
           <a className="cta-card" onClick={()=>onNav('identity')}>
             <div className="label">Brand</div>
             <div className="title">Identity & reporting</div>
             <div className="arrow"><ArrowIcon/></div>
           </a>
+          )}
         </div>
       </section>
 
       <section id="pilot-role">
-        <h2 className="section-title">Pilot role</h2>
-        <p className="body-text">You manage the SP's investment strategy — the platform handles everything else.</p>
+        <h2 className="section-title">PM role</h2>
+        <p className="body-text">You manage the SP's investment strategy. Distribution is handled by both you and POD.</p>
         <div className="pilot-row" style={{marginTop: 24}}>
           <div className="pilot-col">
             <div className="label">Strategy</div>
@@ -1462,9 +1463,9 @@ function WelcomePage({ onNav }) {
             <div className="desc">Steward investor capital with care — execute trades, manage risk, and stay within the investment restrictions agreed at signing.</div>
           </div>
           <div className="pilot-col">
-            <div className="label">Communication</div>
-            <div className="title">Report</div>
-            <div className="desc">Communicate performance and commentary to your investors via the Investor Portal — and beyond, on third-party platforms (Telegram, X) under your Brand.</div>
+            <div className="label">Distribution</div>
+            <div className="title">Raise</div>
+            <div className="desc">Launch with your own investors, then grow. Continue to raise funds from investors directly, enabled by POD in two ways: 1. providing you with a verified track record which is instantly shareable via your preferred channels.  2. Leveraging our internal branding team to work with you on a new branding identity for marketing your fund.</div>
           </div>
         </div>
       </section>
@@ -1476,7 +1477,7 @@ function WelcomePage({ onNav }) {
           <div className="rel-kpi">
             <div className="label">No fixed costs</div>
             <div className="value">$0</div>
-            <div className="note">Zero setup fees, zero monthly minimums, no per-investor or per-SP charges. We win when you win.</div>
+            <div className="note">POD charges zero setup fees, zero monthly minimums, no per-investor or per-SP charges. We earn when you earn.</div>
           </div>
           <div className="rel-kpi">
             <div className="label">Revenue share</div>
@@ -1505,23 +1506,29 @@ function WelcomePage({ onNav }) {
 const SUB_PAGES = {
   'fund-structure': {
     title: 'Fund structure',
-    lead: "The legal and regulatory wrapper. POD's BVI Segregated Portfolio Company gives your strategy the umbrella it needs — without the cost or runway of a standalone fund.",
-    body: ['Lorem ipsum dolor sit amet consectetur. Sed molestie a lorem tincidunt. Urna morbi at amet amet id. Tortor massa vulputate laoreet nullam. Pretium risus platea feugiat viverra sit.', "Enim dictum venenatis amet diam. Volutpat nisi cras dui cras. Varius enim at fringilla id blandit ultrices ac nisl. Pharetra vitae egestas amet facilisis. Pharetra risus fringilla id fringilla faucibus eget quam. A tincidunt cursus magna amet."],
+    lead: "The legal and regulatory wrapper. POD's BVI Segregated Portfolio Company gives your strategy the umbrella it needs, without the cost, operational complexity or runway of establishing a standalone fund.",
+    body: [
+      "Each SP is statutorily ring-fenced: its assets, liabilities, and exposures are legally separated from every other portfolio on the platform. There is no commingling of capital, no shared margin, and no cross-portfolio liability. Accounts at the bank, custodians, and trading venues are opened in the SPC's name, with sub-accounts mapped to each SP. Positions, P&L, and the investor register sit entirely within your SP.",
+      "POD's regulated fund manager: POD Capital Management (BVI) Ltd, licensed by the BVI FSC, is the investment manager of record for every SP on the platform.",
+      "You're engaged under an Investment Advisory Agreement (IAA). Trading decisions for your SP are delegated to you, within the investment policy and risk limits agreed at signing. Trades are executed on behalf of the regulated manager and borne by the SPC; the trading strategy and its IP remain yours.",
+      "Because the manager licence sits with POD, you do not need to hold one yourself, and your physical location is not a gating factor for launch.",
+    ],
   },
   administration: {
     title: 'Administration',
-    lead: 'EFS handles NAV calculation, share register, transfer agency, and KYC. The Investor Portal handles subscriptions and reporting. You focus on managing the strategy.',
-    body: ['Lorem ipsum dolor sit amet consectetur. Sed molestie a lorem tincidunt. Urna morbi at amet amet id. Tortor massa vulputate laoreet nullam. Pretium risus platea feugiat viverra sit.', "Enim dictum venenatis amet diam. Volutpat nisi cras dui cras. Varius enim at fringilla id blandit ultrices ac nisl. Pharetra vitae egestas amet facilisis. Pharetra risus fringilla id fringilla faucibus eget quam."],
+    lead: "POD's purpose-built Administrator, Elysium Fund Services (EFS) is licensed by the Central Bank of Ireland, and handles NAV calculation, share register, transfer agency, and KYC. The Investor Portal handles subscriptions and reporting.",
+    body: [
+      "EFS is fully integrated to the POD platform, with all workflows built on smart contracts, not manually stitched across separate systems. NAV strikes, fee calculations, share issuance, and settlement happen programmatically against a single source of truth: our private ledger. Subscriptions and redemptions settle atomically, in fiat or stablecoin, without manual reconciliation between the bank, the custodian, and the share register.",
+      "POD PMs have access to a dedicated portal showing the live state of their SP. NAV, performance, fees accrued, investor positions, pending subscriptions and redemptions, and the order book all sit in one place, updated in real time rather than reconciled at month-end. Investor reporting, statements, and historical performance are queryable directly from the portal. There are no PDF packs to wait for, no spreadsheet reconciliations, and no email chains with the administrator to confirm a number you already have on screen.",
+    ],
   },
   'investor-base': {
     title: 'Investor base',
-    lead: "POD's distribution channels surface your fund to qualified investors. We help raise the first capital so you can focus on running the strategy, not chasing checks.",
-    body: ['Lorem ipsum dolor sit amet consectetur. Sed molestie a lorem tincidunt. Urna morbi at amet amet id. Tortor massa vulputate laoreet nullam. Pretium risus platea feugiat viverra sit.', "Enim dictum venenatis amet diam. Volutpat nisi cras dui cras. Varius enim at fringilla id blandit ultrices ac nisl. Pharetra vitae egestas amet facilisis. Pharetra risus fringilla id fringilla faucibus eget quam."],
-  },
-  identity: {
-    title: 'Identity & reporting',
-    lead: "POD's brand team helps your fund develop an identity that resonates with investors. Reporting flows out through the Investor Portal and beyond — Telegram, X, custom channels — under your Brand.",
-    body: ['Lorem ipsum dolor sit amet consectetur. Sed molestie a lorem tincidunt. Urna morbi at amet amet id. Tortor massa vulputate laoreet nullam. Pretium risus platea feugiat viverra sit.', "Enim dictum venenatis amet diam. Volutpat nisi cras dui cras. Varius enim at fringilla id blandit ultrices ac nisl. Pharetra vitae egestas amet facilisis. Pharetra risus fringilla id fringilla faucibus eget quam."],
+    lead: "POD provides a platform (POD Discover) where our network of allocators can search for and invest in new funds. After a minimum track record period, we will display your fund on this platform to receive allocations.",
+    body: [
+      "Your fund is displayed on our POD Discover platform with verified performance and risk statistics. Using the platform is a network of allocators actively seeking new emerging PMs to invest in.",
+      "These allocators are already onboarded by POD, and often already invested in another POD SP. This makes subscribing to your fund as simple as a few taps in-app: no new KYC, ODD done at umbrella level, and a basic in-app agreement doc signing workflow. Settlement is atomic, in fiat or stablecoin, as seamless as buying an ETF.",
+    ],
   },
 };
 
@@ -1533,12 +1540,7 @@ function ProvidesContent({ page }) {
       <Hero page={page} title={data.title}/>
       <p className="lead">{data.lead}</p>
       <div style={{display:'flex', flexDirection:'column', gap:14}}>
-        <p className="body-text">{data.body[0]}</p>
-        {data.body[1] && <p className="body-text">{data.body[1]}</p>}
-      </div>
-      <div className="callout">
-        <div className="q">Sed molestie a lorem tincidunt?</div>
-        <div className="a">Lorem ipsum dolor sit amet consectetur. Sed molestie a lorem tincidunt. Urna morbi at amet amet id. Tortor massa vulputate laoreet nullam. Pretium risus platea feugiat viverra sit.</div>
+        {data.body.map((p, i) => <p key={i} className="body-text">{p}</p>)}
       </div>
     </div>
   );
@@ -1591,18 +1593,18 @@ function DownloadIcon() {
 
 function TermSheetPage({ onNav }) {
   const glossary = [
-    { term: 'Parties',                            def: "Who's involved: POD as the regulated Manager, EFS as the Administrator, the Fund itself, and you (the Pilot — your IA entity and Key Persons)." },
-    { term: 'Recitals',                           def: 'The backstory — why this Agreement exists, what each party undertakes, and the partnership intent that frames everything that follows.' },
+    { term: 'Parties',                            def: "Who's involved: POD as the regulated Manager, EFS as the Administrator, the Fund itself, and you (the PM: your IA entity and Key Persons)." },
+    { term: 'Recitals',                           def: 'The backstory: why this Agreement exists, what each party undertakes, and the partnership intent that frames everything that follows.' },
     { term: 'Spirit of the Agreement',            def: 'How to read the rest of this document. POD invests material upfront resources in launching your fund; the partnership terms exist to give both sides enough runway to recoup and grow together. Legal language is for clarity, not distrust.' },
     { term: 'Structure & Delegation',             def: 'How your Segregated Portfolio (SP) sits in the legal stack. POD owns the Fund, appoints itself as Manager (under the IMA), and sub-delegates portfolio management to you (under the IAA). You manage assets; POD holds title and regulatory accountability.' },
     { term: 'Platform Services',                  def: 'Everything POD provides as part of the partnership at no additional cost: the BVI fund structure, FSC regulatory umbrella, EFS administration platform, registered office, brand creation, distribution, and IR support.' },
-    { term: 'Partnership Period & Continuity',    def: "Your 5-year commitment from launch of the most recent SP. Mutual extension by agreement only — no unilateral right. Two automatic extension triggers: the Partnership Period extends by 2 years on each of $25M and $50M of POD Distributed Investment (capital subscribed via POD Discovery — return-driven AUM growth doesn't count). Scope is Competing Funds only — your SMAs and pre-existing platform relationships are fully grandfathered. Personal accounts under $1M and family offices under $25M sit outside. Continuity Event provisions cover what happens if a Key Person leaves." },
-    { term: 'Deferred Distribution & Forfeiture', def: 'A 90-day deferral on your performance fees (industry standard, aligns with investor outcomes). If POD has to terminate the Agreement for cause due to your material breach, deferred fees in the deferral cycle are forfeited. Your invested principal is never affected. Termination for any other reason — mutual agreement, end of partnership, POD convenience — does not trigger forfeiture.' },
+    { term: 'Partnership Period & Continuity',    def: "Your 5-year commitment from launch of the most recent SP. Mutual extension by agreement only - no unilateral right. Two automatic extension triggers: the Partnership Period extends by 2 years on each of $25M and $50M of POD Distributed Investment (capital subscribed via POD Discovery, return-driven AUM growth doesn't count). Scope is Competing Funds only - your SMAs and pre-existing platform relationships are fully grandfathered. Personal accounts under $1M and family offices under $25M sit outside. Continuity Event provisions cover what happens if a Key Person leaves." },
+    { term: 'Deferred Distribution & Forfeiture', def: 'A 90-day deferral on your performance fees (industry standard, aligns with investor outcomes). If POD has to terminate the Agreement for cause due to your material breach, deferred fees in the deferral cycle are forfeited. Your invested principal is never affected. Termination for any other reason - mutual agreement, end of partnership, POD convenience - does not trigger forfeiture.' },
     { term: 'Referral Scheme',                    def: "What you earn for bringing investors and PMs to POD. Stepped revenue share to you: 20% of POD's revenue in Year 1, 10% in Year 2, on (a) investors you refer who subscribe to other Pilots' SPs, and (b) PMs you refer who go live on the platform." },
-    { term: "What's Included in the Partnership", def: "The plain-language list of items POD bears or absorbs that you'd typically pay piecemeal under a traditional administrator: setup fees, ManCo retainers, transfer agency, KYC fees, registered office, NAV reporting, audit liaison, marketing collateral. Aggregate value: ~$100k–250k per year. Net effect: your fixed cost faced is <$10k (pure pass-through legal & registration), and POD's economics are entirely AUM-linked." },
-    { term: 'Term & Termination',                 def: 'How the Agreement starts, runs, and ends. Continues for as long as the IAA is in force. Either party can terminate for cause (material breach, insolvency, regulatory disqualification). POD can terminate for convenience on notice; you cannot terminate for convenience during the Partnership Period. Termination by POD for cause due to your breach triggers forfeiture of fees in deferral — your invested principal is never affected.' },
-    { term: 'General',                            def: 'Standard boilerplate — governing law (BVI), dispute resolution (BVI IAC arbitration), assignment, confidentiality, notices.' },
-    { term: 'Next Steps',                         def: 'What happens after you sign. Confirm Revenue Share tier rates; disclose pre-existing relationships for the Grandfathering Schedule; sign — at which point sections 5–10 become binding; KYC begins; SP creation in BVI; account opening; production testing; go-live (typically 6–9 weeks from term sheet signing).' },
+    { term: "What's Included in the Partnership", def: "The plain-language list of items POD bears or absorbs that you'd typically pay piecemeal under a traditional fund setup avenue: setup fees, ManCo retainers, transfer agency, KYC fees, registered office, NAV reporting, audit liaison, marketing collateral. Aggregate value: ~$100k–250k per year. Net effect: your fixed cost faced is <$10k (pure pass-through legal & registration), and POD's economics are entirely AUM/performance linked." },
+    { term: 'Term & Termination',                 def: 'How the Agreement starts, runs, and ends. Continues for as long as the IAA is in force. Either party can terminate for cause (material breach, insolvency, regulatory disqualification). POD can terminate for convenience on notice; you cannot terminate for convenience during the Partnership Period. Termination by POD for cause due to your breach triggers forfeiture of fees in deferral, your invested principal is never affected.' },
+    { term: 'General',                            def: 'Standard boilerplate - governing law (BVI), dispute resolution (BVI IAC arbitration), assignment, confidentiality, notices.' },
+    { term: 'Next Steps',                         def: 'What happens after you sign. Confirm Revenue Share tier rates; disclose pre-existing relationships for the Grandfathering Schedule; sign - at which point sections 5–10 become binding; KYC begins; SP creation in BVI; account opening; production testing; go-live (typically 6–9 weeks from term sheet signing).' },
   ];
   return (
     <div className="content">
@@ -1663,12 +1665,12 @@ function StructurePage({ onNav }) {
     { agree: 'Offering Memorandum', parties: 'Issued by SPC', purpose: 'Primary disclosure document. Explains fund structure, investment objectives, risk factors, fees, service providers, subscription/redemption procedures, and tax considerations. Not a bilateral agreement.' },
     { agree: 'Administration Agreement', parties: 'SPC; EFS', purpose: 'Fund appoints EFS as administrator. Covers NAV calculation, record-keeping, transfer agency, investor communications, AML/KYC delegation, and reporting obligations.' },
     { agree: 'Custody / Safekeeping Agreement(s)', parties: 'SPC; Custodian (Copper, Ceffu); Banking Partner (FundBank)', purpose: 'Appoints custodians and banking partner for fund assets. Copper/Ceffu as crypto custodians, FundBank as banking partner for fiat. Defines custody terms, security arrangements, liability, and reporting. Disclosed in the OM.' },
-    { agree: 'Investment Management Agreement', parties: 'SPC; POD AM', purpose: 'Fund appoints POD AM as manager of the SPC. Defines management authority and discretion, fee architecture, liability and indemnification terms.' },
+    { agree: 'Investment Management Agreement', parties: 'SPC; POD Capital Management (BVI) Ltd', purpose: 'Fund appoints POD Capital Management (BVI) Ltd as manager of the SPC. Defines management authority and discretion, fee architecture, liability and indemnification terms.' },
     { agree: 'Client Agreement', parties: 'Investor; EFS', purpose: 'Investor opens account at EFS. Establishes the investor\'s relationship with EFS, covers AML/KYC obligations, and authorises EFS to act on subscription/redemption instructions.' },
     { agree: 'Subscription Agreement', parties: 'SPC; Investor', purpose: 'Umbrella agreement between SPC and investor. Permits individual SP subscriptions. Contains investor representations & warranties (qualified/accredited status, source of funds, tax status, etc).' },
   ];
   const perSP = [
-    { agree: 'Investment Advisor Agreement', parties: 'POD AM; Investment Advisor Entity/Person', purpose: 'POD AM delegates investment discretion to the IA in respect of a specific SP. Defines advisor prerogatives and reporting obligations, and fee sharing.' },
+    { agree: 'Investment Advisor Agreement', parties: 'POD Capital Management (BVI) Ltd; Investment Advisor Entity/Person', purpose: 'POD Capital Management (BVI) Ltd delegates investment discretion to the IA in respect of a specific SP. Defines advisor prerogatives and reporting obligations, and fee sharing.' },
     { agree: 'Supplement + Subscription Form', parties: 'Issued by SPC/SP; Form completed by Investor', purpose: 'Supplement: discloses SP-specific document defining each SP (investment mandate, strategy, leverage, liquidity terms) and commercial terms (fees per SP and Share Class).' },
   ];
   return (
@@ -1685,10 +1687,10 @@ function StructurePage({ onNav }) {
             lineHeight: '1.375rem',
             color: 'var(--text-primary)',
             margin: '0 0 32px 0',
-          }}>Where your SP fits</h2>
-          <p className="body-text">A regulated BVI Segregated Portfolio Company with VASP fund administration. Your Segregated Portfolio sits inside the SPC; POD acts as Manager and sub-delegates portfolio management to you under the IAA.</p>
+          }}>Where your SP fits in the POD structure</h2>
+          <p className="body-text">A regulated BVI Segregated Portfolio Company with VASP fund administration. Your Segregated Portfolio sits inside the SPC; POD acts as Manager and sub-delegates portfolio management to you (the IA) under the IAA.</p>
         </div>
-        <img src="./assets/Structure.svg" data-light="./assets/Structure.svg" data-dark="./assets/Structure, dark mode.svg" alt="Corporate structure diagram" className="theme-aware-img" style={{width: 870, height: 'auto', display: 'block'}}/>
+        <img src="./assets/Structure, light mode, V2.svg" data-light="./assets/Structure, light mode, V2.svg" data-dark="./assets/Structure, dark mode, V2.svg" alt="Corporate structure diagram" className="theme-aware-img" style={{width: 870, height: 'auto', display: 'block'}}/>
         <ol style={{
           fontFamily: 'Inter, sans-serif',
           fontWeight: 400,
@@ -1706,7 +1708,15 @@ function StructurePage({ onNav }) {
       </div>
 
       <div id="once-off-setup">
-        <h3 className="subsection-title">One-time setup & client onboarding</h3>
+        <h3 style={{
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '1.125rem',
+          fontStyle: 'normal',
+          fontWeight: 500,
+          lineHeight: '1.375rem',
+          color: 'var(--text-primary)',
+          margin: '0 0 32px 0',
+        }}>One-time setup & client onboarding</h3>
         <table className="legal-table">
           <thead>
             <tr><th>Legal Agreement</th><th>Parties</th><th>Purpose</th></tr>
@@ -1724,7 +1734,15 @@ function StructurePage({ onNav }) {
       </div>
 
       <div id="per-sp">
-        <h3 className="subsection-title">Specific for each Manager / Segregated Portfolio</h3>
+        <h3 style={{
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '1.125rem',
+          fontStyle: 'normal',
+          fontWeight: 500,
+          lineHeight: '1.375rem',
+          color: 'var(--text-primary)',
+          margin: '0 0 32px 0',
+        }}>Specific for each Manager / Segregated Portfolio</h3>
         <table className="legal-table">
           <thead>
             <tr><th>Legal Agreement</th><th>Parties</th><th>Purpose</th></tr>
@@ -1766,10 +1784,10 @@ function HowItWorksPage({ onNav }) {
     'Identification': {
       intro: 'Who you are, how the SP will be named, and the base currency.',
       fields: [
-        { l: 'SP Name', d: "Your strategy gets a name. It will appear on the Investor Portal, in reporting, and on subscription documents. POD's brand team can work with you to develop a name that fits both your team and the platform." },
+        { l: 'SP Name', d: "Your strategy gets a name. It will appear on the Investor Portal, in reporting, and on subscription documents. If needed, POD's brand team can work with you to develop a name that fits both your team and the platform." },
         { l: 'Investment Advisor entity', d: 'The legal entity managing the SP under the IAA. Must match the entity that has cleared KYC. Include jurisdiction (e.g., "[Name] Capital Limited, BVI").' },
         { l: 'Key Person(s)', d: 'Named individuals whose continued active involvement is a condition of the IAA. Trigger Continuity Event if they leave or step away.' },
-        { l: 'Currency', d: 'Base currency for NAV reporting, fees, and investor reporting. USD is the platform default. EUR/GBP require additional FX accommodation; allow a 2–3 week lead-time.' },
+        { l: 'Currency', d: 'Base currency for NAV reporting, fees, and investor reporting. USD is the platform default. EUR/GBP require additional FX accommodation; allow a 2–3 week lead-time for these.' },
       ],
     },
     'Investment Mandate': {
@@ -1778,7 +1796,7 @@ function HowItWorksPage({ onNav }) {
         { l: 'Investment Objective', d: "What return is the SP seeking, in one sentence? Examples: 'To deliver absolute returns through a long/short equity strategy in [region].'" },
         { l: 'Investment Strategy', d: 'How will you achieve the objective? 2–4 sentences covering position sizing, instrument selection, holding period, signal generation.' },
         { l: 'Portfolio Investments', d: 'What asset classes / instruments the SP may hold. Be specific enough to be informative; broad enough not to box yourself in unintentionally.' },
-        { l: 'Investment Restrictions', d: 'Explicit prohibitions or limits — concentration, geographic exclusions, instrument exclusions.' },
+        { l: 'Investment Restrictions', d: 'Explicit prohibitions or limits: concentration, geographic exclusions, instrument exclusions.' },
         { l: 'Leverage', d: "Maximum leverage as % of NAV. 'None' if not employed; otherwise specify maximum (e.g., '200% of NAV gross')." },
       ],
     },
@@ -1795,9 +1813,9 @@ function HowItWorksPage({ onNav }) {
     'Fees & Economics': {
       intro: 'Management fee, performance fee, and how each accrues.',
       fields: [
-        { l: 'Management Fee', d: 'Annual % of NAV charged to the SP. Industry ranges: 0% for cash strategies; 0.5–1% for systematic / passive; 1.5–2% for active equity.' },
+        { l: 'Management Fee', d: 'Annual % of NAV charged to the SP. Industry ranges: 0% for cash strategies; 0.5–1% for passive; 1.5–2% for active.' },
         { l: 'Performance Fee', d: '% of returns above hurdle (or HWM if no hurdle). Industry standard: 10–20%.' },
-        { l: 'Performance Period', d: 'How often performance fee crystallises. Most common: Quarterly (POD platform default — aligns with the 90-day deferral cycle).' },
+        { l: 'Performance Period', d: 'How often performance fee crystallises. Most common: Quarterly (POD platform default - aligns with the 90-day deferral cycle).' },
         { l: 'Hurdle Rate', d: "Threshold return that must be exceeded before performance fee accrues. 'None', or specify (e.g., risk-free rate, 5% absolute)." },
         { l: 'High Water Mark', d: "'Yes' (full HWM, platform default) or describe alternative mechanism for performance fee accrual." },
       ],
@@ -1825,7 +1843,7 @@ function HowItWorksPage({ onNav }) {
       fields: [
         { l: 'Strategy risks', d: 'Market direction, liquidity of underlying instruments, dependence on specific signals or data sources.' },
         { l: 'Counterparty risks', d: 'Specific exchanges, brokers, or trading venues your strategy depends on.' },
-        { l: 'Instrument risks', d: 'If you trade specific derivatives, structured products, or off-the-run instruments — note their unique risk profile.' },
+        { l: 'Instrument risks', d: 'If you trade specific derivatives, structured products, or off-the-run instruments - note their unique risk profile.' },
         { l: 'Operational risks', d: 'Anything specific to how your strategy executes that creates non-standard risk.' },
         { l: 'Regulatory risks', d: 'If your strategy is exposed to specific regulatory regimes (e.g., spot crypto in jurisdictions reviewing classification).' },
       ],
@@ -1859,9 +1877,9 @@ function HowItWorksPage({ onNav }) {
       <div id="how-this-works">
         <h2 className="section-title" style={{margin:'0 0 32px 0'}}>How this works</h2>
         <p className="body-text">Your SP is governed by three layered documents, from most general to most specific:</p>
-        <p className="body-text"><strong style={{color:'var(--text-primary)', fontWeight:500}}>1. Offering Memorandum (OM)</strong> — fund-wide structure, service providers, taxation. Common across all SPs.</p>
-        <p className="body-text"><strong style={{color:'var(--text-primary)', fontWeight:500}}>2. Supplement</strong> — your SP and your Share Class(es). Investment mandate, dealing terms, SP-specific risks. This is what this form produces.</p>
-        <p className="body-text"><strong style={{color:'var(--text-primary)', fontWeight:500}}>3. Subscription Documents</strong> — what each investor signs to subscribe to your SP.</p>
+        <p className="body-text"><strong style={{color:'var(--text-primary)', fontWeight:500}}>Offering Memorandum (OM):</strong> fund-wide structure, service providers, taxation. Common across all SPs.</p>
+        <p className="body-text"><strong style={{color:'var(--text-primary)', fontWeight:500}}>Supplement:</strong> your SP and your Share Class(es). Investment mandate, dealing terms, SP-specific risks. This is what this form produces.</p>
+        <p className="body-text"><strong style={{color:'var(--text-primary)', fontWeight:500}}>Subscription Documents:</strong> what each investor signs to subscribe to your SP.</p>
         <div className="callout" style={{marginTop:24}}>
           <div className="q">What happens after you submit:</div>
           <div className="a">POD reviews each section with you, raises any clarifications, then drafts the formal Supplement based on your inputs. Once both sides sign off, the Supplement is filed and your SP is ready for FSC notification, OM supplement publication, and KYC onboarding.</div>
@@ -1916,40 +1934,41 @@ function HowItWorksPage({ onNav }) {
 function FAQPage({ onNav }) {
   const groups = [
     { title: 'POD and the platform', items: [
-      { q: 'What is POD?', a: 'POD is a regulated, technology-driven fund administration platform enabling investment advisors to launch and operate a Segregated Portfolio within a BVI fund for minimal setup costs and zero platform minimums. It acts as Manager under the IMA and delegates portfolio management to advisors via the IAA.' },
-      { q: 'Where is POD regulated?', a: 'The Fund (POD Emerging Alpha 1 Fund SPC) is a BVI professional fund recognised by the Financial Services Commission (FSC) under SIBA. POD\'s manager entity is FSC-approved, and the administrator is regulated in Ireland.' },
-      { q: 'Why would I pick POD over a traditional Cayman/BVI ManCo and Administrator?', a: 'POD reduces annual fixed costs by ~$100k–250k by absorbing setup, ManCo retainers, NAV, transfer agency, KYC, and registered-office fees. It provides access to POD\'s investor base through a single channel and typically delivers live SPs within 12–16 weeks.' },
-      { q: 'How does POD differ from a standard Reg Hosting Platform?', a: 'Traditional platforms use manual handoffs via email and spreadsheets. POD integrates the administrator into a single automated system with API connectivity, offering daily NAVs, instant settlement, and frictionless operations versus monthly reporting and error-prone manual processes.' },
-      { q: 'Is POD just a platform for fund operations, or can you help me grow?', a: "POD supports growth through audited track records, Discovery visibility to allocators, and brand/marketing assistance, optimizing for SP capacity achievement alongside AUM expansion." },
+      { q: 'What is POD?', a: 'POD is a regulated, technology-driven fund creation and administration platform enabling PMs to launch and operate a Segregated Portfolio within a BVI SPC for minimal setup costs. It acts as Manager under the IMA and delegates portfolio management to you (the PM / IA) via the IAA.' },
+      { q: 'Where is POD regulated?', a: "The Fund (POD Emerging Alpha 1 Fund SPC) is a BVI professional fund recognised by the Financial Services Commission (FSC) under SIBA. POD's manager entity (POD Capital Management (BVI) Ltd) is FSC-approved, and our administrator (EFS) is regulated by the Central Bank of Ireland." },
+      { q: 'Why would I pick POD over a traditional Cayman/BVI ManCo and Administrator?', a: 'Cost: POD reduces annual fixed costs by ~$100k–250k by absorbing setup, ManCo retainers, NAV, transfer agency, KYC, and registered-office fees. Speed: POD delivers live SPs within 6-9 weeks of term sheet signing.' },
+      { q: 'How does POD differ from a standard Reg Hosting Platform?', a: 'Traditional platforms use manual handoffs via email and spreadsheets. POD integrates the administrator into a single automated system run on APIs and smart contracts, offering daily NAVs, atomic settlement, and frictionless operations, compared to monthly reporting and error-prone manual processes.' },
+      { q: 'Is POD just a platform for fund operations, or can you help me grow?', a: "Your AUM growth is the core of what POD does. Three things compound. Track record: POD provides an audited track record you can share with one click. Discovery: POD makes you visible to a large group of allocators using our platform to source managers. Brand and marketing: POD works with you on how your SP is presented: name, look, messaging.\n\nThe end state we're optimising for is the same as yours: getting your SP to AUM capacity." },
     ]},
     { title: 'Structure and legal', items: [
       { q: 'Where does my SP sit in the legal stack?', a: 'Your SP is a Segregated Portfolio within POD Emerging Alpha 1 Fund SPC, a BVI Segregated Portfolio Company. The SPC appoints POD as Manager under the IMA, which sub-delegates to the advisor under the IAA. EFS administers NAV, share register, transfer agency, and KYC.' },
       { q: 'Who owns the SP assets?', a: 'Legal title sits with the SPC, segregated to your SP. Assets are custodied with named custodians (FundBank for fiat; Copper/Ceffu or comparable for crypto) under custody agreements between the SPC and the custodian.' },
+      { q: 'Do I need to be licensed?', a: "No. POD's regulated fund manager (POD Capital Management (BVI) Ltd, licensed by the BVI FSC) is the investment manager of record for your SP. You're engaged under an Investment Advisory Agreement and trade within the agreed policy; the licence sits with us. Where you are physically located is also immaterial based on this setup." },
       { q: 'Can I have multiple SPs?', a: 'Yes. Each strategy gets its own SP within the Fund via the Fund Creation Form. New SPs require a fresh Supplement to the OM and trigger a new Partnership Period from creation date.' },
       { q: 'Can I charge different fees to different investors?', a: 'Yes. Create new share classes within your existing SP with different management fees, performance fees, investor eligibility, minimums, withdrawal notice periods, and lockup terms.' },
     ]},
     { title: 'Economics', items: [
-      { q: 'What do I pay POD?', a: "You don't pay POD directly. POD's compensation is the Revenue Share — a tiered percentage of the management and performance fees collected by the SP from Shareholders." },
-      { q: "What's the Platform Fee?", a: 'A flat 20 basis points per annum (0.20%) of SP AUM, charged directly to the Fund as a Shareholder-borne expense and disclosed in the Offering Memorandum supplement.' },
-      { q: "What's the Distribution Share?", a: '20% of the gross management and performance fees on POD-Sourced Subscribers — investors who subscribe to your SP via POD Discovery (POD\'s platform investor base). This applies for the investor\'s lifetime and only to POD-sourced capital.' },
+      { q: 'What do I pay POD?', a: "You don't pay POD directly. POD's compensation is the Revenue Share: a tiered percentage of the management and performance fees collected by the SP from Shareholders. Under the IMA, those fees are paid to POD as Manager; under the IAA, POD pays you a portion. POD retains the spread (the Revenue Share). You never write POD a cheque. POD's Revenue Share starts at 25%, scaling down to 10%." },
+      { q: "What's the Platform Fee?", a: 'A flat 20 basis points per annum (0.20%) of SP AUM, charged directly to the Fund as a Shareholder-borne expense and disclosed in the Offering Memorandum supplement. This replaces a standard Admin fee which Investors would normally pay.' },
+      { q: "What's the Distribution Share?", a: "20% of the gross management and performance fees on POD-Sourced Subscribers - investors who subscribe to your SP via POD Discovery (POD's platform investor base). This applies for the investor's lifetime and only to POD-sourced capital." },
       { q: 'Can I see who my POD-Sourced investors are?', a: 'No. POD-Sourced Subscriber identities are technically gated in the Investor Portal. You see aggregate AUM and metrics but not individual identities; IA-sourced investors remain fully visible.' },
-      { q: 'Are there any minimum fees?', a: "No. There are no monthly, quarterly, or annual minimums. POD's economics scale with your SP's AUM." },
-      { q: 'What about third-party costs (custody, prime brokerage, KYC, audit)?', a: 'POD aggregates SP volumes across the Group to negotiate wholesale pricing and passes through 100% of the cost benefit to your SP on a pro-rata basis.' },
+      { q: 'Are there any minimum fees?', a: "No. There are no monthly, quarterly, or annual minimums. POD's economics scale with your SP's AUM and performance." },
+      { q: 'What about third-party costs (custody, prime brokerage, KYC, audit)?', a: 'POD aggregates SP volumes across the Group to negotiate wholesale pricing and passes through 100% of the cost benefit to your SP.' },
     ]},
     { title: 'Partnership Period and commitment', items: [
-      { q: 'How long is the Partnership Period?', a: '5 years firm from the creation of your most recent SP. Mutual extension only — no unilateral right. Two automatic 2-year extensions trigger at $25M and $50M of POD Distributed Investment milestones.' },
-      { q: 'What does the partnership commitment actually cover?', a: 'Only Competing Funds — pooled investment vehicles or trust structures that perform the same economic function as your SP. SMAs, advisory mandates, family offices, and personal accounts remain unrestricted.' },
+      { q: 'How long is the Partnership Period?', a: '5 years firm from the creation of your most recent SP. Mutual extension only: no unilateral right. Two automatic 2-year extensions trigger at $25M and $50M of POD Distributed Investment milestones.' },
+      { q: 'What does the partnership commitment actually cover?', a: 'Only Competing Funds - pooled investment vehicles or trust structures that perform the same economic function as your SP. SMAs, advisory mandates, family offices, and personal accounts remain unrestricted.' },
       { q: 'What about my existing fund or platform relationships?', a: 'Pre-existing fund and platform relationships at signing are fully grandfathered. You may continue and grow them without restriction.' },
       { q: 'What if my Key Person leaves the IA?', a: 'A Continuity Event allows POD to suspend subscriptions and performance crystallisation, require an acceptable replacement within 90 days, or terminate the IAA for cause.' },
-      { q: "What's my walk-away leverage at end of partnership?", a: 'There is no unilateral extension by POD and no termination penalty. If performance is strong and economics feel unfair, you can renegotiate or leave, though POD-sourced subscribers typically remain with POD.' },
+      { q: "What's my walk-away leverage at end of partnership?", a: 'There is no unilateral extension by POD and no termination penalty. If performance is strong and economics feel unfair, you can renegotiate or leave.' },
     ]},
     { title: 'Brand and distribution', items: [
       { q: 'Who owns the Brand?', a: 'POD creates and owns the Brand IP for your SP. You receive a perpetual, royalty-free licence to use it within the SP and on POD-linked channels during the term.' },
-      { q: 'Can I distribute on Telegram, X, or other channels?', a: 'Yes, under the Brand and subject to marketing and securities-promotion regulations, with POD providing collateral and you controlling distribution cadence and content.' },
+      { q: 'Can I distribute on Telegram, X, or other channels?', a: 'Yes, under the Brand and subject to marketing and securities-promotion regulations, with POD providing material and you controlling distribution cadence and content.' },
       { q: 'Can I send custom reports to investors?', a: "Yes. The Administration Platform supports both standard and custom Shareholder reports, delivered directly to investor inboxes via the Investor Portal's distribution mechanism." },
     ]},
     { title: 'Operational and regulatory', items: [
-      { q: 'How long does onboarding take?', a: 'Approximately 12–16 weeks from discovery call to live SP. After term sheet signing, an SP can go live within 6–9 weeks.' },
+      { q: 'How long does onboarding take?', a: 'Approximately 12–16 weeks from first discovery call to live SP. After term sheet signing, an SP can go live within 6–9 weeks.' },
       { q: 'What investor jurisdictions are accepted?', a: "This is governed by the Fund's offering perimeter and the Investor Passport KYC framework, with certain jurisdictions subject to enhanced diligence or refusal." },
       { q: 'What happens if EFS is replaced?', a: 'POD has an obligation under the agreement to use reasonable endeavours to maintain the Platform Services and to notify you promptly of any material change of administrator.' },
       { q: 'What if POD goes out of business?', a: "The Fund and your SP exist independently of POD's commercial entity. The Fund would continue to be administered by EFS, and a new manager would be appointed by the Fund's directors with FSC consent." },
@@ -1971,7 +1990,7 @@ function FAQPage({ onNav }) {
           lineHeight: '1.375rem',
           color: 'var(--text-primary)',
           margin: '48px 0 0',
-        }}>Questions Pilots most commonly ask when evaluating POD. Reflects the current term sheet (v0.7) and is non-binding pending the IAA, asked.</p>
+        }}>Questions PMs most commonly ask when evaluating POD. Answers reflect the term sheet and are non-binding indications of intent pending execution of the definitive Investment Advisory Agreement.</p>
       </div>
 
       {groups.map((g, gi) => (
@@ -1986,7 +2005,13 @@ function FAQPage({ onNav }) {
                   <span style={{fontSize:'1.125rem', fontWeight:500, lineHeight:'1.375rem'}}>{it.q}</span>
                   <span className="chev"><ChevronIcon/></span>
                 </div>
-                {open && it.a && <div className="accordion-body">{it.a}</div>}
+                {open && it.a && (
+                  <div className="accordion-body">
+                    {it.a.split('\n\n').map((p, pi, arr) => (
+                      <p key={pi} style={{margin: pi === arr.length - 1 ? 0 : '0 0 12px 0'}}>{p}</p>
+                    ))}
+                  </div>
+                )}
                 {open && !it.a && <div className="accordion-body" style={{color:'var(--text-secondary)', fontStyle:'italic'}}>Answer placeholder.</div>}
               </div>
             );
@@ -2005,9 +2030,9 @@ function FAQPage({ onNav }) {
    ============================================================= */
 const PRICING_TIERS = [
   { label: 'Launch stage',  range: '$0–10M',   min: 0,  max: 10,   rate: 0.25, slug: 'launch',        desc: "For the early stages of your fund growth when POD's value to you is highest." },
-  { label: 'Early growth',  range: '$10–25M',  min: 10, max: 25,   rate: 0.20, slug: 'grow',          desc: "A reduced rate as your fund gains traction. Maximize on investment while minimizing costs." },
+  { label: 'Early growth',  range: '$10–25M',  min: 10, max: 25,   rate: 0.20, slug: 'grow',          desc: "A reduced rate as your fund gains traction." },
   { label: 'Scaling',       range: '$25–75M',  min: 25, max: 75,   rate: 0.15, slug: 'scale',         desc: "A further reduction across mid-market AUM as you approach institutional scale." },
-  { label: 'Institutional', range: '$75M+',    min: 75, max: 1e12, rate: 0.10, slug: 'institutional', desc: "POD's lowest take rate, applied to all AUM above seventy-five million." },
+  { label: 'Institutional', range: '$75M+',    min: 75, max: 1e12, rate: 0.10, slug: 'institutional', desc: "POD's lowest take rate, applied as you reach institutional scale." },
 ];
 
 function calcTierSlices(aum) {
@@ -2022,10 +2047,13 @@ function calcTierSlices(aum) {
   return res;
 }
 function currentTier(aum) {
-  for (let i = 0; i < PRICING_TIERS.length; i++) {
-    if (aum >= PRICING_TIERS[i].min && aum < PRICING_TIERS[i].max) return PRICING_TIERS[i];
+  // Return the highest tier in which any of the AUM falls (matches where fees actually accrue).
+  // At a boundary (e.g. AUM = $10M), all fees sit in the lower tier's slice — so we return that tier.
+  const slices = calcTierSlices(aum);
+  for (let i = slices.length - 1; i >= 0; i--) {
+    if (slices[i] > 0) return PRICING_TIERS[i];
   }
-  return PRICING_TIERS[PRICING_TIERS.length - 1];
+  return PRICING_TIERS[0];
 }
 
 const fmtMoney = n => '$' + Math.round(n).toLocaleString();
@@ -2179,13 +2207,13 @@ function FeeCalculator() {
       <div style={{display:'flex', flexDirection:'column', gap:24}}>
         <div style={{fontSize:18, fontWeight:500, color:'var(--text-primary)'}}>Capital introduction</div>
         <div style={{display:'flex', gap:16}}>
-          <NumberInput label="POD-introduced AUM (millions)" value={ciStr} onChange={setCiStr} prefix="$" step={1} max={aum}/>
+          <NumberInput label="Total AUM" value={ciStr} onChange={setCiStr} prefix="$" step={1} max={aum}/>
           <div style={{flex:1}}/>
         </div>
       </div>
 
       <p style={{fontSize:14, color:'var(--text-secondary)', lineHeight:'18px', margin:0}}>
-        Note: This calculator makes the simplifying assumption that the average fees paid by POD-introduced investors are identical to the average fees paid across your entire investor base.
+        Note: For simplicity, this calculation makes the assumption that the average fees paid by POD-introduced investors are identical to the average fees paid across your entire investor base.
       </p>
 
       <div style={{display:'flex', flexDirection:'column', gap:24}}>
@@ -2218,7 +2246,7 @@ function FeeCalculator() {
             <div style={{display:'flex', alignItems:'center', gap:10, fontSize:13}}>
               <span style={{width:10, height:10, borderRadius:2, background:'#0E0F12', flexShrink:0}}/>
               <span style={{color:'var(--text-primary)'}}>POD base take</span>
-              <span style={{marginLeft:'auto', color:'var(--text-secondary)', fontVariantNumeric:'tabular-nums'}}>{fmtMoney(podBaseTotal)} · {fmtPct(blendedBase * 100)} blended</span>
+              <span style={{marginLeft:'auto', color:'var(--text-secondary)', fontVariantNumeric:'tabular-nums'}}>{fmtMoney(podBaseTotal)}</span>
             </div>
           )}
           {podCI > 0 && (
@@ -2231,48 +2259,69 @@ function FeeCalculator() {
         </div>
       </div>
 
-      {/* Itemized list */}
-      <div style={{display:'flex', flexDirection:'column'}}>
-        {[
-          { l: 'Management fee income', v: fmtMoney(mgmtInc) },
-          { l: 'Performance fee income', v: fmtMoney(perfInc) },
-          { l: 'Total gross fees',       v: fmtMoney(total),       bold: true },
-          { l: 'POD base take',          v: '−' + fmtMoney(podBaseTotal), muted: true },
-          ...(podCI > 0 ? [{ l: 'POD cap intro take', v: '−' + fmtMoney(podCI), muted: true }] : []),
-        ].map((r, i) => (
-          <div key={i} style={{
-            display:'flex', justifyContent:'space-between',
-            padding:'10px 0',
-            borderBottom: '1px solid var(--border-subtle)',
-            fontSize: 14,
-            fontWeight: r.bold ? 500 : 400,
-            color: r.muted ? 'var(--text-secondary)' : 'var(--text-primary)',
-          }}>
-            <span>{r.l}</span>
-            <span style={{fontVariantNumeric:'tabular-nums'}}>{r.v}</span>
+      {/* Output stack: KPI tiles → itemized list → blended base rate pill */}
+      <div style={{display:'flex', flexDirection:'column', gap:16}}>
+        {/* Two summary KPIs */}
+        <div style={{display:'flex', gap:16}}>
+          <div style={{flex:1, border:'1px solid var(--border-subtle)', borderRadius:'var(--radius-m)', padding:'16px 24px', display:'flex', flexDirection:'column', gap:16}}>
+            <div style={{fontSize:14, color:'var(--text-secondary)'}}>Gross fees</div>
+            <div style={{fontSize:30, fontWeight:500, color:'var(--text-primary)', lineHeight:1}}>{fmtMoney(total)}</div>
           </div>
-        ))}
+          <div style={{flex:1, border:'1px solid var(--border-subtle)', borderRadius:'var(--radius-m)', padding:'16px 24px', display:'flex', flexDirection:'column', gap:16}}>
+            <div style={{fontSize:14, color:'var(--text-secondary)'}}>Your Net Fee Income</div>
+            <div style={{fontSize:30, fontWeight:500, color:'#00d996', lineHeight:1}}>{fmtMoney(keeps)}</div>
+          </div>
+        </div>
+
+        {/* Itemized list */}
+        <div style={{display:'flex', flexDirection:'column'}}>
+          {[
+            { l: 'Management fee income', v: fmtMoney(mgmtInc) },
+            { l: 'Performance fee income', v: fmtMoney(perfInc) },
+            { l: 'Total gross fees',       v: fmtMoney(total),       bold: true },
+            { l: 'POD base take',          v: '−' + fmtMoney(podBaseTotal), muted: true },
+            ...(podCI > 0 ? [{ l: 'POD cap intro take', v: '−' + fmtMoney(podCI), muted: true }] : []),
+          ].map((r, i) => (
+            <div key={i} style={{
+              display:'flex', justifyContent:'space-between',
+              padding:'10px 0',
+              borderBottom: '1px solid var(--border-subtle)',
+              fontSize: 14,
+              fontWeight: r.bold ? 500 : 400,
+              color: r.muted ? 'var(--text-secondary)' : 'var(--text-primary)',
+            }}>
+              <span>{r.l}</span>
+              <span style={{fontVariantNumeric:'tabular-nums'}}>{r.v}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Blended base rate elevated pill */}
+        <div style={{
+          background: 'var(--bg-surface)',
+          color: 'var(--text-primary)',
+          height: 50,
+          borderRadius: 'var(--radius-m)',
+          padding: '14px 16px',
+          display: 'flex', alignItems: 'center', gap: 20,
+          fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: 14,
+        }}>
+          <span style={{flex: 1, minWidth: 0}}>Blended base rate</span>
+          <span style={{textAlign: 'right', width: 220, fontVariantNumeric: 'tabular-nums'}}>
+            {fmtPct(blendedBase * 100)} ({fmtMoney(podBaseTotal)})
+          </span>
+        </div>
       </div>
 
-      {/* Two summary KPIs */}
-      <div style={{display:'flex', gap:16}}>
-        <div style={{flex:1, border:'1px solid var(--border-subtle)', borderRadius:'var(--radius-m)', padding:'16px 24px', display:'flex', flexDirection:'column', gap:16}}>
-          <div style={{fontSize:14, color:'var(--text-secondary)'}}>Gross fees</div>
-          <div style={{fontSize:30, fontWeight:500, color:'var(--text-primary)', lineHeight:1}}>{fmtMoney(total)}</div>
-        </div>
-        <div style={{flex:1, border:'1px solid var(--border-subtle)', borderRadius:'var(--radius-m)', padding:'16px 24px', display:'flex', flexDirection:'column', gap:16}}>
-          <div style={{fontSize:14, color:'var(--text-secondary)'}}>Your Net Fee Income</div>
-          <div style={{fontSize:30, fontWeight:500, color:'#00d996', lineHeight:1}}>{fmtMoney(keeps)}</div>
-        </div>
-      </div>
-
-      {/* Current tier card */}
-      <div style={{
-        border: '1px solid var(--border-strong)',
-        borderRadius: 'var(--radius-m)',
-        padding: '32px 48px 32px 24px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      }}>
+      {/* "Your tier" section */}
+      <div style={{display:'flex', flexDirection:'column', gap:16}}>
+        <div style={{fontSize:18, fontWeight:500, color:'var(--text-primary)', lineHeight:'22px'}}>Your tier</div>
+        <div style={{
+          border: '1px solid var(--border-strong)',
+          borderRadius: 'var(--radius-m)',
+          padding: '32px 48px 32px 24px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        }}>
         <div style={{display:'flex', flexDirection:'column', gap:24, width:293}}>
           <div style={{fontSize:14, color:'var(--text-secondary)'}}>{tier.label}</div>
           <div style={{display:'flex', alignItems:'baseline', gap:8}}>
@@ -2293,10 +2342,11 @@ function FeeCalculator() {
           className="theme-aware-img"
           style={{width:177, height:177, objectFit:'contain', borderRadius:'var(--radius-s)'}}
         />
+        </div>
       </div>
 
       <p style={{fontSize:12, color:'var(--text-secondary)', lineHeight:'18px', margin:0}}>
-        POD's fee is charged as a percentage of your total manager fees — no upfront or fixed costs. The blended base rate is calculated progressively across AUM tiers. Cap intro fees (an additional 20% of fees proportional to cap intro AUM) apply only to capital sourced via POD's Discover platform. Leave cap intro AUM at 0 if not applicable. Performance fee is calculated on return net of management fee.
+        POD's fee is charged as a percentage of your total manager fees. The blended base rate is calculated progressively across AUM tiers. Cap intro fees (an additional 20% of fees related to cap intro AUM) apply only to capital sourced via POD's Discover platform. Leave cap intro AUM at 0 if not applicable. Performance fee is calculated on return net of management fee.
       </p>
     </div>
   );
@@ -2309,12 +2359,12 @@ function PricingPage({ onNav }) {
       <div>
         <Hero page="pricing" title="Pricing"/>
         <p className="lead" style={{marginTop: 48}}>No upfront fees, no fixed fees, no minimum fees.<br/>You only pay POD as you earn. We win when you win.</p>
-        <p className="body-text" style={{marginTop: 32}}>POD charges a percentage of gross manager fees — management fee plus performance fee. This percentage reduces as your AUM grows.</p>
+        <p className="body-text" style={{marginTop: 32}}>POD charges a percentage of gross manager fees: management fee plus performance fee. This percentage reduces as your AUM grows.</p>
       </div>
 
       <section id="setup-costs">
         <h2 className="section-title">Setup costs</h2>
-        <p className="body-text">Pay only legal & registration fees (approx $7k, passed through at cost by POD). After that, you face no further fixed fees, and are charged only via POD's fee sharing structure.</p>
+        <p className="body-text">Pay only legal & registration fees (approx $8k, passed through at cost by POD). After that, you face no further fixed fees, and are charged only via POD's fee sharing structure.</p>
       </section>
 
       <section id="base-fee-structure">
@@ -2347,18 +2397,21 @@ function PricingPage({ onNav }) {
         <h2 className="section-title">Third-party costs</h2>
         <div style={{marginTop:24}}>
           <h3 className="subsection-title" style={{margin:'0 0 32px'}}>What you pay to third parties</h3>
-          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', columnGap:32, rowGap:20}}>
+          <div style={{display:'flex', flexDirection:'column', gap:20}}>
             {[
-              "Our purpose-built fund administrator, EFS, sits inside the POD Group of companies, so no additional third-party fund admin is required. We do not charge any minimum fee for admin services, simply a flat 0.20% on AUM, which you pass through to investors as an expense line item. With all other savings, we expect your investor expense ratio to be well below 1%.",
-              "Any minimum fees charged by third-party providers (e.g. custodians, banks, auditors) are absorbed by POD at the umbrella level. You never face a third-party minimum fee.",
-              "Variable costs we do pass through (custody, banking, audit) are charged at wholesale rates negotiated at the umbrella level, significantly cheaper than fees charged to an individual fund.",
-              "Trading volumes are also merged at the umbrella level, resulting in lower trading fees for managers on the POD platform.",
-            ].map((txt, i) => (
+              { type: 'bullet', text: "Our purpose-built fund administrator, EFS, sits inside the POD Group of companies, so no additional third-party fund admin is required. We do not charge any minimum fee for admin services, simply a flat 0.20% on AUM, which you pass through to investors as an expense line item." },
+              { type: 'bullet', text: "Any minimum fees charged by third-party providers (e.g. custodians, banks, auditors) are absorbed by POD at the umbrella level. You never face a third-party minimum fee." },
+              { type: 'bullet', text: "Variable costs we do pass through (custody, banking, audit) are charged at wholesale rates negotiated at the umbrella level, significantly cheaper than fees charged to an individual fund." },
+              { type: 'note',   text: "With all savings combined, we expect your investor expense ratio to be below 1%." },
+              { type: 'bullet', text: "Trading volumes are also merged at the umbrella level, resulting in lower trading fees for managers on the POD platform." },
+            ].map((row, i) => row.type === 'note' ? (
+              <p key={i} className="body-text" style={{margin:0, paddingLeft:32}}>{row.text}</p>
+            ) : (
               <div key={i} style={{display:'flex', gap:12, alignItems:'flex-start'}}>
                 <span style={{flexShrink:0, marginTop:2, width:20, height:20, borderRadius:'50%', border:'1px solid var(--border-strong)', display:'inline-flex', alignItems:'center', justifyContent:'center', color:'var(--text-secondary)'}}>
                   <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 6l3 3 5-6"/></svg>
                 </span>
-                <p className="body-text" style={{flex:1}}>{txt}</p>
+                <p className="body-text" style={{flex:1}}>{row.text}</p>
               </div>
             ))}
           </div>
@@ -2378,7 +2431,7 @@ const PAGE_ANCHORS = {
   welcome: [
     { id: 'partnership',        label: 'Partnership' },
     { id: 'what-pod-provides',  label: 'What POD provides' },
-    { id: 'pilot-role',         label: 'Pilot role' },
+    { id: 'pilot-role',         label: 'PM role' },
     { id: 'relationship',       label: 'The Relationship' },
   ],
   pricing: [
@@ -2460,7 +2513,7 @@ function LoginScreen({ onLogin, onRequestAccess }) {
     <form className="login-form-pane" onSubmit={submit}>
       <div className="header">
         <h1>Join the Pilot Program</h1>
-        <p className="desc">We're partnering with a select group of pilots to be the first to experience POD. Enter your email and site key below to get started.</p>
+        <p className="desc">We're partnering with a select group of launch PMs to be the first to experience POD. Enter your email and site key below to get started.</p>
       </div>
       <div className="login-form">
         <div className="login-fields">
@@ -2623,51 +2676,21 @@ function LoginGate({ exiting, onLogin }) {
   );
 }
 
-function PodLoader() {
-  const ref = useRef(null);
-  useEffect(() => {
-    if (!ref.current || !window.lottie) return;
-    let dark = false;
-    try { dark = localStorage.getItem('pilot.theme') === 'dark'; } catch (_) {}
-    const anim = window.lottie.loadAnimation({
-      container: ref.current,
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      path: dark ? './assets/login/pod-loader-dark.json' : './assets/login/pod-loader.json',
-    });
-    return () => anim.destroy();
-  }, []);
-  return (
-    <div className="login-loader">
-      <div ref={ref} className="login-loader-svg"/>
-    </div>
-  );
-}
-
 function App() {
   const [authed, setAuthed] = useState(() => {
     try { return localStorage.getItem(AUTH_STORAGE_KEY) === '1'; } catch (_) { return false; }
   });
-  const [phase, setPhase] = useState('idle'); // 'idle' | 'exiting' | 'loading'
+  const [exiting, setExiting] = useState(false);
   const logout = () => {
     try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch (_) {}
     setAuthed(false);
-    setPhase('idle');
+    setExiting(false);
   };
   const handleLogin = () => {
-    setPhase('exiting');
-    setTimeout(() => setPhase('loading'), 500);   // exit animation duration
-    setTimeout(() => { setAuthed(true); setPhase('idle'); }, 500 + 4000); // 4s loader
+    setExiting(true);
+    setTimeout(() => { setAuthed(true); setExiting(false); }, 500); // play the exit animation, then mount the app
   };
-  if (!authed) {
-    return (
-      <React.Fragment>
-        {phase !== 'loading' && <LoginGate exiting={phase === 'exiting'} onLogin={handleLogin}/>}
-        {phase === 'loading' && <PodLoader/>}
-      </React.Fragment>
-    );
-  }
+  if (!authed) return <LoginGate exiting={exiting} onLogin={handleLogin}/>;
   return <PilotApp onLogout={logout}/>;
 }
 
