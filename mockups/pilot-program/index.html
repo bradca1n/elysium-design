@@ -423,7 +423,6 @@
     color: var(--text-secondary);
     margin: 0;
   }
-  .cta-card-wide .label { color: #fefeff; }
   .cta-card .title,
   .cta-card-wide .title {
     font-family: 'Inter', sans-serif;
@@ -438,6 +437,11 @@
     width: 16px; height: 16px;
     color: var(--text-primary);
   }
+  /* Wide CTA sits on a hero-image bg in both themes — keep all text/icon
+     white so it reads against the colored bg regardless of theme. */
+  .cta-card-wide .label,
+  .cta-card-wide .title,
+  .cta-card-wide .arrow { color: #fefeff; }
 
   /* "What POD provides" 2-column grid filling 870px content width */
   .provides-grid {
@@ -1623,20 +1627,10 @@ function TermSheetPage({ onNav }) {
     <div className="content">
       <div>
         <Hero page="term-sheet" title="Term sheet"/>
-        <p className="lead" style={{marginTop: 48}}>Download the Term sheet in either PDF or word format below. We've also included a summary of all terms below for your convenience.</p>
+        <p className="lead" style={{marginTop: 48}}>Download the Term sheet below.</p>
       </div>
 
       <div id="downloads" style={{display: 'flex', flexDirection: 'column', gap: 8}}>
-        <a className="download-card" download>
-          <div className="download-card-left">
-            <img className="doc-icon" src="./assets/docx.svg" alt="DOCX"/>
-            <div className="download-card-text">
-              <div className="download-card-title">POD Term sheet</div>
-              <div className="download-card-meta">800 KB</div>
-            </div>
-          </div>
-          <DownloadIcon/>
-        </a>
         <a className="download-card" download>
           <div className="download-card-left">
             <img className="doc-icon" src="./assets/pdf.svg" alt="PDF"/>
@@ -1770,11 +1764,6 @@ function StructurePage({ onNav }) {
             ))}
           </tbody>
         </table>
-      </div>
-
-      <div className="download-row">
-        <button className="download-btn"><DownloadIcon/> Download PPTX</button>
-        <button className="download-btn outline"><DownloadIcon/> Download PDF</button>
       </div>
 
       <NextPageCta from="structure" onNav={onNav}/>
