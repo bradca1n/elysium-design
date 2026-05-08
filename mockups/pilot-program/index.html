@@ -10,6 +10,8 @@
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
 <style>
   /* ============================================================
@@ -37,10 +39,12 @@
     /* Text */
     --text-primary: #171717;
     --text-secondary: #737373;
+    --text-muted: #a3a3a3;
     --text-inverse: #fefeff;
 
     /* Borders */
     --border-subtle: #e5e5e5;
+    --border-default: #e5e5e5;
     --border-strong: #dbdbdc;
 
     /* Spacing */
@@ -854,8 +858,10 @@
     --bg-surface: #1f1f1f;
     --text-primary: #F4F5F4;
     --text-secondary: #9DA0A4;
+    --text-muted: #6B6F76;
     --text-inverse: #171717;
     --border-subtle: #2A2D33;
+    --border-default: #2A2D33;
     --border-strong: #3A3D45;
   }
   body.dark .theme-toggle::before {
@@ -1170,11 +1176,341 @@
   }
   .timeline-carousel::-webkit-scrollbar { display: none; }
 
+  /* ============================================================
+     CREATE A FUND — multi-step form
+     ============================================================ */
+  /* Outer route layout */
+  .cf-page {
+    position: absolute;
+    left: 466px;
+    top: 112px;
+    width: 870px;
+    padding-bottom: 100px;
+  }
+  /* Step indicator rail */
+  .cf-stepper {
+    position: fixed;
+    left: max(20px, calc(50% - 864px + 20px));
+    top: 109px;
+    width: 216px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 4;
+  }
+  .cf-step-row {
+    display: flex; align-items: center; gap: 12px;
+    height: 44px;
+    padding: 10px 16px;
+    border-radius: var(--radius-m);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .cf-step-row.active { background: var(--bg-surface); }
+  .cf-step-row .label {
+    font-family: 'Inter', sans-serif;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-tight);
+    white-space: nowrap;
+  }
+  .cf-step-row.done    .label { color: var(--text-secondary); font-weight: 400; }
+  .cf-step-row.active  .label { color: var(--text-primary);   font-weight: 500; }
+  .cf-step-row.pending .label { color: var(--text-muted);     font-weight: 400; }
+  .cf-step-circle { width: 24px; height: 24px; flex-shrink: 0; position: relative; }
+  /* Topbar override on cf route */
+  .cf-topbar-cta {
+    position: fixed;
+    top: 24px;
+    /* Right edge of button = right edge of form content (frame + 1336).
+       Below 1364px viewport, the page-frame clamps at margin-left:-182 so
+       we track the actual gap (100vw - 1154); at wider widths, frame is
+       (vw-1728)/2 from left, so right = 50% - 472. min() picks the
+       correct one for each side of the breakpoint. */
+    right: max(80px, min(calc(100vw - 1154px), calc(50% - 472px)));
+    z-index: 5;
+  }
+  /* Form layout */
+  .cf-title {
+    font-family: 'Serrif Condensed', Georgia, serif;
+    font-weight: 300;
+    font-size: var(--fs-3xl);
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin: 0;
+  }
+  .cf-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-tight);
+    color: var(--text-secondary);
+    margin: 24px 0 0 0;
+  }
+  .cf-row {
+    display: flex; flex-direction: column; gap: 16px;
+    /* No row dividers — only section headers in Step 5 carry a divider. */
+  }
+  .cf-row .cf-left  { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+  .cf-row .cf-right { width: 100%; }
+  /* Step 5 retains a 2-col grid (Class designation + Sub-class on one row, etc.) */
+  .cf-row.cf-grid {
+    flex-direction: row; gap: 16px; align-items: flex-start;
+  }
+  .cf-row.cf-grid .cf-left,
+  .cf-row.cf-grid .cf-right { width: auto; flex: 1 1 0; min-width: 0; }
+  /* Section subhead within a step (e.g. Step 5 groups) */
+  .cf-section-head {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: var(--fs-lg);
+    line-height: 22px;
+    color: var(--text-primary);
+    margin: 0;
+  }
+  /* Divider line above each section header — except the first, which sits
+     at the top of the form. */
+  .cf-section-head:not(:first-child) {
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 32px;
+  }
+  .cf-label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: var(--fs-md);
+    line-height: var(--lh-normal);
+    color: var(--text-primary);
+    margin: 0;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .cf-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-tight);
+    color: var(--text-secondary);
+    margin: 0;
+  }
+  .cf-input, .cf-textarea, .cf-dropdown {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--bg-canvas);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-m);
+    padding: 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: var(--fs-md);
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.12s;
+  }
+  .cf-input:focus, .cf-textarea:focus, .cf-dropdown:focus {
+    border-color: var(--text-primary);
+  }
+  .cf-input { height: 54px; }
+  .cf-textarea { min-height: 154px; resize: vertical; line-height: 22px; }
+  .cf-input::placeholder, .cf-textarea::placeholder { color: var(--text-muted); }
+  .cf-input-wrap { position: relative; }
+  .cf-input-wrap .suffix {
+    position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+    font-size: var(--fs-sm); color: var(--text-muted);
+    pointer-events: none;
+  }
+  .cf-input-wrap.has-suffix .cf-input { padding-right: 36px; text-align: right; }
+  .cf-input-wrap .prefix {
+    position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+    font-size: var(--fs-sm); color: var(--text-muted);
+    pointer-events: none;
+  }
+  .cf-dropdown-btn {
+    width: 100%; box-sizing: border-box;
+    background: var(--bg-canvas);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-m);
+    padding: 16px;
+    height: 54px;
+    font-family: 'Inter', sans-serif;
+    font-size: var(--fs-md);
+    color: var(--text-primary);
+    cursor: pointer;
+    text-align: left;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .cf-dropdown-btn.placeholder { color: var(--text-muted); }
+  .cf-dropdown-menu {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+    background: var(--bg-canvas);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-m);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    padding: 4px;
+    z-index: 20;
+    max-height: 280px; overflow-y: auto;
+  }
+  .cf-dropdown-menu button {
+    display: block; width: 100%; text-align: left;
+    background: transparent; border: none;
+    padding: 10px 12px; border-radius: 6px;
+    font-family: 'Inter', sans-serif; font-size: var(--fs-sm);
+    color: var(--text-primary); cursor: pointer;
+  }
+  .cf-dropdown-menu button:hover { background: var(--bg-glass); }
+  .cf-help-icon {
+    width: 16px; height: 16px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+    cursor: help; position: relative;
+    flex-shrink: 0;
+  }
+  .cf-help-icon:hover { color: var(--text-secondary); }
+  .cf-tooltip {
+    position: absolute; bottom: calc(100% + 8px); left: -12px;
+    width: 304px;
+    background: var(--bg-canvas);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-m);
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+    z-index: 30;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--text-secondary);
+    white-space: normal;
+    pointer-events: none;
+    cursor: default;
+  }
+  body.dark .cf-tooltip { box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+  .cf-add-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--bg-glass);
+    border: none; border-radius: var(--radius-m);
+    padding: 8px;
+    font-family: 'Inter', sans-serif; font-weight: 500;
+    font-size: var(--fs-sm);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+  .cf-add-btn:hover { background: rgba(0,0,0,0.06); }
+  body.dark .cf-add-btn:hover { background: rgba(255,255,255,0.08); }
+  /* Categories card on Step 6 */
+  .cf-cats-card {
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-m);
+    padding: 24px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .cf-cats-card ul { margin: 0; padding-left: 21px; color: var(--text-secondary); font-size: var(--fs-sm); line-height: 1.4; }
+  .cf-cats-card ul li { margin-bottom: 6px; }
+  .cf-cats-card ul li:last-child { margin-bottom: 0; }
+  .cf-cats-card ul li b { color: var(--text-primary); font-weight: 500; }
+  /* Continue / Submit button row */
+  .cf-btn-row { padding: 24px 0 120px; }
+  .cf-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--text-primary); color: var(--bg-canvas);
+    border: none; border-radius: var(--radius-m);
+    padding: 12px 16px;
+    font-family: 'Inter', sans-serif; font-weight: 500; font-size: var(--fs-md);
+    cursor: pointer;
+  }
+  .cf-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .cf-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent; color: var(--text-primary);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-m);
+    padding: 12px 16px;
+    font-family: 'Inter', sans-serif; font-weight: 500; font-size: var(--fs-md);
+    cursor: pointer;
+    margin-right: 12px;
+  }
+  /* Signature pad */
+  .cf-sig-wrap {
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-m);
+    background: var(--bg-canvas);
+    height: 154px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cf-sig-wrap canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+  .cf-sig-clear {
+    position: absolute; top: 8px; right: 8px;
+    background: var(--bg-glass); border: none;
+    border-radius: 6px; padding: 4px 8px;
+    font-size: 12px; color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .cf-sig-clear:hover { color: var(--text-primary); }
+  /* Cancel modal */
+  .cf-modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+  }
+  .cf-modal {
+    width: 440px; max-width: calc(100vw - 64px);
+    background: var(--bg-canvas);
+    border-radius: var(--radius-m);
+    padding: 32px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.20);
+  }
+  body.dark .cf-modal { background: var(--bg-surface); }
+  .cf-modal h3 {
+    font-family: 'Serrif Condensed', Georgia, serif;
+    font-weight: 300; font-size: 24px; line-height: 1.2;
+    color: var(--text-primary);
+    margin: 0 0 12px;
+  }
+  .cf-modal p {
+    font-family: 'Inter', sans-serif; font-size: var(--fs-sm);
+    color: var(--text-secondary); line-height: 18px;
+    margin: 0 0 24px;
+  }
+  .cf-modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
+  /* Submitted success view */
+  .cf-success {
+    text-align: center;
+    padding: 80px 0;
+    display: flex; flex-direction: column; align-items: center; gap: 24px;
+  }
+  .cf-success .check {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: #caffe8;
+    display: flex; align-items: center; justify-content: center;
+    color: #171717;
+  }
+
   /* Welcome page micro-entry */
   .page-frame { animation: pageEnter 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
   @keyframes pageEnter {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+  /* Bigger transition for the Create-a-fund route — fades out the prior
+     view, then reveals the new one with a staggered cascade of its
+     children (topbar, step rail, page) so it feels intentional. */
+  .page-frame.cf-leaving {
+    animation: cfPageExit 0.32s cubic-bezier(0.55, 0, 0.85, 0.5) forwards;
+  }
+  @keyframes cfPageExit {
+    from { opacity: 1; transform: translateY(0)    scale(1); }
+    to   { opacity: 0; transform: translateY(-8px) scale(0.99); }
+  }
+  @keyframes cfPageEnter {
+    from { opacity: 0; transform: translateY(14px) scale(0.99); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
+  }
+  /* Stagger Create-a-fund chrome on mount. `backwards` keeps the from-state
+     applied during the delay so nothing flashes before its turn. */
+  .page-frame.cf-entering .brand           { animation: cfPageEnter 0.55s 0.05s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+  .page-frame.cf-entering .cf-topbar-cta   { animation: cfPageEnter 0.55s 0.10s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+  .page-frame.cf-entering .cf-stepper      { animation: cfPageEnter 0.55s 0.18s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+  .page-frame.cf-entering .cf-page         { animation: cfPageEnter 0.55s 0.24s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+  /* Same cascade applied when leaving Create-a-fund back to the rest of the app. */
+  .page-frame.cf-entering > *:not(.brand):not(.cf-topbar-cta):not(.cf-stepper):not(.cf-page) {
+    animation: cfPageEnter 0.55s 0.05s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   }
 </style>
 </head>
@@ -1253,13 +1589,13 @@ function ThemeToggle({ dark, onToggle }) {
   );
 }
 
-function TopBar() {
+function TopBar({ onNav }) {
   return (
     <React.Fragment>
       <Brand/>
       <div className="topbar-cta">
         <span className="label">Ready to setup a fund?</span>
-        <button className="pill-btn">
+        <button className="pill-btn" onClick={() => onNav && onNav('create-fund')}>
           Get started
           <span className="icon"><ArrowIcon/></span>
         </button>
@@ -2605,6 +2941,953 @@ function OnboardingTimelinePage({ onNav }) {
 }
 
 /* =============================================================
+   PAGE: CREATE A FUND — multi-step Supplement form
+   ============================================================= */
+const CF_STEPS = [
+  { key: 'identification', label: 'Identification',     title: 'Identification',         subtitle: 'Who you are, how the SP will be named, and the base currency of the SP.', fields: ['spName','iaEntity','keyPersons','currency'] },
+  { key: 'mandate',        label: 'Investment Mandate', title: 'Investment Mandate',     subtitle: 'What the SP is designed to do, how it does it, what it can hold, and what it cannot.', fields: ['objective','strategy','portfolioInvestments','restrictions','leverage'] },
+  { key: 'dealing',        label: 'Dealing & Liquidity',title: 'Dealing & Liquidity',    subtitle: 'When and how investors can subscribe and redeem. Should be calibrated to the underlying liquidity of the strategy — over-promising liquidity creates redemption-gate risk.', fields: ['subscriptionPoint','valuationFrequency','redemptionPoint','redemptionGate','redemptionNoticePeriod'] },
+  { key: 'fees',           label: 'Fees & Economics',   title: 'Fees & Economics',       subtitle: "The IA's fee structure as charged to the SP. POD's Revenue Share, Platform Fee, and Distribution Share (per the term sheet) sit on top of these and do not need to be specified here.", fields: ['mgmtFee','perfFee','perfPeriod','hurdleRate','hwm'] },
+  { key: 'shareClass',     label: 'Share Classes',      title: 'Share Class setup',      subtitle: 'Most SPs launch with a single Share Class (Class A) and add classes later as the investor base diversifies. This is very easily done in the app after launch. Common reasons to add classes from launch: different minimums for different investor categories, different fee structures for anchor investors, or different currency tranches. Complete one Share Class table below for each class you intend to launch with.', fields: ['classDesignation','subClass','minInitialInv','minAdditionalInv','subscriptionPrice','subscriptionFee','distributionType','redemptionPrice','redemptionFee','minRedemptionAmount','lockupPeriod','minHolding','expensesCap'] },
+  { key: 'risks',          label: 'Risk Factors',       title: 'SP-Specific Risk Factors', subtitle: "Risk factors specific to your SP — not the standard ones already covered in the Offering Memorandum. POD will overlay standard risk factors for the platform (banking, custody, regulatory, currency, stablecoin if relevant). What we need from you is the strategy-specific layer.", fields: ['risks'] },
+  { key: 'special',        label: 'Special Situations', title: 'Special Situations',     subtitle: 'Less-common parameters that most SPs leave at the platform default. Only complete these where your strategy has a specific need.', fields: ['specialSituationShares','dividendPolicy','iop','anchorTerms'] },
+  { key: 'submit',         label: 'Submit',             title: 'Submit',                 subtitle: "Now you've completed the form, both parties sign to confirm the inputs. POD then drafts the formal Supplement based on these inputs, which is signed off again before filing with the FSC.", fields: ['iaName','iaTitle','iaSignature','iaDate'] },
+];
+
+const CF_INITIAL = {
+  spName: '', iaEntity: '', keyPersons: [''], currency: '',
+  objective: '', strategy: '', portfolioInvestments: '', restrictions: '', leverage: '',
+  subscriptionPoint: '', valuationFrequency: '', redemptionPoint: '', redemptionGate: '', redemptionNoticePeriod: '',
+  mgmtFee: '', perfFee: '', perfPeriod: '', hurdleRate: '', hwm: '',
+  classDesignation: '', subClass: '', minInitialInv: '', minAdditionalInv: '',
+  subscriptionPrice: '', subscriptionFee: '', distributionType: '',
+  redemptionPrice: '', redemptionFee: '', minRedemptionAmount: '',
+  lockupPeriod: '', minHolding: '', expensesCap: '',
+  risks: [{ title: '', description: '' }],
+  specialSituationShares: '', dividendPolicy: '', iop: '', anchorTerms: '',
+  iaName: '', iaTitle: '', iaSignature: '', iaDate: '',
+};
+
+// Tooltips per Figma node 2359:12011 — verbatim copy.
+const CF_TOOLTIPS = {
+  classDesignation:    'Most SPs launch with Class A. Use "Class A" unless you have a specific reason to differentiate.',
+  subClass:            'Used to differentiate within a class (e.g., currency tranches, founder-friendly fees). Most SPs launch with no sub-classes.',
+  minInitialInv:       "Minimum first subscription amount in the SP's base currency.\n\n$50,000–100,000 for individual-friendly classes;\n$500,000–1,000,000 for institutional-only classes.\n\nThe POD platform investor base is largely institutional, so $100,000+ is typical.",
+  minAdditionalInv:    'Minimum top-up after the initial subscription. Often "$0" to encourage continued allocation.',
+  subscriptionPrice:   'Initial Offer Period: a fixed price (typically $1.00 per Share). Thereafter: NAV per Share at the Valuation Point immediately preceding the Subscription Point.\n\nStandard wording — leave blank unless your strategy requires alternative.',
+  subscriptionFee:     'Charged on subscriptions to compensate for setup work. Usually "$0" for POD-platform investors — platform fees cover setup.',
+  distributionType:    'Distributing (income paid out as cash dividends) or Accumulating (income retained in NAV, lifting Share price). Accumulating is more common for liquid strategies; Distributing for income-oriented strategies.',
+  redemptionPrice:     'NAV per Share at the Valuation Point immediately preceding the Redemption Point, by default.',
+  redemptionFee:       'Charged on redemptions. Usually "$0".',
+  minRedemptionAmount: 'Minimum size of any redemption order. "$0" or e.g., "$10,000".',
+  lockupPeriod:        'Mandatory holding period before first redemption.\n\nRange: None to 12 months.\n\nLock-ups common for less-liquid strategies; uncommon for liquid alternatives.',
+  minHolding:          'Minimum holding amount post any partial redemption. "Not applicable" if no minimum.',
+  expensesCap:         'Maximum costs (quoted as % of AUM) per annum which are passed through to investors as line item, separate to management + performance fees. Examples: custody fees, banking fees, admin fees, legal fees, audit fees.\n\nTypical range for emerging funds: 1–2%. Funds on POD platform face lower fees so 1% recommended.',
+};
+
+// Field-completion ratio per step. Used by stepper progress arc.
+function cfStepProgress(stepIdx, form) {
+  const step = CF_STEPS[stepIdx];
+  if (!step) return 0;
+  let filled = 0, total = 0;
+  step.fields.forEach(f => {
+    if (f === 'keyPersons') {
+      total += 1;
+      if ((form.keyPersons || []).some(p => p && p.trim())) filled += 1;
+    } else if (f === 'risks') {
+      total += 1;
+      if ((form.risks || []).some(r => r && (r.title || '').trim())) filled += 1;
+    } else {
+      total += 1;
+      if ((form[f] || '').toString().trim()) filled += 1;
+    }
+  });
+  return total === 0 ? 1 : filled / total;
+}
+
+/* ---- Shared form components ---- */
+function CFHelpTooltip({ text }) {
+  const [open, setOpen] = useState(false);
+  if (!text) return null;
+  return (
+    <span className="cf-help-icon" onMouseEnter={()=>setOpen(true)} onMouseLeave={()=>setOpen(false)} onFocus={()=>setOpen(true)} onBlur={()=>setOpen(false)} tabIndex={0}>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+        <circle cx="8" cy="8" r="6.5"/>
+        <path d="M6.3 6.2c0-.95.76-1.7 1.7-1.7s1.7.76 1.7 1.7c0 .85-1.7 1.3-1.7 2.5" strokeLinecap="round"/>
+        <circle cx="8" cy="11.3" r="0.6" fill="currentColor" stroke="none"/>
+      </svg>
+      {open && <span className="cf-tooltip" style={{whiteSpace:'pre-wrap'}}>{text}</span>}
+    </span>
+  );
+}
+
+function CFTextInput({ value, onChange, placeholder, type = 'text' }) {
+  return <input className="cf-input" type={type} value={value || ''} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>;
+}
+
+function CFTextarea({ value, onChange, placeholder, height }) {
+  return <textarea className="cf-textarea" style={{height: height || 154}} value={value || ''} onChange={e=>onChange(e.target.value)} placeholder={placeholder}/>;
+}
+
+function CFNumberInput({ value, onChange, placeholder, suffix, prefix }) {
+  return (
+    <div className={'cf-input-wrap' + (suffix ? ' has-suffix' : '')}>
+      {prefix && <span className="prefix">{prefix}</span>}
+      <input className="cf-input" type="text" value={value || ''} onChange={e=>onChange(e.target.value)} placeholder={placeholder} style={prefix ? {paddingLeft: 32} : {}}/>
+      {suffix && <span className="suffix">{suffix}</span>}
+    </div>
+  );
+}
+
+function CFDropdown({ value, onChange, options, placeholder }) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+  useEffect(() => {
+    const onDoc = (e) => { if (!wrapRef.current?.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', onDoc);
+    return () => document.removeEventListener('mousedown', onDoc);
+  }, []);
+  const display = value || placeholder;
+  const isPlaceholder = !value;
+  return (
+    <div ref={wrapRef} style={{position:'relative'}}>
+      <button type="button" className={'cf-dropdown-btn' + (isPlaceholder ? ' placeholder' : '')} onClick={()=>setOpen(o=>!o)}>
+        <span>{display}</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 6 8 10 12 6"/></svg>
+      </button>
+      {open && (
+        <div className="cf-dropdown-menu">
+          {options.map((opt, i) => (
+            <button key={i} type="button" onClick={()=>{ onChange(opt); setOpen(false); }}>{opt}</button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CFSignaturePad({ value, onChange }) {
+  const canvasRef = useRef(null);
+  const drawingRef = useRef(false);
+  const lastRef = useRef({ x: 0, y: 0 });
+  const lastMidRef = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    // Match canvas pixel size to DOM size for crisp lines.
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text-primary').trim() || '#171717';
+    if (value) {
+      const img = new Image();
+      img.onload = () => ctx.drawImage(img, 0, 0, rect.width, rect.height);
+      img.src = value;
+    }
+  }, []);
+
+  const pos = (e) => {
+    const r = canvasRef.current.getBoundingClientRect();
+    const t = e.touches ? e.touches[0] : e;
+    return { x: t.clientX - r.left, y: t.clientY - r.top };
+  };
+  const start = (e) => {
+    e.preventDefault();
+    drawingRef.current = true;
+    const p = pos(e);
+    lastRef.current = p;
+    lastMidRef.current = p;
+    // Draw a tiny dot at the start point so single taps register.
+    const ctx = canvasRef.current.getContext('2d');
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, ctx.lineWidth / 2, 0, Math.PI * 2);
+    ctx.fillStyle = ctx.strokeStyle;
+    ctx.fill();
+  };
+  const move = (e) => {
+    if (!drawingRef.current) return;
+    e.preventDefault();
+    const ctx = canvasRef.current.getContext('2d');
+    const p = pos(e);
+    // Quadratic-midpoint smoothing: draw a curve from the previous midpoint
+    // to the new midpoint, with the actual previous point as the control.
+    // This rounds the corner at every sample, masking the polyline jitter.
+    const mid = { x: (lastRef.current.x + p.x) / 2, y: (lastRef.current.y + p.y) / 2 };
+    ctx.beginPath();
+    ctx.moveTo(lastMidRef.current.x, lastMidRef.current.y);
+    ctx.quadraticCurveTo(lastRef.current.x, lastRef.current.y, mid.x, mid.y);
+    ctx.stroke();
+    lastMidRef.current = mid;
+    lastRef.current = p;
+  };
+  const end = () => {
+    if (!drawingRef.current) return;
+    drawingRef.current = false;
+    // Finish the stroke with a final segment to the actual last point so the
+    // visible line ends where the cursor actually stopped (otherwise the
+    // last midpoint trailed slightly behind the cursor).
+    const ctx = canvasRef.current.getContext('2d');
+    ctx.beginPath();
+    ctx.moveTo(lastMidRef.current.x, lastMidRef.current.y);
+    ctx.lineTo(lastRef.current.x, lastRef.current.y);
+    ctx.stroke();
+    onChange(canvasRef.current.toDataURL('image/png'));
+  };
+  const clear = () => {
+    const c = canvasRef.current;
+    c.getContext('2d').clearRect(0, 0, c.width, c.height);
+    onChange('');
+  };
+
+  return (
+    <div className="cf-sig-wrap">
+      <canvas
+        ref={canvasRef}
+        onMouseDown={start} onMouseMove={move} onMouseUp={end} onMouseLeave={end}
+        onTouchStart={start} onTouchMove={move} onTouchEnd={end}
+      />
+      <button type="button" className="cf-sig-clear" onClick={clear}>Clear</button>
+    </div>
+  );
+}
+
+function CFCancelModal({ onConfirm, onClose }) {
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
+  return ReactDOM.createPortal(
+    <div className="cf-modal-backdrop" onClick={onClose}>
+      <div className="cf-modal" onClick={e=>e.stopPropagation()}>
+        <h3>Cancel setup?</h3>
+        <p>Your progress so far will be discarded. You can start again any time from the Welcome screen.</p>
+        <div className="cf-modal-actions">
+          <button type="button" className="cf-secondary" style={{marginRight:0}} onClick={onClose}>Keep editing</button>
+          <button type="button" className="cf-primary" onClick={onConfirm}>Discard &amp; exit</button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+/* ---- Step indicator with arc-progress on active ---- */
+function CFStepIndicator({ steps, current, progress, onJump }) {
+  return (
+    <nav className="cf-stepper">
+      {steps.map((s, i) => {
+        const state = i < current ? 'done' : i === current ? 'active' : 'pending';
+        return (
+          <div key={s.key} className={'cf-step-row ' + state} onClick={() => i <= current && onJump(i)} style={{cursor: i <= current ? 'pointer' : 'default'}}>
+            <span className="cf-step-circle">
+              {state === 'done' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="11" fill="var(--text-primary)"/>
+                  <path d="M7.5 12.5l3 3 6-7" stroke="var(--bg-canvas)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                </svg>
+              )}
+              {state === 'pending' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="11" stroke="var(--border-strong)" strokeWidth="1.4"/>
+                </svg>
+              )}
+              {state === 'active' && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="11" stroke="var(--border-strong)" strokeWidth="1.4"/>
+                  <circle
+                    cx="12" cy="12" r="11"
+                    stroke="var(--text-primary)" strokeWidth="1.6"
+                    fill="none"
+                    strokeDasharray={2 * Math.PI * 11}
+                    strokeDashoffset={2 * Math.PI * 11 * (1 - (progress || 0))}
+                    transform="rotate(-90 12 12)"
+                    style={{transition: 'stroke-dashoffset 0.3s ease'}}
+                  />
+                </svg>
+              )}
+            </span>
+            <span className="label">{s.label}</span>
+          </div>
+        );
+      })}
+    </nav>
+  );
+}
+
+/* ---- Field row helper ---- */
+// Supporting copy moves into a tooltip on the (?) icon next to the label,
+// so each row is just LABEL [?]  |  INPUT — much more compact.
+function CFFieldRow({ label, desc, tooltip, children, first }) {
+  const tip = tooltip || desc;
+  return (
+    <div className="cf-row" style={first ? {borderTop: 'none', paddingTop: 0} : {}}>
+      <div className="cf-left">
+        <div className="cf-label">{label}{tip && <CFHelpTooltip text={tip}/>}</div>
+      </div>
+      <div className="cf-right">{children}</div>
+    </div>
+  );
+}
+
+/* ---- 8 step renderers ---- */
+function CFStep1({ form, set }) {
+  return (
+    <React.Fragment>
+      <CFFieldRow first label="SP name" desc={"Your strategy gets a name. It will appear on the Investor Portal, in reporting, and on subscription documents. POD's brand team can work with you to develop a name that fits both your team and the platform."}>
+        <CFTextInput value={form.spName} onChange={v=>set('spName', v)} placeholder="SP name"/>
+      </CFFieldRow>
+      <CFFieldRow label="Investment advisor entity" desc={'The legal entity managing the SP under the IAA. Must match the entity that has cleared KYC. Include jurisdiction (e.g., "[Name] Capital Limited, BVI").'}>
+        <CFTextInput value={form.iaEntity} onChange={v=>set('iaEntity', v)} placeholder="IA entity"/>
+      </CFFieldRow>
+      <CFFieldRow label="Key persons" desc={'Named individuals whose continued active involvement is a condition of the IAA. Trigger Continuity Event if they leave or step away (see term sheet 6.7).'}>
+        <div style={{display:'flex', flexDirection:'column', gap:8}}>
+          {(form.keyPersons || []).map((kp, i) => (
+            <CFTextInput key={i} value={kp} onChange={v=>{
+              const next = [...form.keyPersons]; next[i] = v; set('keyPersons', next);
+            }} placeholder="Key person"/>
+          ))}
+          <button type="button" className="cf-add-btn" style={{alignSelf:'flex-start', marginTop:8}} onClick={()=>set('keyPersons', [...(form.keyPersons||[]), ''])}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>
+            Add key person
+          </button>
+        </div>
+      </CFFieldRow>
+      <CFFieldRow label="Currency" desc={'The base currency for NAV reporting, fees, and investor reporting. USD is the platform default and easiest operationally. EUR, GBP, or other currencies require additional FX accommodation; allow a 2–3 week lead-time and confirm with POD before specifying.'}>
+        <CFDropdown value={form.currency} onChange={v=>set('currency', v)} placeholder="Choose currency" options={['USD','EUR','GBP','Other']}/>
+      </CFFieldRow>
+    </React.Fragment>
+  );
+}
+
+function CFStep2({ form, set }) {
+  return (
+    <React.Fragment>
+      <CFFieldRow first label="Investment objective" desc="What return is the SP seeking, in one sentence?">
+        <CFTextarea value={form.objective} onChange={v=>set('objective', v)} placeholder="E.g. To deliver absolute returns through a long/short equity strategy in [region]..."/>
+      </CFFieldRow>
+      <CFFieldRow label="Investment strategy" desc="How will you achieve the objective? 2–4 sentences covering position sizing, instrument selection, holding period, signal generation, and any unusual mechanics. This is what investors will read.">
+        <CFTextarea value={form.strategy} onChange={v=>set('strategy', v)} placeholder="Strategy..."/>
+      </CFFieldRow>
+      <CFFieldRow label="Portfolio investments" desc="What asset classes / instruments the SP may hold.">
+        <CFTextarea value={form.portfolioInvestments} onChange={v=>set('portfolioInvestments', v)} placeholder="E.g. Spot and perpetual futures in major cryptocurrencies, USD cash, and stablecoins..."/>
+      </CFFieldRow>
+      <CFFieldRow label="Investment restrictions" desc="Explicit prohibitions or limits — concentration limits, geographic exclusions, instrument exclusions.">
+        <CFTextarea value={form.restrictions} onChange={v=>set('restrictions', v)} placeholder="E.g. Maximum single-name concentration of 10% of NAV..."/>
+      </CFFieldRow>
+      <CFFieldRow label="Leverage" desc={"Maximum leverage permitted as % of NAV. \"None\" if not employed; otherwise specify maximum.\n\nHigher-leverage strategies require specific risk disclosures."}>
+        <CFTextarea value={form.leverage} onChange={v=>set('leverage', v)} placeholder="E.g. 200% of NAV gross"/>
+      </CFFieldRow>
+    </React.Fragment>
+  );
+}
+
+function CFStep3({ form, set }) {
+  return (
+    <React.Fragment>
+      <CFFieldRow first label="Subscription point" desc={'How often investors can subscribe. "Continuous" (i.e., any Business Day) is the platform default and most flexible.\n\nAlternatives: weekly, monthly, quarterly.'}>
+        <CFDropdown value={form.subscriptionPoint} onChange={v=>set('subscriptionPoint', v)} placeholder="Continuous" options={['Continuous','Weekly','Monthly','Quarterly']}/>
+      </CFFieldRow>
+      <CFFieldRow label="Valuation frequency" desc="How often NAV is calculated.">
+        <CFDropdown value={form.valuationFrequency} onChange={v=>set('valuationFrequency', v)} placeholder="Each Business Day at 17:00 IST" options={['Each Business Day at 17:00 IST','Daily','Weekly','Monthly']}/>
+      </CFFieldRow>
+      <CFFieldRow label="Redemption point" desc="How often investors can redeem. Should match Subscription Point unless your strategy has materially less redemption liquidity than subscription liquidity.">
+        <CFDropdown value={form.redemptionPoint} onChange={v=>set('redemptionPoint', v)} placeholder="Continuous" options={['Continuous','Weekly','Monthly','Quarterly']}/>
+      </CFFieldRow>
+      <CFFieldRow label="Redemption gate" desc={'Cap on aggregate redemptions per period.\n\nUsed to manage liquidity for less-liquid strategies.\n"None" for highly liquid strategies (cash, large-cap equities, major crypto).'}>
+        <CFTextarea value={form.redemptionGate} onChange={v=>set('redemptionGate', v)} placeholder="E.g. 10% of NAV per quarter"/>
+      </CFFieldRow>
+      <CFFieldRow label="Redemption notice period" desc="How much notice investors must give before a redemption settles. Range: 1 Business Day (very liquid) to 90 days (less liquid). Common for emerging-manager SPs: 1–30 Business Days.">
+        <CFDropdown value={form.redemptionNoticePeriod} onChange={v=>set('redemptionNoticePeriod', v)} placeholder="1–30 business days" options={['1 business day','1–30 business days','30–60 days','60–90 days']}/>
+      </CFFieldRow>
+    </React.Fragment>
+  );
+}
+
+function CFStep4({ form, set }) {
+  return (
+    <React.Fragment>
+      <CFFieldRow first label="Management fee" desc={"Annual % of NAV charged to the SP.\n\nIndustry ranges: 0% for cash strategies; 0.5–1% for systematic / passive; 1.5–2% for active equity, crypto, or alternatives.\n\nCharged daily, paid monthly in arrears."}>
+        <CFNumberInput value={form.mgmtFee} onChange={v=>set('mgmtFee', v)} placeholder="" suffix="%"/>
+      </CFFieldRow>
+      <CFFieldRow label="Performance fee" desc={"% of returns above the hurdle (or above the High Water Mark if no hurdle). Industry standard: 10–20%"}>
+        <CFNumberInput value={form.perfFee} onChange={v=>set('perfFee', v)} placeholder="" suffix="%"/>
+      </CFFieldRow>
+      <CFFieldRow label="Performance period" desc={"How often performance fee is crystallised.\n\nMost common: Quarterly (POD platform default — aligns with the 90-day deferral cycle in point 9 of the term sheet) or Annually."}>
+        <CFDropdown value={form.perfPeriod} onChange={v=>set('perfPeriod', v)} placeholder="Quarterly" options={['Quarterly','Annually']}/>
+      </CFFieldRow>
+      <CFFieldRow label="Hurdle rate" desc={"Threshold return that must be exceeded before performance fee accrues.\n\nHurdles are common for systematic / fixed-income strategies; less common for alpha-seeking equity / crypto."}>
+        <CFDropdown value={form.hurdleRate} onChange={v=>set('hurdleRate', v)} placeholder="None" options={['None','USD risk-free rate (SOFR)','5% per annum absolute']}/>
+      </CFFieldRow>
+      <CFFieldRow label="High water mark" desc={"Standard mechanism: performance fee only accrues on NEW high NAV.\n\nSpecify \"Yes\" (full HWM, platform default) or describe an alternative (e.g., \"Resetting HWM each [period]\")."}>
+        <CFTextarea value={form.hwm} onChange={v=>set('hwm', v)} placeholder="E.g. Full HWM, or Resetting HWM each [period]"/>
+      </CFFieldRow>
+    </React.Fragment>
+  );
+}
+
+// Cell must be defined at module scope, not inside CFStep5 — otherwise it's
+// a new component reference on every parent render, which unmounts its
+// children (including inputs) and steals focus after each keystroke.
+function CFStep5Cell({ label, tooltip, children }) {
+  return (
+    <div style={{display:'flex', flexDirection:'column', gap:16, flex:1, minWidth:0}}>
+      <div className="cf-label">{label}<CFHelpTooltip text={CF_TOOLTIPS[tooltip]}/></div>
+      {children}
+    </div>
+  );
+}
+
+function CFStep5({ form, set }) {
+  const Cell = CFStep5Cell;
+  return (
+    <React.Fragment>
+      {/* Section 1 — Class identity */}
+      <h3 className="cf-section-head">Class identity</h3>
+      <div className="cf-row cf-grid" style={{borderTop:'none', paddingTop:0}}>
+        <Cell label="Class designation" tooltip="classDesignation">
+          <CFTextInput value={form.classDesignation} onChange={v=>set('classDesignation', v)} placeholder="Class name"/>
+        </Cell>
+        <Cell label="Sub-class" tooltip="subClass">
+          <CFTextInput value={form.subClass} onChange={v=>set('subClass', v)} placeholder="N/A"/>
+        </Cell>
+      </div>
+
+      {/* Section 2 — Subscriptions */}
+      <h3 className="cf-section-head">Subscriptions</h3>
+      <div className="cf-row cf-grid" style={{borderTop:'none', paddingTop:0}}>
+        <Cell label="Minimum initial investment" tooltip="minInitialInv">
+          <CFNumberInput value={form.minInitialInv} onChange={v=>set('minInitialInv', v)} placeholder="$ USD"/>
+        </Cell>
+        <Cell label="Minimum additional investment" tooltip="minAdditionalInv">
+          <CFNumberInput value={form.minAdditionalInv} onChange={v=>set('minAdditionalInv', v)} placeholder="$ USD"/>
+        </Cell>
+      </div>
+      <div className="cf-row cf-grid">
+        <Cell label="Subscription price" tooltip="subscriptionPrice">
+          <CFNumberInput value={form.subscriptionPrice} onChange={v=>set('subscriptionPrice', v)} placeholder="$ USD"/>
+        </Cell>
+        <Cell label="Subscription fee" tooltip="subscriptionFee">
+          <CFNumberInput value={form.subscriptionFee} onChange={v=>set('subscriptionFee', v)} placeholder="$ USD"/>
+        </Cell>
+      </div>
+
+      {/* Section 3 — Distribution & redemptions */}
+      <h3 className="cf-section-head">Distribution &amp; redemptions</h3>
+      <div className="cf-row cf-grid" style={{borderTop:'none', paddingTop:0}}>
+        <Cell label="Distribution type" tooltip="distributionType">
+          <CFDropdown value={form.distributionType} onChange={v=>set('distributionType', v)} placeholder="Accumulating" options={['Accumulating','Distributing']}/>
+        </Cell>
+        <div style={{flex:1}}/>
+      </div>
+      <div className="cf-row cf-grid">
+        <Cell label="Redemption price" tooltip="redemptionPrice">
+          <CFTextInput value={form.redemptionPrice} onChange={v=>set('redemptionPrice', v)} placeholder="NAV per Share at preceding Valuation Point"/>
+        </Cell>
+        <Cell label="Redemption fee" tooltip="redemptionFee">
+          <CFNumberInput value={form.redemptionFee} onChange={v=>set('redemptionFee', v)} placeholder="$ USD"/>
+        </Cell>
+      </div>
+      <div className="cf-row cf-grid">
+        <Cell label="Minimum redemption amount" tooltip="minRedemptionAmount">
+          <CFNumberInput value={form.minRedemptionAmount} onChange={v=>set('minRedemptionAmount', v)} placeholder="$ USD"/>
+        </Cell>
+        <div style={{flex:1}}/>
+      </div>
+
+      {/* Section 4 — Holding & costs */}
+      <h3 className="cf-section-head">Holding &amp; costs</h3>
+      <div className="cf-row cf-grid" style={{borderTop:'none', paddingTop:0}}>
+        <Cell label="Lock-up period" tooltip="lockupPeriod">
+          <CFDropdown value={form.lockupPeriod} onChange={v=>set('lockupPeriod', v)} placeholder="None" options={['None','3 months','6 months','12 months']}/>
+        </Cell>
+        <Cell label="Minimum holding" tooltip="minHolding">
+          <CFTextInput value={form.minHolding} onChange={v=>set('minHolding', v)} placeholder="N/A"/>
+        </Cell>
+      </div>
+      <div className="cf-row cf-grid">
+        <Cell label="Expenses cap" tooltip="expensesCap">
+          <CFNumberInput value={form.expensesCap} onChange={v=>set('expensesCap', v)} placeholder="1" suffix="%"/>
+        </Cell>
+        <div style={{flex:1}}/>
+      </div>
+    </React.Fragment>
+  );
+}
+
+function CFStep6({ form, set }) {
+  return (
+    <React.Fragment>
+      <div className="cf-cats-card" style={{marginTop: 24}}>
+        <div style={{fontWeight: 500, color: 'var(--text-primary)', fontSize: 'var(--fs-sm)'}}>Categories to consider:</div>
+        <ul>
+          <li><b>Strategy risks.</b> Market direction, liquidity of underlying instruments, dependence on specific signals or data sources.</li>
+          <li><b>Counterparty risks.</b> Specific exchanges, brokers, or trading venues your strategy depends on.</li>
+          <li><b>Instrument risks.</b> If you trade specific derivatives, structured products, or off-the-run instruments — note their unique risk profile.</li>
+          <li><b>Operational risks.</b> Anything specific to how your strategy executes that creates non-standard risk.</li>
+          <li><b>Regulatory risks.</b> If your strategy is exposed to specific regulatory regimes (e.g., spot crypto in jurisdictions reviewing classification).</li>
+        </ul>
+      </div>
+      <CFFieldRow label="Risks" desc={"Write each risk factor as a bolded short title followed by 2–4 sentences of plain-English explanation.\n\nPOD will edit for legal style during Supplement drafting."}>
+        <div style={{display:'flex', flexDirection:'column', gap:16}}>
+          {(form.risks || []).map((r, i) => (
+            <div key={i} style={{display:'flex', flexDirection:'column', gap:8}}>
+              <CFTextInput value={r.title} onChange={v=>{
+                const next = [...form.risks]; next[i] = {...next[i], title: v}; set('risks', next);
+              }} placeholder="Risk title"/>
+              <CFTextarea value={r.description} onChange={v=>{
+                const next = [...form.risks]; next[i] = {...next[i], description: v}; set('risks', next);
+              }} placeholder="Description"/>
+            </div>
+          ))}
+          <button type="button" className="cf-add-btn" style={{alignSelf:'flex-start'}} onClick={()=>set('risks', [...(form.risks||[]), {title:'', description:''}])}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><line x1="8" y1="3" x2="8" y2="13"/><line x1="3" y1="8" x2="13" y2="8"/></svg>
+            Add a risk
+          </button>
+        </div>
+      </CFFieldRow>
+    </React.Fragment>
+  );
+}
+
+function CFStep7({ form, set }) {
+  return (
+    <React.Fragment>
+      <CFFieldRow first label="Special situation shares" desc={'Used to ring-fence illiquid sleeves, side-pockets, or one-off positions that shouldn\'t share liquidity with the main book. "Not applicable" for clean liquid strategies.'}>
+        <CFTextInput value={form.specialSituationShares} onChange={v=>set('specialSituationShares', v)} placeholder="N/A"/>
+      </CFFieldRow>
+      <CFFieldRow label="Dividend policy" desc="Distributing (income paid out) or Accumulating (income retained in NAV). Should match the Distribution Type chosen for your Share Class(es).">
+        <CFDropdown value={form.dividendPolicy} onChange={v=>set('dividendPolicy', v)} placeholder="Distributing" options={['Distributing','Accumulating']}/>
+      </CFFieldRow>
+      <CFFieldRow label="Initial offer period" desc="Window during which investors can subscribe at the fixed initial price (typically $1.00 per Share). After the IOP, NAV pricing applies.">
+        <CFDropdown value={form.iop} onChange={v=>set('iop', v)} placeholder="30 days from SP launch" options={['30 days from SP launch','60 days from SP launch','90 days from SP launch']}/>
+      </CFFieldRow>
+      <CFFieldRow label="Anchor investor terms" desc={"If you have anchor investors with bespoke economics (e.g., reduced fees for the first $[X]M), describe here. POD will help structure a Founder's Class or Sub-Class to accommodate."}>
+        <CFTextarea value={form.anchorTerms} onChange={v=>set('anchorTerms', v)} placeholder="Describe investor terms here..."/>
+      </CFFieldRow>
+    </React.Fragment>
+  );
+}
+
+function CFStep8({ form, set }) {
+  // POD signature block is pre-filled (read-only).
+  return (
+    <React.Fragment>
+      <CFFieldRow first label="Investment advisor">
+        <div style={{display:'flex', flexDirection:'column', gap:16}}>
+          <CFTextInput value={form.iaName} onChange={v=>set('iaName', v)} placeholder="Name"/>
+          <CFTextInput value={form.iaTitle} onChange={v=>set('iaTitle', v)} placeholder="Title"/>
+          <div>
+            <CFSignaturePad value={form.iaSignature} onChange={v=>set('iaSignature', v)}/>
+            <div style={{fontSize: 12, color: 'var(--text-muted)', marginTop: 6}}>Sign here using your mouse or trackpad</div>
+          </div>
+          <CFTextInput value={form.iaDate} onChange={v=>set('iaDate', v)} placeholder="DD/MM/YYYY"/>
+        </div>
+      </CFFieldRow>
+      <CFFieldRow label="POD">
+        <div style={{display:'flex', flexDirection:'column', gap:16}}>
+          <div className="cf-input" style={{display:'flex', alignItems:'center'}}>Patrick Lynch</div>
+          <div className="cf-input" style={{display:'flex', alignItems:'center'}}>CEO</div>
+          <div className="cf-sig-wrap" style={{display:'flex', alignItems:'center', justifyContent:'center'}}>
+            <svg width="200" height="100" viewBox="0 0 200 100" fill="none" stroke="var(--text-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 60 Q40 20 60 50 T100 60 Q120 80 140 40 T180 50"/>
+            </svg>
+          </div>
+          <div className="cf-input" style={{display:'flex', alignItems:'center'}}>{new Date().toLocaleDateString('en-GB')}</div>
+        </div>
+      </CFFieldRow>
+    </React.Fragment>
+  );
+}
+
+// Pre-loaded PDF assets (logo + POD signature) cached as data URLs so we
+// can synchronously embed them via doc.addImage. Loaded once on first call.
+let _pdfAssets = null;
+async function loadPdfAssets() {
+  if (_pdfAssets) return _pdfAssets;
+  const fetchAsDataUrl = async (url) => {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+  };
+  const [logo, podSig] = await Promise.all([
+    fetchAsDataUrl('./assets/pod-logo.png').catch(() => null),
+    fetchAsDataUrl('./assets/pod-signature.png').catch(() => null),
+  ]);
+  _pdfAssets = { logo, podSig };
+  return _pdfAssets;
+}
+
+// Build a clean PDF of the entire form using jsPDF + autoTable. Two columns:
+// Question (left) + Response (right), grouped under section headers.
+async function buildFundFormPdfDoc(form) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const margin = 48;
+  const assets = await loadPdfAssets();
+
+  const dash = (v) => (v === null || v === undefined || v === '' ? '—' : String(v));
+  const sections = [
+    { title: '1. Identification', rows: [
+      ['SP name', dash(form.spName)],
+      ['Investment advisor entity', dash(form.iaEntity)],
+      ['Key persons', dash((form.keyPersons || []).filter(p => p && p.trim()).join('\n'))],
+      ['Currency', dash(form.currency)],
+    ]},
+    { title: '2. Investment Mandate', rows: [
+      ['Investment objective', dash(form.objective)],
+      ['Investment strategy', dash(form.strategy)],
+      ['Portfolio investments', dash(form.portfolioInvestments)],
+      ['Investment restrictions', dash(form.restrictions)],
+      ['Leverage', dash(form.leverage)],
+    ]},
+    { title: '3. Dealing & Liquidity', rows: [
+      ['Subscription point', dash(form.subscriptionPoint)],
+      ['Valuation frequency', dash(form.valuationFrequency)],
+      ['Redemption point', dash(form.redemptionPoint)],
+      ['Redemption gate', dash(form.redemptionGate)],
+      ['Redemption notice period', dash(form.redemptionNoticePeriod)],
+    ]},
+    { title: '4. Fees & Economics', rows: [
+      ['Management fee', form.mgmtFee ? form.mgmtFee + '%' : '—'],
+      ['Performance fee', form.perfFee ? form.perfFee + '%' : '—'],
+      ['Performance period', dash(form.perfPeriod)],
+      ['Hurdle rate', dash(form.hurdleRate)],
+      ['High water mark', dash(form.hwm)],
+    ]},
+    { title: '5. Share Class setup', rows: [
+      ['Class designation', dash(form.classDesignation)],
+      ['Sub-class', dash(form.subClass)],
+      ['Minimum initial investment', dash(form.minInitialInv)],
+      ['Minimum additional investment', dash(form.minAdditionalInv)],
+      ['Subscription price', dash(form.subscriptionPrice)],
+      ['Subscription fee', dash(form.subscriptionFee)],
+      ['Distribution type', dash(form.distributionType)],
+      ['Redemption price', dash(form.redemptionPrice)],
+      ['Redemption fee', dash(form.redemptionFee)],
+      ['Minimum redemption amount', dash(form.minRedemptionAmount)],
+      ['Lock-up period', dash(form.lockupPeriod)],
+      ['Minimum holding', dash(form.minHolding)],
+      ['Expenses cap', form.expensesCap ? form.expensesCap + '%' : '—'],
+    ]},
+    { title: '6. SP-Specific Risk Factors', rows:
+      ((form.risks || []).filter(r => r.title || r.description).length
+        ? form.risks.filter(r => r.title || r.description).map((r, i) => [
+            `Risk ${i + 1}${r.title ? ' — ' + r.title : ''}`,
+            dash(r.description)
+          ])
+        : [['Risks', '—']])
+    },
+    { title: '7. Special Situations', rows: [
+      ['Special situation shares', dash(form.specialSituationShares)],
+      ['Dividend policy', dash(form.dividendPolicy)],
+      ['Initial offer period', dash(form.iop)],
+      ['Anchor investor terms', dash(form.anchorTerms)],
+    ]},
+  ];
+
+  // Logo + cover header
+  let coverTopY = margin;
+  if (assets.logo) {
+    try { doc.addImage(assets.logo, 'PNG', margin, coverTopY, 80, 19); } catch (e) {}
+    coverTopY += 36;
+  }
+  doc.setFont('helvetica', 'bold').setFontSize(20).setTextColor(20);
+  doc.text('Fund Creation Supplement', margin, coverTopY + 10);
+  doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(120);
+  doc.text(`Generated ${new Date().toLocaleString('en-GB')}`, margin, coverTopY + 30);
+
+  let startY = coverTopY + 50;
+
+  sections.forEach(s => {
+    // Section title row
+    doc.autoTable({
+      startY,
+      margin: { left: margin, right: margin },
+      head: [[s.title]],
+      body: [],
+      theme: 'plain',
+      headStyles: {
+        fillColor: [23, 23, 23], textColor: [254, 254, 255],
+        fontStyle: 'bold', fontSize: 11,
+        cellPadding: { top: 8, right: 12, bottom: 8, left: 12 },
+      },
+    });
+    startY = doc.lastAutoTable.finalY;
+
+    // Field rows
+    doc.autoTable({
+      startY,
+      margin: { left: margin, right: margin },
+      head: [['Question', 'Response']],
+      body: s.rows,
+      theme: 'grid',
+      styles: {
+        font: 'helvetica', fontSize: 10, cellPadding: 8,
+        lineColor: [220, 220, 220], lineWidth: 0.5,
+        valign: 'top',
+      },
+      headStyles: {
+        fillColor: [248, 248, 248], textColor: [115, 115, 115],
+        fontStyle: 'bold', fontSize: 9,
+      },
+      columnStyles: {
+        0: { cellWidth: 200, fontStyle: 'bold', textColor: [60, 60, 60] },
+        1: { cellWidth: 'auto', textColor: [20, 20, 20] },
+      },
+    });
+    startY = doc.lastAutoTable.finalY + 16;
+  });
+
+  // Signatures section — needs custom rendering to embed the signature image.
+  doc.autoTable({
+    startY,
+    margin: { left: margin, right: margin },
+    head: [['8. Signatures']],
+    body: [],
+    theme: 'plain',
+    headStyles: {
+      fillColor: [23, 23, 23], textColor: [254, 254, 255],
+      fontStyle: 'bold', fontSize: 11,
+      cellPadding: { top: 8, right: 12, bottom: 8, left: 12 },
+    },
+  });
+  startY = doc.lastAutoTable.finalY;
+
+  doc.autoTable({
+    startY,
+    margin: { left: margin, right: margin },
+    head: [['Question', 'Response']],
+    body: [
+      ['Investment advisor — Name', dash(form.iaName)],
+      ['Investment advisor — Title', dash(form.iaTitle)],
+      ['Investment advisor — Date', dash(form.iaDate)],
+      ['Investment advisor — Signature', form.iaSignature ? '' : '—'],
+      ['POD — Name', 'Patrick Lynch'],
+      ['POD — Title', 'CEO'],
+      ['POD — Signature', assets.podSig ? '' : '—'],
+      ['POD — Date', new Date().toLocaleDateString('en-GB')],
+    ],
+    theme: 'grid',
+    styles: { font: 'helvetica', fontSize: 10, cellPadding: 8, lineColor: [220,220,220], lineWidth: 0.5, valign: 'top' },
+    headStyles: { fillColor: [248,248,248], textColor: [115,115,115], fontStyle: 'bold', fontSize: 9 },
+    columnStyles: {
+      0: { cellWidth: 200, fontStyle: 'bold', textColor: [60,60,60] },
+      1: { cellWidth: 'auto' },
+    },
+    didDrawCell: (data) => {
+      if (data.section !== 'body' || data.column.index !== 1) return;
+      // IA signature — embed the canvas data URL.
+      if (data.row.index === 3 && form.iaSignature) {
+        try {
+          const w = Math.min(180, data.cell.width - 16);
+          doc.addImage(form.iaSignature, 'PNG', data.cell.x + 8, data.cell.y + 8, w, w * 0.4);
+        } catch (e) {}
+      }
+      // POD signature — embed the bundled sample signature PNG.
+      if (data.row.index === 6 && assets.podSig) {
+        try {
+          const w = Math.min(180, data.cell.width - 16);
+          doc.addImage(assets.podSig, 'PNG', data.cell.x + 8, data.cell.y + 8, w, w * 0.4);
+        } catch (e) {}
+      }
+    },
+    didParseCell: (data) => {
+      if (data.section !== 'body' || data.column.index !== 1) return;
+      // Reserve row height for embedded signature images.
+      if (data.row.index === 3 && form.iaSignature) data.cell.styles.minCellHeight = 80;
+      if (data.row.index === 6 && assets.podSig)   data.cell.styles.minCellHeight = 80;
+    },
+  });
+
+  return doc;
+}
+
+// Returns a Blob ready to attach to an email request.
+async function generateFundFormPdfBlob(form) {
+  if (!window.jspdf) throw new Error('PDF library failed to load.');
+  const doc = await buildFundFormPdfDoc(form);
+  return doc.output('blob');
+}
+
+// Trigger an in-browser download (kept for demo purposes alongside email send).
+async function downloadFundFormPdf(form) {
+  if (!window.jspdf) { alert('PDF library failed to load — check your network and try again.'); return; }
+  const doc = await buildFundFormPdfDoc(form);
+  doc.save('POD-fund-creation.pdf');
+}
+
+// To enable real email delivery, sign up for a free Web3Forms access key
+// at https://web3forms.com (60-second signup, no credit card) and paste it
+// below. Without a key the send is mocked: the PDF is generated in-memory
+// but nothing leaves the browser — the success screen still shows.
+const WEB3FORMS_ACCESS_KEY = '';
+const FUND_FORM_RECIPIENT = 'work@bradcain.co';
+
+async function emailFundFormPdf(form) {
+  let blob;
+  try { blob = await generateFundFormPdfBlob(form); }
+  catch (e) { console.error(e); return { ok: false, mocked: false, error: e.message }; }
+
+  // Mock mode: no key configured. Pretend success so the demo flow still works.
+  if (!WEB3FORMS_ACCESS_KEY) {
+    console.warn(
+      `[email mock] Would have sent the PDF (${Math.round(blob.size / 1024)} KB) ` +
+      `to ${FUND_FORM_RECIPIENT}. Add a Web3Forms access key in WEB3FORMS_ACCESS_KEY to enable real delivery.`
+    );
+    return { ok: true, mocked: true };
+  }
+
+  const fd = new FormData();
+  fd.append('access_key', WEB3FORMS_ACCESS_KEY);
+  fd.append('subject', 'POD Fund Creation Supplement — submission');
+  fd.append('from_name', form.iaName || 'POD Fund Creation');
+  fd.append('email', FUND_FORM_RECIPIENT);
+  fd.append('message', `Submission from ${form.iaName || 'an investment advisor'}.\n\nSee the attached PDF for the full Supplement.`);
+  fd.append('attachment', blob, 'POD-fund-creation.pdf');
+
+  try {
+    const res = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: fd });
+    return { ok: res.ok, mocked: false };
+  } catch (e) {
+    console.error('[email] send failed', e);
+    return { ok: false, mocked: false, error: e.message };
+  }
+}
+
+function CFSubmittedView({ onHome, onDownload, sendStatus }) {
+  return (
+    <div className="cf-success">
+      <div className="check">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="5 12 10 17 19 8"/></svg>
+      </div>
+      <h1 className="cf-title">Submitted</h1>
+      <p className="cf-desc" style={{maxWidth: 560}}>
+        Thanks for completing the form. A copy of your responses has been emailed to POD as a PDF Supplement. We'll review your inputs and be in touch shortly to confirm next steps and arrange final sign-off before filing with the FSC.
+      </p>
+      {sendStatus === 'mocked' && (
+        <p className="cf-desc" style={{maxWidth: 560, fontSize: 12, color: 'var(--text-muted)'}}>
+          (Email service not configured — PDF was generated locally. Check the browser console for details.)
+        </p>
+      )}
+      {sendStatus === 'failed' && (
+        <p className="cf-desc" style={{maxWidth: 560, fontSize: 12, color: '#c14d4d'}}>
+          We hit a snag delivering the email. Your responses are saved — please reach out to POD if you don't hear back.
+        </p>
+      )}
+      <div style={{display:'flex', gap:12, marginTop: 16}}>
+        <button type="button" className="cf-secondary" style={{marginRight:0}} onClick={onDownload}>
+          <DownloadIcon/> Download PDF
+        </button>
+        <button type="button" className="cf-primary" onClick={onHome}>
+          Return home
+          <ArrowIcon/>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ---- The page ---- */
+function CreateFundPage({ onNav }) {
+  const [step, setStep] = useState(0);
+  const [form, setForm] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('pilot.fundForm') || 'null');
+      return saved || CF_INITIAL;
+    } catch { return CF_INITIAL; }
+  });
+  const [submitted, setSubmitted] = useState(false);
+  const [sendStatus, setSendStatus] = useState(null); // 'sent' | 'mocked' | 'failed'
+  const [showCancel, setShowCancel] = useState(false);
+
+  useEffect(() => {
+    try { localStorage.setItem('pilot.fundForm', JSON.stringify(form)); } catch {}
+  }, [form]);
+
+  const set = (key, value) => setForm(f => ({...f, [key]: value}));
+
+  const stepProgress = React.useMemo(() => CF_STEPS.map((_, i) => cfStepProgress(i, form)), [form]);
+
+  const goBack = () => setStep(s => Math.max(0, s - 1));
+  const goNext = () => setStep(s => Math.min(CF_STEPS.length - 1, s + 1));
+  const submit = async () => {
+    setSubmitted(true);
+    const res = await emailFundFormPdf(form);
+    setSendStatus(res.mocked ? 'mocked' : res.ok ? 'sent' : 'failed');
+  };
+
+  const exitToWelcome = () => {
+    try { localStorage.removeItem('pilot.fundForm'); } catch {}
+    onNav('welcome');
+  };
+
+  if (submitted) {
+    return (
+      <React.Fragment>
+        <CFCustomTopbar onCancel={null}/>
+        <div className="cf-page">
+          <CFSubmittedView onHome={exitToWelcome} onDownload={() => downloadFundFormPdf(form)} sendStatus={sendStatus}/>
+        </div>
+      </React.Fragment>
+    );
+  }
+
+  const currentStep = CF_STEPS[step];
+  const StepRenderer = [CFStep1, CFStep2, CFStep3, CFStep4, CFStep5, CFStep6, CFStep7, CFStep8][step];
+  const isLast = step === CF_STEPS.length - 1;
+
+  return (
+    <React.Fragment>
+      <CFCustomTopbar onCancel={() => setShowCancel(true)}/>
+      <CFStepIndicator steps={CF_STEPS} current={step} progress={stepProgress[step]} onJump={setStep}/>
+      <div className="cf-page">
+        <h1 className="cf-title">{currentStep.title}</h1>
+        <p className="cf-subtitle">{currentStep.subtitle}</p>
+        <div style={{marginTop: 64, display:'flex', flexDirection:'column', gap: 48}}>
+          <StepRenderer form={form} set={set}/>
+        </div>
+        <div className="cf-btn-row" style={{display:'flex', alignItems:'center'}}>
+          {step > 0 && <button type="button" className="cf-secondary" onClick={goBack}><ArrowIcon direction="left"/> Back</button>}
+          <button type="button" className="cf-primary" onClick={isLast ? submit : goNext}>
+            {isLast ? 'Submit' : 'Continue'}
+            <ArrowIcon/>
+          </button>
+        </div>
+      </div>
+      {showCancel && <CFCancelModal onConfirm={exitToWelcome} onClose={() => setShowCancel(false)}/>}
+    </React.Fragment>
+  );
+}
+
+function CFCustomTopbar({ onCancel }) {
+  return (
+    <React.Fragment>
+      <div className="brand">
+        <span className="brand-logo"><PodLogo/></span>
+        <span className="brand-name">Fund creation</span>
+      </div>
+      {onCancel && (
+        <div className="cf-topbar-cta">
+          <button className="pill-btn" onClick={onCancel}>Cancel setup</button>
+        </div>
+      )}
+    </React.Fragment>
+  );
+}
+
+/* =============================================================
    APP
    ============================================================= */
 const PAGE_ANCHORS = {
@@ -2893,6 +4176,8 @@ function PilotApp({ onLogout }) {
     });
   }, [dark, route]);
 
+  const [transitioning, setTransitioning] = useState(false);
+
   const setRouteAndScroll = (id) => {
     // Sub-pages now open as side sheet instead of routing
     if (SUB_KEYS.includes(id)) {
@@ -2910,6 +4195,19 @@ function PilotApp({ onLogout }) {
         const el = document.getElementById(id);
         if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
       }
+      return;
+    }
+    // Create-a-fund route gets a real exit + cascading enter animation.
+    const isCfHop = id === 'create-fund' || route === 'create-fund';
+    if (isCfHop && id !== route) {
+      setTransitioning(true);
+      setTimeout(() => {
+        setRoute(id);
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        window.location.hash = id;
+        // Allow the entering animation to play, then drop the flag.
+        setTimeout(() => setTransitioning(false), 700);
+      }, 320); // matches cfPageExit duration
       return;
     }
     setRoute(id);
@@ -2935,15 +4233,7 @@ function PilotApp({ onLogout }) {
     case 'welcome':         view = <WelcomePage onNav={setRouteAndScroll}/>; break;
     case 'structure':       view = <StructurePage onNav={setRouteAndScroll}/>; break;
     case 'how-it-works':    view = <HowItWorksPage onNav={setRouteAndScroll}/>; break;
-    case 'create-fund':     view = (
-      <div className="content">
-        <div>
-          <Hero page="howitworks" title="Create a fund"/>
-          <p className="lead" style={{marginTop: 48}}>Fund creation flow — separate design in progress.</p>
-        </div>
-        <PageFooter/>
-      </div>
-    ); break;
+    case 'create-fund':     view = <CreateFundPage onNav={setRouteAndScroll}/>; break;
     case 'term-sheet':      view = <TermSheetPage onNav={setRouteAndScroll}/>; break;
     case 'faq':             view = <FAQPage onNav={setRouteAndScroll}/>; break;
     case 'pricing':         view = <PricingPage onNav={setRouteAndScroll}/>; break;
@@ -2953,11 +4243,31 @@ function PilotApp({ onLogout }) {
 
   const anchors = PAGE_ANCHORS[route] || [];
 
+  // While transitioning we keep the OLD chrome on screen but apply the
+  // exit class. Once the route swaps below, the new chrome mounts with the
+  // entering class, which kicks off the staggered child cascade.
+  const transitionClass = transitioning
+    ? ' cf-leaving'
+    : (route === 'create-fund' ? ' cf-entering' : '');
+
+  // Create Fund flow renders its own chrome (custom topbar, step rail, no sidebar/anchors).
+  if (route === 'create-fund' && !transitioning) {
+    return (
+      <React.Fragment>
+        <div className="topbar-bg"/>
+        <div className={'page-frame' + transitionClass}>
+          {view}
+          <ThemeToggle dark={dark} onToggle={()=>setDark(d => !d)}/>
+        </div>
+      </React.Fragment>
+    );
+  }
+
   return (
     <React.Fragment>
       <div className="topbar-bg"/>
-      <div className="page-frame">
-        <TopBar/>
+      <div className={'page-frame' + transitionClass}>
+        <TopBar onNav={setRouteAndScroll}/>
         <Sidebar route={route} onNav={setRouteAndScroll} onLogout={onLogout}/>
         {view}
         {anchors.length > 0 && <PageAnchors items={anchors}/>}
