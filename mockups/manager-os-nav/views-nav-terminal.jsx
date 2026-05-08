@@ -140,7 +140,7 @@ function NavView({ onNav, showTweaks }) {
           ].map((k,i) => <Kpi key={i} {...k}/>)}
         </div>
 
-        <PerformanceSection range={perfRange} setRange={setPerfRange}/>
+        <PerformanceSection range={perfRange} setRange={setPerfRange} bigHeadline/>
 
         <RisksSection range={perfRange}/>
 
@@ -580,6 +580,70 @@ function DerivativeRow({ a }) {
   );
 }
 
+// NumberFlow-style digit reels — props change → CSS transitions interpolate.
+function FlowDigit({ digit, hidden }) {
+  return (
+    <span style={{
+      display:'inline-block', verticalAlign:'top',
+      height:'1em', width: hidden ? 0 : '1ch',
+      overflow:'hidden', opacity: hidden ? 0 : 1,
+      transition: 'width 0.55s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.4s cubic-bezier(0.32, 0.72, 0, 1)',
+    }}>
+      <span style={{
+        display:'block',
+        transform: `translateY(-${digit}em)`,
+        transition: 'transform 0.6s cubic-bezier(0.32, 0.72, 0, 1)',
+        willChange: 'transform',
+      }}>
+        {[0,1,2,3,4,5,6,7,8,9].map(n => (
+          <span key={n} style={{display:'block', height:'1em', lineHeight:1}}>{n}</span>
+        ))}
+      </span>
+    </span>
+  );
+}
+function FlowPct({ value, style }) {
+  const sign = value >= 0 ? '+' : '−';
+  const [intStr, fracStr] = Math.abs(value).toFixed(2).split('.');
+  const intDigits = intStr.split('').map(Number);
+  const fracDigits = fracStr.split('').map(Number);
+  const MAX_INT = 3;
+  const staticChar = {display:'inline-block', verticalAlign:'top', height:'1em', lineHeight:1};
+  return (
+    <span style={{display:'inline-block', lineHeight:1, fontVariantNumeric:'tabular-nums', ...style}}>
+      <span style={staticChar}>{sign}</span>
+      {Array.from({length: MAX_INT}).map((_, i) => {
+        const idx = intDigits.length - (MAX_INT - i);
+        const hidden = idx < 0;
+        return <FlowDigit key={`i${i}`} digit={hidden ? 0 : intDigits[idx]} hidden={hidden}/>;
+      })}
+      <span style={staticChar}>.</span>
+      {fracDigits.map((d, i) => <FlowDigit key={`f${i}`} digit={d}/>)}
+      <span style={staticChar}>%</span>
+    </span>
+  );
+}
+function FlowNum({ value, decimals = 2, maxInt = 2, style }) {
+  const sign = value < 0 ? '−' : '';
+  const fixed = Math.abs(value).toFixed(decimals);
+  const [intStr, fracStr = ''] = fixed.split('.');
+  const intDigits = intStr.split('').map(Number);
+  const fracDigits = fracStr.split('').map(Number);
+  const staticChar = {display:'inline-block', verticalAlign:'top', height:'1em', lineHeight:1};
+  return (
+    <span style={{display:'inline-block', lineHeight:1, fontVariantNumeric:'tabular-nums', ...style}}>
+      {sign && <span style={staticChar}>{sign}</span>}
+      {Array.from({length: maxInt}).map((_, i) => {
+        const idx = intDigits.length - (maxInt - i);
+        const hidden = idx < 0;
+        return <FlowDigit key={`i${i}`} digit={hidden ? 0 : intDigits[idx]} hidden={hidden}/>;
+      })}
+      {decimals > 0 && <span style={staticChar}>.</span>}
+      {fracDigits.map((d, i) => <FlowDigit key={`f${i}`} digit={d}/>)}
+    </span>
+  );
+}
+
 function PerformanceSection({ range, setRange, bigHeadline }) {
   const def = RANGE_DEFS.find(d => d.k === range) || RANGE_DEFS[0];
   // Period returns computed from master series so they always match the chart endpoint
@@ -587,7 +651,6 @@ function PerformanceSection({ range, setRange, bigHeadline }) {
   const benchSlice = MASTER_BENCHMARK.slice(-def.days - 1);
   const portRet  = portSlice[portSlice.length - 1]  - portSlice[0];
   const benchRet = benchSlice[benchSlice.length - 1] - benchSlice[0];
-  const fmtPct = v => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(2) + '%';
 
   return (
     <div style={{marginBottom:48}}>
@@ -596,8 +659,8 @@ function PerformanceSection({ range, setRange, bigHeadline }) {
           <div>
             <div style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',marginBottom:12}}>Portfolio return · {def.label}</div>
             <div style={{display:'flex',alignItems:'baseline',gap:14,flexWrap:'wrap'}}>
-              <span style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color: portRet >= 0 ? 'var(--pos)' : 'var(--neg)'}}>{fmtPct(portRet)}</span>
-              <span style={{fontSize:13,color:'var(--ink-3)'}}>vs BTCUSD <span style={{fontWeight:500,color:'var(--ink-1)',fontVariantNumeric:'tabular-nums'}}>{fmtPct(benchRet)}</span></span>
+              <FlowPct value={portRet} style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',color: portRet >= 0 ? 'var(--pos)' : 'var(--neg)'}}/>
+              <span style={{fontSize:13,color:'var(--ink-3)'}}>vs BTCUSD <FlowPct value={benchRet} style={{fontSize:13,fontWeight:500,color:'var(--ink-1)'}}/></span>
             </div>
           </div>
         ) : (
@@ -713,9 +776,11 @@ function PerformanceChart({ range }) {
           </linearGradient>
         </defs>
         <line x1="0" y1={yScale(0)} x2={W} y2={yScale(0)} stroke="var(--line-2)" strokeWidth="1" vectorEffect="non-scaling-stroke"/>
-        <path d={portFill} fill="url(#portGrad)"/>
-        <path d={portPath}  fill="none" stroke="#4080FF" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke"/>
-        <path d={benchPath} fill="none" stroke="#5ed9b5" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke"/>
+        <g key={`reveal-${range}`} style={{animation:'chartReveal 1.1s cubic-bezier(0.32, 0.72, 0, 1) both'}}>
+          <path d={portFill} fill="url(#portGrad)"/>
+          <path d={portPath}  fill="none" stroke="#4080FF" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke"/>
+          <path d={benchPath} fill="none" stroke="#5ed9b5" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke"/>
+        </g>
         {hover != null && (
           <line x1={xScale(hover)} y1={0} x2={xScale(hover)} y2={H} stroke="var(--ink-3)" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity="0.6" style={{pointerEvents:'none'}}/>
         )}
@@ -859,10 +924,10 @@ function RiskCard({ title, value, peerValue, peerLabel, verdict }) {
         }}>?</span>
       </div>
       <div style={{display:'flex',alignItems:'baseline',gap:14,marginTop:10,flexWrap:'wrap'}}>
-        <span style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',color:valueColor,fontVariantNumeric:'tabular-nums',lineHeight:1}}>{fmt(value)}</span>
+        <FlowNum value={value} style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',color:valueColor}}/>
         <span style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:13}}>
-          <span style={{color:deltaColor,fontWeight:500,fontVariantNumeric:'tabular-nums'}}>{arrow} {fmt(Math.abs(delta))}</span>
-          <span style={{color:'var(--ink-3)'}}>vs {peerLabel} {fmt(peerValue)}</span>
+          <span style={{color:deltaColor,fontWeight:500,display:'inline-flex',alignItems:'baseline',gap:4}}>{arrow}<FlowNum value={Math.abs(delta)}/></span>
+          <span style={{color:'var(--ink-3)',display:'inline-flex',alignItems:'baseline',gap:4}}>vs {peerLabel}<FlowNum value={peerValue}/></span>
         </span>
       </div>
       <div style={{fontSize:13,color:'var(--ink-2)',marginTop:10}}>{verdict}</div>

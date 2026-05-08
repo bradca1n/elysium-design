@@ -304,7 +304,7 @@ function FeeBars({ data }) {
           const perfH = (d.perf / max) * H;
           return (
             <div key={i} style={{display:'flex',flexDirection:'column',justifyContent:'flex-end',height:H,position:'relative'}} title={`${d.m}: Mgt $${d.mgt.toFixed(1)}K + Perf $${d.perf.toFixed(1)}K`}>
-              <div style={{display:'flex',flexDirection:'column',borderRadius:4,overflow:'hidden',height:totalH,animation:'barGrow 0.7s cubic-bezier(0.22,1,0.36,1) both',animationDelay:`${0.05+i*0.04}s`,transformOrigin:'bottom'}}>
+              <div style={{display:'flex',flexDirection:'column',borderRadius:4,overflow:'hidden',height:totalH,animation:'barRise 0.7s cubic-bezier(0.22,1,0.36,1) both',animationDelay:`${0.05+i*0.06}s`,transformOrigin:'bottom'}}>
                 <div style={{height:perfH,background:'#82e0b9'}}/>
                 <div style={{height:mgtH,background:'#1d7d59'}}/>
               </div>
