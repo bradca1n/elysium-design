@@ -1163,6 +1163,13 @@
   .cursor-gradient { position: absolute; inset: 0; overflow: hidden; }
   .cursor-gradient-radial { position: absolute; inset: -10%; will-change: background; }
 
+  /* Onboarding timeline carousel — horizontal scroll-snap, hidden scrollbar */
+  .timeline-carousel {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .timeline-carousel::-webkit-scrollbar { display: none; }
+
   /* Welcome page micro-entry */
   .page-frame { animation: pageEnter 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
   @keyframes pageEnter {
@@ -1192,6 +1199,7 @@ const HEADER = {
   'term-sheet':      { img: 'header-1.png' }, // green (per design)
   faqs:              { img: 'header-5.png' }, // silver
   pricing:           { img: 'header-6.png' }, // purple
+  timeline:          { img: 'header-4.png' }, // dark
 };
 
 /* =============================================================
@@ -1314,6 +1322,7 @@ function Sidebar({ route, onNav, onLogout }) {
         <Row id="term-sheet" label="Term sheet"/>
         <Row id="structure"  label="Structure"/>
         <Row id="pricing"    label="Pricing"/>
+        <Row id="timeline"   label="Timeline"/>
         <Row id="faq"        label="FAQ"/>
       </div>
       <div className="sb-group">
@@ -1376,7 +1385,8 @@ const NEXT_PAGE = {
   welcome:        { id: 'term-sheet',   label: 'Term sheet',    title: 'Read the term sheet' },
   'term-sheet':   { id: 'structure',    label: 'Structure',     title: 'Where your SP fits' },
   structure:      { id: 'pricing',      label: 'Pricing',       title: "How POD's fees work" },
-  pricing:        { id: 'faq',          label: 'FAQ',           title: 'Common questions' },
+  pricing:        { id: 'timeline',     label: 'Timeline',      title: 'Onboarding timeline' },
+  timeline:       { id: 'faq',          label: 'FAQ',           title: 'Common questions' },
   faq:            { id: 'how-it-works', label: 'How it works',  title: 'Define your SP' },
   'how-it-works': { id: 'create-fund',  label: 'Fund creation', title: 'Create a fund' },
 };
@@ -1384,6 +1394,7 @@ const NEXT_PAGE_HEADER_KEY = {
   'term-sheet':   'term-sheet',
   structure:      'structure',
   pricing:        'pricing',
+  timeline:       'timeline',
   faq:            'faqs',
   'how-it-works': 'howitworks',
   'create-fund':  'create-fund',
@@ -2434,6 +2445,166 @@ function PricingPage({ onNav }) {
 }
 
 /* =============================================================
+   PAGE: ONBOARDING TIMELINE
+   ============================================================= */
+function OnboardingTimelinePage({ onNav }) {
+  const SECTIONS = [
+    { name: 'Discovery', steps: [
+      { num: '01', title: 'Discovery call', desc: 'Initial fit conversation. NDA executed before exchange of confidential information.', time: '1–2 days' },
+      { num: '02', title: 'POD Demo',       desc: 'Fund admin, Investor Portal, distribution and reporting in action. Live Q&A with the POD team.', time: '1–2 days' },
+    ]},
+    { name: 'Diligence', steps: [
+      { num: '03', title: 'IA shares performance data', desc: 'IA provides historical track record. POD assesses fit, returns profile, and strategy compatibility.', time: '1 week' },
+      { num: '04', title: 'POD shares IA pack',         desc: 'Full data pack: term sheet, corporate structure, economics calculator, fund creation form, FAQ, KYC requirements. IA reviews internally.', time: '1–2 weeks' },
+    ]},
+    { name: 'Commit', steps: [
+      { num: '05', title: 'Term sheet signed', desc: 'Heads of terms agreed. Binding commercial sections execute. KYC pack starts on IA entity and Key Persons.', time: '1–2 weeks' },
+    ]},
+    { name: 'Build', steps: [
+      { num: '06', title: 'Fund creation',                       desc: 'SP created within POD Emerging Alpha 1 Fund SPC. FSC notification, OM supplement drafted, IAA executed.', time: '4–6 weeks' },
+      { num: '07', title: 'Account opening & production testing', desc: 'Custody, bank and exchange accounts opened in SP name. Production testing on POD platform: trades, NAV cycles, reporting.', time: '2–3 weeks' },
+    ]},
+    { name: 'Launch', steps: [
+      { num: '08', title: 'Go-live', desc: 'First Shareholder subscriptions accepted. Live trading commences. Reporting cycles begin via the Investor Portal.', time: 'Ongoing' },
+    ]},
+  ];
+
+  const [currentSection, setCurrentSection] = useState(0);
+  const [progress, setProgress] = useState(() => SECTIONS.map(() => 0));
+  const sectionsRef = useRef(null);
+
+  // Track active section + per-section line progress, both driven off the
+  // 50%-viewport trigger Y. As that line passes through each section's
+  // vertical line, the fill grows from 0 to 100%.
+  useEffect(() => {
+    const root = sectionsRef.current;
+    if (!root) return;
+    const update = () => {
+      const triggerY = window.innerHeight * 0.5;
+      // Active section: section of LAST card whose top has crossed triggerY
+      const cardEls = root.querySelectorAll('[data-card]');
+      let active = 0;
+      cardEls.forEach(el => {
+        if (el.getBoundingClientRect().top <= triggerY) {
+          active = parseInt(el.getAttribute('data-section'), 10);
+        }
+      });
+      setCurrentSection(active);
+      // Per-line fill ratio
+      const lineEls = root.querySelectorAll('[data-line]');
+      const next = SECTIONS.map(() => 0);
+      lineEls.forEach((el) => {
+        const idx = parseInt(el.getAttribute('data-line'), 10);
+        const rect = el.getBoundingClientRect();
+        if (rect.height === 0) { next[idx] = 0; return; }
+        if (triggerY <= rect.top) next[idx] = 0;
+        else if (triggerY >= rect.bottom) next[idx] = 1;
+        else next[idx] = (triggerY - rect.top) / rect.height;
+      });
+      setProgress(next);
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, []);
+
+  return (
+    <div className="content">
+      <div>
+        <Hero page="timeline" title="Onboarding timeline"/>
+        <p className="lead" style={{marginTop: 48}}>From first conversation to live SP — here's how it goes.</p>
+      </div>
+
+      <section id="timeline-flow" ref={sectionsRef} style={{display:'flex', flexDirection:'column'}}>
+        {SECTIONS.map((section, sIdx) => {
+          const isActive = sIdx === currentSection;
+          return (
+            <React.Fragment key={sIdx}>
+              {sIdx > 0 && <div style={{height:48}}/>}
+              <div style={{
+                display:'flex', gap:32,
+                opacity: isActive ? 1 : 0.3,
+                transition: 'opacity 0.35s ease-in-out',
+              }}>
+                {/* Left column: heading + vertical line spanning the section's cards */}
+                <div style={{width:370, flexShrink:0, display:'flex', flexDirection:'column'}}>
+                  <div style={{
+                    fontFamily:"'Serrif Condensed', Georgia, serif",
+                    fontWeight:300,
+                    fontSize:30,
+                    lineHeight:'40px',
+                    color:'var(--text-primary)',
+                    whiteSpace:'nowrap',
+                  }}>
+                    {sIdx + 1}. {section.name}
+                  </div>
+                  <div data-line={sIdx} style={{
+                    flex:1,
+                    width:1,
+                    marginTop:24,
+                    background:'var(--border-subtle)',
+                    position:'relative',
+                  }}>
+                    <div style={{
+                      position:'absolute', top:0, left:0, width:'100%',
+                      height: `${(progress[sIdx] || 0) * 100}%`,
+                      background:'var(--text-primary)',
+                      transition:'height 0.08s linear',
+                    }}/>
+                  </div>
+                </div>
+                {/* Right column: cards for this section */}
+                <div style={{flex:1, minWidth:0, display:'flex', flexDirection:'column', gap:48, paddingRight:48}}>
+                  {section.steps.map((step, stepIdx) => (
+                    <div
+                      key={stepIdx}
+                      data-card
+                      data-section={sIdx}
+                      style={{display:'flex', flexDirection:'column', gap:24}}
+                    >
+                      <div style={{fontSize:14, color:'var(--text-secondary)', lineHeight:'18px'}}>{step.num}</div>
+                      <div style={{fontSize:24, fontWeight:500, color:'var(--text-primary)', lineHeight:1.15}}>{step.title}</div>
+                      <div style={{fontSize:14, color:'var(--text-secondary)', lineHeight:'18px'}}>{step.desc}</div>
+                      <div style={{
+                        alignSelf:'flex-start',
+                        marginTop:8,
+                        padding:'8px 12px',
+                        background:'var(--bg-glass)',
+                        borderRadius:'var(--radius-m)',
+                        fontSize:14, fontWeight:500,
+                        color:'var(--text-primary)',
+                        display:'inline-flex',
+                        alignItems:'center',
+                        gap:6,
+                      }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}>
+                          <circle cx="12" cy="12" r="10"/>
+                          <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        {step.time}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </React.Fragment>
+          );
+        })}
+      </section>
+
+      <p className="body-text">Total ~12–16 weeks from first conversation to live SP</p>
+
+      <NextPageCta from="timeline" onNav={onNav}/>
+      <PageFooter/>
+    </div>
+  );
+}
+
+/* =============================================================
    APP
    ============================================================= */
 const PAGE_ANCHORS = {
@@ -2776,6 +2947,7 @@ function PilotApp({ onLogout }) {
     case 'term-sheet':      view = <TermSheetPage onNav={setRouteAndScroll}/>; break;
     case 'faq':             view = <FAQPage onNav={setRouteAndScroll}/>; break;
     case 'pricing':         view = <PricingPage onNav={setRouteAndScroll}/>; break;
+    case 'timeline':        view = <OnboardingTimelinePage onNav={setRouteAndScroll}/>; break;
     default:                view = <WelcomePage onNav={setRouteAndScroll}/>;
   }
 
