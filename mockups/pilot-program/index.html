@@ -1557,7 +1557,7 @@
       width: 100%;
       max-width: 100%;
       box-sizing: border-box;
-      padding: 88px 40px 48px;
+      padding: 88px 24px 48px;
       gap: 56px;
     }
     .content > .hero + * { margin-top: 0 !important; }
@@ -1573,7 +1573,7 @@
       box-sizing: border-box;
     }
     .hero { height: 160px; }
-    .hero h1 { font-size: 48px; line-height: 1.05; }
+    .hero h1 { font-size: 38px; line-height: 1.05; }
     /* Dark CTA — tighten padding so contents stay inside */
     .cta-dark { padding: 24px; height: auto; min-height: 160px; gap: 16px; flex-wrap: wrap; }
     .cta-dark .title { font-size: 36px; }
@@ -1663,7 +1663,7 @@
     .mob-sheet {
       position: fixed;
       left: 0; right: 0; top: 0;
-      max-height: 85vh;
+      max-height: 92dvh;
       background: var(--bg-surface);
       border-bottom-left-radius: 20px;
       border-bottom-right-radius: 20px;
@@ -1672,7 +1672,8 @@
       will-change: transform;
       z-index: 101;
       overflow-y: auto;
-      padding: max(8px, env(safe-area-inset-top)) 0 16px;
+      -webkit-overflow-scrolling: touch;
+      padding: max(8px, env(safe-area-inset-top)) 0 max(32px, calc(env(safe-area-inset-bottom) + 24px));
       box-shadow: 0 8px 24px rgba(0,0,0,0.12);
     }
     .mob-sheet.open { transform: translateY(0); }
@@ -1807,8 +1808,19 @@
       font-size: var(--fs-md);
       padding-bottom: 6px;
     }
-    /* Structure diagram (Structure.svg) — fluid width */
-    .content img[alt="Corporate structure diagram"] { width: 100% !important; height: auto !important; }
+    /* Structure diagram — render at larger size with horizontal scroll
+       so users can pan to see detail (was forced to 100% which hid labels). */
+    .struct-diagram-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 0 -24px;
+      padding: 0 24px 8px;
+    }
+    .content img[alt="Corporate structure diagram"] {
+      width: 870px !important;
+      max-width: none !important;
+      height: auto !important;
+    }
     .struct-diagram { padding: 16px; overflow-x: auto; }
     .struct-diagram svg, .struct-diagram img { max-width: 100%; height: auto; }
 
@@ -1823,9 +1835,14 @@
     .tl-left .tl-track { display: none; }
     .tl-right { padding-right: 0 !important; }
 
-    /* Accordion bodies (FAQ + How it works) — make tap target the whole row */
-    .accordion-row { padding: 4px 0; }
+    /* Accordion bodies (FAQ + How it works) — more breathing room between
+       rows, tap target the whole row. */
+    .accordion-row { padding: 20px 0; }
     .accordion-head { min-height: 44px; }
+    .accordion-row + .accordion-row { border-top: 1px solid var(--border-subtle); }
+
+    /* Fee calculator card — tighten internal padding for mobile */
+    .pr-calc-card { padding: 20px !important; gap: 28px !important; }
 
     /* Callout boxes (.callout) keep their style, just lose any fixed width */
     .callout { width: 100%; box-sizing: border-box; }
@@ -1863,7 +1880,7 @@
       width: 100%;
       max-width: 100%;
       box-sizing: border-box;
-      padding: 88px 20px 140px;
+      padding: 88px 12px 140px;
     }
     /* Hide the inline button row — we render a sticky footer instead. */
     .cf-btn-row { display: none !important; }
@@ -2568,7 +2585,9 @@ function StructurePage({ onNav }) {
           }}>Where your SP fits in the POD structure</h2>
           <p className="body-text">A regulated BVI Segregated Portfolio Company with VASP fund administration. Your Segregated Portfolio sits inside the SPC; POD acts as Manager and sub-delegates portfolio management to you (the IA) under the IAA.</p>
         </div>
-        <img src="./assets/Structure, light mode, V2.svg" data-light="./assets/Structure, light mode, V2.svg" data-dark="./assets/Structure, dark mode, V2.svg" alt="Corporate structure diagram" className="theme-aware-img" style={{width: 870, height: 'auto', display: 'block'}}/>
+        <div className="struct-diagram-scroll">
+          <img src="./assets/Structure, light mode, V2.svg" data-light="./assets/Structure, light mode, V2.svg" data-dark="./assets/Structure, dark mode, V2.svg" alt="Corporate structure diagram" className="theme-aware-img" style={{width: 870, height: 'auto', display: 'block'}}/>
+        </div>
         <ol style={{
           fontFamily: 'Inter, sans-serif',
           fontWeight: 400,
@@ -3050,7 +3069,7 @@ function FeeCalculator() {
   const segTotal = segs.reduce((a, s) => a + s.v, 0);
 
   return (
-    <div style={{
+    <div className="pr-calc-card" style={{
       border: '1px solid var(--border-subtle)',
       borderRadius: 'var(--radius-m)',
       padding: 32,
