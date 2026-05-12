@@ -4412,7 +4412,7 @@ Object.assign(window, { EconomicsView });
 const { useState: _ov1 } = React;
 
 function OverviewView({ onNav }) {
-  const [perfRange, setPerfRange] = _ov1('3M');
+  const [perfRange, setPerfRange] = _ov1(window.__CINE__ ? '1M' : '3M');
   const [cineSheetOpen, setCineSheetOpen] = React.useState(false);
 
   React.useEffect(() => {
@@ -5021,12 +5021,30 @@ setTimeout(applyTerminalTags, 600);
   function cursorToCenter(dur = 0.5, ease = 'cubic.inOut') {
     return gsap.to(ensureCursor(), { x: 960 - 10, y: 540 - 10, duration: dur, ease });
   }
-  // Fade non-focused fields. Pass null to restore all.
+  // Dim everything in the sheet body EXCEPT the row containing the active
+  // field. Pass null to restore all.
   function focusField(activeName) {
-    const fields = document.querySelectorAll('[data-cine^="field-"]');
-    fields.forEach(el => {
-      const target = activeName == null ? 1 : (el.getAttribute('data-cine') === activeName ? 1 : 0.20);
-      gsap.to(el, { opacity: target, duration: 0.3, ease: 'cubic.out' });
+    const sheet = $('sheet');
+    if (!sheet) return;
+    const active = activeName ? sheet.querySelector(`[data-cine="${activeName}"]`) : null;
+    // The active field's row = the direct child of sheet-body that contains it.
+    // sheet structure: sheet > [topbar, body, footer]; body has many sibling
+    // rows (title, section labels, field wrappers).
+    const body = sheet.querySelector('[data-cine="sheet-footer"]')?.previousElementSibling
+              || sheet.children[1]; // body div
+    if (!body) return;
+    const rows = Array.from(body.children);
+    const activeRow = active ? rows.find(r => r === active || r.contains(active)) : null;
+    rows.forEach(row => {
+      const target = activeName == null ? 1 : (row === activeRow ? 1 : 0.20);
+      gsap.to(row, { opacity: target, duration: 0.3, ease: 'cubic.out' });
+    });
+    // Also dim the topbar (Cancel button) and footer when focusing a field
+    const topbar = sheet.children[0];
+    const footer = $('sheet-footer');
+    [topbar, footer].forEach(el => {
+      if (!el) return;
+      gsap.to(el, { opacity: activeName == null ? 1 : 0.20, duration: 0.3, ease: 'cubic.out' });
     });
   }
   function cursorShow() { return gsap.to(ensureCursor(), { opacity: 1, duration: 0.2 }); }
@@ -5190,7 +5208,7 @@ setTimeout(applyTerminalTags, 600);
       .to({}, { duration: 0.8 }, 0)
 
       // ── Zoom to chart (0.8 → 1.4) ──
-      .add(() => cameraTo('chart', 1.8, 0.6, 'expo.out'), 0.8)
+      .add(() => cameraTo('chart', 1.8, 0.7, 'expo.out'), 0.8)
 
       // ── Timeframe cycling 1M (initial) → 3M → 1Y (1.4 → 3.4) ──
       // Two clicks since we already start on 1M.
@@ -5203,8 +5221,8 @@ setTimeout(applyTerminalTags, 600);
       .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1Y']), 3.1)
 
       // ── Pan to CTA + cursor flies to viewport centre (3.7 → 4.4) ──
-      .add(() => cameraTo('add-class-btn', 1.8, 0.7, 'quart.inOut'), 3.7)
-      .add(() => cursorToCenter(0.7, 'cubic.inOut'), 3.7)
+      .add(() => cameraTo('add-class-btn', 1.8, 0.7, 'expo.out'), 3.7)
+      .add(() => cursorToCenter(0.7, 'expo.out'), 3.7)
 
       // ── Hold so the click reads (4.4 → 4.7) ──
       // ── Button press + sheet open (4.7) ──
@@ -5224,16 +5242,16 @@ setTimeout(applyTerminalTags, 600);
       .add(() => cursorHide(), 5.0)
 
       // ── Tight zoom on Class name + fields dim (5.4 → 6.0) ──
-      .add(() => { cameraTo('field-name', 2.2, 0.6, 'expo.out'); focusField('field-name'); }, 5.4)
+      .add(() => { cameraTo('field-name', 2.2, 0.7, 'expo.out'); focusField('field-name'); }, 5.4)
 
       // ── Field micro-pans + focus (7.2 → 9.4) ── currency removed
-      .add(() => { cameraTo('field-fee', 2.2, 0.28, 'cubic.out'); focusField('field-fee'); }, 7.2)
-      .add(() => { cameraTo('field-mgmt', 2.2, 0.28, 'cubic.out'); focusField('field-mgmt'); }, 8.0)
-      .add(() => { cameraTo('field-min', 2.2, 0.28, 'cubic.out'); focusField('field-min'); }, 9.1)
+      .add(() => { cameraTo('field-fee', 2.2, 0.35, 'expo.out'); focusField('field-fee'); }, 7.2)
+      .add(() => { cameraTo('field-mgmt', 2.2, 0.35, 'expo.out'); focusField('field-mgmt'); }, 8.0)
+      .add(() => { cameraTo('field-min', 2.2, 0.35, 'expo.out'); focusField('field-min'); }, 9.1)
 
       // ── Pull back to footer; cursor approaches Create button (10.6 → 11.4) ──
-      .add(() => { focusField(null); cameraTo('sheet-footer', 1.4, 0.6, 'cubic.inOut'); }, 10.6)
-      .add(() => { cursorShow(); cursorTo('create-btn', 0.7, 'cubic.inOut'); }, 10.7)
+      .add(() => { focusField(null); cameraTo('sheet-footer', 1.4, 0.7, 'expo.out'); }, 10.6)
+      .add(() => { cursorShow(); cursorTo('create-btn', 0.7, 'expo.out'); }, 10.7)
 
       // ── Cursor pulses + button-press flash + clickCreate + loader (11.5) ──
       .add(() => {
@@ -5250,8 +5268,9 @@ setTimeout(applyTerminalTags, 600);
       // ── Cursor fades, loader runs for ~1s (11.7) ──
       .add(() => cursorHide(), 11.7)
 
-      // ── Zoom out to wide as loader holds (12.4 → 13.2) ──
-      .add(() => cameraReset(0.8, 'cubic.inOut'), 12.4)
+      // ── Loader holds, then sheet closes + zoom out (12.2 → 13.0) ──
+      .add(() => { setCreateLoading(false); window.cine?.closeSheet?.(); }, 12.2)
+      .add(() => cameraReset(0.8, 'expo.out'), 12.4)
 
       // ── Confirmation modal appears (13.0) ──
       .add(() => showModal(), 13.0)
