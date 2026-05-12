@@ -1111,6 +1111,8 @@ function Sidebar({ route, onNav }) {
 function ThemeSegment() {
   const [mode, setMode] = React.useState(() => localStorage.getItem('mos.theme') || 'system');
   React.useEffect(() => {
+    // Cinematic mode hard-pins to dark; don't let stored theme override it
+    if (window.__CINE__) { document.body.classList.add('dark'); return; }
     localStorage.setItem('mos.theme', mode);
     let dark = false;
     if (mode === 'dark') dark = true;
