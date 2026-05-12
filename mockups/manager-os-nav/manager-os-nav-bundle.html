@@ -1503,13 +1503,13 @@ function PerformanceSection({ range, setRange, bigHeadline }) {
   const fmtPct = v => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(2) + '%';
 
   return (
-    <div style={{marginBottom:48}}>
+    <div style={{marginBottom:48}} data-cine="chart">
       <div style={{display:'flex',alignItems:'flex-end',justifyContent:'space-between',marginBottom:20,gap:16,flexWrap:'wrap'}}>
         {bigHeadline ? (
           <div>
             <div style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',marginBottom:12}}>Portfolio return · {def.label}</div>
             <div style={{display:'flex',alignItems:'baseline',gap:14,flexWrap:'wrap'}}>
-              <span style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color: portRet >= 0 ? 'var(--pos)' : 'var(--neg)'}}>{fmtPct(portRet)}</span>
+              <span data-cine="port-return" style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color: portRet >= 0 ? 'var(--pos)' : 'var(--neg)'}}>{fmtPct(portRet)}</span>
               <span style={{fontSize:13,color:'var(--ink-3)'}}>vs BTCUSD <span style={{fontWeight:500,color:'var(--ink-1)',fontVariantNumeric:'tabular-nums'}}>{fmtPct(benchRet)}</span></span>
             </div>
           </div>
@@ -1527,7 +1527,7 @@ function PerformanceSection({ range, setRange, bigHeadline }) {
       <PerformanceChart range={range}/>
       <div style={{display:'grid',gridTemplateColumns:'repeat(6, minmax(0,1fr))',marginTop:24,gap:4}}>
         {RANGE_DEFS.map(def => (
-          <button key={def.k} onClick={() => setRange(def.k)} style={{
+          <button key={def.k} data-cine={`toggle-${def.k}`} onClick={() => setRange(def.k)} style={{
             padding:'14px 18px',
             background: range === def.k ? 'var(--bg-subtle)' : 'transparent',
             border:'none',
@@ -2898,7 +2898,7 @@ function ShareClassesView({ onNav, shareClasses, setShareClasses }) {
 // ============================================================================
 // SHARE CLASS SIDE SHEET (Create / Edit)
 // ============================================================================
-function FloatingField({ label, value, onChange, type='text', step, min, prefix, suffix, options, hint, autoFocus }) {
+function FloatingField({ label, value, onChange, type='text', step, min, prefix, suffix, options, hint, autoFocus, cineKey }) {
   const [focused, setFocused] = _s1(false);
   const isSelect = !!options;
   const hasValue = value !== '' && value !== null && value !== undefined;
@@ -2935,7 +2935,7 @@ function FloatingField({ label, value, onChange, type='text', step, min, prefix,
   };
   return (
     <React.Fragment>
-      <div style={wrapperS}>
+      <div style={wrapperS} data-cine={cineKey}>
         <label style={labelS}>{label}</label>
         {prefix && float && <span style={{position:'absolute', left:14, top:28, fontSize:14, color:'var(--ink-1)', pointerEvents:'none', fontVariantNumeric:'tabular-nums'}}>{prefix}</span>}
         {suffix && float && <span style={{position:'absolute', right:14, top:28, fontSize:14, color:'var(--ink-3)', pointerEvents:'none', fontVariantNumeric:'tabular-nums'}}>{suffix}</span>}
@@ -3072,7 +3072,7 @@ function ShareClassSheet({ open, mode, initialData, onClose, onSave }) {
   return ReactDOM.createPortal(
     <React.Fragment>
       <div style={overlayS} onClick={onCancel}/>
-      <div style={panelS} role="dialog" aria-label={mode==='edit'?'Edit share class':'Add share class'}>
+      <div data-cine="sheet" style={panelS} role="dialog" aria-label={mode==='edit'?'Edit share class':'Add share class'}>
         <div style={topbarS}>
           <button style={cancelBtnS} onClick={onCancel} aria-label="Cancel">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -3093,10 +3093,10 @@ function ShareClassSheet({ open, mode, initialData, onClose, onSave }) {
           {/* Identity */}
           <div style={{...sectionLabelS, marginTop:0, paddingTop:0, borderTop:'none'}}>Identity</div>
           <div style={groupS}>
-            <FloatingField label="Class name" value={form.name} onChange={set('name')}/>
+            <FloatingField label="Class name" cineKey="field-name" value={form.name} onChange={set('name')}/>
           </div>
           <div style={groupS}>
-            <FloatingField label="Fee tier" value={form.feeTier} onChange={set('feeTier')} options={['Retail','Institutional','Seed','Platform','Bundled']}/>
+            <FloatingField label="Fee tier" cineKey="field-fee" value={form.feeTier} onChange={set('feeTier')} options={['Retail','Institutional','Seed','Platform','Bundled']}/>
           </div>
           <div style={groupS}>
             <label style={fLabel}>Income treatment</label>
@@ -3114,7 +3114,7 @@ function ShareClassSheet({ open, mode, initialData, onClose, onSave }) {
           {/* Currency & Hedging */}
           <div style={sectionLabelS}>Currency &amp; Hedging</div>
           <div style={groupS}>
-            <FloatingField label="Denomination currency" value={form.currency} onChange={set('currency')} options={[
+            <FloatingField label="Denomination currency" cineKey="field-currency" value={form.currency} onChange={set('currency')} options={[
               {value:'USD',label:'USD — US Dollar'},
               {value:'EUR',label:'EUR — Euro'},
               {value:'GBP',label:'GBP — British Pound'},
@@ -3137,7 +3137,7 @@ function ShareClassSheet({ open, mode, initialData, onClose, onSave }) {
           {/* Fees */}
           <div style={sectionLabelS}>Fees</div>
           <div style={{...groupS, ...rowS}}>
-            <FloatingField label="Management fee" type="number" step="0.01" min="0" suffix="%" value={form.mgmtNum} onChange={set('mgmtNum')}/>
+            <FloatingField label="Management fee" cineKey="field-mgmt" type="number" step="0.01" min="0" suffix="%" value={form.mgmtNum} onChange={set('mgmtNum')}/>
             <FloatingField label="Performance fee" type="number" step="0.01" min="0" suffix="%" value={form.perfNum} onChange={set('perfNum')}/>
           </div>
           <div style={{...groupS, ...rowS}}>
@@ -3148,7 +3148,7 @@ function ShareClassSheet({ open, mode, initialData, onClose, onSave }) {
           {/* Dealing & Liquidity */}
           <div style={sectionLabelS}>Dealing &amp; Liquidity</div>
           <div style={groupS}>
-            <FloatingField label="Minimum investment" type="number" min="0" prefix={prefix} value={form.minInvestment} onChange={set('minInvestment')}/>
+            <FloatingField label="Minimum investment" cineKey="field-min" type="number" min="0" prefix={prefix} value={form.minInvestment} onChange={set('minInvestment')}/>
           </div>
           <div style={{...groupS, ...rowS}}>
             <div style={{display:'grid', gridTemplateColumns:'1fr 110px', gap:8}}>
@@ -3191,7 +3191,7 @@ function ShareClassSheet({ open, mode, initialData, onClose, onSave }) {
           </div>
         </div>
 
-        <div style={footerS}>
+        <div data-cine="sheet-footer" style={footerS}>
           {mode === 'edit' ? (
             <button style={{...btnPrimary, flex:1, height:40, opacity: isValid?1:0.5, cursor: isValid?'pointer':'not-allowed'}} onClick={onSaveChanges} disabled={!isValid}>Save Changes</button>
           ) : (
@@ -4347,7 +4347,7 @@ function OverviewView({ onNav }) {
   const availablePct = 100 - filledPct - pendingPct;
 
   return (
-    <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
+    <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page data-cine="page-root">
       {/* ===== Page header ===== */}
       <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 32px',gap:24}}>
         <div>
@@ -4356,7 +4356,7 @@ function OverviewView({ onNav }) {
         </div>
         <div style={{display:'flex',gap:8,flexShrink:0}}>
           <button style={ovBtnOutline}>Invite investor</button>
-          <button style={ovBtnPrimary}>+ Add share class</button>
+          <button data-cine="add-class-btn" style={ovBtnPrimary}>+ Add share class</button>
           <button aria-label="More" style={{width:32,height:32,border:'1px solid var(--line-2)',background:'var(--bg-canvas)',borderRadius:8,cursor:'pointer',color:'var(--ink-2)',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
           </button>
