@@ -4959,6 +4959,34 @@ setTimeout(applyTerminalTags, 600);
   // Observed from MASTER_PORTFOLIO. Default range is 3M.
   const PORT_RETURNS = { '3M': 20.00, '1M': 6.30, '1Y': 55.00 };
 
+  // ── Toast ──
+  let toastEl;
+  function ensureToast(msg) {
+    if (toastEl) {
+      toastEl.querySelector('.toast-text').textContent = msg;
+      return toastEl;
+    }
+    toastEl = document.createElement('div');
+    toastEl.id = 'cine-toast';
+    toastEl.setAttribute('data-cine', 'toast');
+    toastEl.innerHTML = `
+      <span class="toast-icon">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </span>
+      <span class="toast-text">${msg}</span>
+    `;
+    document.body.appendChild(toastEl);
+    return toastEl;
+  }
+  function showToast(msg) {
+    const el = ensureToast(msg);
+    return gsap.to(el, { opacity: 1, x: 0, duration: 0.4, ease: 'cubic.out' });
+  }
+  function hideToast() {
+    if (!toastEl) return;
+    return gsap.to(toastEl, { opacity: 0, x: 20, duration: 0.3, ease: 'cubic.in' });
+  }
+
   // ── Typewriter helpers ──
   // Schedule per-character setField calls onto the timeline.
   function typeFieldOnto(tl, key, text, startAt, perChar = 0.08) {
@@ -4976,6 +5004,11 @@ setTimeout(applyTerminalTags, 600);
     const tl = gsap.timeline({ paused: true });
 
     tl
+      // ── Intro: pageRise (0.0 → 0.5) ──
+      .fromTo('[data-page]',
+        { opacity: 0, y: 8 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'cubic.out' }, 0)
+
       // ── Establish (0.0 → 0.8) ──
       .add(() => cameraReset(), 0)
       .to({}, { duration: 0.8 }, 0)
@@ -5029,19 +5062,22 @@ setTimeout(applyTerminalTags, 600);
       .add(() => { cursorShow(); cursorTo('sheet-footer', 0.3, 'cubic.inOut'); }, 11.3)
 
       // ── Click Create (11.7) ──
-      .add(() => { cursorPulse(); window.cine?.clickCreate?.(); }, 11.7)
+      .add(() => { cursorPulse(); window.cine?.clickCreate?.(); cursorHide(); }, 11.7)
 
-      // ── Toast emphasis placeholder (12.1 → 12.8) — Task 9 ──
-      .add(() => cameraTo('sheet', 1.5, 0.4, 'expo.out'), 12.1)
-      .to({}, { duration: 0.6 }, 12.8)
+      // ── Toast slides in + camera nudge (12.1 → 12.8) ──
+      .add(() => showToast('Share class created · Class B'), 12.1)
+      .add(() => cameraReset(0.8, 'cubic.inOut'), 12.4)  // pull back to wide as toast lands
+      .to({}, { duration: 0.7 }, 12.8)
 
-      // ── Zoom out (13.4 → 14.4) ──
-      .add(() => cameraReset(1.0, 'quart.inOut'), 13.4)
-      .to({}, { duration: 1.0 }, 14.4)
+      // ── Hold on toast against wide shot (13.2 → 14.4) ──
+      .to({}, { duration: 1.2 }, 13.2)
 
-      // ── Outro placeholder (15.5 → 15.9) — Task 9 ──
-      .to({}, { duration: 0.4 }, 15.5)
-      .to({}, { duration: 0.0 }, 15.9);
+      // ── Toast fades out (14.4) ──
+      .add(() => hideToast(), 14.4)
+
+      // ── Outro: pageFade (15.5 → 15.9) ──
+      .to('[data-page]',
+        { opacity: 0, y: -6, duration: 0.4, ease: 'cubic.in' }, 15.5);
 
     // ── Field fills (typewriter + snap) ──
     typeFieldOnto(tl, 'name', 'Class B', 6.00);                       // ~6.00 → 6.56
@@ -5058,6 +5094,18 @@ setTimeout(applyTerminalTags, 600);
     cameraReset();
     window.cineTimeline = buildTimeline();
     console.info('[cine] timeline built, duration =', window.cineTimeline.duration().toFixed(2), 's');
+
+    // Auto-play in regular browsers; loop for preview. Playwright/headless
+    // pauses + scrubs explicitly so this is a no-op there.
+    requestAnimationFrame(() => window.cineTimeline.play());
+    window.cineTimeline.eventCallback('onComplete', () => {
+      if (!/HeadlessChrome|Headless/.test(navigator.userAgent)) {
+        setTimeout(() => {
+          if (toastEl) toastEl.style.opacity = '0';
+          window.cineTimeline.restart();
+        }, 400);
+      }
+    });
   });
 
   window.cineCamera = { cameraTo, cameraSnap, $ };
