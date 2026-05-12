@@ -4897,6 +4897,59 @@ setTimeout(applyTerminalTags, 600);
     });
   }
 
+  // ── Synthetic cursor ──
+  let cursorEl;
+  function ensureCursor() {
+    if (cursorEl) return cursorEl;
+    cursorEl = document.createElement('div');
+    cursorEl.id = 'cine-cursor';
+    cursorEl.innerHTML = `
+      <svg viewBox="0 0 20 20">
+        <path d="M2 2 L18 10 L10 11 L7 18 Z" fill="#0E0F12" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>
+      </svg>
+      <div class="cursor-ring"></div>
+    `;
+    document.body.appendChild(cursorEl);
+    return cursorEl;
+  }
+  function cursorTo(target, dur = 0.4, ease = 'cubic.inOut') {
+    const el = typeof target === 'string' ? $(target) : target;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    return gsap.to(ensureCursor(), { x: cx - 10, y: cy - 10, duration: dur, ease });
+  }
+  function cursorShow() { return gsap.to(ensureCursor(), { opacity: 1, duration: 0.2 }); }
+  function cursorHide() { return gsap.to(ensureCursor(), { opacity: 0, duration: 0.2 }); }
+  function cursorPulse() {
+    const c = ensureCursor();
+    const ring = c.querySelector('.cursor-ring');
+    return gsap.timeline()
+      .to(c, { scale: 0.85, duration: 0.08, ease: 'power2.out' })
+      .to(c, { scale: 1.0, duration: 0.12, ease: 'back.out(2)' })
+      .fromTo(ring, { opacity: 0.7, scale: 0.6 }, { opacity: 0, scale: 1.6, duration: 0.4, ease: 'power2.out' }, 0);
+  }
+
+  // ── Portfolio-return number ticker ──
+  function tickPortReturn(fromPct, toPct, dur = 0.35) {
+    const el = $('port-return');
+    if (!el) return;
+    const obj = { v: fromPct };
+    return gsap.to(obj, {
+      v: toPct,
+      duration: dur,
+      ease: 'cubic.out',
+      onUpdate: () => {
+        const sign = obj.v >= 0 ? '+' : '−';
+        el.textContent = sign + Math.abs(obj.v).toFixed(2) + '%';
+      },
+    });
+  }
+
+  // Observed from MASTER_PORTFOLIO. Default range is 3M.
+  const PORT_RETURNS = { '3M': 20.00, '1M': 6.30, '1Y': 55.00 };
+
   function buildTimeline() {
     const tl = gsap.timeline({ paused: true });
 
@@ -4907,7 +4960,18 @@ setTimeout(applyTerminalTags, 600);
 
       // ── Zoom to chart (0.8 → 1.4) ──
       .add(() => cameraTo('chart', 1.8, 0.6, 'expo.out'), 0.8)
-      .to({}, { duration: 1.6 }, 1.4)   // chart hold (cycling region — Task 7)
+
+      // ── Timeframe cycling 1M → 3M → 1Y (1.4 → 3.0) ──
+      .add(() => cursorShow(), 1.4)
+      .add(() => cursorTo('toggle-1M', 0.4, 'cubic.inOut'), 1.4)
+      .add(() => { window.cine.setPerfRange('1M'); cursorPulse(); }, 1.8)
+      .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1M']), 1.8)
+      .add(() => cursorTo('toggle-3M', 0.2, 'cubic.inOut'), 2.0)
+      .add(() => { window.cine.setPerfRange('3M'); cursorPulse(); }, 2.2)
+      .add(() => tickPortReturn(PORT_RETURNS['1M'], PORT_RETURNS['3M']), 2.2)
+      .add(() => cursorTo('toggle-1Y', 0.2, 'cubic.inOut'), 2.4)
+      .add(() => { window.cine.setPerfRange('1Y'); cursorPulse(); }, 2.6)
+      .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1Y']), 2.6)
 
       // ── Pan to CTA (3.0 → 3.6) ──
       .add(() => cameraTo('add-class-btn', 1.8, 0.6, 'quart.inOut'), 3.0)
