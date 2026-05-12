@@ -334,6 +334,88 @@
     font-weight: 500;
     line-height: 1.4;
   }
+
+  /* Hide Save Draft in cinematic mode so Create gets full width */
+  body.cine-active [data-cine="save-draft"] { display: none !important; }
+
+  /* Create-button loader state */
+  @keyframes cine-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .cine-create-loading {
+    pointer-events: none;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .cine-create-loading svg {
+    width: 16px; height: 16px;
+    animation: cine-spin 1s linear infinite;
+  }
+
+  /* Confirmation modal */
+  #cine-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    will-change: opacity;
+  }
+  #cine-modal .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+  }
+  #cine-modal .modal-card {
+    position: relative;
+    background: var(--bg-canvas);
+    border-radius: 14px;
+    width: 440px;
+    padding: 36px 32px 28px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.20);
+    text-align: center;
+    transform: translateY(12px) scale(0.98);
+    will-change: transform;
+  }
+  #cine-modal .modal-icon {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--accent-plum);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+  #cine-modal .modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink-1);
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+  #cine-modal .modal-sub {
+    font-size: 13px;
+    color: var(--ink-2);
+    margin-bottom: 20px;
+  }
+  #cine-modal .modal-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    padding: 0 18px;
+    background: var(--ink-1);
+    color: var(--bg-canvas);
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+  }
 </style>
 
 <script type="application/json" id="__tweaks">
@@ -3208,8 +3290,8 @@ function ShareClassSheet({ open, mode, initialData, onClose, onSave }) {
             <button style={{...btnPrimary, flex:1, height:40, opacity: isValid?1:0.5, cursor: isValid?'pointer':'not-allowed'}} onClick={onSaveChanges} disabled={!isValid}>Save Changes</button>
           ) : (
             <React.Fragment>
-              <button style={{...btnOutline, flex:1, height:40, opacity: form.name.trim()?1:0.5, cursor: form.name.trim()?'pointer':'not-allowed'}} onClick={onDraft} disabled={!form.name.trim()}>Save Draft</button>
-              <button style={{...btnPrimary, flex:1, height:40, opacity: isValid?1:0.5, cursor: isValid?'pointer':'not-allowed'}} onClick={onCreate} disabled={!isValid}>Create Class</button>
+              <button data-cine="save-draft" style={{...btnOutline, flex:1, height:40, opacity: form.name.trim()?1:0.5, cursor: form.name.trim()?'pointer':'not-allowed'}} onClick={onDraft} disabled={!form.name.trim()}>Save Draft</button>
+              <button data-cine="create-btn" style={{...btnPrimary, flex:1, height:40, opacity: isValid?1:0.5, cursor: isValid?'pointer':'not-allowed'}} onClick={onCreate} disabled={!isValid}>Create Class</button>
             </React.Fragment>
           )}
         </div>
@@ -4855,6 +4937,7 @@ setTimeout(applyTerminalTags, 600);
 (function() {
   if (!window.__CINE__) return;
   console.info('[cine] activated');
+  document.body.classList.add('cine-active');
 
   const VIEWPORT = { w: 1920, h: 1080 };
 
@@ -4942,7 +5025,7 @@ setTimeout(applyTerminalTags, 600);
   function focusField(activeName) {
     const fields = document.querySelectorAll('[data-cine^="field-"]');
     fields.forEach(el => {
-      const target = activeName == null ? 1 : (el.getAttribute('data-cine') === activeName ? 1 : 0.25);
+      const target = activeName == null ? 1 : (el.getAttribute('data-cine') === activeName ? 1 : 0.20);
       gsap.to(el, { opacity: target, duration: 0.3, ease: 'cubic.out' });
     });
   }
@@ -5027,6 +5110,59 @@ setTimeout(applyTerminalTags, 600);
     return gsap.to(toastEl, { opacity: 0, x: 20, duration: 0.3, ease: 'cubic.in' });
   }
 
+  // ── Create-button loader state ──
+  function setCreateLoading(on) {
+    const btn = $('create-btn');
+    if (!btn) return;
+    if (on) {
+      btn.dataset.cineOriginalLabel = btn.textContent;
+      btn.classList.add('cine-create-loading');
+      btn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        </svg>
+        <span>Creating&hellip;</span>
+      `;
+    } else {
+      btn.classList.remove('cine-create-loading');
+      btn.textContent = btn.dataset.cineOriginalLabel || 'Create Class';
+    }
+  }
+
+  // ── Confirmation modal ──
+  let modalEl;
+  function ensureModal() {
+    if (modalEl) return modalEl;
+    modalEl = document.createElement('div');
+    modalEl.id = 'cine-modal';
+    modalEl.setAttribute('data-cine', 'modal');
+    modalEl.innerHTML = `
+      <div class="modal-backdrop"></div>
+      <div class="modal-card">
+        <div class="modal-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="modal-title">Share class created</div>
+        <div class="modal-sub">Class B is now live and ready for subscriptions.</div>
+        <button class="modal-cta">Done</button>
+      </div>
+    `;
+    document.body.appendChild(modalEl);
+    return modalEl;
+  }
+  function showModal() {
+    const el = ensureModal();
+    const card = el.querySelector('.modal-card');
+    gsap.to(el, { opacity: 1, duration: 0.3, ease: 'cubic.out' });
+    gsap.to(card, { y: 0, scale: 1, duration: 0.4, ease: 'back.out(1.4)' });
+  }
+  function hideModal() {
+    if (!modalEl) return;
+    const card = modalEl.querySelector('.modal-card');
+    gsap.to(modalEl, { opacity: 0, duration: 0.3, ease: 'cubic.in' });
+    gsap.to(card, { y: 12, scale: 0.98, duration: 0.3, ease: 'cubic.in' });
+  }
+
   // ── Typewriter helpers ──
   // Schedule per-character setField calls onto the timeline.
   function typeFieldOnto(tl, key, text, startAt, perChar = 0.08) {
@@ -5083,47 +5219,57 @@ setTimeout(applyTerminalTags, 600);
         window.cine?.openCreateSheet?.();
       }, 4.7)
 
-      // ── Skip directly to Class name once sheet is in (5.1 → 5.7) ──
-      // 300ms CSS slide-in + a beat of breathing before tight zoom.
+      // ── Sheet slide-in shows full structure first (4.7 → 5.4) ──
+      // Brief beat where ALL fields read at full opacity, then tighten.
       .add(() => cursorHide(), 5.0)
-      .add(() => cameraTo('field-name', 2.2, 0.6, 'expo.out'), 5.1)
-      .add(() => focusField('field-name'), 5.1)
 
-      // ── Field micro-pans + focus (7.2 → 10.0) ──
+      // ── Tight zoom on Class name + fields dim (5.4 → 6.0) ──
+      .add(() => { cameraTo('field-name', 2.2, 0.6, 'expo.out'); focusField('field-name'); }, 5.4)
+
+      // ── Field micro-pans + focus (7.2 → 9.4) ── currency removed
       .add(() => { cameraTo('field-fee', 2.2, 0.28, 'cubic.out'); focusField('field-fee'); }, 7.2)
       .add(() => { cameraTo('field-mgmt', 2.2, 0.28, 'cubic.out'); focusField('field-mgmt'); }, 8.0)
-      .add(() => { cameraTo('field-currency', 2.2, 0.28, 'cubic.out'); focusField('field-currency'); }, 9.1)
-      .add(() => { cameraTo('field-min', 2.2, 0.28, 'cubic.out'); focusField('field-min'); }, 10.0)
+      .add(() => { cameraTo('field-min', 2.2, 0.28, 'cubic.out'); focusField('field-min'); }, 9.1)
 
-      // ── Pull back to footer + cursor reappears (11.2 → 11.7) ──
-      .add(() => { focusField(null); cameraTo('sheet-footer', 1.4, 0.5, 'cubic.inOut'); }, 11.2)
-      .add(() => { cursorShow(); cursorToCenter(0.4, 'cubic.inOut'); }, 11.3)
+      // ── Pull back to footer; cursor approaches Create button (10.6 → 11.4) ──
+      .add(() => { focusField(null); cameraTo('sheet-footer', 1.4, 0.6, 'cubic.inOut'); }, 10.6)
+      .add(() => { cursorShow(); cursorTo('create-btn', 0.7, 'cubic.inOut'); }, 10.7)
 
-      // ── Click Create (11.7) ──
-      .add(() => { cursorPulse(); window.cine?.clickCreate?.(); cursorHide(); }, 11.7)
+      // ── Cursor pulses + button-press flash + clickCreate + loader (11.5) ──
+      .add(() => {
+        const btn = $('create-btn');
+        if (btn) {
+          gsap.fromTo(btn,
+            { scale: 1 },
+            { scale: 0.95, duration: 0.08, yoyo: true, repeat: 1, ease: 'power2.out' });
+        }
+        cursorPulse();
+        setCreateLoading(true);
+      }, 11.5)
 
-      // ── Toast slides in + camera nudge (12.1 → 12.8) ──
-      .add(() => showToast('Share class created · Class B'), 12.1)
-      .add(() => cameraReset(0.8, 'cubic.inOut'), 12.4)  // pull back to wide as toast lands
-      .to({}, { duration: 0.7 }, 12.8)
+      // ── Cursor fades, loader runs for ~1s (11.7) ──
+      .add(() => cursorHide(), 11.7)
 
-      // ── Hold on toast against wide shot (13.2 → 14.4) ──
-      .to({}, { duration: 1.2 }, 13.2)
+      // ── Zoom out to wide as loader holds (12.4 → 13.2) ──
+      .add(() => cameraReset(0.8, 'cubic.inOut'), 12.4)
 
-      // ── Toast fades out (14.4) ──
-      .add(() => hideToast(), 14.4)
+      // ── Confirmation modal appears (13.0) ──
+      .add(() => showModal(), 13.0)
 
-      // ── Outro: pageFade (15.5 → 15.9) ──
+      // ── Hold on modal (13.0 → 14.6) ──
+      .to({}, { duration: 1.6 }, 13.0)
+
+      // ── Modal fades + outro (15.0 → 15.9) ──
+      .add(() => hideModal(), 15.0)
       .to('[data-page]',
         { opacity: 0, y: -6, duration: 0.4, ease: 'cubic.in' }, 15.5);
 
-    // ── Field fills (typewriter + snap) ──
+    // ── Field fills (typewriter + snap) — currency removed ──
     typeFieldOnto(tl, 'name', 'Class B', 6.00);                       // ~6.00 → 6.56
     setFieldOnto(tl, 'feeTier', 'Institutional', 7.45);
     typeFieldOnto(tl, 'mgmtNum', '1.50', 8.30);                       // ~8.30 → 8.62
     typeFieldOnto(tl, 'perfNum', '20',   8.70);                       // ~8.70 → 8.86
-    setFieldOnto(tl, 'currency', 'USD', 9.45);
-    typeFieldOnto(tl, 'minInvestment', '100000', 10.30);              // ~10.30 → 10.78
+    typeFieldOnto(tl, 'minInvestment', '100000', 9.40);               // ~9.40 → 9.88
 
     return tl;
   }
