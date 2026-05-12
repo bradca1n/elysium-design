@@ -391,6 +391,11 @@
   }
 
   /* Sheet → full-width confirmation state */
+  [data-cine="sheet"].cine-confirming {
+    height: 100vh !important;
+    top: 0 !important;
+    bottom: auto !important;
+  }
   [data-cine="sheet"].cine-confirming > *:not(.cine-sheet-confirm) {
     opacity: 0 !important;
     pointer-events: none;
@@ -5361,6 +5366,18 @@ setTimeout(applyTerminalTags, 600);
           path: 'assets/check%20animation/glossy_check_from_video.json',
         });
         container.__cineLottie = anim;
+        container.__cineLottieReady = false;
+        anim.addEventListener('DOMLoaded', () => {
+          container.__cineLottieReady = true;
+          // If a play was requested before load finished, fire it now.
+          if (container.__cinePlayPending) {
+            container.__cinePlayPending = false;
+            anim.goToAndPlay(0, true);
+          }
+        });
+        anim.addEventListener('data_failed', () => {
+          console.warn('[cine] lottie data_failed — JSON did not load');
+        });
       }
     }
     return conf;
@@ -5374,11 +5391,15 @@ setTimeout(applyTerminalTags, 600);
     sheet.style.width = '100vw';
     sheet.style.maxWidth = '100vw';
     sheet.classList.add('cine-confirming');
-    // Play the check animation from the start
+    // Play the check animation. If the JSON hasn't loaded yet, queue
+    // the play call to fire on DOMLoaded.
     const lottieEl = conf?.querySelector('#cine-confirm-lottie');
     if (lottieEl?.__cineLottie) {
-      lottieEl.__cineLottie.goToAndStop(0, true);
-      lottieEl.__cineLottie.play();
+      if (lottieEl.__cineLottieReady) {
+        lottieEl.__cineLottie.goToAndPlay(0, true);
+      } else {
+        lottieEl.__cinePlayPending = true;
+      }
     }
   }
   function collapseSheetConfirm() {
