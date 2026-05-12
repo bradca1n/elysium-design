@@ -4885,6 +4885,15 @@ setTimeout(applyTerminalTags, 600);
     gsap.set(camEl, { scale, x: VIEWPORT.w / 2 - tx * scale, y: VIEWPORT.h / 2 - ty * scale });
   }
 
+  // Identity reset — used for "wide shot" framing. Targeting page-root at
+  // scale 1.0 would centre the (very tall) page in the 1080 viewport,
+  // pushing the header out of frame. The wide shot is just no transform.
+  function cameraReset(dur = 0, ease = 'quart.inOut') {
+    const camEl = document.querySelector('.cinematic-camera');
+    if (dur <= 0) return gsap.set(camEl, { scale: 1, x: 0, y: 0 });
+    return gsap.to(camEl, { scale: 1, x: 0, y: 0, duration: dur, ease });
+  }
+
   function waitForMount() {
     return new Promise(resolve => {
       const start = performance.now();
@@ -4955,7 +4964,7 @@ setTimeout(applyTerminalTags, 600);
 
     tl
       // ── Establish (0.0 → 0.8) ──
-      .add(() => cameraSnap('page-root', 1.0), 0)
+      .add(() => cameraReset(), 0)
       .to({}, { duration: 0.8 }, 0)
 
       // ── Zoom to chart (0.8 → 1.4) ──
@@ -5000,7 +5009,7 @@ setTimeout(applyTerminalTags, 600);
       .to({}, { duration: 0.6 }, 11.9)
 
       // ── Zoom out (12.5 → 13.5) ──
-      .add(() => cameraTo('page-root', 1.0, 1.0, 'quart.inOut'), 12.5)
+      .add(() => cameraReset(1.0, 'quart.inOut'), 12.5)
       .to({}, { duration: 1.1 }, 13.5)
 
       // ── Outro placeholder (14.6 → 15.0) — Task 9 ──
@@ -5011,7 +5020,7 @@ setTimeout(applyTerminalTags, 600);
   }
 
   waitForMount().then(() => {
-    cameraSnap('page-root', 1.0);
+    cameraReset();
     window.cineTimeline = buildTimeline();
     console.info('[cine] timeline built, duration =', window.cineTimeline.duration().toFixed(2), 's');
   });
