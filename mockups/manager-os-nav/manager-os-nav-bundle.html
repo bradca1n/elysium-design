@@ -4480,7 +4480,7 @@ function OverviewView({ onNav }) {
   return (
     <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page data-cine="page-root">
       {/* ===== Page header ===== */}
-      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 32px',gap:24}}>
+      <div data-cine="page-header" style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 32px',gap:24}}>
         <div>
           <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>Overview</div>
           <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Fund-level snapshot across NAV, dealing, capacity and classes.</div>
@@ -4498,7 +4498,7 @@ function OverviewView({ onNav }) {
       <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) 340px',gap:32,marginBottom:80}}>
         <div style={{minWidth:0}}>
           {/* Headline NAV tile */}
-          <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'18px 22px',marginBottom:24,position:'relative'}}>
+          <div data-cine="nav-tile" style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:8,padding:'18px 22px',marginBottom:24,position:'relative'}}>
             <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:16}}>
               <div>
                 <div style={{fontSize:14,color:'var(--ink-2)',fontWeight:500,marginBottom:8}}>NAV</div>
@@ -4525,16 +4525,21 @@ function OverviewView({ onNav }) {
         </div>
 
         {/* Status panel */}
-        <StatusPanel cap={cap} filledPct={filledPct} pendingPct={pendingPct} availablePct={availablePct} onNav={onNav}/>
+        <div data-cine="status-panel">
+          <StatusPanel cap={cap} filledPct={filledPct} pendingPct={pendingPct} availablePct={availablePct} onNav={onNav}/>
+        </div>
       </div>
 
       {/* ===== Share classes ===== */}
+      <div data-cine="classes-section">
       <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',marginBottom:20}}>Share classes</div>
       <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:80}}>
         {classes.map((c,i) => <ClassCard key={i} {...c}/>)}
       </div>
+      </div>
 
       {/* ===== Recent activity ===== */}
+      <div data-cine="recent-activity">
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20}}>
         <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',color:'var(--ink-1)'}}>Recent activity</div>
         <button onClick={() => onNav('order-book')} style={{
@@ -4583,8 +4588,10 @@ function OverviewView({ onNav }) {
           </tbody>
         </table>
       </div>
+      </div>
 
       {/* ===== Strategy ===== */}
+      <div data-cine="strategy-section">
       <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',marginBottom:20}}>Strategy</div>
       <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) 320px',gap:32}}>
         <div>
@@ -4607,6 +4614,7 @@ function OverviewView({ onNav }) {
             ))}
           </div>
         </div>
+      </div>
       </div>
       {window.__CINE__ && (
         <ShareClassSheet
@@ -5048,6 +5056,18 @@ setTimeout(applyTerminalTags, 600);
   function cursorToCenter(dur = 0.5, ease = 'cubic.inOut') {
     return gsap.to(ensureCursor(), { x: 960 - 10, y: 540 - 10, duration: dur, ease });
   }
+  // Dim peripheral sections of the Overview when the chart is the focus.
+  // Active = chart at 100%; status panel, recent activity, share classes,
+  // strategy, NAV tile and page header all → 20%.
+  function focusChart(on) {
+    const targets = ['nav-tile', 'page-header', 'status-panel', 'classes-section', 'recent-activity', 'strategy-section'];
+    targets.forEach(name => {
+      const el = $(name);
+      if (!el) return;
+      gsap.to(el, { opacity: on ? 0.20 : 1, duration: 0.4, ease: 'cubic.out' });
+    });
+  }
+
   // Dim everything in the sheet body EXCEPT the row containing the active
   // field. Pass null to restore all.
   function focusField(activeName) {
@@ -5273,8 +5293,8 @@ setTimeout(applyTerminalTags, 600);
       .add(() => cameraReset(), 0)
       .to({}, { duration: 0.8 }, 0)
 
-      // ── Zoom to chart (0.8 → 1.4) ──
-      .add(() => cameraTo('chart', 1.8, 0.7, 'expo.out'), 0.8)
+      // ── Zoom to chart + dim peripheral sections (0.8 → 1.4) ──
+      .add(() => { cameraTo('chart', 1.8, 0.7, 'expo.out'); focusChart(true); }, 0.8)
 
       // ── Timeframe cycling 1M (initial) → 3M → 1Y (1.4 → 3.4) ──
       // Two clicks since we already start on 1M.
@@ -5286,8 +5306,8 @@ setTimeout(applyTerminalTags, 600);
       .add(() => { window.cine.setPerfRange('1Y'); cursorPulse(); drawChartLines(); }, 3.1)
       .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1Y']), 3.1)
 
-      // ── Pan to CTA + cursor flies to viewport centre (3.7 → 4.4) ──
-      .add(() => cameraTo('add-class-btn', 1.8, 0.7, 'expo.out'), 3.7)
+      // ── Pan to CTA — restore peripheral opacity so the CTA reads (3.7 → 4.4) ──
+      .add(() => { cameraTo('add-class-btn', 1.8, 0.7, 'expo.out'); focusChart(false); }, 3.7)
       .add(() => cursorToCenter(0.7, 'expo.out'), 3.7)
 
       // ── Hold so the click reads (4.4 → 4.7) ──
