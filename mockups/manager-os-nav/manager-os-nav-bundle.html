@@ -339,6 +339,13 @@
   /* Hide Save Draft in cinematic mode so Create gets full width */
   body.cine-active [data-cine="save-draft"] { display: none !important; }
 
+  /* Pin sheet to viewport height in cinematic mode so absolute children
+     centre against the viewport rather than the (taller) camera-host */
+  body.cine-active [data-cine="sheet"] {
+    height: 100vh !important;
+    bottom: auto !important;
+  }
+
   /* Active input field — white border + soft diffused glow */
   [data-cine^="field-"].cine-active-input {
     border-color: #ffffff !important;
@@ -424,9 +431,14 @@
 
   /* Sheet → full-width confirmation state */
   [data-cine="sheet"].cine-confirming {
+    width: 100vw !important;
+    max-width: 100vw !important;
     height: 100vh !important;
     top: 0 !important;
     bottom: auto !important;
+    transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                height 0.4s ease,
+                transform 0.3s ease !important;
   }
   [data-cine="sheet"].cine-confirming > *:not(.cine-sheet-confirm) {
     opacity: 0 !important;
