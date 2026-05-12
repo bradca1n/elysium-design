@@ -5581,7 +5581,10 @@ setTimeout(applyTerminalTags, 600);
         const sheet = $('sheet');
         if (sheet) {
           sheet.style.transition = '';
-          sheet.style.transform = 'translateX(100%)';
+          // !important inline so it beats React's plain inline render
+          // (which would otherwise leave the sheet at translateX(0) if
+          // the open prop hasn't fully reconciled to false yet).
+          sheet.style.setProperty('transform', 'translateX(100%)', 'important');
         }
         const overlay = $('overlay');
         if (overlay) {
@@ -5636,6 +5639,9 @@ setTimeout(applyTerminalTags, 600);
             { scale: 1 },
             { scale: 0.95, duration: 0.08, yoyo: true, repeat: 1, ease: 'power2.out' });
         }
+        // Release the !important transform hold so the slide-in animation works
+        const sheet = $('sheet');
+        if (sheet) sheet.style.removeProperty('transform');
         cursorPulse();
         window.cine?.openCreateSheet?.();
       }, 4.7)
