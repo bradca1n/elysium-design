@@ -1494,6 +1494,11 @@ function DerivativeRow({ a }) {
 }
 
 function PerformanceSection({ range, setRange, bigHeadline }) {
+  React.useEffect(() => {
+    if (!window.__CINE__) return;
+    (window.cine ||= {}).setPerfRange = setRange;
+  }, [setRange]);
+
   const def = RANGE_DEFS.find(d => d.k === range) || RANGE_DEFS[0];
   // Period returns computed from master series so they always match the chart endpoint
   const portSlice  = MASTER_PORTFOLIO.slice(-def.days - 1);
@@ -3030,6 +3035,13 @@ function ShareClassSheet({ open, mode, initialData, onClose, onSave }) {
   const onDraft = () => { if (form.name.trim()) onSave(buildClass('draft')); };
   const onSaveChanges = () => { if (isValid) onSave(buildClass(initialData?.status || 'draft')); };
 
+  React.useEffect(() => {
+    if (!window.__CINE__) return;
+    if (!open) return;
+    (window.cine ||= {}).setField = (key, value) => setVal(key, value);
+    window.cine.clickCreate = onCreate;
+  }, [open, isValid, onSave]);
+
   // Styles (scoped, all use manager-os-nav tokens)
   const overlayS = { position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', zIndex:60, opacity: open ? 1 : 0, pointerEvents: open ? 'auto' : 'none', transition:'opacity 0.2s ease' };
   const panelS = { position:'fixed', top:0, right:0, bottom:0, width:660, maxWidth:'100vw', background:'var(--bg-canvas)', borderLeft:'1px solid var(--line-1)', zIndex:61, transform: open ? 'translateX(0)' : 'translateX(100%)', transition:'transform 0.3s ease', display:'flex', flexDirection:'column', boxShadow:'-24px 0 48px rgba(0,0,0,0.18)' };
@@ -3437,7 +3449,7 @@ const td = { padding:'14px 12px',borderBottom:'1px solid var(--line-1)' };
 const fLabel = { fontSize:11,color:'var(--ink-2)',fontWeight:500,marginBottom:6,display:'block' };
 const fInput = { width:'100%',height:40,padding:'0 14px',border:'1px solid var(--line-2)',borderRadius:8,fontSize:13,color:'var(--ink-1)',background:'var(--bg-canvas)',fontFamily:'inherit',boxSizing:'border-box' };
 
-Object.assign(window, { OrderBookView, CollateralView, ShareRegisterView, ShareClassesView, ReconciliationView });
+Object.assign(window, { OrderBookView, CollateralView, ShareRegisterView, ShareClassesView, ReconciliationView, ShareClassSheet });
 
 </script>
 <script type="text/babel" data-presets="env,react" data-source="views-pnl-bs.jsx">
@@ -4316,6 +4328,13 @@ const { useState: _ov1 } = React;
 
 function OverviewView({ onNav }) {
   const [perfRange, setPerfRange] = _ov1('3M');
+  const [cineSheetOpen, setCineSheetOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!window.__CINE__) return;
+    (window.cine ||= {}).openCreateSheet = () => setCineSheetOpen(true);
+    window.cine.closeSheet = () => setCineSheetOpen(false);
+  }, []);
 
   const classes = [
     { name: 'Class A', navShare: '$104.27', units: '199,920', total: '$20,838,000', mgmt: '2.00%', perf: '20%', investors: 12, change: '+5.2%' },
@@ -4356,7 +4375,7 @@ function OverviewView({ onNav }) {
         </div>
         <div style={{display:'flex',gap:8,flexShrink:0}}>
           <button style={ovBtnOutline}>Invite investor</button>
-          <button data-cine="add-class-btn" style={ovBtnPrimary}>+ Add share class</button>
+          <button data-cine="add-class-btn" onClick={() => window.cine?.openCreateSheet?.()} style={ovBtnPrimary}>+ Add share class</button>
           <button aria-label="More" style={{width:32,height:32,border:'1px solid var(--line-2)',background:'var(--bg-canvas)',borderRadius:8,cursor:'pointer',color:'var(--ink-2)',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
           </button>
@@ -4477,6 +4496,15 @@ function OverviewView({ onNav }) {
           </div>
         </div>
       </div>
+      {window.__CINE__ && (
+        <ShareClassSheet
+          open={cineSheetOpen}
+          mode="create"
+          initialData={null}
+          onClose={() => setCineSheetOpen(false)}
+          onSave={() => setCineSheetOpen(false)}
+        />
+      )}
     </div>
   );
 }
