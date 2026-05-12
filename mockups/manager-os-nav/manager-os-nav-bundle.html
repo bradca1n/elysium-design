@@ -4988,20 +4988,41 @@ setTimeout(applyTerminalTags, 600);
 
   function $(name) { return document.querySelector(`[data-cine="${name}"]`); }
 
-  // Read target's untransformed rect. Use gsap.set + force reflow so the
-  // GPU compositor flushes the camera transform before measurement.
+  // Read target's untransformed rect. Two transforms can mess with this:
+  //  1) The camera's transform on .cinematic-camera (from GSAP)
+  //  2) The sheet's own translateX transition (CSS, mid slide-in)
+  // We neutralise both for the duration of the measurement, then restore.
   function measureUntransformed(el) {
     const camEl = document.querySelector('.cinematic-camera');
+    const sheet = $('sheet');
     const cur = {
       x: gsap.getProperty(camEl, 'x'),
       y: gsap.getProperty(camEl, 'y'),
       scale: gsap.getProperty(camEl, 'scale'),
     };
     gsap.set(camEl, { x: 0, y: 0, scale: 1 });
-    // Force synchronous reflow so the rect returned reflects identity transform
+
+    // Snap sheet to its open position without animating (skip the CSS
+    // transition for the measurement; restored before we return).
+    let savedSheetTransition, savedSheetTransform;
+    if (sheet) {
+      savedSheetTransition = sheet.style.transition;
+      savedSheetTransform = sheet.style.transform;
+      sheet.style.transition = 'none';
+      sheet.style.transform = 'translateX(0)';
+      // eslint-disable-next-line no-unused-expressions
+      sheet.offsetHeight;
+    }
+
+    // Force synchronous reflow on the camera too
     // eslint-disable-next-line no-unused-expressions
     camEl.offsetHeight;
     const rect = el.getBoundingClientRect();
+
+    if (sheet) {
+      sheet.style.transition = savedSheetTransition;
+      sheet.style.transform = savedSheetTransform;
+    }
     gsap.set(camEl, cur);
     return rect;
   }
@@ -5366,11 +5387,11 @@ setTimeout(applyTerminalTags, 600);
         window.cine?.openCreateSheet?.();
       }, 4.7)
 
-      // ── Cut straight to first input — camera zoom starts during sheet slide-in (4.7) ──
-      .add(() => cameraTo('field-name', 2.2, 0.7, 'expo.out'), 4.7)
-      .add(() => cursorHide(), 4.9)
+      // ── Cut to first input — sheet has just landed, camera takes over (4.85) ──
+      .add(() => cameraTo('field-name', 2.2, 0.7, 'expo.out'), 4.85)
+      .add(() => cursorHide(), 5.0)
       // Dim peripheral sheet content once camera has landed on field-name
-      .add(() => focusField('field-name'), 5.4)
+      .add(() => focusField('field-name'), 5.6)
 
       // ── Field micro-pans + focus (7.2 → 9.4) ── currency removed
       .add(() => { cameraTo('field-fee', 2.2, 0.35, 'expo.out'); focusField('field-fee'); }, 7.2)
