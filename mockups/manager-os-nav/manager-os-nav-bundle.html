@@ -390,6 +390,38 @@
     font-weight: 500;
   }
 
+  /* Sheet → intermediate "Creating..." loading state */
+  [data-cine="sheet"].cine-loading > *:not(.cine-sheet-loading) {
+    opacity: 0 !important;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .cine-sheet-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+  [data-cine="sheet"].cine-loading .cine-sheet-loading {
+    opacity: 1;
+  }
+  .cine-sheet-loading .loading-spinner {
+    width: 56px;
+    height: 56px;
+    color: var(--ink-1);
+    animation: cine-spin 1s linear infinite;
+  }
+  .cine-sheet-loading .loading-text {
+    font-size: 14px;
+    color: var(--ink-2);
+    margin-top: 22px;
+  }
+
   /* Sheet → full-width confirmation state */
   [data-cine="sheet"].cine-confirming {
     height: 100vh !important;
@@ -5340,6 +5372,45 @@ setTimeout(applyTerminalTags, 600);
     }
   }
 
+  // ── Sheet intermediate loading state (centred spinner) ──
+  function ensureSheetLoadingContent() {
+    const sheet = $('sheet');
+    if (!sheet) return null;
+    let load = sheet.querySelector('.cine-sheet-loading');
+    if (!load) {
+      load = document.createElement('div');
+      load.className = 'cine-sheet-loading';
+      load.innerHTML = `
+        <svg class="loading-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        </svg>
+        <div class="loading-text">Creating share class…</div>
+      `;
+      sheet.appendChild(load);
+    }
+    return load;
+  }
+  function showSheetLoading() {
+    const sheet = $('sheet');
+    if (!sheet) return;
+    ensureSheetLoadingContent();
+    sheet.classList.add('cine-loading');
+  }
+  function hideSheetLoading() {
+    const sheet = $('sheet');
+    if (!sheet) return;
+    sheet.classList.remove('cine-loading');
+  }
+
+  // ── Slide sheet off right (out of view) ──
+  function slideSheetOff() {
+    const sheet = $('sheet');
+    if (!sheet) return;
+    // Use transform on inline style; the sheet has transition:transform set
+    sheet.style.transition = 'transform 0.6s cubic-bezier(0.5, 0, 0.75, 0)';
+    sheet.style.transform = 'translateX(100%)';
+  }
+
   // ── Sheet expand to full-width confirmation state ──
   function ensureSheetConfirmContent() {
     const sheet = $('sheet');
@@ -5390,6 +5461,8 @@ setTimeout(applyTerminalTags, 600);
     sheet.style.transition = 'width 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.3s ease';
     sheet.style.width = '100vw';
     sheet.style.maxWidth = '100vw';
+    // Move from loading → confirming
+    sheet.classList.remove('cine-loading');
     sheet.classList.add('cine-confirming');
     // Play the check animation. If the JSON hasn't loaded yet, queue
     // the play call to fire on DOMLoaded.
@@ -5482,10 +5555,14 @@ setTimeout(applyTerminalTags, 600);
       // ── Loop cleanup — runs on every iteration including the first ──
       .add(() => {
         collapseSheetConfirm();
+        hideSheetLoading();
         window.cine?.closeSheet?.();
         window.cine?.resetForm?.();
         const sheet = $('sheet');
-        if (sheet) sheet.style.transform = 'translateX(100%)';
+        if (sheet) {
+          sheet.style.transition = '';
+          sheet.style.transform = 'translateX(100%)';
+        }
         const btn = $('create-btn');
         if (btn) {
           btn.classList.remove('cine-create-loading');
@@ -5550,7 +5627,7 @@ setTimeout(applyTerminalTags, 600);
       .add(() => { focusField(null); cameraTo('sheet-footer', 1.4, 0.7, 'expo.out'); }, 10.6)
       .add(() => { cursorShow(); cursorToCenter(0.7, 'expo.out'); }, 10.7)
 
-      // ── Cursor pulses + button-press flash + clickCreate + loader (11.5) ──
+      // ── Click Create: cursor pulse + button press + form fades, sheet loader appears (11.5) ──
       .add(() => {
         const btn = $('create-btn');
         if (btn) {
@@ -5559,24 +5636,27 @@ setTimeout(applyTerminalTags, 600);
             { scale: 0.95, duration: 0.08, yoyo: true, repeat: 1, ease: 'power2.out' });
         }
         cursorPulse();
-        setCreateLoading(true);
+        showSheetLoading();
       }, 11.5)
 
       // ── Cursor fades (11.7) ──
       .add(() => cursorHide(), 11.7)
 
-      // ── Halfway through loading: camera starts zooming out (11.9 → 12.6) ──
-      .add(() => cameraReset(0.7, 'expo.out'), 11.9)
+      // ── Camera zooms out while the loader is visible (12.0 → 12.7) ──
+      .add(() => cameraReset(0.7, 'expo.out'), 12.0)
 
-      // ── Loader ends + sheet slides across to full width (12.6) ──
-      .add(() => { setCreateLoading(false); expandSheetToConfirm(); }, 12.6)
+      // ── Sheet expands to full width with confirmation (12.7) ──
+      .add(() => expandSheetToConfirm(), 12.7)
 
-      // ── Hold on the full-width confirmation (13.3 → 15.0) ──
-      .to({}, { duration: 1.7 }, 13.3)
+      // ── Hold on full-width confirmation (13.5 → 15.0) ──
+      .to({}, { duration: 1.5 }, 13.5)
 
-      // ── Outro (15.5 → 15.9) ──
+      // ── Sheet slides off-right (15.0 → 15.6) ──
+      .add(() => slideSheetOff(), 15.0)
+
+      // ── Outro page fade (16.0 → 16.4) ──
       .to('[data-page]',
-        { opacity: 0, y: -6, duration: 0.4, ease: 'cubic.in' }, 15.5);
+        { opacity: 0, y: -6, duration: 0.4, ease: 'cubic.in' }, 16.0);
 
     // ── Field fills (typewriter + dropdown) — currency removed ──
     const FEE_TIER_OPTS = ['Retail','Institutional','Seed','Platform','Bundled'];
