@@ -352,6 +352,33 @@
     animation: cine-spin 1s linear infinite;
   }
 
+  /* Fake dropdown popover (used to visualise the Fee tier selection) */
+  #cine-fake-dropdown {
+    background: var(--bg-canvas);
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.14);
+    padding: 6px;
+    z-index: 70;
+    color: var(--ink-1);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-6px);
+    will-change: transform, opacity;
+  }
+  #cine-fake-dropdown .cine-dd-item {
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.2;
+    transition: background-color 0.15s, color 0.15s;
+  }
+  #cine-fake-dropdown .cine-dd-item.cine-dd-highlight {
+    background: var(--bg-subtle);
+    color: var(--ink-1);
+    font-weight: 500;
+  }
+
   /* Confirmation modal */
   #cine-modal {
     position: fixed;
@@ -5128,6 +5155,45 @@ setTimeout(applyTerminalTags, 600);
     return gsap.to(toastEl, { opacity: 0, x: 20, duration: 0.3, ease: 'cubic.in' });
   }
 
+  // ── Fake dropdown (for select-style fields) ──
+  // Renders a popover below the given field, optionally highlights one option.
+  // Append inside the field's row so it inherits the camera's transform.
+  function showFakeDropdown(fieldCineKey, options, highlightIdx) {
+    const field = $(fieldCineKey);
+    if (!field) return;
+    const row = field.parentNode;
+    let dd = document.getElementById('cine-fake-dropdown');
+    if (!dd) {
+      dd = document.createElement('div');
+      dd.id = 'cine-fake-dropdown';
+    }
+    if (dd.parentNode !== row) {
+      row.style.position = row.style.position || 'relative';
+      row.appendChild(dd);
+    }
+    // Position below the field, full width (offsetTop/Left ignore transforms)
+    dd.style.position = 'absolute';
+    dd.style.top = (field.offsetTop + field.offsetHeight + 6) + 'px';
+    dd.style.left = field.offsetLeft + 'px';
+    dd.style.width = field.offsetWidth + 'px';
+    dd.innerHTML = options.map((opt, i) =>
+      `<div class="cine-dd-item${i === highlightIdx ? ' cine-dd-highlight' : ''}">${opt}</div>`
+    ).join('');
+    gsap.to(dd, { opacity: 1, y: 0, duration: 0.2, ease: 'expo.out' });
+  }
+  function highlightDropdown(idx) {
+    const dd = document.getElementById('cine-fake-dropdown');
+    if (!dd) return;
+    Array.from(dd.children).forEach((it, i) => {
+      it.classList.toggle('cine-dd-highlight', i === idx);
+    });
+  }
+  function hideFakeDropdown() {
+    const dd = document.getElementById('cine-fake-dropdown');
+    if (!dd) return;
+    return gsap.to(dd, { opacity: 0, y: -6, duration: 0.18, ease: 'cubic.in' });
+  }
+
   // ── Create-button loader state ──
   function setCreateLoading(on) {
     const btn = $('create-btn');
@@ -5283,9 +5349,15 @@ setTimeout(applyTerminalTags, 600);
       .to('[data-page]',
         { opacity: 0, y: -6, duration: 0.4, ease: 'cubic.in' }, 15.5);
 
-    // ── Field fills (typewriter + snap) — currency removed ──
+    // ── Field fills (typewriter + dropdown) — currency removed ──
+    const FEE_TIER_OPTS = ['Retail','Institutional','Seed','Platform','Bundled'];
     typeFieldOnto(tl, 'name', 'Class B', 6.00);                       // ~6.00 → 6.56
-    setFieldOnto(tl, 'feeTier', 'Institutional', 7.45);
+
+    // Fee tier: open dropdown → hover Institutional → commit + close
+    tl.add(() => showFakeDropdown('field-fee', FEE_TIER_OPTS, -1), 7.40);
+    tl.add(() => highlightDropdown(1), 7.55);                           // Institutional = idx 1
+    tl.add(() => { window.cine?.setField?.('feeTier', 'Institutional'); hideFakeDropdown(); }, 7.80);
+
     typeFieldOnto(tl, 'mgmtNum', '1.50', 8.30);                       // ~8.30 → 8.62
     typeFieldOnto(tl, 'perfNum', '20',   8.70);                       // ~8.70 → 8.86
     typeFieldOnto(tl, 'minInvestment', '100000', 9.40);               // ~9.40 → 9.88
