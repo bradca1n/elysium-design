@@ -4855,34 +4855,23 @@ setTimeout(applyTerminalTags, 600);
 
   const VIEWPORT = { w: 1920, h: 1080 };
 
-  // Resolve a data-cine target. Returns the element, or null if not mounted.
-  function $(name) {
-    return document.querySelector(`[data-cine="${name}"]`);
-  }
+  function $(name) { return document.querySelector(`[data-cine="${name}"]`); }
 
-  // Camera primitive. Centres target in 1920×1080 frame at given scale.
   function cameraTo(target, scale = 1, dur = 0.6, ease = 'expo.out') {
     const el = typeof target === 'string' ? $(target) : target;
     if (!el) { console.warn('[cine] cameraTo: target not found', target); return; }
-
-    // Read the target's bounding rect in unscaled coordinates. To do this
-    // reliably even mid-tween, we temporarily neutralise the current camera
-    // transform, measure, then restore.
     const camEl = document.querySelector('.cinematic-camera');
     const prevTransform = camEl.style.transform;
     camEl.style.transform = '';
     const rect = el.getBoundingClientRect();
     camEl.style.transform = prevTransform;
-
     const tx = rect.left + rect.width / 2;
     const ty = rect.top + rect.height / 2;
     const x = VIEWPORT.w / 2 - tx * scale;
     const y = VIEWPORT.h / 2 - ty * scale;
-
     return gsap.to(camEl, { scale, x, y, duration: dur, ease });
   }
 
-  // Snap camera to a target without animation.
   function cameraSnap(target, scale = 1) {
     const el = typeof target === 'string' ? $(target) : target;
     if (!el) return;
@@ -4896,7 +4885,73 @@ setTimeout(applyTerminalTags, 600);
     gsap.set(camEl, { scale, x: VIEWPORT.w / 2 - tx * scale, y: VIEWPORT.h / 2 - ty * scale });
   }
 
-  // Expose for console use during development.
+  function waitForMount() {
+    return new Promise(resolve => {
+      const start = performance.now();
+      const tick = () => {
+        if ($('chart') && $('page-root') && $('add-class-btn')) return resolve();
+        if (performance.now() - start > 5000) return resolve();
+        requestAnimationFrame(tick);
+      };
+      tick();
+    });
+  }
+
+  function buildTimeline() {
+    const tl = gsap.timeline({ paused: true });
+
+    tl
+      // ── Establish (0.0 → 0.8) ──
+      .add(() => cameraSnap('page-root', 1.0), 0)
+      .to({}, { duration: 0.8 }, 0)
+
+      // ── Zoom to chart (0.8 → 1.4) ──
+      .add(() => cameraTo('chart', 1.8, 0.6, 'expo.out'), 0.8)
+      .to({}, { duration: 1.6 }, 1.4)   // chart hold (cycling region — Task 7)
+
+      // ── Pan to CTA (3.0 → 3.6) ──
+      .add(() => cameraTo('add-class-btn', 1.8, 0.6, 'quart.inOut'), 3.0)
+      .to({}, { duration: 0.3 }, 3.6)
+
+      // ── Sheet frame (3.9 → 4.5) — sheet beats land in Task 8 ──
+      .add(() => cameraTo('sheet', 1.4, 0.6, 'cubic.inOut'), 3.9)
+      .to({}, { duration: 0.0 }, 4.5)
+
+      // ── Tighten on Identity (4.5 → 5.1) ──
+      .add(() => cameraTo('field-name', 2.2, 0.6, 'expo.out'), 4.5)
+      .to({}, { duration: 0.6 }, 5.1)
+
+      // ── Field micro-pans (6.3 → 9.1) ──
+      .add(() => cameraTo('field-fee', 2.2, 0.28, 'cubic.out'), 6.3)
+      .add(() => cameraTo('field-mgmt', 2.2, 0.28, 'cubic.out'), 7.1)
+      .add(() => cameraTo('field-currency', 2.2, 0.28, 'cubic.out'), 8.2)
+      .add(() => cameraTo('field-min', 2.2, 0.28, 'cubic.out'), 9.1)
+
+      // ── Pull back for Create (10.3 → 10.8) ──
+      .add(() => cameraTo('sheet-footer', 1.4, 0.5, 'cubic.inOut'), 10.3)
+      .to({}, { duration: 0.3 }, 10.8)
+
+      // ── Toast emphasis placeholder (11.2 → 11.9) — Task 9 ──
+      .add(() => cameraTo('sheet', 1.5, 0.4, 'expo.out'), 11.2)
+      .to({}, { duration: 0.6 }, 11.9)
+
+      // ── Zoom out (12.5 → 13.5) ──
+      .add(() => cameraTo('page-root', 1.0, 1.0, 'quart.inOut'), 12.5)
+      .to({}, { duration: 1.1 }, 13.5)
+
+      // ── Outro placeholder (14.6 → 15.0) — Task 9 ──
+      .to({}, { duration: 0.4 }, 14.6)
+      .to({}, { duration: 0.0 }, 15.0);
+
+    return tl;
+  }
+
+  waitForMount().then(() => {
+    cameraSnap('page-root', 1.0);
+    window.cineTimeline = buildTimeline();
+    console.info('[cine] timeline built, duration =', window.cineTimeline.duration().toFixed(2), 's');
+  });
+
   window.cineCamera = { cameraTo, cameraSnap, $ };
 })();
 </script>
