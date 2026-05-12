@@ -4923,14 +4923,19 @@ const INITIAL_SHARE_CLASSES = [
 ];
 
 function App() {
-  const [route, setRoute] = React.useState(() => localStorage.getItem('mos.route') || 'nav');
+  // Cinematic mode: pin to Overview, force dark, disable navigation
+  const isCine = typeof window !== 'undefined' && !!window.__CINE__;
+  const [route, setRouteRaw] = React.useState(() =>
+    isCine ? 'overview' : (localStorage.getItem('mos.route') || 'nav'));
+  const setRoute = isCine ? () => {} : setRouteRaw;
   const [showTweaks, setShowTweaks] = React.useState(false);
   const [tweaks, setTweaks] = React.useState(TWEAK_DEFAULTS);
   const [shareClasses, setShareClasses] = React.useState(INITIAL_SHARE_CLASSES);
 
-  React.useEffect(() => { localStorage.setItem('mos.route', route); }, [route]);
+  React.useEffect(() => { if (!isCine) localStorage.setItem('mos.route', route); }, [route]);
 
   React.useEffect(() => {
+    if (isCine) { document.body.classList.add('dark'); return; }
     // Only control dark mode if user hasn't set an explicit theme in the account menu
     if (!localStorage.getItem('mos.theme')) document.body.classList.toggle('dark', tweaks.dark);
     const accents = {
