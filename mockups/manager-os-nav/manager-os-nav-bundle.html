@@ -4983,64 +4983,73 @@ setTimeout(applyTerminalTags, 600);
       // ── Zoom to chart (0.8 → 1.4) ──
       .add(() => cameraTo('chart', 1.8, 0.6, 'expo.out'), 0.8)
 
-      // ── Timeframe cycling 1M → 3M → 1Y (1.4 → 3.0) ──
+      // ── Timeframe cycling 1M → 3M → 1Y (1.4 → 3.7) ── slowed to 700ms beats
       .add(() => cursorShow(), 1.4)
       .add(() => cursorTo('toggle-1M', 0.4, 'cubic.inOut'), 1.4)
       .add(() => { window.cine.setPerfRange('1M'); cursorPulse(); }, 1.8)
       .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1M']), 1.8)
-      .add(() => cursorTo('toggle-3M', 0.2, 'cubic.inOut'), 2.0)
-      .add(() => { window.cine.setPerfRange('3M'); cursorPulse(); }, 2.2)
-      .add(() => tickPortReturn(PORT_RETURNS['1M'], PORT_RETURNS['3M']), 2.2)
-      .add(() => cursorTo('toggle-1Y', 0.2, 'cubic.inOut'), 2.4)
-      .add(() => { window.cine.setPerfRange('1Y'); cursorPulse(); }, 2.6)
-      .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1Y']), 2.6)
+      .add(() => cursorTo('toggle-3M', 0.3, 'cubic.inOut'), 2.3)
+      .add(() => { window.cine.setPerfRange('3M'); cursorPulse(); }, 2.6)
+      .add(() => tickPortReturn(PORT_RETURNS['1M'], PORT_RETURNS['3M']), 2.6)
+      .add(() => cursorTo('toggle-1Y', 0.3, 'cubic.inOut'), 3.1)
+      .add(() => { window.cine.setPerfRange('1Y'); cursorPulse(); }, 3.4)
+      .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1Y']), 3.4)
 
-      // ── Pan to CTA + cursor approach (3.0 → 3.6) ──
-      .add(() => cameraTo('add-class-btn', 1.8, 0.6, 'quart.inOut'), 3.0)
-      .add(() => cursorTo('add-class-btn', 0.4, 'cubic.inOut'), 3.0)
+      // ── Pan to CTA + cursor approach (3.9 → 4.5) ──
+      .add(() => cameraTo('add-class-btn', 1.8, 0.6, 'quart.inOut'), 3.9)
+      .add(() => cursorTo('add-class-btn', 0.5, 'cubic.inOut'), 3.9)
 
-      // ── Click button + open sheet (3.6) ──
-      .add(() => { cursorPulse(); window.cine?.openCreateSheet?.(); }, 3.6)
+      // ── Button press effect (4.5) — scale flash so the click reads ──
+      .add(() => {
+        const btn = $('add-class-btn');
+        if (btn) {
+          gsap.fromTo(btn,
+            { scale: 1 },
+            { scale: 0.95, duration: 0.08, yoyo: true, repeat: 1, ease: 'power2.out' });
+        }
+        cursorPulse();
+        window.cine?.openCreateSheet?.();
+      }, 4.5)
 
-      // ── Camera reframes as sheet slides in (3.9 → 4.5) ──
-      .add(() => cameraTo('sheet', 1.4, 0.6, 'cubic.inOut'), 3.9)
-      .add(() => cursorHide(), 4.2)
+      // ── Camera reframes as sheet slides in (4.8 → 5.4) ──
+      .add(() => cameraTo('sheet', 1.4, 0.6, 'cubic.inOut'), 4.8)
+      .add(() => cursorHide(), 5.1)
 
-      // ── Tight zoom on Class name (4.5 → 5.1) ──
-      .add(() => cameraTo('field-name', 2.2, 0.6, 'expo.out'), 4.5)
+      // ── Tight zoom on Class name (5.4 → 6.0) ──
+      .add(() => cameraTo('field-name', 2.2, 0.6, 'expo.out'), 5.4)
 
-      // ── Field micro-pans (6.3 → 9.1) ──
-      .add(() => cameraTo('field-fee', 2.2, 0.28, 'cubic.out'), 6.3)
-      .add(() => cameraTo('field-mgmt', 2.2, 0.28, 'cubic.out'), 7.1)
-      .add(() => cameraTo('field-currency', 2.2, 0.28, 'cubic.out'), 8.2)
-      .add(() => cameraTo('field-min', 2.2, 0.28, 'cubic.out'), 9.1)
+      // ── Field micro-pans (7.2 → 10.0) ──
+      .add(() => cameraTo('field-fee', 2.2, 0.28, 'cubic.out'), 7.2)
+      .add(() => cameraTo('field-mgmt', 2.2, 0.28, 'cubic.out'), 8.0)
+      .add(() => cameraTo('field-currency', 2.2, 0.28, 'cubic.out'), 9.1)
+      .add(() => cameraTo('field-min', 2.2, 0.28, 'cubic.out'), 10.0)
 
-      // ── Pull back to footer + cursor reappears (10.3 → 10.8) ──
-      .add(() => cameraTo('sheet-footer', 1.4, 0.5, 'cubic.inOut'), 10.3)
-      .add(() => { cursorShow(); cursorTo('sheet-footer', 0.3, 'cubic.inOut'); }, 10.40)
+      // ── Pull back to footer + cursor reappears (11.2 → 11.7) ──
+      .add(() => cameraTo('sheet-footer', 1.4, 0.5, 'cubic.inOut'), 11.2)
+      .add(() => { cursorShow(); cursorTo('sheet-footer', 0.3, 'cubic.inOut'); }, 11.3)
 
-      // ── Click Create (10.8) ──
-      .add(() => { cursorPulse(); window.cine?.clickCreate?.(); }, 10.8)
+      // ── Click Create (11.7) ──
+      .add(() => { cursorPulse(); window.cine?.clickCreate?.(); }, 11.7)
 
-      // ── Toast emphasis placeholder (11.2 → 11.9) — Task 9 ──
-      .add(() => cameraTo('sheet', 1.5, 0.4, 'expo.out'), 11.2)
-      .to({}, { duration: 0.6 }, 11.9)
+      // ── Toast emphasis placeholder (12.1 → 12.8) — Task 9 ──
+      .add(() => cameraTo('sheet', 1.5, 0.4, 'expo.out'), 12.1)
+      .to({}, { duration: 0.6 }, 12.8)
 
-      // ── Zoom out (12.5 → 13.5) ──
-      .add(() => cameraReset(1.0, 'quart.inOut'), 12.5)
-      .to({}, { duration: 1.1 }, 13.5)
+      // ── Zoom out (13.4 → 14.4) ──
+      .add(() => cameraReset(1.0, 'quart.inOut'), 13.4)
+      .to({}, { duration: 1.0 }, 14.4)
 
-      // ── Outro placeholder (14.6 → 15.0) — Task 9 ──
-      .to({}, { duration: 0.4 }, 14.6)
-      .to({}, { duration: 0.0 }, 15.0);
+      // ── Outro placeholder (15.5 → 15.9) — Task 9 ──
+      .to({}, { duration: 0.4 }, 15.5)
+      .to({}, { duration: 0.0 }, 15.9);
 
     // ── Field fills (typewriter + snap) ──
-    typeFieldOnto(tl, 'name', 'Class B', 5.10);                       // ~5.10 → 5.66
-    setFieldOnto(tl, 'feeTier', 'Institutional', 6.55);
-    typeFieldOnto(tl, 'mgmtNum', '1.50', 7.40);                       // ~7.40 → 7.72
-    typeFieldOnto(tl, 'perfNum', '20',   7.80);                       // ~7.80 → 7.96
-    setFieldOnto(tl, 'currency', 'USD', 8.55);
-    typeFieldOnto(tl, 'minInvestment', '100000', 9.40);               // ~9.40 → 9.88
+    typeFieldOnto(tl, 'name', 'Class B', 6.00);                       // ~6.00 → 6.56
+    setFieldOnto(tl, 'feeTier', 'Institutional', 7.45);
+    typeFieldOnto(tl, 'mgmtNum', '1.50', 8.30);                       // ~8.30 → 8.62
+    typeFieldOnto(tl, 'perfNum', '20',   8.70);                       // ~8.70 → 8.86
+    setFieldOnto(tl, 'currency', 'USD', 9.45);
+    typeFieldOnto(tl, 'minInvestment', '100000', 10.30);              // ~10.30 → 10.78
 
     return tl;
   }
