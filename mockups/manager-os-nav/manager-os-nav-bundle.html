@@ -14,6 +14,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
 
 <style>
+  @font-face {
+    font-family: 'Serrif Condensed';
+    src: url('assets/SerrifCondensed-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+  .serif-title {
+    font-family: 'Serrif Condensed', 'Inter', system-ui, sans-serif;
+    font-weight: 300;
+    letter-spacing: 0;
+  }
   :root {
     --bg-canvas: #FFFFFF;
     --bg-surface: #FAF9F7;
@@ -276,6 +288,16 @@
     transform-origin: 0 0;
     will-change: transform;
   }
+  /* Sharpen text through the camera transform. -webkit-font-smoothing
+     antialiased + text-rendering geometricPrecision render glyphs with
+     more sub-pixel fidelity. Combined with DSF=2 capture, the 2.2×
+     camera scale stays sharp. */
+  body.cine-active .cinematic-camera,
+  body.cine-active .cinematic-camera * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: geometricPrecision;
+  }
   #cine-cursor {
     position: fixed;
     width: 45px;
@@ -452,8 +474,8 @@
     opacity: 1;
   }
   .cine-sheet-confirm .confirm-icon {
-    width: 200px; height: 200px;
-    margin-bottom: 16px;
+    width: 180px; height: 180px;
+    margin-bottom: 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -467,14 +489,15 @@
     height: 100%;
   }
   .cine-sheet-confirm .confirm-title {
-    font-size: 32px;
-    font-weight: 500;
+    font-family: 'Serrif Condensed', 'Inter', system-ui, sans-serif;
+    font-size: 36px;
+    font-weight: 300;
     color: var(--ink-1);
-    letter-spacing: -0.02em;
-    margin-bottom: 10px;
+    letter-spacing: 0;
+    margin-bottom: 9px;
   }
   .cine-sheet-confirm .confirm-sub {
-    font-size: 15px;
+    font-size: 14px;
     color: var(--ink-2);
   }
 
@@ -3299,7 +3322,7 @@ function ShareClassSheet({ open, mode, initialData, onClose, onSave }) {
   return ReactDOM.createPortal(
     <React.Fragment>
       <div data-cine="overlay" style={overlayS} onClick={onCancel}/>
-      <div data-cine="sheet" style={panelS} role="dialog" aria-label={mode==='edit'?'Edit share class':'Add share class'}>
+      <div data-cine="sheet" style={panelS} role="dialog" aria-label={mode==='edit'?'Edit share class':'Create share class'}>
         <div style={topbarS}>
           <button style={cancelBtnS} onClick={onCancel} aria-label="Cancel">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -3309,8 +3332,8 @@ function ShareClassSheet({ open, mode, initialData, onClose, onSave }) {
 
         <div style={bodyS}>
           <div style={{paddingBottom:24}}>
-            <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>
-              {mode==='edit' ? `Edit ${initialData?.name || 'share class'}` : 'Add share class'}
+            <div className="serif-title" style={{fontSize:32,letterSpacing:0,color:'var(--ink-1)'}}>
+              {mode==='edit' ? `Edit ${initialData?.name || 'share class'}` : 'Create share class'}
             </div>
             <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>
               {mode==='edit' ? 'Update terms for this share class.' : 'Define the terms for a new share class in this fund.'}
@@ -4588,12 +4611,12 @@ function OverviewView({ onNav }) {
       {/* ===== Page header ===== */}
       <div data-cine="page-header" style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 32px',gap:24}}>
         <div>
-          <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>Overview</div>
+          <div className="serif-title" style={{fontSize:32,letterSpacing:0,color:'var(--ink-1)'}}>Overview</div>
           <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Fund-level snapshot across NAV, dealing, capacity and classes.</div>
         </div>
         <div style={{display:'flex',gap:8,flexShrink:0}}>
           <button style={ovBtnOutline}>Invite investor</button>
-          <button data-cine="add-class-btn" onClick={() => window.cine?.openCreateSheet?.()} style={ovBtnPrimary}>+ Add share class</button>
+          <button data-cine="add-class-btn" onClick={() => window.cine?.openCreateSheet?.()} style={ovBtnPrimary}>+ Create share class</button>
           <button aria-label="More" style={{width:32,height:32,border:'1px solid var(--line-2)',background:'var(--bg-canvas)',borderRadius:8,cursor:'pointer',color:'var(--ink-2)',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
           </button>
@@ -5151,6 +5174,26 @@ setTimeout(applyTerminalTags, 600);
     gsap.set(camEl, { scale, x: VIEWPORT.w / 2 - tx * scale, y: VIEWPORT.h / 2 - ty * scale });
   }
 
+  // Camera that keeps the sidesheet anchored to the right edge of the
+  // viewport while zooming. Target is vertically centred. Used for
+  // field tight-zooms so the dashboard stays visible on the left.
+  function cameraToSheetRight(target, scale = 1, dur = 0.6, ease = 'expo.out', anchor = 'center') {
+    const el = typeof target === 'string' ? $(target) : target;
+    if (!el) return;
+    const sheet = $('sheet');
+    if (!sheet) return cameraTo(target, scale, dur, ease);
+    const sheetRect = measureUntransformed(sheet);
+    const rect = measureUntransformed(el);
+    const x = VIEWPORT.w - sheetRect.right * scale;
+    // anchor 'bottom' pins the target's bottom edge to viewport bottom
+    // (so there's no empty space below the sheet); 'center' centres it
+    const y = anchor === 'bottom'
+      ? VIEWPORT.h - rect.bottom * scale
+      : VIEWPORT.h / 2 - (rect.top + rect.height / 2) * scale;
+    return gsap.to(document.querySelector('.cinematic-camera'),
+      { scale, x, y, duration: dur, ease });
+  }
+
   // Identity reset — used for "wide shot" framing. Targeting page-root at
   // scale 1.0 would centre the (very tall) page in the 1080 viewport,
   // pushing the header out of frame. The wide shot is just no transform.
@@ -5200,6 +5243,26 @@ setTimeout(applyTerminalTags, 600);
   // target will be (not where it is now).
   function cursorToCenter(dur = 0.5, ease = 'cubic.inOut') {
     return gsap.to(ensureCursor(), { x: 960 - 22, y: 540 - 22, duration: dur, ease });
+  }
+  // Fly cursor to a target whose on-screen position is determined by a
+  // concurrent cameraToSheetRight(focusTarget, scale) move. Mirrors the
+  // camera's math so cursor lands where the target *will* be once camera
+  // settles, not where it is mid-tween.
+  function cursorToInSheetRightCam(target, focusTarget, scale, dur = 0.5, ease = 'cubic.inOut', anchor = 'center') {
+    const el = typeof target === 'string' ? $(target) : target;
+    const focusEl = typeof focusTarget === 'string' ? $(focusTarget) : focusTarget;
+    const sheet = $('sheet');
+    if (!el || !focusEl || !sheet) return cursorToCenter(dur, ease);
+    const sheetRect = measureUntransformed(sheet);
+    const focusRect = measureUntransformed(focusEl);
+    const elRect = measureUntransformed(el);
+    const camX = VIEWPORT.w - sheetRect.right * scale;
+    const camY = anchor === 'bottom'
+      ? VIEWPORT.h - focusRect.bottom * scale
+      : VIEWPORT.h / 2 - (focusRect.top + focusRect.height / 2) * scale;
+    const cx = camX + (elRect.left + elRect.width / 2) * scale;
+    const cy = camY + (elRect.top + elRect.height / 2) * scale;
+    return gsap.to(ensureCursor(), { x: cx - 22, y: cy - 22, duration: dur, ease });
   }
   // Dim peripheral sections of the Overview when the chart is the focus.
   // Active = chart at 100%; status panel, recent activity, share classes,
@@ -5416,13 +5479,13 @@ setTimeout(applyTerminalTags, 600);
   function slideSheetOff() {
     const sheet = $('sheet');
     if (!sheet) return;
-    // Use transform on inline style; the sheet has transition:transform set
-    sheet.style.transition = 'transform 0.6s cubic-bezier(0.5, 0, 0.75, 0)';
-    sheet.style.transform = 'translateX(100%)';
+    // !important to override the !important translateX(0) set during slide-in
+    sheet.style.transition = 'transform 0.35s cubic-bezier(0.5, 0, 0.75, 0)';
+    sheet.style.setProperty('transform', 'translateX(100%)', 'important');
     // Fade the dim overlay at the same pace as the slide-off
     const overlay = $('overlay');
     if (overlay) {
-      overlay.style.transition = 'opacity 0.6s ease';
+      overlay.style.transition = 'opacity 0.35s ease';
       overlay.style.opacity = '0';
     }
   }
@@ -5457,7 +5520,7 @@ setTimeout(applyTerminalTags, 600);
           const anim = window.lottie.loadAnimation({
             container,
             renderer: 'svg',
-            loop: false,
+            loop: true,
             autoplay: false,
             animationData: animData,
           });
@@ -5502,6 +5565,12 @@ setTimeout(applyTerminalTags, 600);
     sheet.style.width = '';
     sheet.style.maxWidth = '';
     sheet.style.transition = '';
+    // Stop the looping lottie so it isn't still spinning during loop reset
+    const lottieEl = sheet.querySelector('#cine-confirm-lottie');
+    if (lottieEl?.__cineLottie) {
+      lottieEl.__cineLottie.stop();
+      lottieEl.__cinePlayPending = false;
+    }
   }
 
   // ── Confirmation modal ──
@@ -5610,8 +5679,8 @@ setTimeout(applyTerminalTags, 600);
       .add(() => cameraReset(), 0)
       .to({}, { duration: 0.8 }, 0)
 
-      // ── Zoom to chart + dim peripheral sections (0.8 → 1.4) ──
-      .add(() => { cameraTo('chart', 1.8, 0.7, 'expo.out'); focusChart(true); }, 0.8)
+      // ── Zoom to chart + dim peripheral sections (0.8 → 1.8) ──
+      .add(() => { cameraTo('chart', 1.8, 1.0, 'expo.inOut'); focusChart(true); }, 0.8)
 
       // ── Timeframe cycling 1M (initial) → 3M → 1Y (1.4 → 3.4) ──
       // Two clicks since we already start on 1M.
@@ -5624,7 +5693,7 @@ setTimeout(applyTerminalTags, 600);
       .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1Y']), 3.1)
 
       // ── Zoom out to wide; cursor travels across to the CTA button (3.5 → 4.7) ──
-      .add(() => { cameraReset(0.5, 'expo.out'); focusChart(false); }, 3.5)
+      .add(() => { cameraReset(0.8, 'expo.inOut'); focusChart(false); }, 3.5)
 
       // ── Cursor flies to "+ Add share class" button at its natural position (4.0 → 4.7) ──
       .add(() => cursorTo('add-class-btn', 0.7, 'expo.out'), 4.0)
@@ -5638,29 +5707,36 @@ setTimeout(applyTerminalTags, 600);
             { scale: 1 },
             { scale: 0.95, duration: 0.08, yoyo: true, repeat: 1, ease: 'power2.out' });
         }
-        // Release the !important transform hold so the slide-in animation works
+        // Slide the sheet in. Loop cleanup pins it at translateX(100%) with
+        // !important; we keep !important on the way in too, otherwise React's
+        // plain inline panelS style overrides it before the transition runs.
         const sheet = $('sheet');
-        if (sheet) sheet.style.removeProperty('transform');
+        if (sheet) {
+          sheet.style.transition = 'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)';
+          void sheet.offsetWidth;  // commit transition before changing transform
+          sheet.style.setProperty('transform', 'translateX(0)', 'important');
+        }
         cursorPulse();
         window.cine?.openCreateSheet?.();
       }, 4.7)
 
-      // ── Cut to first input — sheet has just landed, camera takes over (4.85) ──
-      .add(() => cameraTo('field-name', 2.2, 0.7, 'expo.out'), 4.85)
-      .add(() => cursorHide(), 5.0)
+      // ── Camera zooms to first input as soon as sheet finishes its 0.55s slide-in.
+      //    Longer + smoother (1.0s expo.inOut) to read as a deliberate cinematic move. ──
+      .add(() => cameraToSheetRight('field-name', 2.2, 1.0, 'expo.inOut'), 5.25)
+      .add(() => cursorHide(), 5.5)
       // Dim peripheral sheet content once camera has landed on field-name
-      .add(() => focusField('field-name'), 5.6)
+      .add(() => focusField('field-name'), 6.3)
 
-      // ── Field micro-pans + focus (7.2 → 9.4) ── currency removed
-      .add(() => { cameraTo('field-fee', 2.2, 0.35, 'expo.out'); focusField('field-fee'); }, 7.2)
-      .add(() => { cameraTo('field-mgmt', 2.2, 0.35, 'expo.out'); focusField('field-mgmt'); }, 8.0)
-      .add(() => { cameraTo('field-min', 2.2, 0.35, 'expo.out'); focusField('field-min'); }, 9.1)
+      // ── Field micro-pans + focus ── currency removed
+      .add(() => { cameraToSheetRight('field-fee', 2.2, 0.35, 'expo.out'); focusField('field-fee'); }, 7.6)
+      .add(() => { cameraToSheetRight('field-mgmt', 2.2, 0.35, 'expo.out'); focusField('field-mgmt'); }, 8.4)
+      .add(() => { cameraToSheetRight('field-min', 2.2, 0.35, 'expo.out'); focusField('field-min'); }, 9.5)
 
-      // ── Pull back to footer; cursor flies to viewport centre where Create lands (10.6 → 11.4) ──
-      .add(() => { focusField(null); cameraTo('sheet-footer', 1.4, 0.7, 'expo.out'); }, 10.6)
-      .add(() => { cursorShow(); cursorToCenter(0.7, 'expo.out'); }, 10.7)
+      // ── Pan down to footer; stay at field-zoom (2.2). Cursor flies to Create ──
+      .add(() => { focusField(null); cameraToSheetRight('sheet-footer', 2.2, 0.7, 'expo.out', 'bottom'); }, 11.0)
+      .add(() => { cursorShow(); cursorToInSheetRightCam('create-btn', 'sheet-footer', 2.2, 0.7, 'expo.out', 'bottom'); }, 11.1)
 
-      // ── Click Create: cursor pulse + button press (11.5) ──
+      // ── Click Create: cursor pulse + button press ──
       .add(() => {
         const btn = $('create-btn');
         if (btn) {
@@ -5669,39 +5745,47 @@ setTimeout(applyTerminalTags, 600);
             { scale: 0.95, duration: 0.08, yoyo: true, repeat: 1, ease: 'power2.out' });
         }
         cursorPulse();
-      }, 11.5)
+      }, 11.9)
 
-      // ── Cursor hides; camera pans up to centre of sheet and the
-      //    form fades out + confirmation fades in simultaneously (11.7 → 12.7) ──
-      .add(() => cursorHide(), 11.7)
-      .add(() => { cameraTo('sheet', 1.2, 1.0, 'expo.out'); expandSheetToConfirm(); }, 11.7)
+      // ── Cursor hides; camera pans up to sheet, form fades, confirmation
+      //    fades in. Lottie loops while we hold (12.1). ──
+      .add(() => cursorHide(), 12.1)
+      .add(() => { cameraToSheetRight('sheet', 2.2, 1.0, 'expo.out'); expandSheetToConfirm(); }, 12.1)
 
-      // ── Hold on confirmation (12.9 → 14.2) ──
-      .to({}, { duration: 1.3 }, 12.9)
+      // ── Zoom out 2.5s into the confirmation (14.6), 0.8s smooth expo.inOut ──
+      .add(() => cameraReset(0.8, 'expo.inOut'), 14.6)
 
-      // ── Sheet slides off-right + camera zooms out simultaneously (14.2) ──
-      .add(() => { slideSheetOff(); cameraReset(0.7, 'expo.out'); }, 14.2)
+      // ── Retract immediately after zoom-out completes (15.4), 0.35s slide-off ──
+      .add(() => slideSheetOff(), 15.4)
 
-      // ── Outro page fade (15.2 → 15.6) ──
+      // ── Outro page fade after slide-off completes (15.8 → 16.2) ──
       .to('[data-page]',
-        { opacity: 0, y: -6, duration: 0.4, ease: 'cubic.in' }, 15.2);
+        { opacity: 0, y: -6, duration: 0.4, ease: 'cubic.in' }, 15.8);
 
     // ── Field fills (typewriter + dropdown) — currency removed ──
     const FEE_TIER_OPTS = ['Retail','Institutional','Seed','Platform','Bundled'];
-    typeFieldOnto(tl, 'name', 'Class B', 6.00);                       // ~6.00 → 6.56
+    typeFieldOnto(tl, 'name', 'Class B', 6.40);                       // ~6.40 → 6.96
 
     // Fee tier: open dropdown → hover Institutional → commit + close
-    tl.add(() => showFakeDropdown('field-fee', FEE_TIER_OPTS, -1), 7.40);
-    tl.add(() => highlightDropdown(1), 7.55);                           // Institutional = idx 1
-    tl.add(() => { window.cine?.setField?.('feeTier', 'Institutional'); hideFakeDropdown(); }, 7.80);
+    tl.add(() => showFakeDropdown('field-fee', FEE_TIER_OPTS, -1), 7.80);
+    tl.add(() => highlightDropdown(1), 7.95);                           // Institutional = idx 1
+    tl.add(() => { window.cine?.setField?.('feeTier', 'Institutional'); hideFakeDropdown(); }, 8.20);
 
-    typeFieldOnto(tl, 'mgmtNum', '1.50', 8.30);                       // ~8.30 → 8.62
-    typeFieldOnto(tl, 'perfNum', '20',   8.70);                       // ~8.70 → 8.86
+    typeFieldOnto(tl, 'mgmtNum', '1.50', 8.70);                       // ~8.70 → 9.02
+    typeFieldOnto(tl, 'perfNum', '20',   9.10);                       // ~9.10 → 9.26
     // Min investment — feed pre-formatted strings so commas appear naturally
     const MIN_STEPS = ['1', '10', '100', '1,000', '10,000', '100,000'];
     MIN_STEPS.forEach((s, i) => {
-      tl.add(() => window.cine?.setField?.('minInvestment', s), 9.40 + (i + 1) * 0.08);
+      tl.add(() => window.cine?.setField?.('minInvestment', s), 9.80 + (i + 1) * 0.08);
     });
+
+    // Lower-section fields — populate instantly just before the camera pans
+    // down (10.95), so they're already filled by the time they hit 100% opacity.
+    tl.add(() => {
+      window.cine?.setField?.('lockupNum', '12');
+      window.cine?.setField?.('noticeNum', '30');
+      window.cine?.setField?.('dealing', 'Monthly');
+    }, 10.95);
 
     return tl;
   }
