@@ -5348,6 +5348,22 @@ setTimeout(applyTerminalTags, 600);
     const tl = gsap.timeline({ paused: true });
 
     tl
+      // ── Loop cleanup — runs on every iteration including the first ──
+      .add(() => {
+        window.cine?.closeSheet?.();
+        const sheet = $('sheet');
+        if (sheet) sheet.style.transform = 'translateX(100%)';
+        const modal = document.getElementById('cine-modal');
+        if (modal) { modal.style.opacity = '0'; modal.style.pointerEvents = 'none'; }
+        const card = modal?.querySelector('.modal-card');
+        if (card) { card.style.transform = 'translateY(12px) scale(0.98)'; }
+        const btn = $('create-btn');
+        if (btn) {
+          btn.classList.remove('cine-create-loading');
+          btn.textContent = btn.dataset.cineOriginalLabel || 'Create Class';
+        }
+      }, 0)
+
       // ── Intro: pageRise (0.0 → 0.5) ──
       .fromTo('[data-page]',
         { opacity: 0, y: 8 },
