@@ -295,7 +295,7 @@
     position: absolute;
     inset: -18px;
     border-radius: 50%;
-    border: 2px solid rgba(29,125,89,0.6);
+    border: 3px solid rgba(29,125,89,0.9);
     opacity: 0;
     will-change: transform, opacity;
   }
@@ -4988,14 +4988,29 @@ setTimeout(applyTerminalTags, 600);
 
   function $(name) { return document.querySelector(`[data-cine="${name}"]`); }
 
+  // Read target's untransformed rect. Use gsap.set + force reflow so the
+  // GPU compositor flushes the camera transform before measurement.
+  function measureUntransformed(el) {
+    const camEl = document.querySelector('.cinematic-camera');
+    const cur = {
+      x: gsap.getProperty(camEl, 'x'),
+      y: gsap.getProperty(camEl, 'y'),
+      scale: gsap.getProperty(camEl, 'scale'),
+    };
+    gsap.set(camEl, { x: 0, y: 0, scale: 1 });
+    // Force synchronous reflow so the rect returned reflects identity transform
+    // eslint-disable-next-line no-unused-expressions
+    camEl.offsetHeight;
+    const rect = el.getBoundingClientRect();
+    gsap.set(camEl, cur);
+    return rect;
+  }
+
   function cameraTo(target, scale = 1, dur = 0.6, ease = 'expo.out') {
     const el = typeof target === 'string' ? $(target) : target;
     if (!el) { console.warn('[cine] cameraTo: target not found', target); return; }
     const camEl = document.querySelector('.cinematic-camera');
-    const prevTransform = camEl.style.transform;
-    camEl.style.transform = '';
-    const rect = el.getBoundingClientRect();
-    camEl.style.transform = prevTransform;
+    const rect = measureUntransformed(el);
     const tx = rect.left + rect.width / 2;
     const ty = rect.top + rect.height / 2;
     const x = VIEWPORT.w / 2 - tx * scale;
@@ -5007,10 +5022,7 @@ setTimeout(applyTerminalTags, 600);
     const el = typeof target === 'string' ? $(target) : target;
     if (!el) return;
     const camEl = document.querySelector('.cinematic-camera');
-    const prevTransform = camEl.style.transform;
-    camEl.style.transform = '';
-    const rect = el.getBoundingClientRect();
-    camEl.style.transform = prevTransform;
+    const rect = measureUntransformed(el);
     const tx = rect.left + rect.width / 2;
     const ty = rect.top + rect.height / 2;
     gsap.set(camEl, { scale, x: VIEWPORT.w / 2 - tx * scale, y: VIEWPORT.h / 2 - ty * scale });
@@ -5116,7 +5128,7 @@ setTimeout(applyTerminalTags, 600);
     return gsap.timeline()
       .to(c, { scale: 0.85, duration: 0.08, ease: 'power2.out' })
       .to(c, { scale: 1.0, duration: 0.12, ease: 'back.out(2)' })
-      .fromTo(ring, { opacity: 0.7, scale: 0.6 }, { opacity: 0, scale: 1.6, duration: 0.4, ease: 'power2.out' }, 0);
+      .fromTo(ring, { opacity: 1.0, scale: 0.6 }, { opacity: 0, scale: 1.7, duration: 0.45, ease: 'power2.out' }, 0);
   }
 
   // ── Chart line draw-in ──
