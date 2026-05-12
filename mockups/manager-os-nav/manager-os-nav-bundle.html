@@ -4932,6 +4932,20 @@ setTimeout(applyTerminalTags, 600);
     const cy = rect.top + rect.height / 2;
     return gsap.to(ensureCursor(), { x: cx - 10, y: cy - 10, duration: dur, ease });
   }
+  // Send cursor to viewport center — used when a parallel cameraTo is
+  // bringing the target to the centre, so the cursor lands where the
+  // target will be (not where it is now).
+  function cursorToCenter(dur = 0.5, ease = 'cubic.inOut') {
+    return gsap.to(ensureCursor(), { x: 960 - 10, y: 540 - 10, duration: dur, ease });
+  }
+  // Fade non-focused fields. Pass null to restore all.
+  function focusField(activeName) {
+    const fields = document.querySelectorAll('[data-cine^="field-"]');
+    fields.forEach(el => {
+      const target = activeName == null ? 1 : (el.getAttribute('data-cine') === activeName ? 1 : 0.25);
+      gsap.to(el, { opacity: target, duration: 0.3, ease: 'cubic.out' });
+    });
+  }
   function cursorShow() { return gsap.to(ensureCursor(), { opacity: 1, duration: 0.2 }); }
   function cursorHide() { return gsap.to(ensureCursor(), { opacity: 0, duration: 0.2 }); }
   function cursorPulse() {
@@ -5042,23 +5056,22 @@ setTimeout(applyTerminalTags, 600);
       // ── Zoom to chart (0.8 → 1.4) ──
       .add(() => cameraTo('chart', 1.8, 0.6, 'expo.out'), 0.8)
 
-      // ── Timeframe cycling 1M → 3M → 1Y (1.4 → 3.7) ── slowed to 700ms beats
+      // ── Timeframe cycling 1M (initial) → 3M → 1Y (1.4 → 3.4) ──
+      // Two clicks since we already start on 1M.
       .add(() => cursorShow(), 1.4)
-      .add(() => cursorTo('toggle-1M', 0.4, 'cubic.inOut'), 1.4)
-      .add(() => { window.cine.setPerfRange('1M'); cursorPulse(); drawChartLines(); }, 1.8)
-      .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1M']), 1.8)
-      .add(() => cursorTo('toggle-3M', 0.3, 'cubic.inOut'), 2.3)
-      .add(() => { window.cine.setPerfRange('3M'); cursorPulse(); drawChartLines(); }, 2.6)
-      .add(() => tickPortReturn(PORT_RETURNS['1M'], PORT_RETURNS['3M']), 2.6)
-      .add(() => cursorTo('toggle-1Y', 0.3, 'cubic.inOut'), 3.1)
-      .add(() => { window.cine.setPerfRange('1Y'); cursorPulse(); drawChartLines(); }, 3.4)
-      .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1Y']), 3.4)
+      .add(() => cursorTo('toggle-3M', 0.5, 'cubic.inOut'), 1.4)
+      .add(() => { window.cine.setPerfRange('3M'); cursorPulse(); drawChartLines(); }, 2.0)
+      .add(() => tickPortReturn(PORT_RETURNS['1M'], PORT_RETURNS['3M']), 2.0)
+      .add(() => cursorTo('toggle-1Y', 0.4, 'cubic.inOut'), 2.6)
+      .add(() => { window.cine.setPerfRange('1Y'); cursorPulse(); drawChartLines(); }, 3.1)
+      .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1Y']), 3.1)
 
-      // ── Pan to CTA + cursor approach (3.9 → 4.5) ──
-      .add(() => cameraTo('add-class-btn', 1.8, 0.6, 'quart.inOut'), 3.9)
-      .add(() => cursorTo('add-class-btn', 0.5, 'cubic.inOut'), 3.9)
+      // ── Pan to CTA + cursor flies to viewport centre (3.7 → 4.4) ──
+      .add(() => cameraTo('add-class-btn', 1.8, 0.7, 'quart.inOut'), 3.7)
+      .add(() => cursorToCenter(0.7, 'cubic.inOut'), 3.7)
 
-      // ── Button press effect (4.5) — scale flash so the click reads ──
+      // ── Hold so the click reads (4.4 → 4.7) ──
+      // ── Button press + sheet open (4.7) ──
       .add(() => {
         const btn = $('add-class-btn');
         if (btn) {
@@ -5068,24 +5081,23 @@ setTimeout(applyTerminalTags, 600);
         }
         cursorPulse();
         window.cine?.openCreateSheet?.();
-      }, 4.5)
+      }, 4.7)
 
-      // ── Camera reframes as sheet slides in (4.8 → 5.4) ──
-      .add(() => cameraTo('sheet', 1.4, 0.6, 'cubic.inOut'), 4.8)
-      .add(() => cursorHide(), 5.1)
+      // ── Skip directly to Class name once sheet is in (5.1 → 5.7) ──
+      // 300ms CSS slide-in + a beat of breathing before tight zoom.
+      .add(() => cursorHide(), 5.0)
+      .add(() => cameraTo('field-name', 2.2, 0.6, 'expo.out'), 5.1)
+      .add(() => focusField('field-name'), 5.1)
 
-      // ── Tight zoom on Class name (5.4 → 6.0) ──
-      .add(() => cameraTo('field-name', 2.2, 0.6, 'expo.out'), 5.4)
-
-      // ── Field micro-pans (7.2 → 10.0) ──
-      .add(() => cameraTo('field-fee', 2.2, 0.28, 'cubic.out'), 7.2)
-      .add(() => cameraTo('field-mgmt', 2.2, 0.28, 'cubic.out'), 8.0)
-      .add(() => cameraTo('field-currency', 2.2, 0.28, 'cubic.out'), 9.1)
-      .add(() => cameraTo('field-min', 2.2, 0.28, 'cubic.out'), 10.0)
+      // ── Field micro-pans + focus (7.2 → 10.0) ──
+      .add(() => { cameraTo('field-fee', 2.2, 0.28, 'cubic.out'); focusField('field-fee'); }, 7.2)
+      .add(() => { cameraTo('field-mgmt', 2.2, 0.28, 'cubic.out'); focusField('field-mgmt'); }, 8.0)
+      .add(() => { cameraTo('field-currency', 2.2, 0.28, 'cubic.out'); focusField('field-currency'); }, 9.1)
+      .add(() => { cameraTo('field-min', 2.2, 0.28, 'cubic.out'); focusField('field-min'); }, 10.0)
 
       // ── Pull back to footer + cursor reappears (11.2 → 11.7) ──
-      .add(() => cameraTo('sheet-footer', 1.4, 0.5, 'cubic.inOut'), 11.2)
-      .add(() => { cursorShow(); cursorTo('sheet-footer', 0.3, 'cubic.inOut'); }, 11.3)
+      .add(() => { focusField(null); cameraTo('sheet-footer', 1.4, 0.5, 'cubic.inOut'); }, 11.2)
+      .add(() => { cursorShow(); cursorToCenter(0.4, 'cubic.inOut'); }, 11.3)
 
       // ── Click Create (11.7) ──
       .add(() => { cursorPulse(); window.cine?.clickCreate?.(); cursorHide(); }, 11.7)
@@ -5118,6 +5130,8 @@ setTimeout(applyTerminalTags, 600);
 
   waitForMount().then(() => {
     cameraReset();
+    // Initial state: chart on 1M (per design)
+    if (window.cine?.setPerfRange) window.cine.setPerfRange('1M');
     window.cineTimeline = buildTimeline();
     window.cineTimeline.timeScale(0.5);  // play at half speed per feedback
     console.info('[cine] timeline built, base duration =', window.cineTimeline.duration().toFixed(2), 's, scaled =', (window.cineTimeline.duration() / window.cineTimeline.timeScale()).toFixed(2), 's');
