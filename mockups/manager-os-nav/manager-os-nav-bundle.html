@@ -5398,9 +5398,9 @@ setTimeout(applyTerminalTags, 600);
       .add(() => { cameraTo('field-mgmt', 2.2, 0.35, 'expo.out'); focusField('field-mgmt'); }, 8.0)
       .add(() => { cameraTo('field-min', 2.2, 0.35, 'expo.out'); focusField('field-min'); }, 9.1)
 
-      // ── Pull back to footer; cursor approaches Create button (10.6 → 11.4) ──
+      // ── Pull back to footer; cursor flies to viewport centre where Create lands (10.6 → 11.4) ──
       .add(() => { focusField(null); cameraTo('sheet-footer', 1.4, 0.7, 'expo.out'); }, 10.6)
-      .add(() => { cursorShow(); cursorTo('create-btn', 0.7, 'expo.out'); }, 10.7)
+      .add(() => { cursorShow(); cursorToCenter(0.7, 'expo.out'); }, 10.7)
 
       // ── Cursor pulses + button-press flash + clickCreate + loader (11.5) ──
       .add(() => {
