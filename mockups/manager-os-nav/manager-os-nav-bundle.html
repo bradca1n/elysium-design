@@ -5623,12 +5623,11 @@ setTimeout(applyTerminalTags, 600);
       .add(() => { window.cine.setPerfRange('1Y'); cursorPulse(); drawChartLines(); }, 3.1)
       .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1Y']), 3.1)
 
-      // ── Zoom out to wide first (3.5 → 4.0) ──
+      // ── Zoom out to wide; cursor travels across to the CTA button (3.5 → 4.7) ──
       .add(() => { cameraReset(0.5, 'expo.out'); focusChart(false); }, 3.5)
 
-      // ── Then zoom in + pan up to CTA (4.0 → 4.7) ──
-      .add(() => cameraTo('add-class-btn', 1.8, 0.7, 'expo.out'), 4.0)
-      .add(() => cursorToCenter(0.7, 'expo.out'), 4.0)
+      // ── Cursor flies to "+ Add share class" button at its natural position (4.0 → 4.7) ──
+      .add(() => cursorTo('add-class-btn', 0.7, 'expo.out'), 4.0)
 
       // ── Hold so the click reads (4.4 → 4.7) ──
       // ── Button press + sheet open (4.7) ──
