@@ -429,17 +429,7 @@
     margin-top: 22px;
   }
 
-  /* Sheet → full-width confirmation state */
-  [data-cine="sheet"].cine-confirming {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    height: 100vh !important;
-    top: 0 !important;
-    bottom: auto !important;
-    transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-                height 0.4s ease,
-                transform 0.3s ease !important;
-  }
+  /* Sheet → confirmation state (within the sheet, no widening) */
   [data-cine="sheet"].cine-confirming > *:not(.cine-sheet-confirm) {
     opacity: 0 !important;
     pointer-events: none;
@@ -5469,11 +5459,7 @@ setTimeout(applyTerminalTags, 600);
     const sheet = $('sheet');
     if (!sheet) return;
     const conf = ensureSheetConfirmContent();
-    // Override the sheet's transition to include width
-    sheet.style.transition = 'width 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.3s ease';
-    sheet.style.width = '100vw';
-    sheet.style.maxWidth = '100vw';
-    // Move from loading → confirming
+    // Swap loading → confirming, no widening
     sheet.classList.remove('cine-loading');
     sheet.classList.add('cine-confirming');
     // Play the check animation. If the JSON hasn't loaded yet, queue
@@ -5651,24 +5637,22 @@ setTimeout(applyTerminalTags, 600);
         showSheetLoading();
       }, 11.5)
 
-      // ── Cursor fades (11.7) ──
+      // ── Cursor fades + camera pans up to centre of sheet (11.7 → 12.5) ──
       .add(() => cursorHide(), 11.7)
+      .add(() => cameraTo('sheet', 1.2, 0.8, 'expo.out'), 11.7)
 
-      // ── Camera zooms out while the loader is visible (12.0 → 12.7) ──
-      .add(() => cameraReset(0.7, 'expo.out'), 12.0)
+      // ── Loader holds, then swap to confirmation inside the sheet (12.8) ──
+      .add(() => expandSheetToConfirm(), 12.8)
 
-      // ── Sheet expands to full width with confirmation (12.7) ──
-      .add(() => expandSheetToConfirm(), 12.7)
+      // ── Hold on confirmation (13.6 → 14.8) ──
+      .to({}, { duration: 1.2 }, 13.6)
 
-      // ── Hold on full-width confirmation (13.5 → 15.0) ──
-      .to({}, { duration: 1.5 }, 13.5)
+      // ── Sheet slides off-right + camera zooms out simultaneously (14.8) ──
+      .add(() => { slideSheetOff(); cameraReset(0.7, 'expo.out'); }, 14.8)
 
-      // ── Sheet slides off-right (15.0 → 15.6) ──
-      .add(() => slideSheetOff(), 15.0)
-
-      // ── Outro page fade (16.0 → 16.4) ──
+      // ── Outro page fade (15.8 → 16.2) ──
       .to('[data-page]',
-        { opacity: 0, y: -6, duration: 0.4, ease: 'cubic.in' }, 16.0);
+        { opacity: 0, y: -6, duration: 0.4, ease: 'cubic.in' }, 15.8);
 
     // ── Field fills (typewriter + dropdown) — currency removed ──
     const FEE_TIER_OPTS = ['Retail','Institutional','Seed','Platform','Bundled'];
