@@ -3215,7 +3215,10 @@ function ShareClassSheet({ open, mode, initialData, onClose, onSave }) {
         </div>
       </div>
     </React.Fragment>,
-    document.body
+    // In cinematic mode, portal to the camera host so the sheet scales with
+    // the camera (per-field tight zoom requires the sheet to be a descendant
+    // of the transformed element).
+    (window.__CINE__ && document.querySelector('.cinematic-camera-host')) || document.body
   );
 }
 
@@ -4940,6 +4943,29 @@ setTimeout(applyTerminalTags, 600);
       .fromTo(ring, { opacity: 0.7, scale: 0.6 }, { opacity: 0, scale: 1.6, duration: 0.4, ease: 'power2.out' }, 0);
   }
 
+  // ── Chart line draw-in ──
+  // After setPerfRange, the chart SVG re-renders with new paths. We animate
+  // each stroke path with stroke-dasharray so it draws in over ~500ms.
+  function drawChartLines() {
+    const chartEl = $('chart');
+    if (!chartEl) return;
+    // Wait one frame for React's re-render so we grab the NEW paths.
+    requestAnimationFrame(() => {
+      const paths = chartEl.querySelectorAll('svg path[fill="none"]');
+      paths.forEach(p => {
+        const len = p.getTotalLength();
+        if (!isFinite(len) || len === 0) return;
+        gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
+        gsap.to(p, { strokeDashoffset: 0, duration: 0.6, ease: 'cubic.out' });
+      });
+      // Filled area: fade in
+      const fills = chartEl.querySelectorAll('svg path[fill]:not([fill="none"])');
+      fills.forEach(f => {
+        gsap.fromTo(f, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: 'cubic.out' });
+      });
+    });
+  }
+
   // ── Portfolio-return number ticker ──
   function tickPortReturn(fromPct, toPct, dur = 0.35) {
     const el = $('port-return');
@@ -5019,13 +5045,13 @@ setTimeout(applyTerminalTags, 600);
       // ── Timeframe cycling 1M → 3M → 1Y (1.4 → 3.7) ── slowed to 700ms beats
       .add(() => cursorShow(), 1.4)
       .add(() => cursorTo('toggle-1M', 0.4, 'cubic.inOut'), 1.4)
-      .add(() => { window.cine.setPerfRange('1M'); cursorPulse(); }, 1.8)
+      .add(() => { window.cine.setPerfRange('1M'); cursorPulse(); drawChartLines(); }, 1.8)
       .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1M']), 1.8)
       .add(() => cursorTo('toggle-3M', 0.3, 'cubic.inOut'), 2.3)
-      .add(() => { window.cine.setPerfRange('3M'); cursorPulse(); }, 2.6)
+      .add(() => { window.cine.setPerfRange('3M'); cursorPulse(); drawChartLines(); }, 2.6)
       .add(() => tickPortReturn(PORT_RETURNS['1M'], PORT_RETURNS['3M']), 2.6)
       .add(() => cursorTo('toggle-1Y', 0.3, 'cubic.inOut'), 3.1)
-      .add(() => { window.cine.setPerfRange('1Y'); cursorPulse(); }, 3.4)
+      .add(() => { window.cine.setPerfRange('1Y'); cursorPulse(); drawChartLines(); }, 3.4)
       .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1Y']), 3.4)
 
       // ── Pan to CTA + cursor approach (3.9 → 4.5) ──
@@ -5093,7 +5119,8 @@ setTimeout(applyTerminalTags, 600);
   waitForMount().then(() => {
     cameraReset();
     window.cineTimeline = buildTimeline();
-    console.info('[cine] timeline built, duration =', window.cineTimeline.duration().toFixed(2), 's');
+    window.cineTimeline.timeScale(0.5);  // play at half speed per feedback
+    console.info('[cine] timeline built, base duration =', window.cineTimeline.duration().toFixed(2), 's, scaled =', (window.cineTimeline.duration() / window.cineTimeline.timeScale()).toFixed(2), 's');
 
     // Auto-play in regular browsers; loop for preview. Playwright/headless
     // pauses + scrubs explicitly so this is a no-op there.
