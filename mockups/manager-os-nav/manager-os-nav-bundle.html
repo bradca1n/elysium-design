@@ -277,8 +277,8 @@
   }
   #cine-cursor {
     position: fixed;
-    width: 30px;
-    height: 30px;
+    width: 45px;
+    height: 45px;
     pointer-events: none;
     z-index: 9999;
     top: 0;
@@ -293,7 +293,7 @@
   }
   #cine-cursor .cursor-ring {
     position: absolute;
-    inset: -12px;
+    inset: -18px;
     border-radius: 50%;
     border: 2px solid rgba(29,125,89,0.6);
     opacity: 0;
@@ -5058,13 +5058,13 @@ setTimeout(applyTerminalTags, 600);
     const rect = el.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
-    return gsap.to(ensureCursor(), { x: cx - 15, y: cy - 15, duration: dur, ease });
+    return gsap.to(ensureCursor(), { x: cx - 22, y: cy - 22, duration: dur, ease });
   }
   // Send cursor to viewport center — used when a parallel cameraTo is
   // bringing the target to the centre, so the cursor lands where the
   // target will be (not where it is now).
   function cursorToCenter(dur = 0.5, ease = 'cubic.inOut') {
-    return gsap.to(ensureCursor(), { x: 960 - 15, y: 540 - 15, duration: dur, ease });
+    return gsap.to(ensureCursor(), { x: 960 - 22, y: 540 - 22, duration: dur, ease });
   }
   // Dim peripheral sections of the Overview when the chart is the focus.
   // Active = chart at 100%; status panel, recent activity, share classes,
