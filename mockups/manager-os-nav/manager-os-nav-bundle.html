@@ -4959,6 +4959,19 @@ setTimeout(applyTerminalTags, 600);
   // Observed from MASTER_PORTFOLIO. Default range is 3M.
   const PORT_RETURNS = { '3M': 20.00, '1M': 6.30, '1Y': 55.00 };
 
+  // ── Typewriter helpers ──
+  // Schedule per-character setField calls onto the timeline.
+  function typeFieldOnto(tl, key, text, startAt, perChar = 0.08) {
+    for (let i = 1; i <= text.length; i++) {
+      const t = startAt + i * perChar;
+      tl.add(() => window.cine?.setField?.(key, text.slice(0, i)), t);
+    }
+  }
+  // Instant set (dropdowns / non-typewriter fields).
+  function setFieldOnto(tl, key, value, at) {
+    tl.add(() => window.cine?.setField?.(key, value), at);
+  }
+
   function buildTimeline() {
     const tl = gsap.timeline({ paused: true });
 
