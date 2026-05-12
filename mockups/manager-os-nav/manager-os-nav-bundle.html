@@ -11,6 +11,7 @@
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
 
 <style>
   :root {
@@ -412,14 +413,15 @@
     opacity: 1;
   }
   .cine-sheet-confirm .confirm-icon {
-    width: 72px; height: 72px;
-    border-radius: 50%;
-    background: var(--accent-plum);
-    color: #fff;
+    width: 200px; height: 200px;
+    margin-bottom: 16px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 24px;
+  }
+  .cine-sheet-confirm .confirm-icon svg {
+    width: 100%;
+    height: 100%;
   }
   .cine-sheet-confirm .confirm-title {
     font-size: 32px;
@@ -5342,25 +5344,42 @@ setTimeout(applyTerminalTags, 600);
       conf = document.createElement('div');
       conf.className = 'cine-sheet-confirm';
       conf.innerHTML = `
-        <div class="confirm-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
+        <div class="confirm-icon" id="cine-confirm-lottie"></div>
         <div class="confirm-title">Share class created</div>
         <div class="confirm-sub">Class B is now live and ready for subscriptions.</div>
       `;
       sheet.appendChild(conf);
+
+      // Load the lottie animation lazily, once.
+      if (window.lottie) {
+        const container = conf.querySelector('#cine-confirm-lottie');
+        const anim = window.lottie.loadAnimation({
+          container,
+          renderer: 'svg',
+          loop: false,
+          autoplay: false,
+          path: 'assets/check%20animation/glossy_check_from_video.json',
+        });
+        container.__cineLottie = anim;
+      }
     }
     return conf;
   }
   function expandSheetToConfirm() {
     const sheet = $('sheet');
     if (!sheet) return;
-    ensureSheetConfirmContent();
+    const conf = ensureSheetConfirmContent();
     // Override the sheet's transition to include width
     sheet.style.transition = 'width 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.3s ease';
     sheet.style.width = '100vw';
     sheet.style.maxWidth = '100vw';
     sheet.classList.add('cine-confirming');
+    // Play the check animation from the start
+    const lottieEl = conf?.querySelector('#cine-confirm-lottie');
+    if (lottieEl?.__cineLottie) {
+      lottieEl.__cineLottie.goToAndStop(0, true);
+      lottieEl.__cineLottie.play();
+    }
   }
   function collapseSheetConfirm() {
     const sheet = $('sheet');
