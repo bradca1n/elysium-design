@@ -389,6 +389,50 @@
     font-weight: 500;
   }
 
+  /* Sheet → full-width confirmation state */
+  [data-cine="sheet"].cine-confirming > *:not(.cine-sheet-confirm) {
+    opacity: 0 !important;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .cine-sheet-confirm {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    padding: 40px;
+  }
+  [data-cine="sheet"].cine-confirming .cine-sheet-confirm {
+    opacity: 1;
+  }
+  .cine-sheet-confirm .confirm-icon {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--accent-plum);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+  .cine-sheet-confirm .confirm-title {
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--ink-1);
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+  .cine-sheet-confirm .confirm-sub {
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+
   /* Confirmation modal */
   #cine-modal {
     position: fixed;
@@ -4639,7 +4683,9 @@ function OverviewView({ onNav }) {
           mode="create"
           initialData={null}
           onClose={() => setCineSheetOpen(false)}
-          onSave={() => setCineSheetOpen(false)}
+          /* In cinematic mode the timeline takes over after Create — keep sheet
+             open so it can expand into the confirmation state. */
+          onSave={() => {}}
         />
       )}
     </div>
@@ -5287,6 +5333,44 @@ setTimeout(applyTerminalTags, 600);
     }
   }
 
+  // ── Sheet expand to full-width confirmation state ──
+  function ensureSheetConfirmContent() {
+    const sheet = $('sheet');
+    if (!sheet) return null;
+    let conf = sheet.querySelector('.cine-sheet-confirm');
+    if (!conf) {
+      conf = document.createElement('div');
+      conf.className = 'cine-sheet-confirm';
+      conf.innerHTML = `
+        <div class="confirm-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="confirm-title">Share class created</div>
+        <div class="confirm-sub">Class B is now live and ready for subscriptions.</div>
+      `;
+      sheet.appendChild(conf);
+    }
+    return conf;
+  }
+  function expandSheetToConfirm() {
+    const sheet = $('sheet');
+    if (!sheet) return;
+    ensureSheetConfirmContent();
+    // Override the sheet's transition to include width
+    sheet.style.transition = 'width 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.3s ease';
+    sheet.style.width = '100vw';
+    sheet.style.maxWidth = '100vw';
+    sheet.classList.add('cine-confirming');
+  }
+  function collapseSheetConfirm() {
+    const sheet = $('sheet');
+    if (!sheet) return;
+    sheet.classList.remove('cine-confirming');
+    sheet.style.width = '';
+    sheet.style.maxWidth = '';
+    sheet.style.transition = '';
+  }
+
   // ── Confirmation modal ──
   let modalEl;
   function ensureModal() {
@@ -5357,14 +5441,11 @@ setTimeout(applyTerminalTags, 600);
     tl
       // ── Loop cleanup — runs on every iteration including the first ──
       .add(() => {
+        collapseSheetConfirm();
         window.cine?.closeSheet?.();
         window.cine?.resetForm?.();
         const sheet = $('sheet');
         if (sheet) sheet.style.transform = 'translateX(100%)';
-        const modal = document.getElementById('cine-modal');
-        if (modal) { modal.style.opacity = '0'; modal.style.pointerEvents = 'none'; }
-        const card = modal?.querySelector('.modal-card');
-        if (card) { card.style.transform = 'translateY(12px) scale(0.98)'; }
         const btn = $('create-btn');
         if (btn) {
           btn.classList.remove('cine-create-loading');
@@ -5394,9 +5475,12 @@ setTimeout(applyTerminalTags, 600);
       .add(() => { window.cine.setPerfRange('1Y'); cursorPulse(); drawChartLines(); }, 3.1)
       .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1Y']), 3.1)
 
-      // ── Pan to CTA — restore peripheral opacity so the CTA reads (3.7 → 4.4) ──
-      .add(() => { cameraTo('add-class-btn', 1.8, 0.7, 'expo.out'); focusChart(false); }, 3.7)
-      .add(() => cursorToCenter(0.7, 'expo.out'), 3.7)
+      // ── Zoom out to wide first (3.5 → 4.0) ──
+      .add(() => { cameraReset(0.5, 'expo.out'); focusChart(false); }, 3.5)
+
+      // ── Then zoom in + pan up to CTA (4.0 → 4.7) ──
+      .add(() => cameraTo('add-class-btn', 1.8, 0.7, 'expo.out'), 4.0)
+      .add(() => cursorToCenter(0.7, 'expo.out'), 4.0)
 
       // ── Hold so the click reads (4.4 → 4.7) ──
       // ── Button press + sheet open (4.7) ──
@@ -5441,18 +5525,16 @@ setTimeout(applyTerminalTags, 600);
       // ── Cursor fades, loader runs for ~1s (11.7) ──
       .add(() => cursorHide(), 11.7)
 
-      // ── Loader holds, then sheet closes + zoom out (12.2 → 13.0) ──
-      .add(() => { setCreateLoading(false); window.cine?.closeSheet?.(); }, 12.2)
-      .add(() => cameraReset(0.8, 'expo.out'), 12.4)
+      // ── Loader holds briefly then sheet expands to confirmation (12.2) ──
+      .add(() => { setCreateLoading(false); expandSheetToConfirm(); }, 12.2)
 
-      // ── Confirmation modal appears (13.0) ──
-      .add(() => showModal(), 13.0)
+      // ── Camera zooms back to identity while sheet expands (12.3 → 13.1) ──
+      .add(() => cameraReset(0.8, 'expo.out'), 12.3)
 
-      // ── Hold on modal (13.0 → 14.6) ──
-      .to({}, { duration: 1.6 }, 13.0)
+      // ── Hold on the full-width confirmation (13.1 → 15.0) ──
+      .to({}, { duration: 1.9 }, 13.1)
 
-      // ── Modal fades + outro (15.0 → 15.9) ──
-      .add(() => hideModal(), 15.0)
+      // ── Outro (15.5 → 15.9) ──
       .to('[data-page]',
         { opacity: 0, y: -6, duration: 0.4, ease: 'cubic.in' }, 15.5);
 
