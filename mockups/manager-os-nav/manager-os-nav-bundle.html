@@ -4995,17 +4995,19 @@ setTimeout(applyTerminalTags, 600);
       .add(() => { window.cine.setPerfRange('1Y'); cursorPulse(); }, 2.6)
       .add(() => tickPortReturn(PORT_RETURNS['3M'], PORT_RETURNS['1Y']), 2.6)
 
-      // ── Pan to CTA (3.0 → 3.6) ──
+      // ── Pan to CTA + cursor approach (3.0 → 3.6) ──
       .add(() => cameraTo('add-class-btn', 1.8, 0.6, 'quart.inOut'), 3.0)
-      .to({}, { duration: 0.3 }, 3.6)
+      .add(() => cursorTo('add-class-btn', 0.4, 'cubic.inOut'), 3.0)
 
-      // ── Sheet frame (3.9 → 4.5) — sheet beats land in Task 8 ──
+      // ── Click button + open sheet (3.6) ──
+      .add(() => { cursorPulse(); window.cine?.openCreateSheet?.(); }, 3.6)
+
+      // ── Camera reframes as sheet slides in (3.9 → 4.5) ──
       .add(() => cameraTo('sheet', 1.4, 0.6, 'cubic.inOut'), 3.9)
-      .to({}, { duration: 0.0 }, 4.5)
+      .add(() => cursorHide(), 4.2)
 
-      // ── Tighten on Identity (4.5 → 5.1) ──
+      // ── Tight zoom on Class name (4.5 → 5.1) ──
       .add(() => cameraTo('field-name', 2.2, 0.6, 'expo.out'), 4.5)
-      .to({}, { duration: 0.6 }, 5.1)
 
       // ── Field micro-pans (6.3 → 9.1) ──
       .add(() => cameraTo('field-fee', 2.2, 0.28, 'cubic.out'), 6.3)
@@ -5013,9 +5015,12 @@ setTimeout(applyTerminalTags, 600);
       .add(() => cameraTo('field-currency', 2.2, 0.28, 'cubic.out'), 8.2)
       .add(() => cameraTo('field-min', 2.2, 0.28, 'cubic.out'), 9.1)
 
-      // ── Pull back for Create (10.3 → 10.8) ──
+      // ── Pull back to footer + cursor reappears (10.3 → 10.8) ──
       .add(() => cameraTo('sheet-footer', 1.4, 0.5, 'cubic.inOut'), 10.3)
-      .to({}, { duration: 0.3 }, 10.8)
+      .add(() => { cursorShow(); cursorTo('sheet-footer', 0.3, 'cubic.inOut'); }, 10.40)
+
+      // ── Click Create (10.8) ──
+      .add(() => { cursorPulse(); window.cine?.clickCreate?.(); }, 10.8)
 
       // ── Toast emphasis placeholder (11.2 → 11.9) — Task 9 ──
       .add(() => cameraTo('sheet', 1.5, 0.4, 'expo.out'), 11.2)
@@ -5028,6 +5033,14 @@ setTimeout(applyTerminalTags, 600);
       // ── Outro placeholder (14.6 → 15.0) — Task 9 ──
       .to({}, { duration: 0.4 }, 14.6)
       .to({}, { duration: 0.0 }, 15.0);
+
+    // ── Field fills (typewriter + snap) ──
+    typeFieldOnto(tl, 'name', 'Class B', 5.10);                       // ~5.10 → 5.66
+    setFieldOnto(tl, 'feeTier', 'Institutional', 6.55);
+    typeFieldOnto(tl, 'mgmtNum', '1.50', 7.40);                       // ~7.40 → 7.72
+    typeFieldOnto(tl, 'perfNum', '20',   7.80);                       // ~7.80 → 7.96
+    setFieldOnto(tl, 'currency', 'USD', 8.55);
+    typeFieldOnto(tl, 'minInvestment', '100000', 9.40);               // ~9.40 → 9.88
 
     return tl;
   }
