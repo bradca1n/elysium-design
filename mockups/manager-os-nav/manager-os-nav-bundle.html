@@ -5522,17 +5522,17 @@ setTimeout(applyTerminalTags, 600);
         setCreateLoading(true);
       }, 11.5)
 
-      // ── Cursor fades, loader runs for ~1s (11.7) ──
+      // ── Cursor fades (11.7) ──
       .add(() => cursorHide(), 11.7)
 
-      // ── Loader holds briefly then sheet expands to confirmation (12.2) ──
-      .add(() => { setCreateLoading(false); expandSheetToConfirm(); }, 12.2)
+      // ── Halfway through loading: camera starts zooming out (11.9 → 12.6) ──
+      .add(() => cameraReset(0.7, 'expo.out'), 11.9)
 
-      // ── Camera zooms back to identity while sheet expands (12.3 → 13.1) ──
-      .add(() => cameraReset(0.8, 'expo.out'), 12.3)
+      // ── Loader ends + sheet slides across to full width (12.6) ──
+      .add(() => { setCreateLoading(false); expandSheetToConfirm(); }, 12.6)
 
-      // ── Hold on the full-width confirmation (13.1 → 15.0) ──
-      .to({}, { duration: 1.9 }, 13.1)
+      // ── Hold on the full-width confirmation (13.3 → 15.0) ──
+      .to({}, { duration: 1.7 }, 13.3)
 
       // ── Outro (15.5 → 15.9) ──
       .to('[data-page]',
