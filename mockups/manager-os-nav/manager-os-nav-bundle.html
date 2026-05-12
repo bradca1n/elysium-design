@@ -338,6 +338,17 @@
   /* Hide Save Draft in cinematic mode so Create gets full width */
   body.cine-active [data-cine="save-draft"] { display: none !important; }
 
+  /* Active input field — white border + soft halo glow */
+  [data-cine^="field-"].cine-active-input {
+    border-color: #ffffff !important;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.06),
+      0 0 0 4px rgba(255,255,255,0.65),
+      0 12px 32px rgba(0,0,0,0.08) !important;
+    background: var(--bg-canvas) !important;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease !important;
+  }
+
   /* Create-button loader state */
   @keyframes cine-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   .cine-create-loading {
@@ -3269,7 +3280,7 @@ function ShareClassSheet({ open, mode, initialData, onClose, onSave }) {
           {/* Dealing & Liquidity */}
           <div style={sectionLabelS}>Dealing &amp; Liquidity</div>
           <div style={groupS}>
-            <FloatingField label="Minimum investment" cineKey="field-min" type="number" min="0" prefix={prefix} value={form.minInvestment} onChange={set('minInvestment')}/>
+            <FloatingField label="Minimum investment" cineKey="field-min" type={window.__CINE__ ? "text" : "number"} min="0" prefix={prefix} value={form.minInvestment} onChange={set('minInvestment')}/>
           </div>
           <div style={{...groupS, ...rowS}}>
             <div style={{display:'grid', gridTemplateColumns:'1fr 110px', gap:8}}>
@@ -5093,6 +5104,10 @@ setTimeout(applyTerminalTags, 600);
       if (!el) return;
       gsap.to(el, { opacity: activeName == null ? 1 : 0.20, duration: 0.3, ease: 'cubic.out' });
     });
+    // Highlight active field — white border + halo glow
+    document.querySelectorAll('[data-cine^="field-"]').forEach(el => {
+      el.classList.toggle('cine-active-input', el.getAttribute('data-cine') === activeName);
+    });
   }
   function cursorShow() { return gsap.to(ensureCursor(), { opacity: 1, duration: 0.2 }); }
   function cursorHide() { return gsap.to(ensureCursor(), { opacity: 0, duration: 0.2 }); }
@@ -5380,7 +5395,11 @@ setTimeout(applyTerminalTags, 600);
 
     typeFieldOnto(tl, 'mgmtNum', '1.50', 8.30);                       // ~8.30 → 8.62
     typeFieldOnto(tl, 'perfNum', '20',   8.70);                       // ~8.70 → 8.86
-    typeFieldOnto(tl, 'minInvestment', '100000', 9.40);               // ~9.40 → 9.88
+    // Min investment — feed pre-formatted strings so commas appear naturally
+    const MIN_STEPS = ['1', '10', '100', '1,000', '10,000', '100,000'];
+    MIN_STEPS.forEach((s, i) => {
+      tl.add(() => window.cine?.setField?.('minInvestment', s), 9.40 + (i + 1) * 0.10);
+    });
 
     return tl;
   }
