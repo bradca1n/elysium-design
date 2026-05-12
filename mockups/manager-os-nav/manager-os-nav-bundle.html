@@ -5282,12 +5282,29 @@ setTimeout(applyTerminalTags, 600);
   }
 
   // ── Typewriter helpers ──
-  // Schedule per-character setField calls onto the timeline.
-  function typeFieldOnto(tl, key, text, startAt, perChar = 0.08) {
+  // Schedule per-character setField calls onto the timeline. Also focus
+  // the input during typing so the browser shows a caret — makes the
+  // motion read as live typing rather than a static value swap.
+  function typeFieldOnto(tl, key, text, startAt, perChar = 0.05) {
+    // Focus the input at the start, blur at the end.
+    tl.add(() => {
+      const wrapper = $(key);
+      const input = wrapper?.querySelector('input, select');
+      if (input && typeof input.focus === 'function') {
+        try { input.focus({ preventScroll: true }); } catch (e) {}
+      }
+    }, startAt - 0.05);
     for (let i = 1; i <= text.length; i++) {
       const t = startAt + i * perChar;
       tl.add(() => window.cine?.setField?.(key, text.slice(0, i)), t);
     }
+    tl.add(() => {
+      const wrapper = $(key);
+      const input = wrapper?.querySelector('input, select');
+      if (input && typeof input.blur === 'function') {
+        try { input.blur(); } catch (e) {}
+      }
+    }, startAt + text.length * perChar + 0.1);
   }
   // Instant set (dropdowns / non-typewriter fields).
   function setFieldOnto(tl, key, value, at) {
@@ -5397,7 +5414,7 @@ setTimeout(applyTerminalTags, 600);
     // Min investment — feed pre-formatted strings so commas appear naturally
     const MIN_STEPS = ['1', '10', '100', '1,000', '10,000', '100,000'];
     MIN_STEPS.forEach((s, i) => {
-      tl.add(() => window.cine?.setField?.('minInvestment', s), 9.40 + (i + 1) * 0.10);
+      tl.add(() => window.cine?.setField?.('minInvestment', s), 9.40 + (i + 1) * 0.08);
     });
 
     return tl;
