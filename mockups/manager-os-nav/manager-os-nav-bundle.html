@@ -4819,15 +4819,58 @@ setTimeout(applyTerminalTags, 600);
 </script>
 
 <script id="cinematic-mode">
-  // Cinematic mode entry. Activates only when ?cine=1.
-  // Built incrementally — see docs/superpowers/plans/2026-05-12-manager-os-cinematic-plan.md
-  (function() {
-    if (!window.__CINE__) return;
-    console.info('[cine] activated');
-    // TODO: camera primitive (Task 4)
-    // TODO: state bridge (Task 5)
-    // TODO: master timeline (Task 6+)
-  })();
+// Cinematic mode entry. Activates only when ?cine=1.
+// See docs/superpowers/plans/2026-05-12-manager-os-cinematic-plan.md
+(function() {
+  if (!window.__CINE__) return;
+  console.info('[cine] activated');
+
+  const VIEWPORT = { w: 1920, h: 1080 };
+
+  // Resolve a data-cine target. Returns the element, or null if not mounted.
+  function $(name) {
+    return document.querySelector(`[data-cine="${name}"]`);
+  }
+
+  // Camera primitive. Centres target in 1920×1080 frame at given scale.
+  function cameraTo(target, scale = 1, dur = 0.6, ease = 'expo.out') {
+    const el = typeof target === 'string' ? $(target) : target;
+    if (!el) { console.warn('[cine] cameraTo: target not found', target); return; }
+
+    // Read the target's bounding rect in unscaled coordinates. To do this
+    // reliably even mid-tween, we temporarily neutralise the current camera
+    // transform, measure, then restore.
+    const camEl = document.querySelector('.cinematic-camera');
+    const prevTransform = camEl.style.transform;
+    camEl.style.transform = '';
+    const rect = el.getBoundingClientRect();
+    camEl.style.transform = prevTransform;
+
+    const tx = rect.left + rect.width / 2;
+    const ty = rect.top + rect.height / 2;
+    const x = VIEWPORT.w / 2 - tx * scale;
+    const y = VIEWPORT.h / 2 - ty * scale;
+
+    return gsap.to(camEl, { scale, x, y, duration: dur, ease });
+  }
+
+  // Snap camera to a target without animation.
+  function cameraSnap(target, scale = 1) {
+    const el = typeof target === 'string' ? $(target) : target;
+    if (!el) return;
+    const camEl = document.querySelector('.cinematic-camera');
+    const prevTransform = camEl.style.transform;
+    camEl.style.transform = '';
+    const rect = el.getBoundingClientRect();
+    camEl.style.transform = prevTransform;
+    const tx = rect.left + rect.width / 2;
+    const ty = rect.top + rect.height / 2;
+    gsap.set(camEl, { scale, x: VIEWPORT.w / 2 - tx * scale, y: VIEWPORT.h / 2 - ty * scale });
+  }
+
+  // Expose for console use during development.
+  window.cineCamera = { cameraTo, cameraSnap, $ };
+})();
 </script>
 </body>
 </html>
