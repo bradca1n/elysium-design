@@ -236,7 +236,7 @@
   }
   table tbody tr:hover td { background: var(--glass-bg) !important; }
 
-  /* KPI tile — refined terminal style with numbered badge */
+  /* KPI tile — refined terminal style */
   [data-kpi-grid] > * {
     background: var(--bg-card) !important;
     backdrop-filter: none !important;
@@ -245,15 +245,6 @@
     position: relative !important;
   }
   body:not(.dark) [data-kpi-grid] > * { border: 1px solid var(--line-1) !important; }
-  [data-kpi-grid] > *::before {
-    content: attr(data-kpi-num);
-    position: absolute; top: 14px; right: 14px;
-    width: 18px; height: 18px;
-    border: 1px solid var(--line-2); border-radius: 4px;
-    color: var(--ink-3); font-size: 9.5px; font-weight: 600;
-    display: flex; align-items: center; justify-content: center;
-  }
-  [data-kpi-grid] > *:not([data-kpi-num])::before { display: none; }
   [data-kpi-grid] > * > div:first-child {
     font-size: 11.5px !important;
     color: var(--ink-3) !important;
@@ -4892,8 +4883,112 @@ Object.assign(window, { OverviewView });
 const aBtnOutline = { background:'var(--bg-canvas)',border:'1px solid var(--line-2)',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,color:'var(--ink-1)',display:'inline-flex',alignItems:'center',gap:6,fontFamily:'inherit' };
 const aBtnPrimary = { background:'var(--accent-plum)',color:'var(--accent-plum-on)',border:'none',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,fontFamily:'inherit' };
 
+const BellSnoozeIcon = (p={}) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}>
+    <path d="M6 9a5 5 0 0 1 10 0c0 5 2 7 2 7H4s2-2 2-7Z"/>
+    <path d="M9 19a1.94 1.94 0 0 0 4 0"/>
+    <path d="M16 3h5l-5 5h5"/>
+  </svg>
+);
+
+function SnoozeModal({ item, onClose, onConfirm }) {
+  const [choice, setChoice] = React.useState('1h');
+  const [notify, setNotify] = React.useState(true);
+
+  React.useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  if (!item) return null;
+
+  const options = [
+    { k: '1h',       label: '1 hour',                 sub: 'Returns at the top of the next hour' },
+    { k: '4h',       label: '4 hours',                sub: 'Returns later today' },
+    { k: 'tomorrow', label: 'Until tomorrow morning', sub: 'Returns at 08:00 local' },
+    { k: 'dealing',  label: 'Until next dealing',     sub: 'Returns Mon 04 May 17:00 UTC' },
+    { k: 'custom',   label: 'Custom…',                sub: 'Pick a specific date and time' },
+  ];
+
+  return (
+    <React.Fragment>
+      <div onClick={onClose} style={{
+        position:'fixed',inset:0,background:'rgba(10,10,12,0.45)',
+        zIndex:80,animation:'navFade 0.18s ease-out both',
+      }}/>
+      <div role="dialog" aria-modal="true" style={{
+        position:'fixed',top:'50%',left:'50%',transform:'translate(-50%,-50%)',
+        width:'min(420px, 94vw)',background:'var(--bg-canvas)',
+        border:'1px solid var(--line-1)',borderRadius:14,
+        boxShadow:'0 24px 64px rgba(0,0,0,0.22), 0 2px 6px rgba(0,0,0,0.08)',
+        zIndex:81,padding:'22px 22px 18px',
+        animation:'pageRise 0.22s cubic-bezier(0.22, 1, 0.36, 1) both',
+      }}>
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:4}}>
+          <span style={{
+            width:30,height:30,borderRadius:8,
+            background:'var(--bg-subtle)',color:'var(--ink-1)',
+            display:'inline-flex',alignItems:'center',justifyContent:'center',flexShrink:0,
+          }}>
+            <BellSnoozeIcon style={{width:16,height:16}}/>
+          </span>
+          <div style={{fontSize:15,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>Snooze action</div>
+        </div>
+        <div style={{fontSize:12.5,color:'var(--ink-2)',marginBottom:18,paddingLeft:40}}>{item.title}</div>
+
+        <div style={{display:'flex',flexDirection:'column',gap:6,marginBottom:16}}>
+          {options.map(o => {
+            const active = choice === o.k;
+            return (
+              <label key={o.k} style={{
+                display:'flex',alignItems:'center',gap:12,
+                padding:'10px 12px',borderRadius:8,cursor:'pointer',
+                border: `1px solid ${active ? 'var(--ink-1)' : 'var(--line-1)'}`,
+                background: active ? 'var(--bg-subtle)' : 'var(--bg-canvas)',
+                transition:'background 0.12s, border-color 0.12s',
+              }}>
+                <input type="radio" name="snooze" checked={active} onChange={()=>setChoice(o.k)} style={{
+                  width:14,height:14,accentColor:'var(--ink-1)',margin:0,flexShrink:0,
+                }}/>
+                <div style={{minWidth:0,flex:1}}>
+                  <div style={{fontSize:13,fontWeight:500,color:'var(--ink-1)'}}>{o.label}</div>
+                  <div style={{fontSize:11.5,color:'var(--ink-3)',marginTop:1}}>{o.sub}</div>
+                </div>
+              </label>
+            );
+          })}
+        </div>
+
+        <label style={{display:'flex',alignItems:'center',gap:10,padding:'8px 0 16px',cursor:'pointer'}}>
+          <input type="checkbox" checked={notify} onChange={e=>setNotify(e.target.checked)} style={{
+            width:14,height:14,accentColor:'var(--ink-1)',margin:0,
+          }}/>
+          <span style={{fontSize:12.5,color:'var(--ink-2)'}}>Bring back early if status changes</span>
+        </label>
+
+        <div style={{display:'flex',justifyContent:'flex-end',gap:8,borderTop:'1px solid var(--line-1)',paddingTop:14}}>
+          <button onClick={onClose} style={aBtnOutline}>Cancel</button>
+          <button onClick={()=>onConfirm(item, choice, notify)} style={aBtnPrimary}>Snooze</button>
+        </div>
+      </div>
+    </React.Fragment>
+  );
+}
+
 function ActionsView({ onNav }) {
   const [filter, setFilter] = React.useState('all');
+  const [snoozing, setSnoozing] = React.useState(null);
+  const [snoozedIds, setSnoozedIds] = React.useState(() => new Set());
+
+  const handleConfirm = (item, choice, notify) => {
+    setSnoozedIds(prev => {
+      const next = new Set(prev);
+      next.add(item.id);
+      return next;
+    });
+    setSnoozing(null);
+  };
 
   const items = [
     {
@@ -5079,7 +5174,20 @@ function ActionsView({ onNav }) {
                 <div style={{fontSize:13,color:'var(--ink-2)'}}>{item.detail}</div>
               </div>
               <div style={{display:'flex',alignItems:'center',gap:8}}>
-                <button style={{...aBtnOutline,height:32,fontSize:12.5}}>Snooze</button>
+                <button
+                  onClick={()=>setSnoozing(item)}
+                  aria-label="Snooze"
+                  title="Snooze"
+                  style={{
+                    width:32,height:32,padding:0,borderRadius:8,
+                    border:'1px solid var(--line-2)',background:'var(--bg-canvas)',
+                    color: snoozedIds.has(item.id) ? 'var(--accent-plum)' : 'var(--ink-2)',
+                    cursor:'pointer',display:'inline-flex',alignItems:'center',justifyContent:'center',
+                    fontFamily:'inherit',
+                  }}
+                >
+                  <BellSnoozeIcon style={{width:16,height:16}}/>
+                </button>
                 <button onClick={()=>onNav(item.route)} style={{...aBtnPrimary,height:32,fontSize:12.5,display:'inline-flex',alignItems:'center',gap:6}}>
                   {item.cta}
                   <Icon.arrowRight style={{width:12,height:12}}/>
@@ -5096,6 +5204,8 @@ function ActionsView({ onNav }) {
       </div>
 
       <div style={{marginTop:16,fontSize:12,color:'var(--ink-3)'}}>Placeholder content · live signals will be wired to NAV strikes, dealing windows, custody balances and period close.</div>
+
+      <SnoozeModal item={snoozing} onClose={()=>setSnoozing(null)} onConfirm={handleConfirm}/>
     </div>
   );
 }
@@ -5464,6 +5574,8 @@ function App() {
           <div className="row">
             <label>Jump to</label>
             <select className="tweak-select" value={route} onChange={e=>setRoute(e.target.value)}>
+              <option value="home">Home</option>
+              <option value="actions">Actions</option>
               <option value="overview">Overview</option>
               <option value="nav">NAV</option>
               <option value="order-book">Order book</option>
@@ -5487,14 +5599,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 
 <script>
 // Terminal-theme post-mount tagger:
-// - numbers each KPI tile within its grid (data-kpi-num="01"…)
 // - tags the duration profile bar (data-duration-bar) so dark CSS can recolor it
 function applyTerminalTags() {
-  document.querySelectorAll('[data-kpi-grid]').forEach(grid => {
-    Array.from(grid.children).forEach((tile, i) => {
-      tile.setAttribute('data-kpi-num', String(i + 1).padStart(2, '0'));
-    });
-  });
   // Duration profile: a flex row of 3 segments inside Share Register summary charts
   document.querySelectorAll('div').forEach(el => {
     if (el.dataset.durationBar) return;
@@ -6196,22 +6302,18 @@ setTimeout(applyTerminalTags, 600);
       tl.add(() => window.cine?.setField?.('minInvestment', s), 9.80 + (i + 1) * 0.08);
     });
 
-    // Lower-section fields — populate instantly just before the camera pans
-    // down (10.95), so they're already filled by the time they hit 100% opacity.
-    // Also scroll the sheet body to the bottom so Lock-up / Notice / Dealing /
-    // Voting are inside the visible viewport above the footer (otherwise body's
-    // overflowY:auto leaves them below the scroll fold and the camera frames
-    // empty space where they should be).
+    // Populate lower-section fields + scroll body BEFORE the field-min camera
+    // beat (t=9.5). With body scrolled so Voting sits near body bottom, the
+    // field-min zoom shows Min investment mid-body with Lock-up / Notice /
+    // Dealing / Voting in frame below it (instead of cropping straight to
+    // the Create Class footer). Same scroll position carries through to the
+    // camera-to-footer beat at t=11.
     tl.add(() => {
       window.cine?.setField?.('lockupNum', '12');
       window.cine?.setField?.('noticeNum', '30');
       window.cine?.setField?.('dealing', 'Monthly');
       const sheet = document.querySelector('[data-cine="sheet"]');
       if (sheet) {
-        // Body is the scrollable mid section between topbar (child 0) and footer.
-        // Scroll so the Voting row sits near the bottom of body's visible area:
-        // Lock-up / Notice / Dealing / Voting end up in the camera frame above
-        // the footer, with the Advanced section just out of view below.
         const body = sheet.children[1];
         const votingRow = Array.from(body?.children || [])
           .find(r => r.textContent && r.textContent.includes('Shareholders can vote'));
@@ -6220,7 +6322,7 @@ setTimeout(applyTerminalTags, 600);
           body.scrollTop = Math.max(0, target);
         }
       }
-    }, 10.95);
+    }, 9.4);
 
     return tl;
   }
