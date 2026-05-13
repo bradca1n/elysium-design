@@ -830,7 +830,7 @@ function Navbar({ onNav, route }) {
   }, [menuOpen]);
   // Breadcrumb label for the active route
   const routeLabels = {
-    'home': 'Home', 'actions': 'Actions', 'communication': 'Communication',
+    'home': 'Home', 'actions': 'Actions',
     'overview': 'Overview', 'nav': 'NAV', 'collateral': 'Collateral & Treasury',
     'share-register': 'Share Register', 'share-classes': 'Share Classes', 'economics': 'Economics',
     'pnl': 'Profit & Loss', 'balance-sheet': 'Balance Sheet', 'reconciliation': 'Reconciliation log',
@@ -874,7 +874,7 @@ function Navbar({ onNav, route }) {
         )}
       </div>
       <div style={{display:'flex',alignItems:'center',gap:14}}>
-        {inFund && <NextDealingCountdown/>}
+        {(inFund || route === 'home') && <NextDealingCountdown/>}
         <button style={{
           display: 'inline-flex', alignItems: 'center', gap: 8,
           height: 32, padding: '0 12px', borderRadius: 8,
@@ -974,7 +974,6 @@ function Sidebar({ route, onNav }) {
   const primary = [
     { id: 'home', label: 'Home', icon: Icon.home },
     { id: 'actions', label: 'Actions', icon: Icon.zap },
-    { id: 'communication', label: 'Communication', icon: Icon.chat },
   ];
   // NAV children — sub-nav under NAV item
   const navChildren = [
@@ -4886,6 +4885,415 @@ Object.assign(window, { OverviewView });
 
 </script>
 
+<script type="text/babel" data-presets="env,react" data-source="views-actions.jsx">
+/* Actions view — placeholder notifications centre.
+   Daily operations queue, prioritised. Each item routes to its work surface. */
+
+const aBtnOutline = { background:'var(--bg-canvas)',border:'1px solid var(--line-2)',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,color:'var(--ink-1)',display:'inline-flex',alignItems:'center',gap:6,fontFamily:'inherit' };
+const aBtnPrimary = { background:'var(--accent-plum)',color:'var(--accent-plum-on)',border:'none',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,fontFamily:'inherit' };
+
+function ActionsView({ onNav }) {
+  const [filter, setFilter] = React.useState('all');
+
+  const items = [
+    {
+      id: 'recon-30apr',
+      priority: 'high',
+      category: 'NAV',
+      title: 'Verify 30 Apr NAV strike',
+      detail: 'Strike posted at 16:00 UTC · 5 of 6 venue checks complete. Binance dust variance pending review.',
+      cta: 'Open reconciliation',
+      route: 'reconciliation',
+      received: '12 min ago',
+    },
+    {
+      id: 'subs-pending',
+      priority: 'high',
+      category: 'Dealings',
+      title: 'Approve 3 subscription orders',
+      detail: '$425,000 across Class A and Class C · cutoff Sun 03 May 17:00 UTC.',
+      cta: 'Open order book',
+      route: 'order-book',
+      received: '34 min ago',
+    },
+    {
+      id: 'bs-signoff',
+      priority: 'high',
+      category: 'Period close',
+      title: 'Sign off April balance sheet',
+      detail: 'Books balance · $0 variance · last verified 30 Apr 16:02 UTC.',
+      cta: 'Open balance sheet',
+      route: 'balance-sheet',
+      received: '2 hr ago',
+    },
+    {
+      id: 'perf-fee-classc',
+      priority: 'medium',
+      category: 'Economics',
+      title: 'Crystallise Class C performance fee',
+      detail: 'Class C above HWM · $156,800 accrued for the period.',
+      cta: 'Open economics',
+      route: 'economics',
+      received: '4 hr ago',
+    },
+    {
+      id: 'usd-coverage',
+      priority: 'medium',
+      category: 'Treasury',
+      title: 'USD coverage below 30-day target',
+      detail: 'Free cash covers 22 days vs. 30-day policy floor. Consider rebalancing from posted collateral.',
+      cta: 'Open treasury',
+      route: 'collateral',
+      received: 'Today',
+    },
+    {
+      id: 'lockup-ending',
+      priority: 'medium',
+      category: 'Share register',
+      title: 'Lock-up ends for 4 holders this week',
+      detail: 'Combined $2.1M moves from Locked → Available between 06 May and 10 May.',
+      cta: 'Open share register',
+      route: 'share-register',
+      received: 'Today',
+    },
+    {
+      id: 'class-d-draft',
+      priority: 'low',
+      category: 'Share classes',
+      title: 'Class D draft awaiting activation',
+      detail: 'Term sheet drafted · fees and gates set · no investors assigned.',
+      cta: 'Open share classes',
+      route: 'share-classes',
+      received: 'Yesterday',
+    },
+    {
+      id: 'q-report',
+      priority: 'low',
+      category: 'Reporting',
+      title: 'Quarterly performance report ready for review',
+      detail: 'Draft generated from period P&L · 12 pages · investor letter pending sign-off.',
+      cta: 'Open profit & loss',
+      route: 'pnl',
+      received: 'Yesterday',
+    },
+    {
+      id: 'statements',
+      priority: 'low',
+      category: 'Investor comms',
+      title: '124 monthly statements queued',
+      detail: 'Statements generated for all active holders · awaiting batch send.',
+      cta: 'Review queue',
+      route: 'share-register',
+      received: '2 days ago',
+    },
+  ];
+
+  const counts = {
+    all: items.length,
+    high: items.filter(i => i.priority === 'high').length,
+    medium: items.filter(i => i.priority === 'medium').length,
+    low: items.filter(i => i.priority === 'low').length,
+  };
+
+  const filtered = filter === 'all' ? items : items.filter(i => i.priority === filter);
+
+  const priorityCfg = {
+    high:   { bg: '#FFF2F0', fg: '#a3261c', border: '#F5C2BC', label: 'High',   dot: '#e13733' },
+    medium: { bg: '#FFF6E6', fg: '#8A5A10', border: '#F5E2B8', label: 'Medium', dot: '#d4a017' },
+    low:    { bg: 'var(--green-50)', fg: 'var(--green-700)', border: 'var(--green-200)', label: 'Low',    dot: 'var(--green-600)' },
+  };
+
+  return (
+    <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
+      <div style={{display:'flex',alignItems:'flex-end',justifyContent:'space-between',padding:'4px 0 32px',gap:24,flexWrap:'wrap'}}>
+        <div>
+          <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>Actions</div>
+          <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Daily operations needing your attention, prioritised.</div>
+        </div>
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
+          <button style={aBtnOutline}>Mark all read</button>
+          <button style={aBtnOutline}>Snooze settings</button>
+        </div>
+      </div>
+
+      <div data-kpi-grid style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:80}}>
+        {[
+          { l: 'Open actions',       v: String(counts.all),    s: 'Across all priorities' },
+          { l: 'High priority',      v: String(counts.high),   s: 'Awaiting your decision' },
+          { l: 'Awaiting sign-off',  v: '2',                   s: 'Period close · NAV strike' },
+          { l: 'Resolved this week', v: '14',                  s: 'Avg time to action 38 min' },
+        ].map((k,i) => (
+          <div key={i}>
+            <div>{k.l}</div>
+            <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums'}}>{k.v}</div>
+            <div style={{fontSize:13}}>{k.s}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16,gap:16,flexWrap:'wrap'}}>
+        <div style={{display:'inline-flex',background:'var(--bg-subtle)',borderRadius:8,padding:2,gap:2}}>
+          {[
+            { k: 'all',    l: `All · ${counts.all}` },
+            { k: 'high',   l: `High · ${counts.high}` },
+            { k: 'medium', l: `Medium · ${counts.medium}` },
+            { k: 'low',    l: `Low · ${counts.low}` },
+          ].map(t => (
+            <button key={t.k} onClick={()=>setFilter(t.k)} style={{
+              border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,
+              fontSize:12,fontWeight:500,fontFamily:'inherit',
+              background: filter===t.k ? 'var(--bg-canvas)' : 'transparent',
+              color: filter===t.k ? 'var(--ink-1)' : 'var(--ink-2)',
+              boxShadow: filter===t.k ? '0 1px 2px rgba(0,0,0,0.06)' : 'none',
+            }}>{t.l}</button>
+          ))}
+        </div>
+        <div style={{fontSize:12,color:'var(--ink-3)'}}>Newest first · auto-refresh every 60s</div>
+      </div>
+
+      <div style={{display:'flex',flexDirection:'column',gap:8}}>
+        {filtered.map(item => {
+          const p = priorityCfg[item.priority];
+          return (
+            <div key={item.id} data-row style={{
+              display:'grid',
+              gridTemplateColumns:'14px 1fr auto',
+              alignItems:'center',gap:20,
+              padding:'18px 22px',
+              background:'var(--bg-card)',
+              border:'1px solid var(--line-1)',
+              borderRadius:10,
+            }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='var(--bg-card)'}>
+              <span style={{width:8,height:8,borderRadius:'50%',background:p.dot,display:'inline-block'}}/>
+              <div style={{minWidth:0}}>
+                <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6,flexWrap:'wrap'}}>
+                  <span style={{
+                    display:'inline-flex',alignItems:'center',
+                    padding:'2px 10px',borderRadius:999,fontSize:11.5,fontWeight:500,
+                    background:p.bg,color:p.fg,border:`1px solid ${p.border}`,
+                  }}>{p.label}</span>
+                  <span style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>{item.category}</span>
+                  <span style={{fontSize:11.5,color:'var(--ink-3)'}}>· {item.received}</span>
+                </div>
+                <div style={{fontSize:14,fontWeight:600,color:'var(--ink-1)',marginBottom:4}}>{item.title}</div>
+                <div style={{fontSize:13,color:'var(--ink-2)'}}>{item.detail}</div>
+              </div>
+              <div style={{display:'flex',alignItems:'center',gap:8}}>
+                <button style={{...aBtnOutline,height:32,fontSize:12.5}}>Snooze</button>
+                <button onClick={()=>onNav(item.route)} style={{...aBtnPrimary,height:32,fontSize:12.5,display:'inline-flex',alignItems:'center',gap:6}}>
+                  {item.cta}
+                  <Icon.arrowRight style={{width:12,height:12}}/>
+                </button>
+              </div>
+            </div>
+          );
+        })}
+        {filtered.length === 0 && (
+          <div style={{padding:'48px 16px',textAlign:'center',color:'var(--ink-3)',fontSize:13,border:'1px dashed var(--line-2)',borderRadius:10}}>
+            No actions at this priority. You're caught up.
+          </div>
+        )}
+      </div>
+
+      <div style={{marginTop:16,fontSize:12,color:'var(--ink-3)'}}>Placeholder content · live signals will be wired to NAV strikes, dealing windows, custody balances and period close.</div>
+    </div>
+  );
+}
+
+Object.assign(window, { ActionsView });
+
+</script>
+
+<script type="text/babel" data-presets="env,react" data-source="views-home.jsx">
+/* Home view — multi-fund manager landing.
+   Greeting + headline KPIs + funds list + recent updates + orders. */
+
+const hBtnOutline = { background:'var(--bg-canvas)',border:'1px solid var(--line-2)',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,color:'var(--ink-1)',display:'inline-flex',alignItems:'center',gap:6,fontFamily:'inherit' };
+
+const FUND_GRADIENTS = {
+  'pod-crypto': 'radial-gradient(circle at 30% 30%,#E9D5FF 0%,transparent 45%),radial-gradient(circle at 70% 35%,#BFDBFE 0%,transparent 50%),radial-gradient(circle at 50% 75%,#FCA5A5 0%,transparent 55%),linear-gradient(135deg,#C4B5FD 0%,#A5B4FC 55%,#FBCFE8 100%)',
+  'pod-securities': 'radial-gradient(circle at 30% 30%,#CFE9DA 0%,transparent 45%),radial-gradient(circle at 70% 35%,#9DA0A4 0%,transparent 55%),radial-gradient(circle at 50% 75%,#1B1E24 0%,transparent 70%),linear-gradient(135deg,#2F333B 0%,#82858B 60%,#E4E3DE 100%)',
+};
+
+function HomeView({ onNav }) {
+  const greeting = (() => {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good morning';
+    if (h < 18) return 'Good afternoon';
+    return 'Good evening';
+  })();
+
+  const funds = [
+    {
+      id: 'pod-crypto',
+      name: 'POD Crypto Fund',
+      status: 'Active',
+      aum: '$100,409,766',
+      change: '+2.1%',
+      changeAbs: '+$2,800,195',
+    },
+    {
+      id: 'pod-securities',
+      name: 'POD Securities Fund',
+      status: 'Active',
+      aum: '$50,409,766',
+      change: '+1.0%',
+      changeAbs: '+$500,409',
+    },
+  ];
+
+  const updates = [
+    { ts: 'Today, 3:20 PM', text: 'NAV updated: POD Crypto Fund, 100,409,766.29 USD', route: 'nav' },
+    { ts: 'Today, 3:20 PM', text: 'Management fees collected: POD Crypto Fund, 40,200.00 USD', route: 'economics' },
+    { ts: 'Today, 3:20 PM', text: 'Adjustment applied: POD Securities Fund, Class A, Securities', route: 'reconciliation' },
+  ];
+
+  const orders = [
+    { date: 'Dec 12, 2025', type: 'Subscription', fund: 'POD Crypto Fund', amount: '$950,000',  status: 'pending' },
+    { date: 'Dec 12, 2025', type: 'Redemption',   fund: 'POD Crypto Fund', amount: '$350,000',  status: 'settled' },
+    { date: 'Dec 10, 2025', type: 'Subscription', fund: 'POD Crypto Fund', amount: '$1,500,000', status: 'pending' },
+    { date: 'Dec 09, 2025', type: 'Redemption',   fund: 'POD Crypto Fund', amount: '$600,000',  status: 'settled' },
+    { date: 'Dec 09, 2025', type: 'Subscription', fund: 'POD Crypto Fund', amount: '$1,100,000', status: 'settled' },
+  ];
+
+  return (
+    <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
+      {/* Header */}
+      <div style={{display:'flex',alignItems:'flex-end',justifyContent:'space-between',padding:'4px 0 32px',gap:24,flexWrap:'wrap'}}>
+        <div className="serif-title" style={{fontSize:32,letterSpacing:0,color:'var(--ink-1)'}}>{greeting}, Riko</div>
+        <div style={{display:'flex',gap:8}}>
+          <button style={hBtnOutline}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="8" r="4"/><path d="M3 21a6 6 0 0 1 12 0M19 8v6M16 11h6"/></svg>
+            Invite investor
+          </button>
+          <button aria-label="More" style={{width:34,height:34,border:'1px solid var(--line-2)',background:'var(--bg-canvas)',borderRadius:8,cursor:'pointer',color:'var(--ink-2)',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      {/* KPIs — 2:1:1 split */}
+      <div data-kpi-grid style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr',gap:8,marginBottom:64}}>
+        <div>
+          <div>Total AUM</div>
+          <div style={{fontSize:36,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>$150,819,532</div>
+          <div style={{fontSize:13}}>
+            <span style={{color:'var(--pos)',fontWeight:500}}>+3.1%</span> <span style={{color:'var(--ink-3)'}}>($4,524,585)</span>
+          </div>
+        </div>
+        <div>
+          <div>Pending orders</div>
+          <div style={{fontSize:36,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>5</div>
+          <div style={{fontSize:13}}>1 sell order</div>
+        </div>
+        <div onClick={()=>onNav('actions')} style={{cursor:'pointer'}}>
+          <div>Needs action</div>
+          <div style={{fontSize:36,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color:'var(--neg)'}}>3</div>
+          <div style={{fontSize:13}}>3 active issues</div>
+        </div>
+      </div>
+
+      {/* Funds */}
+      <div style={{marginBottom:64}}>
+        <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',color:'var(--ink-1)',marginBottom:20}}>Funds</div>
+        <div style={{display:'flex',flexDirection:'column',gap:8}}>
+          {funds.map(f => {
+            const positive = f.change.startsWith('+');
+            return (
+              <div key={f.id} onClick={()=>onNav('overview')} data-row style={{
+                display:'grid',gridTemplateColumns:'auto 1fr auto auto',alignItems:'center',gap:20,
+                padding:'16px 20px',background:'var(--bg-card)',
+                border:'1px solid var(--line-1)',borderRadius:10,cursor:'pointer',
+              }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='var(--bg-card)'}>
+                <div style={{width:44,height:44,borderRadius:'50%',background:FUND_GRADIENTS[f.id],flexShrink:0}}/>
+                <div style={{minWidth:0}}>
+                  <div style={{fontSize:15,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>{f.name}</div>
+                  <div style={{fontSize:12,color:'var(--ink-3)',marginTop:2}}>{f.status}</div>
+                </div>
+                <div style={{textAlign:'right'}}>
+                  <div style={{fontSize:15,fontWeight:500,color:'var(--ink-1)',fontVariantNumeric:'tabular-nums'}}>{f.aum}</div>
+                  <div style={{fontSize:12,marginTop:2,fontVariantNumeric:'tabular-nums'}}>
+                    <span style={{color: positive ? 'var(--pos)' : 'var(--neg)',fontWeight:500}}>{f.change}</span>
+                    <span style={{color:'var(--ink-3)'}}> ({f.changeAbs})</span>
+                  </div>
+                </div>
+                <Icon.arrowRight style={{width:16,height:16,color:'var(--ink-3)'}}/>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Recent updates + Orders */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32}}>
+        {/* Recent updates */}
+        <div>
+          <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',color:'var(--ink-1)',marginBottom:20}}>Recent updates</div>
+          <div style={{display:'flex',flexDirection:'column'}}>
+            {updates.map((u,i) => (
+              <a key={i} onClick={(e)=>{e.preventDefault();onNav(u.route);}} href="#" style={{
+                display:'flex',alignItems:'center',justifyContent:'space-between',gap:16,
+                padding:'16px 4px',
+                borderTop: i===0 ? 'none' : '1px solid var(--line-1)',
+                color:'var(--ink-1)',textDecoration:'none',cursor:'pointer',
+              }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                <div style={{minWidth:0}}>
+                  <div style={{fontSize:11.5,color:'var(--ink-3)',marginBottom:4}}>{u.ts}</div>
+                  <div style={{fontSize:13,color:'var(--ink-1)'}}>{u.text}</div>
+                </div>
+                <Icon.arrowRight style={{width:14,height:14,color:'var(--ink-3)',flexShrink:0}}/>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Orders */}
+        <div>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20}}>
+            <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',color:'var(--ink-1)'}}>Orders</div>
+            <button onClick={()=>onNav('order-book')} style={{...hBtnOutline,height:30,fontSize:12.5,padding:'0 12px'}}>View all</button>
+          </div>
+          <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
+            <thead>
+              <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,textAlign:'left'}}>
+                <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Date</th>
+                <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Type</th>
+                <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Fund</th>
+                <th style={{padding:'4px 4px 8px',fontWeight:500,textAlign:'right',borderBottom:'1px solid var(--line-1)'}}>Amount</th>
+                <th style={{padding:'4px 4px 8px',fontWeight:500,textAlign:'right',borderBottom:'1px solid var(--line-1)'}}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((r,i) => (
+                <tr key={i} style={{fontSize:13}}>
+                  <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color:'var(--ink-2)',whiteSpace:'nowrap'}}>{r.date}</td>
+                  <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color: r.type==='Subscription' ? 'var(--pos)' : 'var(--neg)',fontWeight:500}}>{r.type}</td>
+                  <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color:'var(--ink-2)',whiteSpace:'nowrap'}}>{r.fund}</td>
+                  <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right',fontWeight:500}}>{r.amount}</td>
+                  <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right'}}>
+                    <span style={{
+                      display:'inline-flex',alignItems:'center',gap:5,fontSize:11.5,fontWeight:500,
+                      color: r.status === 'settled' ? 'var(--green-700)' : '#8A5A10',
+                    }}>
+                      {r.status === 'settled' && <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3.5 8.5 6.5 11.5 12.5 5"/></svg>}
+                      {r.status === 'pending' && <span style={{width:6,height:6,borderRadius:'50%',background:'#D89A20'}}/>}
+                      {r.status === 'settled' ? 'Settled' : 'Pending'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { HomeView });
+
+</script>
+
 <script type="text/babel">
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "dark": true,
@@ -4991,7 +5399,9 @@ function App() {
   };
 
   let view;
-  if (route === 'overview') view = <OverviewView onNav={setRoute}/>;
+  if (route === 'home') view = <HomeView onNav={setRoute}/>;
+  else if (route === 'actions') view = <ActionsView onNav={setRoute}/>;
+  else if (route === 'overview') view = <OverviewView onNav={setRoute}/>;
   else if (route === 'order-book') view = <OrderBookView onNav={setRoute}/>;
   else if (route === 'collateral') view = <CollateralView onNav={setRoute}/>;
   else if (route === 'share-register') view = <ShareRegisterView onNav={setRoute} shareClasses={shareClasses} setShareClasses={setShareClasses}/>;
@@ -5788,10 +6198,28 @@ setTimeout(applyTerminalTags, 600);
 
     // Lower-section fields — populate instantly just before the camera pans
     // down (10.95), so they're already filled by the time they hit 100% opacity.
+    // Also scroll the sheet body to the bottom so Lock-up / Notice / Dealing /
+    // Voting are inside the visible viewport above the footer (otherwise body's
+    // overflowY:auto leaves them below the scroll fold and the camera frames
+    // empty space where they should be).
     tl.add(() => {
       window.cine?.setField?.('lockupNum', '12');
       window.cine?.setField?.('noticeNum', '30');
       window.cine?.setField?.('dealing', 'Monthly');
+      const sheet = document.querySelector('[data-cine="sheet"]');
+      if (sheet) {
+        // Body is the scrollable mid section between topbar (child 0) and footer.
+        // Scroll so the Voting row sits near the bottom of body's visible area:
+        // Lock-up / Notice / Dealing / Voting end up in the camera frame above
+        // the footer, with the Advanced section just out of view below.
+        const body = sheet.children[1];
+        const votingRow = Array.from(body?.children || [])
+          .find(r => r.textContent && r.textContent.includes('Shareholders can vote'));
+        if (body && votingRow) {
+          const target = votingRow.offsetTop + votingRow.offsetHeight - body.clientHeight + 24;
+          body.scrollTop = Math.max(0, target);
+        }
+      }
     }, 10.95);
 
     return tl;
