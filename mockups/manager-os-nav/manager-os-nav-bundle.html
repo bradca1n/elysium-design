@@ -54,6 +54,8 @@
     --info-fg: #345B85;
     --glass-bg: rgba(0,0,0,0.03);
     --glass-border: rgba(0,0,0,0.06);
+    --row-hover: rgba(0,0,0,0.025);
+    --card-hover: rgba(0,0,0,0.05);
   }
   .dark {
     --bg-canvas: #08090B;
@@ -79,6 +81,8 @@
     --info-fg: #9CC9DD;
     --glass-bg: #131519;
     --glass-border: #23262C;
+    --row-hover: rgba(255,255,255,0.04);
+    --card-hover: #181B21;
   }
   * { box-sizing: border-box; }
   body {
@@ -234,7 +238,7 @@
     border-bottom: 1px solid var(--line-1) !important;
     background: transparent !important;
   }
-  table tbody tr:hover td { background: var(--glass-bg) !important; }
+  table tbody tr:hover td { background: var(--row-hover) !important; }
 
   /* KPI tile — refined terminal style */
   [data-kpi-grid] > * {
@@ -245,6 +249,14 @@
     position: relative !important;
   }
   body:not(.dark) [data-kpi-grid] > * { border: 1px solid var(--line-1) !important; }
+
+  /* Glass-style KPI tiles — opt-in for Home / Actions pages.
+     Body prefix bumps specificity to match `body:not(.dark) [data-kpi-grid] > *` (0-2-2),
+     and since this rule comes later in source order it wins. */
+  body [data-kpi-grid][data-kpi-style="glass"] > * {
+    background: var(--glass-bg) !important;
+    border: none !important;
+  }
   [data-kpi-grid] > * > div:first-child {
     font-size: 11.5px !important;
     color: var(--ink-3) !important;
@@ -353,10 +365,14 @@
   body.cine-active [data-cine="save-draft"] { display: none !important; }
 
   /* Pin sheet to viewport height in cinematic mode so absolute children
-     centre against the viewport rather than the (taller) camera-host */
+     centre against the viewport rather than the (taller) camera-host.
+     Transform is driven by a CSS variable so gsap.to() on the variable
+     animates the slide-in/out as a scrub-friendly tween (CSS transitions
+     play on wall-clock and complete in 1-2 frames under scrubbed capture). */
   body.cine-active [data-cine="sheet"] {
     height: 100vh !important;
     bottom: auto !important;
+    transform: translateX(var(--cine-sheet-x, 100%)) !important;
   }
 
   /* Active input field — white border + soft diffused glow */
@@ -2101,7 +2117,7 @@ function OrderBookView({ onNav }) {
         </thead>
         <tbody>
           {filtered.map(o => (
-            <tr key={o.id} onClick={() => setSelected(o)} style={{fontSize:13,cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <tr key={o.id} onClick={() => setSelected(o)} style={{fontSize:13,cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.background='var(--row-hover)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
               <td style={td}>
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <OrderTypeTag type={o.type}/>
@@ -2910,7 +2926,7 @@ function ShareRegisterView({ onNav, shareClasses, setShareClasses }) {
           </thead>
           <tbody>
             {rows.map((r,i) => (
-              <tr key={i} style={{fontSize:13}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+              <tr key={i} style={{fontSize:13}} onMouseEnter={e=>e.currentTarget.style.background='var(--row-hover)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
                 <td style={{...td,padding:'12px 16px'}}>
                   <div style={{fontWeight:500,color:'var(--ink-1)'}}>{r.name}</div>
                 </td>
@@ -3090,7 +3106,7 @@ function ShareClassesView({ onNav, shareClasses, setShareClasses }) {
             {filtered.map((c,i) => {
               const muted = c.status !== 'active';
               return (
-                <tr key={i} data-row style={{fontSize:13,cursor:'pointer'}} onClick={()=>openEdit(c)} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                <tr key={i} data-row style={{fontSize:13,cursor:'pointer'}} onClick={()=>openEdit(c)} onMouseEnter={e=>e.currentTarget.style.background='var(--row-hover)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
                   <td style={{...td,padding:'14px 16px',fontWeight:500,color:'var(--ink-1)'}}>{c.name}</td>
                   <td style={{...td,padding:'14px 16px',color:'var(--ink-2)',fontSize:12.5}}>{c.code} · {c.launched}</td>
                   <td style={{...td,padding:'14px 16px',textAlign:'right',color: muted ? 'var(--ink-3)' : 'var(--ink-1)'}}>{c.navShare}</td>
@@ -3659,7 +3675,7 @@ function ReconciliationView({ onNav }) {
         </thead>
         <tbody>
           {strikes.map((s,i) => (
-            <tr key={i} style={{fontSize:13}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <tr key={i} style={{fontSize:13}} onMouseEnter={e=>e.currentTarget.style.background='var(--row-hover)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
               <td style={td}><div style={{fontWeight:500}}>{s.d} UTC</div></td>
               <td style={{...td,textAlign:'right',fontWeight:500}}>{s.nav}</td>
               <td style={{...td,textAlign:'right',color: s.ch.startsWith('+')?'var(--pos)':'var(--neg)',fontWeight:500}}>{s.ch}</td>
@@ -4896,10 +4912,16 @@ function SnoozeModal({ item, onClose, onConfirm }) {
   const [notify, setNotify] = React.useState(true);
 
   React.useEffect(() => {
+    if (!item) return;
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [item, onClose]);
 
   if (!item) return null;
 
@@ -4911,33 +4933,52 @@ function SnoozeModal({ item, onClose, onConfirm }) {
     { k: 'custom',   label: 'Custom…',                sub: 'Pick a specific date and time' },
   ];
 
-  return (
-    <React.Fragment>
+  // Portal to document.body so that the page-rise transform on [data-page]
+  // (the rendering ancestor) doesn't capture our position:fixed.
+  const modal = (
+    <div className="no-page-anim" style={{
+      position:'fixed',inset:0,zIndex:100,
+      display:'flex',alignItems:'center',justifyContent:'center',
+      padding:24,
+    }}>
       <div onClick={onClose} style={{
-        position:'fixed',inset:0,background:'rgba(10,10,12,0.45)',
-        zIndex:80,animation:'navFade 0.18s ease-out both',
+        position:'absolute',inset:0,background:'rgba(10,10,12,0.45)',
+        animation:'navFade 0.18s ease-out both',
       }}/>
-      <div role="dialog" aria-modal="true" style={{
-        position:'fixed',top:'50%',left:'50%',transform:'translate(-50%,-50%)',
-        width:'min(420px, 94vw)',background:'var(--bg-canvas)',
-        border:'1px solid var(--line-1)',borderRadius:14,
+      <div role="dialog" aria-modal="true" aria-labelledby="snooze-title" style={{
+        position:'relative',
+        width:'min(420px, 100%)',background:'var(--bg-canvas)',
+        border:'none',borderRadius:12,
         boxShadow:'0 24px 64px rgba(0,0,0,0.22), 0 2px 6px rgba(0,0,0,0.08)',
-        zIndex:81,padding:'22px 22px 18px',
-        animation:'pageRise 0.22s cubic-bezier(0.22, 1, 0.36, 1) both',
+        padding:'20px 20px 16px',
+        animation:'navFade 0.18s ease-out both',
       }}>
-        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:4}}>
-          <span style={{
-            width:30,height:30,borderRadius:8,
-            background:'var(--bg-subtle)',color:'var(--ink-1)',
-            display:'inline-flex',alignItems:'center',justifyContent:'center',flexShrink:0,
-          }}>
-            <BellSnoozeIcon style={{width:16,height:16}}/>
-          </span>
-          <div style={{fontSize:15,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>Snooze action</div>
+        {/* Header — title left, X close right */}
+        <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:16,marginBottom:6}}>
+          <div style={{display:'flex',alignItems:'center',gap:10,minWidth:0}}>
+            <span style={{
+              width:28,height:28,borderRadius:8,
+              background:'var(--bg-subtle)',color:'var(--ink-1)',
+              display:'inline-flex',alignItems:'center',justifyContent:'center',flexShrink:0,
+            }}>
+              <BellSnoozeIcon style={{width:15,height:15}}/>
+            </span>
+            <div id="snooze-title" style={{fontSize:15,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>Snooze action</div>
+          </div>
+          <button onClick={onClose} aria-label="Close" style={{
+            width:28,height:28,padding:0,
+            border:'none',background:'transparent',
+            color:'var(--ink-2)',cursor:'pointer',
+            display:'inline-flex',alignItems:'center',justifyContent:'center',
+            fontFamily:'inherit',
+          }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
         </div>
-        <div style={{fontSize:12.5,color:'var(--ink-2)',marginBottom:18,paddingLeft:40}}>{item.title}</div>
+        <div style={{fontSize:12.5,color:'var(--ink-2)',marginBottom:18,paddingLeft:38}}>{item.title}</div>
 
-        <div style={{display:'flex',flexDirection:'column',gap:6,marginBottom:16}}>
+        {/* Options */}
+        <div style={{display:'flex',flexDirection:'column',gap:6,marginBottom:14}}>
           {options.map(o => {
             const active = choice === o.k;
             return (
@@ -4960,20 +5001,24 @@ function SnoozeModal({ item, onClose, onConfirm }) {
           })}
         </div>
 
-        <label style={{display:'flex',alignItems:'center',gap:10,padding:'8px 0 16px',cursor:'pointer'}}>
+        {/* Notify toggle */}
+        <label style={{display:'flex',alignItems:'center',gap:10,padding:'6px 0 16px',cursor:'pointer'}}>
           <input type="checkbox" checked={notify} onChange={e=>setNotify(e.target.checked)} style={{
             width:14,height:14,accentColor:'var(--ink-1)',margin:0,
           }}/>
           <span style={{fontSize:12.5,color:'var(--ink-2)'}}>Bring back early if status changes</span>
         </label>
 
+        {/* Footer */}
         <div style={{display:'flex',justifyContent:'flex-end',gap:8,borderTop:'1px solid var(--line-1)',paddingTop:14}}>
           <button onClick={onClose} style={aBtnOutline}>Cancel</button>
-          <button onClick={()=>onConfirm(item, choice, notify)} style={aBtnPrimary}>Snooze</button>
+          <button onClick={()=>onConfirm(item, choice, notify)} style={aBtnPrimary}>Confirm</button>
         </div>
       </div>
-    </React.Fragment>
+    </div>
   );
+
+  return ReactDOM.createPortal(modal, document.body);
 }
 
 function ActionsView({ onNav }) {
@@ -5111,7 +5156,7 @@ function ActionsView({ onNav }) {
         </div>
       </div>
 
-      <div data-kpi-grid style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:80}}>
+      <div data-kpi-grid data-kpi-style="glass" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:80}}>
         {[
           { l: 'Open actions',       v: String(counts.all),    s: 'Across all priorities' },
           { l: 'High priority',      v: String(counts.high),   s: 'Awaiting your decision' },
@@ -5155,10 +5200,10 @@ function ActionsView({ onNav }) {
               gridTemplateColumns:'14px 1fr auto',
               alignItems:'center',gap:20,
               padding:'18px 22px',
-              background:'var(--bg-card)',
-              border:'1px solid var(--line-1)',
+              background:'var(--glass-bg)',
+              border:'none',
               borderRadius:10,
-            }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='var(--bg-card)'}>
+            }} onMouseEnter={e=>e.currentTarget.style.background='var(--card-hover)'} onMouseLeave={e=>e.currentTarget.style.background='var(--glass-bg)'}>
               <span style={{width:8,height:8,borderRadius:'50%',background:p.dot,display:'inline-block'}}/>
               <div style={{minWidth:0}}>
                 <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6,flexWrap:'wrap'}}>
@@ -5219,6 +5264,8 @@ Object.assign(window, { ActionsView });
    Greeting + headline KPIs + funds list + recent updates + orders. */
 
 const hBtnOutline = { background:'var(--bg-canvas)',border:'1px solid var(--line-2)',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,color:'var(--ink-1)',display:'inline-flex',alignItems:'center',gap:6,fontFamily:'inherit' };
+const hTh = { textAlign:'left',padding:'8px 12px',borderBottom:'1px solid var(--line-1)',fontWeight:500 };
+const hTd = { padding:'14px 12px',borderBottom:'1px solid var(--line-1)' };
 
 const FUND_GRADIENTS = {
   'pod-crypto': 'radial-gradient(circle at 30% 30%,#E9D5FF 0%,transparent 45%),radial-gradient(circle at 70% 35%,#BFDBFE 0%,transparent 50%),radial-gradient(circle at 50% 75%,#FCA5A5 0%,transparent 55%),linear-gradient(135deg,#C4B5FD 0%,#A5B4FC 55%,#FBCFE8 100%)',
@@ -5283,7 +5330,7 @@ function HomeView({ onNav }) {
       </div>
 
       {/* KPIs — 2:1:1 split */}
-      <div data-kpi-grid style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr',gap:8,marginBottom:64}}>
+      <div data-kpi-grid data-kpi-style="glass" style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr',gap:8,marginBottom:64}}>
         <div>
           <div>Total AUM</div>
           <div style={{fontSize:36,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>$150,819,532</div>
@@ -5312,9 +5359,9 @@ function HomeView({ onNav }) {
             return (
               <div key={f.id} onClick={()=>onNav('overview')} data-row style={{
                 display:'grid',gridTemplateColumns:'auto 1fr auto auto',alignItems:'center',gap:20,
-                padding:'16px 20px',background:'var(--bg-card)',
-                border:'1px solid var(--line-1)',borderRadius:10,cursor:'pointer',
-              }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='var(--bg-card)'}>
+                padding:'16px 20px',background:'var(--glass-bg)',
+                border:'none',borderRadius:10,cursor:'pointer',
+              }} onMouseEnter={e=>e.currentTarget.style.background='var(--card-hover)'} onMouseLeave={e=>e.currentTarget.style.background='var(--glass-bg)'}>
                 <div style={{width:44,height:44,borderRadius:'50%',background:FUND_GRADIENTS[f.id],flexShrink:0}}/>
                 <div style={{minWidth:0}}>
                   <div style={{fontSize:15,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>{f.name}</div>
@@ -5346,7 +5393,7 @@ function HomeView({ onNav }) {
                 padding:'16px 4px',
                 borderTop: i===0 ? 'none' : '1px solid var(--line-1)',
                 color:'var(--ink-1)',textDecoration:'none',cursor:'pointer',
-              }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+              }} onMouseEnter={e=>e.currentTarget.style.background='var(--row-hover)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
                 <div style={{minWidth:0}}>
                   <div style={{fontSize:11.5,color:'var(--ink-3)',marginBottom:4}}>{u.ts}</div>
                   <div style={{fontSize:13,color:'var(--ink-1)'}}>{u.text}</div>
@@ -5365,22 +5412,22 @@ function HomeView({ onNav }) {
           </div>
           <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
             <thead>
-              <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,textAlign:'left'}}>
-                <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Date</th>
-                <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Type</th>
-                <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Fund</th>
-                <th style={{padding:'4px 4px 8px',fontWeight:500,textAlign:'right',borderBottom:'1px solid var(--line-1)'}}>Amount</th>
-                <th style={{padding:'4px 4px 8px',fontWeight:500,textAlign:'right',borderBottom:'1px solid var(--line-1)'}}>Status</th>
+              <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>
+                <th style={hTh}>Date</th>
+                <th style={hTh}>Type</th>
+                <th style={hTh}>Fund</th>
+                <th style={{...hTh,textAlign:'right'}}>Amount</th>
+                <th style={{...hTh,textAlign:'right'}}>Status</th>
               </tr>
             </thead>
             <tbody>
               {orders.map((r,i) => (
-                <tr key={i} style={{fontSize:13}}>
-                  <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color:'var(--ink-2)',whiteSpace:'nowrap'}}>{r.date}</td>
-                  <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color: r.type==='Subscription' ? 'var(--pos)' : 'var(--neg)',fontWeight:500}}>{r.type}</td>
-                  <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color:'var(--ink-2)',whiteSpace:'nowrap'}}>{r.fund}</td>
-                  <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right',fontWeight:500}}>{r.amount}</td>
-                  <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right'}}>
+                <tr key={i} data-row style={{fontSize:13}}>
+                  <td style={{...hTd,color:'var(--ink-2)',whiteSpace:'nowrap'}}>{r.date}</td>
+                  <td style={{...hTd,color: r.type==='Subscription' ? 'var(--pos)' : 'var(--neg)',fontWeight:500}}>{r.type}</td>
+                  <td style={{...hTd,color:'var(--ink-2)',whiteSpace:'nowrap'}}>{r.fund}</td>
+                  <td style={{...hTd,textAlign:'right',fontWeight:500}}>{r.amount}</td>
+                  <td style={{...hTd,textAlign:'right'}}>
                     <span style={{
                       display:'inline-flex',alignItems:'center',gap:5,fontSize:11.5,fontWeight:500,
                       color: r.status === 'settled' ? 'var(--green-700)' : '#8A5A10',
@@ -5759,13 +5806,13 @@ setTimeout(applyTerminalTags, 600);
     const rect = el.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
-    return gsap.to(ensureCursor(), { x: cx - 22, y: cy - 22, duration: dur, ease });
+    return gsap.to(ensureCursor(), { x: cx - 4, y: cy - 4, duration: dur, ease });
   }
   // Send cursor to viewport center — used when a parallel cameraTo is
   // bringing the target to the centre, so the cursor lands where the
   // target will be (not where it is now).
   function cursorToCenter(dur = 0.5, ease = 'cubic.inOut') {
-    return gsap.to(ensureCursor(), { x: 960 - 22, y: 540 - 22, duration: dur, ease });
+    return gsap.to(ensureCursor(), { x: 960 - 4, y: 540 - 4, duration: dur, ease });
   }
   // Fly cursor to a target whose on-screen position is determined by a
   // concurrent cameraToSheetRight(focusTarget, scale) move. Mirrors the
@@ -5785,7 +5832,7 @@ setTimeout(applyTerminalTags, 600);
       : VIEWPORT.h / 2 - (focusRect.top + focusRect.height / 2) * scale;
     const cx = camX + (elRect.left + elRect.width / 2) * scale;
     const cy = camY + (elRect.top + elRect.height / 2) * scale;
-    return gsap.to(ensureCursor(), { x: cx - 22, y: cy - 22, duration: dur, ease });
+    return gsap.to(ensureCursor(), { x: cx - 4, y: cy - 4, duration: dur, ease });
   }
   // Dim peripheral sections of the Overview when the chart is the focus.
   // Active = chart at 100%; status panel, recent activity, share classes,
@@ -6002,15 +6049,11 @@ setTimeout(applyTerminalTags, 600);
   function slideSheetOff() {
     const sheet = $('sheet');
     if (!sheet) return;
-    // !important to override the !important translateX(0) set during slide-in
-    sheet.style.transition = 'transform 0.35s cubic-bezier(0.5, 0, 0.75, 0)';
-    sheet.style.setProperty('transform', 'translateX(100%)', 'important');
-    // Fade the dim overlay at the same pace as the slide-off
+    // Animate the CSS variable via gsap so the slide-off scrubs with cineTimeline.
+    gsap.to(sheet, { '--cine-sheet-x': '100%', duration: 0.45, ease: 'cubic.in' });
+    // Fade the dim overlay at the same pace.
     const overlay = $('overlay');
-    if (overlay) {
-      overlay.style.transition = 'opacity 0.35s ease';
-      overlay.style.opacity = '0';
-    }
+    if (overlay) gsap.to(overlay, { opacity: 0, duration: 0.45, ease: 'cubic.in' });
   }
 
   // ── Sheet expand to full-width confirmation state ──
@@ -6173,10 +6216,12 @@ setTimeout(applyTerminalTags, 600);
         const sheet = $('sheet');
         if (sheet) {
           sheet.style.transition = '';
-          // !important inline so it beats React's plain inline render
-          // (which would otherwise leave the sheet at translateX(0) if
-          // the open prop hasn't fully reconciled to false yet).
-          sheet.style.setProperty('transform', 'translateX(100%)', 'important');
+          // CSS rule in cine mode reads --cine-sheet-x with !important; reset
+          // it to 100% to pin the sheet off-screen. Also strip any leftover
+          // inline transform from prior runs so React/our prior writes don't
+          // fight the CSS-var-driven slide.
+          sheet.style.removeProperty('transform');
+          sheet.style.setProperty('--cine-sheet-x', '100%');
         }
         const overlay = $('overlay');
         if (overlay) {
@@ -6230,15 +6275,13 @@ setTimeout(applyTerminalTags, 600);
             { scale: 1 },
             { scale: 0.95, duration: 0.08, yoyo: true, repeat: 1, ease: 'power2.out' });
         }
-        // Slide the sheet in. Loop cleanup pins it at translateX(100%) with
-        // !important; we keep !important on the way in too, otherwise React's
-        // plain inline panelS style overrides it before the transition runs.
+        // Slide the sheet in. CSS rule in cine mode reads --cine-sheet-x with
+        // !important, so animating the variable via gsap keeps the slide-in
+        // scrubbable (a CSS transition would play on wall-clock and complete
+        // in 1-2 captured frames). The monkey-patched gsap.to redirects this
+        // tween onto cineTimeline in capture mode.
         const sheet = $('sheet');
-        if (sheet) {
-          sheet.style.transition = 'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)';
-          void sheet.offsetWidth;  // commit transition before changing transform
-          sheet.style.setProperty('transform', 'translateX(0)', 'important');
-        }
+        if (sheet) gsap.to(sheet, { '--cine-sheet-x': '0%', duration: 0.55, ease: 'cubic.out' });
         cursorPulse();
         window.cine?.openCreateSheet?.();
       }, 4.7)
@@ -6250,14 +6293,14 @@ setTimeout(applyTerminalTags, 600);
       // Dim peripheral sheet content once camera has landed on field-name
       .add(() => focusField('field-name'), 6.3)
 
-      // ── Field micro-pans + focus ── currency removed
-      .add(() => { cameraToSheetRight('field-fee', 2.2, 0.35, 'expo.out'); focusField('field-fee'); }, 7.6)
-      .add(() => { cameraToSheetRight('field-mgmt', 2.2, 0.35, 'expo.out'); focusField('field-mgmt'); }, 8.4)
-      .add(() => { cameraToSheetRight('field-min', 2.2, 0.35, 'expo.out'); focusField('field-min'); }, 9.5)
+      // ── Field micro-pans + focus — slower 0.55s expo.inOut so each beat reads ──
+      .add(() => { cameraToSheetRight('field-fee', 2.2, 0.55, 'expo.inOut'); focusField('field-fee'); }, 7.6)
+      .add(() => { cameraToSheetRight('field-mgmt', 2.2, 0.55, 'expo.inOut'); focusField('field-mgmt'); }, 8.7)
+      .add(() => { cameraToSheetRight('field-min', 2.2, 0.55, 'expo.inOut'); focusField('field-min'); }, 9.9)
 
       // ── Pan down to footer; stay at field-zoom (2.2). Cursor flies to Create ──
-      .add(() => { focusField(null); cameraToSheetRight('sheet-footer', 2.2, 0.7, 'expo.out', 'bottom'); }, 11.0)
-      .add(() => { cursorShow(); cursorToInSheetRightCam('create-btn', 'sheet-footer', 2.2, 0.7, 'expo.out', 'bottom'); }, 11.1)
+      .add(() => { focusField(null); cameraToSheetRight('sheet-footer', 2.2, 0.7, 'expo.out', 'bottom'); }, 11.6)
+      .add(() => { cursorShow(); cursorToInSheetRightCam('create-btn', 'sheet-footer', 2.2, 0.7, 'expo.out', 'bottom'); }, 11.7)
 
       // ── Click Create: cursor pulse + button press ──
       .add(() => {
@@ -6268,46 +6311,44 @@ setTimeout(applyTerminalTags, 600);
             { scale: 0.95, duration: 0.08, yoyo: true, repeat: 1, ease: 'power2.out' });
         }
         cursorPulse();
-      }, 11.9)
+      }, 12.5)
 
       // ── Cursor hides; camera pans up to sheet, form fades, confirmation
-      //    fades in. Lottie loops while we hold (12.1). ──
-      .add(() => cursorHide(), 12.1)
-      .add(() => { cameraToSheetRight('sheet', 2.2, 1.0, 'expo.out'); expandSheetToConfirm(); }, 12.1)
+      //    fades in. Lottie loops while we hold (12.7). ──
+      .add(() => cursorHide(), 12.7)
+      .add(() => { cameraToSheetRight('sheet', 2.2, 1.0, 'expo.out'); expandSheetToConfirm(); }, 12.7)
 
-      // ── Zoom out 2.5s into the confirmation (14.6), 0.8s smooth expo.inOut ──
-      .add(() => cameraReset(0.8, 'expo.inOut'), 14.6)
+      // ── Zoom out 2.5s into the confirmation (15.2), 0.8s smooth expo.inOut ──
+      .add(() => cameraReset(0.8, 'expo.inOut'), 15.2)
 
-      // ── Retract immediately after zoom-out completes (15.4), 0.35s slide-off ──
-      .add(() => slideSheetOff(), 15.4)
+      // ── Retract immediately after zoom-out completes (16.0), 0.35s slide-off ──
+      .add(() => slideSheetOff(), 16.0)
 
-      // ── Outro page fade after slide-off completes (15.8 → 16.2) ──
+      // ── Outro page fade after slide-off completes (16.4 → 16.8) ──
       .to('[data-page]',
-        { opacity: 0, y: -6, duration: 0.4, ease: 'cubic.in' }, 15.8);
+        { opacity: 0, y: -6, duration: 0.4, ease: 'cubic.in' }, 16.4);
 
     // ── Field fills (typewriter + dropdown) — currency removed ──
     const FEE_TIER_OPTS = ['Retail','Institutional','Seed','Platform','Bundled'];
     typeFieldOnto(tl, 'name', 'Class B', 6.40);                       // ~6.40 → 6.96
 
     // Fee tier: open dropdown → hover Institutional → commit + close
-    tl.add(() => showFakeDropdown('field-fee', FEE_TIER_OPTS, -1), 7.80);
-    tl.add(() => highlightDropdown(1), 7.95);                           // Institutional = idx 1
-    tl.add(() => { window.cine?.setField?.('feeTier', 'Institutional'); hideFakeDropdown(); }, 8.20);
+    tl.add(() => showFakeDropdown('field-fee', FEE_TIER_OPTS, -1), 8.15);
+    tl.add(() => highlightDropdown(1), 8.30);                           // Institutional = idx 1
+    tl.add(() => { window.cine?.setField?.('feeTier', 'Institutional'); hideFakeDropdown(); }, 8.55);
 
-    typeFieldOnto(tl, 'mgmtNum', '1.50', 8.70);                       // ~8.70 → 9.02
-    typeFieldOnto(tl, 'perfNum', '20',   9.10);                       // ~9.10 → 9.26
+    typeFieldOnto(tl, 'mgmtNum', '1.50', 9.30);                       // after field-mgmt cam lands (8.7 + 0.55 = 9.25)
+    typeFieldOnto(tl, 'perfNum', '20',   9.55);
     // Min investment — feed pre-formatted strings so commas appear naturally
     const MIN_STEPS = ['1', '10', '100', '1,000', '10,000', '100,000'];
     MIN_STEPS.forEach((s, i) => {
-      tl.add(() => window.cine?.setField?.('minInvestment', s), 9.80 + (i + 1) * 0.08);
+      tl.add(() => window.cine?.setField?.('minInvestment', s), 10.50 + (i + 1) * 0.08);
     });
 
     // Populate lower-section fields + scroll body BEFORE the field-min camera
-    // beat (t=9.5). With body scrolled so Voting sits near body bottom, the
+    // beat (t=9.9). With body scrolled so Voting sits near body bottom, the
     // field-min zoom shows Min investment mid-body with Lock-up / Notice /
-    // Dealing / Voting in frame below it (instead of cropping straight to
-    // the Create Class footer). Same scroll position carries through to the
-    // camera-to-footer beat at t=11.
+    // Dealing / Voting in frame below it.
     tl.add(() => {
       window.cine?.setField?.('lockupNum', '12');
       window.cine?.setField?.('noticeNum', '30');
@@ -6322,7 +6363,7 @@ setTimeout(applyTerminalTags, 600);
           body.scrollTop = Math.max(0, target);
         }
       }
-    }, 9.4);
+    }, 9.7);
 
     return tl;
   }
