@@ -127,34 +127,58 @@ function NavChart({ range, height = 280 }) {
           </g>
         )}
       </svg>
-      {hover && (
-        <div style={{
-          position: 'absolute',
-          left: Math.min(hover.x + 12, W - 190),
-          top: Math.max(hover.y - 60, 8),
-          background: 'var(--bg-canvas)',
-          border: '1px solid var(--line-2)',
-          borderRadius: '8px',
-          padding: '10px 12px',
-          fontSize: '12px',
-          boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-          minWidth: 180,
-          pointerEvents: 'none',
-          fontVariantNumeric: 'tabular-nums',
-        }}>
-          <div style={{ color: 'var(--ink-3)', fontSize: 11, marginBottom: 4 }}>
-            {(() => { const d = new Date(); d.setDate(d.getDate() - (days - 1 - hover.i)); return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }); })()}
+      {hover && (() => {
+        // Two-series tooltip matching ChartTooltip atom (Figma 2287-61039):
+        // Portfolio (green dot) + BTCUSD (blue dot) rows, divider, date footer.
+        const portfolioPct = ((hover.v / series[0]) - 1) * 100;
+        const btcPct = ((hover.s / share[0]) - 1) * 100;
+        const dateLabel = (() => {
+          const d = new Date();
+          d.setDate(d.getDate() - (days - 1 - hover.i));
+          return d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: '2-digit' });
+        })();
+        return (
+          <div style={{
+            position: 'absolute',
+            left: Math.min(hover.x + 12, W - 232),
+            top: Math.max(hover.y - 56, 8),
+            background: 'var(--bg-canvas)',
+            border: '1px solid var(--line-2)',
+            borderRadius: 8,
+            padding: '10px 14px',
+            width: 220,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+            pointerEvents: 'none',
+            fontVariantNumeric: 'tabular-nums',
+          }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: 8 }}>
+              <div style={{ display:'flex', alignItems:'center', gap: 8 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--green-700)' }}/>
+                <span style={{ fontSize: 12, fontWeight: 500, lineHeight: '18px', color: 'var(--ink-1)' }}>Portfolio</span>
+              </div>
+              <span style={{ fontSize: 12, fontWeight: 500, lineHeight: '18px', color: 'var(--ink-1)' }}>
+                {portfolioPct >= 0 ? '+' : ''}{portfolioPct.toFixed(2)}%
+              </span>
+            </div>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: 8 }}>
+              <div style={{ display:'flex', alignItems:'center', gap: 8 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--info-fg)' }}/>
+                <span style={{ fontSize: 12, fontWeight: 500, lineHeight: '18px', color: 'var(--ink-1)' }}>BTCUSD</span>
+              </div>
+              <span style={{ fontSize: 12, fontWeight: 500, lineHeight: '18px', color: 'var(--ink-1)' }}>
+                {btcPct >= 0 ? '+' : ''}{btcPct.toFixed(2)}%
+              </span>
+            </div>
+            <div style={{ height: 1, width: '100%', background: 'var(--line-1)' }}/>
+            <span style={{ fontSize: 10, fontWeight: 500, lineHeight: '18px', textAlign: 'center', color: 'var(--ink-3)' }}>
+              {dateLabel}
+            </span>
           </div>
-          <div style={{ display:'flex', justifyContent:'space-between', gap: 12, marginBottom: 2 }}>
-            <span style={{color:'var(--ink-2)'}}>Fund NAV</span>
-            <b>${(hover.v/1e6).toFixed(2)}M</b>
-          </div>
-          <div style={{ display:'flex', justifyContent:'space-between', gap: 12 }}>
-            <span style={{color:'var(--ink-2)'}}>NAV / share</span>
-            <b>${hover.s.toFixed(2)}</b>
-          </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }

@@ -18,7 +18,7 @@ const PAD = 5;
 
 // When the confirmation+lottie appears in the timeline. Update if the
 // timeline beats change.
-const CONFIRM_START = 12.7;
+const CONFIRM_START = 12.1;
 
 console.log('[capture] launching chromium');
 const browser = await chromium.launch();

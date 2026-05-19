@@ -206,6 +206,7 @@ function CollateralView({ onNav }) {
           <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>Collateral &amp; Treasury</div>
           <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Free cash, custody balances and venue collateral across the fund.</div>
         </div>
+        <button onClick={()=>setSheetOpen(true)} style={btnOutline}>Move collateral</button>
       </div>
 
       <section style={{marginBottom:70}}>
@@ -213,12 +214,7 @@ function CollateralView({ onNav }) {
           <div>
             <div style={{fontSize:18,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>Treasury</div>
           </div>
-          <div style={{display:'flex',alignItems:'center',gap:8}}>
-            <button style={btnOutline}>View Cashbook</button>
-            <button aria-label="More" style={{width:32,height:32,border:'none',background:'transparent',borderRadius:8,cursor:'pointer',color:'var(--ink-2)',display:'inline-flex',alignItems:'center',justifyContent:'center',flexShrink:0}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
-            </button>
-          </div>
+          <button style={btnOutline}>View Cashbook</button>
         </div>
 
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>

@@ -1,0 +1,13 @@
+{
+  "name": "manager-os-cinematic-capture",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preview": "node preview-frames.mjs",
+    "capture": "node capture-cinematic.mjs"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "playwright": "^1.45.0"
+  }
+}

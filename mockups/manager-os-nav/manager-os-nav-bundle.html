@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Manager OS Version 3.0 · POD Crypto Fund</title>
 <meta name="viewport" content="width=1400">
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -49,6 +50,14 @@
     --green-700: #1d7d59;
     --pos: #1d7d59;
     --neg: #e13733;
+    --neg-bg: rgba(225,55,51,0.10);
+    --neg-border: rgba(225,55,51,0.22);
+    --warn-bg: rgba(216,154,32,0.12);
+    --warn-fg: #8A5A10;
+    --warn-border: rgba(216,154,32,0.22);
+    --hold-bg: rgba(108,90,180,0.10);
+    --hold-fg: #544497;
+    --hold-border: rgba(108,90,180,0.22);
     --info-bg: #EEF3F9;
     --info-border: #D2DFEC;
     --info-fg: #345B85;
@@ -74,6 +83,14 @@
     --green-700: #b1ecd2;
     --pos: #45d59b;
     --neg: #e13733;
+    --neg-bg: rgba(225,55,51,0.14);
+    --neg-border: rgba(225,55,51,0.28);
+    --warn-bg: rgba(216,160,32,0.14);
+    --warn-fg: #E8B850;
+    --warn-border: rgba(216,160,32,0.28);
+    --hold-bg: rgba(140,118,210,0.14);
+    --hold-fg: #B5A8E5;
+    --hold-border: rgba(140,118,210,0.28);
     --info-bg: rgba(95,184,218,0.10);
     --info-border: rgba(95,184,218,0.25);
     --info-fg: #9CC9DD;
@@ -130,6 +147,22 @@
   @keyframes rowSlide {
     from { opacity: 0; transform: translateX(-8px); }
     to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes drawerSlideIn {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+  }
+  @keyframes drawerSlideOut {
+    from { transform: translateX(0); }
+    to   { transform: translateX(100%); }
+  }
+  @keyframes drawerBackdropIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes drawerBackdropOut {
+    from { opacity: 1; }
+    to   { opacity: 0; }
   }
 
   /* Stagger children of page root on mount */
@@ -245,6 +278,19 @@
     position: relative !important;
   }
   body:not(.dark) [data-kpi-grid] > * { border: 1px solid var(--line-1) !important; }
+  /* Glass-style KPI tiles — opt-in via data-kpi-style="glass" (Home / Actions / Investors / Investor profile).
+     Body prefix bumps specificity to match the light-mode border rule above (0-2-2),
+     and since this rule comes later it wins. */
+  body [data-kpi-grid][data-kpi-style="glass"] > * {
+    background: var(--glass-bg) !important;
+    border: none !important;
+  }
+  /* Theme-aware bulb image (feedback card + modal). Show light variant by default,
+     swap to dark when body.dark is set. */
+  .bulb-img { display: inline-block; flex-shrink: 0; object-fit: contain; }
+  .bulb-dark { display: none; }
+  body.dark .bulb-light { display: none; }
+  body.dark .bulb-dark { display: inline-block; }
   [data-kpi-grid] > * > div:first-child {
     font-size: 11.5px !important;
     color: var(--ink-3) !important;
@@ -268,10 +314,6 @@
   /* Duration profile graph — sharper corners (colour driven by JSX from accent) */
   [data-duration-bar] { border-radius: 4px !important; border: none !important; }
 
-  /* Comments thread (giscus) */
-  .comments { max-width: 1200px; margin: 0 auto; padding: 48px 40px 96px; border-top: 1px solid var(--line-1); background: var(--bg-canvas); font-family: 'Inter', sans-serif; }
-  .comments h2 { font-size: 22px; font-weight: 600; margin: 0 0 6px; color: var(--ink-1); letter-spacing: -0.01em; }
-  .comments .comments-sub { font-size: 13px; color: var(--ink-2); margin-bottom: 28px; }
 
   /* ─── Cinematic mode ─── */
   .cinematic-camera {
@@ -579,27 +621,6 @@
   }
 </script>
 
-<div class="comments">
-  <h2>Comments</h2>
-  <div class="comments-sub">Sign in with GitHub to leave feedback on this design.</div>
-  <script src="https://giscus.app/client.js"
-          data-repo="bradca1n/elysium-design"
-          data-repo-id="R_kgDORi_KEA"
-          data-category="General"
-          data-category-id="DIC_kwDORi_KEM4C7aes"
-          data-mapping="specific"
-          data-term="bradca1n/elysium-design/main/mockups/manager-os-nav/index"
-          data-strict="0"
-          data-reactions-enabled="1"
-          data-emit-metadata="0"
-          data-input-position="top"
-          data-theme="preferred_color_scheme"
-          data-lang="en"
-          crossorigin="anonymous"
-          async>
-  </script>
-</div>
-
 <script type="text/babel" data-presets="env,react" data-source="components.jsx">
 /* Elysium NAV Prototype — Shared components.
    All components exported to window at bottom so other babel scripts can use them. */
@@ -610,7 +631,8 @@ const Icon = {
   chevron: (p={}) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><polyline points="9 6 15 12 9 18"/></svg>,
   down: (p={}) => <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><polyline points="4 6 8 10 12 6"/></svg>,
   arrowUpRight: (p={}) => <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M4.66 11.33 11.33 4.66M11.33 4.66H4.66M11.33 4.66v6.67"/></svg>,
-  bell: (p={}) => <svg viewBox="0 0 21 21" fill="currentColor" {...p}><path fillRule="evenodd" clipRule="evenodd" d="M7.52 17.78c.32-.36.87-.39 1.24-.07.46.41 1.07.65 1.73.65s1.27-.24 1.73-.65c.36-.32.92-.29 1.24.07.32.36.28.91-.07 1.24-.77.68-1.78 1.09-2.9 1.09s-2.13-.41-2.9-1.09c-.35-.33-.39-.88-.07-1.24Zm-1.36-15.11A5.99 5.99 0 0 1 10.5.87c1.62 0 3.18.65 4.33 1.79a6.13 6.13 0 0 1 1.78 4.33c0 2.55.64 4.24 1.31 5.32.31.5.56.9.73 1.19.08.14.16.28.22.4.03.06.06.13.08.22.02.07.06.22.04.4a.98.98 0 0 1-.17.44.93.93 0 0 1-.35.41c-.22.16-.47.2-.55.21l-.04.01a5.4 5.4 0 0 1-.42.04c-.29.01-.7.01-1.2.01H4.69c-.5 0-.91 0-1.2-.01a5.5 5.5 0 0 1-.42-.04l-.04-.01a.97.97 0 0 1-.55-.21.93.93 0 0 1-.35-.41.98.98 0 0 1-.17-.44.72.72 0 0 1 .04-.4c.02-.09.06-.16.08-.22.06-.12.14-.26.22-.4.17-.29.41-.69.73-1.19l.01-.02c.67-1.08 1.31-2.77 1.31-5.32 0-1.63.65-3.19 1.79-4.33Z"/></svg>,
+  arrowDownLeft: (p={}) => <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M11.33 4.66 4.66 11.33M4.66 11.33h6.67M4.66 11.33V4.66"/></svg>,
+  bell: (p={}) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>,
   search: (p={}) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>,
   plus: (p={}) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 5v14M5 12h14"/></svg>,
   x: (p={}) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M18 6 6 18M6 6l18 18"/></svg>,
@@ -630,6 +652,12 @@ const Icon = {
   doc: (p={}) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M14 2.27V6.4c0 .56 0 .84.11 1.05a1 1 0 0 0 .44.44c.21.11.49.11 1.05.11h4.13M16 13H8M16 17H8M10 9H8M14 2H8.8c-1.68 0-2.52 0-3.16.33a3 3 0 0 0-1.31 1.31C4 4.28 4 5.12 4 6.8v10.4c0 1.68 0 2.52.33 3.16a3 3 0 0 0 1.31 1.31c.64.33 1.48.33 3.16.33h6.4c1.68 0 2.52 0 3.16-.33a3 3 0 0 0 1.31-1.31c.33-.64.33-1.48.33-3.16V8l-6-6Z"/></svg>,
   chart: (p={}) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M21 21H4.6c-.56 0-.84 0-1.05-.11a1 1 0 0 1-.44-.44C3 20.24 3 19.96 3 19.4V3M21 7l-5.43 5.43c-.2.2-.3.3-.41.34a.5.5 0 0 1-.31 0c-.11-.04-.21-.14-.41-.34l-1.87-1.87c-.2-.2-.3-.3-.41-.34a.5.5 0 0 0-.31 0c-.11.04-.21.14-.41.34L7 15M21 7h-4M21 7v4"/></svg>,
   scales: (p={}) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M18 10l-3.43 3.43a.5.5 0 0 1-.41.34.5.5 0 0 1-.31 0 .76.76 0 0 1-.41-.34l-2.87-2.87c-.2-.2-.3-.3-.41-.34a.5.5 0 0 0-.31 0c-.11.04-.21.14-.41.34L6 14M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z"/></svg>,
+  clock: (p={}) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+  alarmClock: (p={}) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="12" cy="13" r="8"/><polyline points="12 9 12 13 14.5 14.5"/><path d="M5 3 2 6M22 6l-3-3M6.4 19.6 4 22M17.6 19.6 20 22"/></svg>,
+  checkCircle: (p={}) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="12" cy="12" r="10"/><polyline points="8.5 12.5 11 15 16 10"/></svg>,
+  refreshCw: (p={}) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><polyline points="20 4 20 9 15 9"/><polyline points="4 20 4 15 9 15"/><path d="M5 10a8 8 0 0 1 14-3M19 14a8 8 0 0 1-14 3"/></svg>,
+  calendarCheck: (p={}) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/><polyline points="9 15 11 17 15 13"/></svg>,
+  orderBook: (p={}) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M4 8h16"/><polyline points="16 4 20 8 16 12"/><path d="M20 16H4"/><polyline points="8 12 4 16 8 20"/></svg>,
 };
 
 /* ─────────────────────────── CHART ─────────────────────────── */
@@ -730,34 +758,58 @@ function NavChart({ range, height = 280 }) {
           </g>
         )}
       </svg>
-      {hover && (
-        <div style={{
-          position: 'absolute',
-          left: Math.min(hover.x + 12, W - 190),
-          top: Math.max(hover.y - 60, 8),
-          background: 'var(--bg-canvas)',
-          border: '1px solid var(--line-2)',
-          borderRadius: '8px',
-          padding: '10px 12px',
-          fontSize: '12px',
-          boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-          minWidth: 180,
-          pointerEvents: 'none',
-          fontVariantNumeric: 'tabular-nums',
-        }}>
-          <div style={{ color: 'var(--ink-3)', fontSize: 11, marginBottom: 4 }}>
-            {(() => { const d = new Date(); d.setDate(d.getDate() - (days - 1 - hover.i)); return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }); })()}
+      {hover && (() => {
+        // Two-series tooltip matching ChartTooltip atom (Figma 2287-61039):
+        // Portfolio (green dot) + BTCUSD (blue dot) rows, divider, date footer.
+        const portfolioPct = ((hover.v / series[0]) - 1) * 100;
+        const btcPct = ((hover.s / share[0]) - 1) * 100;
+        const dateLabel = (() => {
+          const d = new Date();
+          d.setDate(d.getDate() - (days - 1 - hover.i));
+          return d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: '2-digit' });
+        })();
+        return (
+          <div style={{
+            position: 'absolute',
+            left: Math.min(hover.x + 12, W - 232),
+            top: Math.max(hover.y - 56, 8),
+            background: 'var(--bg-canvas)',
+            border: '1px solid var(--line-2)',
+            borderRadius: 8,
+            padding: '10px 14px',
+            width: 220,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+            pointerEvents: 'none',
+            fontVariantNumeric: 'tabular-nums',
+          }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: 8 }}>
+              <div style={{ display:'flex', alignItems:'center', gap: 8 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--green-700)' }}/>
+                <span style={{ fontSize: 12, fontWeight: 500, lineHeight: '18px', color: 'var(--ink-1)' }}>Portfolio</span>
+              </div>
+              <span style={{ fontSize: 12, fontWeight: 500, lineHeight: '18px', color: 'var(--ink-1)' }}>
+                {portfolioPct >= 0 ? '+' : ''}{portfolioPct.toFixed(2)}%
+              </span>
+            </div>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap: 8 }}>
+              <div style={{ display:'flex', alignItems:'center', gap: 8 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--info-fg)' }}/>
+                <span style={{ fontSize: 12, fontWeight: 500, lineHeight: '18px', color: 'var(--ink-1)' }}>BTCUSD</span>
+              </div>
+              <span style={{ fontSize: 12, fontWeight: 500, lineHeight: '18px', color: 'var(--ink-1)' }}>
+                {btcPct >= 0 ? '+' : ''}{btcPct.toFixed(2)}%
+              </span>
+            </div>
+            <div style={{ height: 1, width: '100%', background: 'var(--line-1)' }}/>
+            <span style={{ fontSize: 10, fontWeight: 500, lineHeight: '18px', textAlign: 'center', color: 'var(--ink-3)' }}>
+              {dateLabel}
+            </span>
           </div>
-          <div style={{ display:'flex', justifyContent:'space-between', gap: 12, marginBottom: 2 }}>
-            <span style={{color:'var(--ink-2)'}}>Fund NAV</span>
-            <b>${(hover.v/1e6).toFixed(2)}M</b>
-          </div>
-          <div style={{ display:'flex', justifyContent:'space-between', gap: 12 }}>
-            <span style={{color:'var(--ink-2)'}}>NAV / share</span>
-            <b>${hover.s.toFixed(2)}</b>
-          </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
@@ -809,8 +861,10 @@ function NextDealingCountdown() {
   );
 }
 
-function Navbar({ onNav, route }) {
+function Navbar({ onNav, route, investorName }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const [notifOpen, setNotifOpen] = React.useState(false);
+  const [notifTab, setNotifTab] = React.useState('all');
   React.useEffect(() => {
     if (!menuOpen) return;
     const handler = (e) => {
@@ -819,25 +873,203 @@ function Navbar({ onNav, route }) {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [menuOpen]);
+  React.useEffect(() => {
+    if (!notifOpen) return;
+    const handler = (e) => {
+      if (!e.target.closest || !e.target.closest('[data-notifications-menu]')) setNotifOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [notifOpen]);
+  // Fund events. `kind` drives the row template:
+  // - subscription / redemption: avatar tinted green/pink, meta = ts · amount · class
+  // - dealing-cutoff: neutral avatar (alarm icon), meta = ts · amount · class
+  // - report: neutral avatar (file icon), tail action "is complete", meta = ts · date,
+  //   plus a PDF attachment card.
+  const events = [
+    { id:'evt-1', kind:'subscription', state:'unread', category:'all',
+      actor:'Subscription', action:'settled in',
+      target:'POD Crypto Fund', targetTone:'crypto',
+      ts:'1 hour ago', amount:'+$2,500,000 USD', cls:'Class A' },
+    { id:'evt-2', kind:'redemption', state:'unread', category:'approvals',
+      actor:'Redemption', action:'settled in',
+      target:'POD Crypto Fund', targetTone:'crypto',
+      ts:'1 hour ago', amount:'−$800,000 USD', cls:'Class A' },
+    { id:'evt-3', kind:'dealing-cutoff', state:'unread', category:'reminders',
+      actor:'Dealing cutoff', action:'settled in',
+      target:'POD Crypto Fund', targetTone:'crypto',
+      ts:'1 hour ago', amount:'+$2,500,000 USD', cls:'Class A' },
+    { id:'evt-4', kind:'report', state:'unread', category:'all',
+      actor:'Report', action:'for', tailAction:'is complete',
+      target:'POD Crypto Fund', targetTone:'crypto',
+      ts:'Just now', date:'30 Apr 2026',
+      attachment:{ name:'POD-Crypto-Q1-2026.pdf', size:'248 KB' } },
+    { id:'evt-5', kind:'subscription', state:'read', category:'archive',
+      actor:'Subscription', action:'settled in',
+      target:'POD Securities Fund', targetTone:'securities',
+      ts:'Yesterday', amount:'+$1,200,000 USD', cls:'Class B' },
+    { id:'evt-6', kind:'dealing-cutoff', state:'read', category:'reminders',
+      actor:'Dealing cutoff', action:'settled in',
+      target:'POD Crypto Fund', targetTone:'crypto',
+      ts:'Yesterday', amount:'+$3,400,000 USD', cls:'Class A' },
+  ];
+  const tabMatch = (e) =>
+    notifTab === 'all'       ? true :
+    notifTab === 'approvals' ? e.category === 'approvals' :
+    notifTab === 'reminders' ? e.category === 'reminders' :
+    notifTab === 'archive'   ? e.state === 'read' :
+    true;
+  const currentList = events.filter(tabMatch);
+  const activityUnread    = events.filter(e => e.state === 'unread').length;
+  const approvalsUnread   = events.filter(e => e.category === 'approvals' && e.state === 'unread').length;
+
+  // Target chip (small inline pill representing the fund the event relates to).
+  const targetTones = {
+    crypto:     { dot:'radial-gradient(circle at 30% 30%,#E9D5FF 0%,transparent 45%),radial-gradient(circle at 70% 35%,#BFDBFE 0%,transparent 50%),radial-gradient(circle at 50% 75%,#FCA5A5 0%,transparent 55%),linear-gradient(135deg,#C4B5FD 0%,#A5B4FC 55%,#FBCFE8 100%)' },
+    securities: { dot:'radial-gradient(circle at 30% 30%,#CFE9DA 0%,transparent 45%),radial-gradient(circle at 70% 35%,#9DA0A4 0%,transparent 55%),radial-gradient(circle at 50% 75%,#1B1E24 0%,transparent 70%),linear-gradient(135deg,#2F333B 0%,#82858B 60%,#E4E3DE 100%)' },
+    default:    { dot:'var(--ink-2)' },
+  };
+  const TargetChip = ({ label, tone }) => {
+    const t = targetTones[tone] || targetTones.default;
+    return (
+      <span style={{
+        display:'inline-flex',alignItems:'center',gap:6,
+        padding:'1px 8px 1px 6px',borderRadius:6,
+        background:'var(--bg-subtle)',color:'var(--ink-1)',
+        fontSize:13,fontWeight:500,verticalAlign:'baseline',
+      }}>
+        <span style={{width:12,height:12,borderRadius:3,background:t.dot,flexShrink:0,display:'inline-block'}}/>
+        {label}
+      </span>
+    );
+  };
+
+  // Kind → avatar tone + icon. Subscription = green, Redemption = pink,
+  // dealing-cutoff/report = neutral.
+  const KIND_CONFIG = {
+    'subscription':   { iconKey: 'arrowUpRight',   bg: 'var(--green-50)', fg: 'var(--green-700)' },
+    'redemption':     { iconKey: 'arrowDownLeft',  bg: '#FCE4E4',          fg: '#A0382F' },
+    'dealing-cutoff': { iconKey: 'alarmClock',     bg: 'var(--bg-subtle)', fg: 'var(--ink-1)' },
+    'report':         { iconKey: 'doc',            bg: 'var(--bg-subtle)', fg: 'var(--ink-1)' },
+  };
+
+  const Avatar = ({ kind }) => {
+    const cfg = KIND_CONFIG[kind] || KIND_CONFIG['dealing-cutoff'];
+    return (
+      <div style={{flexShrink:0,width:32,height:32}}>
+        <div style={{
+          width:32,height:32,borderRadius:'50%',
+          background: cfg.bg, color: cfg.fg,
+          display:'inline-flex',alignItems:'center',justifyContent:'center',
+        }}>
+          {React.createElement(Icon[cfg.iconKey] || Icon.clock, { style: { width: 16, height: 16 } })}
+        </div>
+      </div>
+    );
+  };
+
+  // Small red PDF icon — matches the Figma "File type=Document / PDF, Type=Solid".
+  const PdfIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{flexShrink:0}}>
+      <path d="M7 4 a2 2 0 0 1 2-2 h12 l5 5 v19 a2 2 0 0 1-2 2 H9 a2 2 0 0 1-2-2 Z" fill="#E74040"/>
+      <path d="M20 2 v5 a1 1 0 0 0 1 1 h5" fill="#FF6B6B"/>
+      <text x="16" y="22" textAnchor="middle" fontSize="7" fontWeight="700" fill="#fff" fontFamily="Inter, sans-serif">PDF</text>
+    </svg>
+  );
+
+  const NotifRow = ({ n }) => (
+    <div style={{
+      position:'relative',
+      display:'flex',gap:12,padding:'12px',borderRadius:10,
+      alignItems:'flex-start',cursor:'pointer',transition:'background 0.12s',
+    }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+      {n.state === 'unread' && (
+        <span style={{
+          position:'absolute',top:14,right:14,
+          width:8,height:8,borderRadius:'50%',
+          background:'var(--ink-1)',
+        }}/>
+      )}
+      <Avatar kind={n.kind}/>
+      <div style={{flex:1,minWidth:0,display:'flex',flexDirection:'column',gap:4}}>
+        <div style={{fontSize:14,color:'var(--ink-1)',lineHeight:1.45,display:'flex',flexWrap:'wrap',alignItems:'center',gap:'4px 6px'}}>
+          <span style={{fontWeight:600}}>{n.actor}</span>
+          <span style={{color:'var(--ink-2)'}}>{n.action}</span>
+          <TargetChip label={n.target} tone={n.targetTone}/>
+          {n.tailAction && <span style={{color:'var(--ink-2)'}}>{n.tailAction}</span>}
+        </div>
+        <div style={{fontSize:12,color:'var(--ink-3)',display:'flex',gap:6,flexWrap:'wrap'}}>
+          {n.ts && <span>{n.ts}</span>}
+          {n.amount && <React.Fragment><span>·</span><span>{n.amount}</span></React.Fragment>}
+          {n.cls && <React.Fragment><span>·</span><span>{n.cls}</span></React.Fragment>}
+          {n.date && <React.Fragment><span>·</span><span>{n.date}</span></React.Fragment>}
+        </div>
+        {n.kind === 'report' && n.attachment && (
+          <div style={{
+            marginTop:6,padding:'10px 12px',borderRadius:10,
+            background:'var(--bg-canvas)',border:'1px solid var(--line-1)',
+            display:'flex',alignItems:'center',gap:12,
+          }}>
+            <PdfIcon/>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontSize:13,fontWeight:500,color:'var(--ink-1)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{n.attachment.name}</div>
+              <div style={{fontSize:11.5,color:'var(--ink-3)'}}>{n.attachment.size}</div>
+            </div>
+            <button style={{width:28,height:28,borderRadius:8,border:'none',background:'transparent',color:'var(--ink-2)',cursor:'pointer',display:'inline-flex',alignItems:'center',justifyContent:'center'}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+              <Icon.download style={{width:14,height:14}}/>
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  // Chip-pill style filter tabs (matches Figma node 2506:23741).
+  const TabChip = ({ id, label, count }) => {
+    const active = notifTab === id;
+    return (
+      <button onClick={() => setNotifTab(id)} style={{
+        height:30,padding:'0 14px',borderRadius:999,
+        border: active ? 'none' : '1px solid var(--line-2)',
+        background: active ? 'var(--ink-1)' : 'transparent',
+        color: active ? 'var(--bg-canvas)' : 'var(--ink-1)',
+        fontSize:12.5,fontWeight:500,fontFamily:'inherit',cursor:'pointer',
+        display:'inline-flex',alignItems:'center',gap:6,whiteSpace:'nowrap',
+      }}>
+        <span>{label}</span>
+        {count > 0 && (
+          <span style={{ color: active ? 'var(--bg-canvas)' : 'var(--ink-3)', opacity: active ? 0.7 : 1, fontWeight:500 }}>{count}</span>
+        )}
+      </button>
+    );
+  };
   // Breadcrumb label for the active route
   const routeLabels = {
     'home': 'Home', 'actions': 'Actions',
     'overview': 'Overview', 'nav': 'NAV', 'collateral': 'Collateral & Treasury',
-    'share-register': 'Share Register', 'share-classes': 'Share Classes', 'economics': 'Economics',
+    'share-register': 'Share Register', 'share-classes': 'Share Classes', 'investors': 'Investors',
+    'investor': investorName || 'Investor', 'economics': 'Economics',
     'pnl': 'Profit & Loss', 'balance-sheet': 'Balance Sheet', 'reconciliation': 'Reconciliation log',
     'order-book': 'Order Book',
   };
-  const fundScopedRoutes = ['overview','nav','collateral','share-register','share-classes','economics','pnl','balance-sheet','reconciliation','order-book'];
+  const fundScopedRoutes = ['overview','nav','collateral','share-register','share-classes','investors','investor','economics','pnl','balance-sheet','reconciliation','order-book'];
   const inFund = fundScopedRoutes.includes(route);
-  // Sub-pages map to their parent route for 3-crumb breadcrumbs
+  // Sub-pages map to their parent route. Used to walk the breadcrumb chain.
   const parentOf = {
     'share-classes': 'share-register',
+    'investors':     'share-register',
+    'investor':      'investors',
     'pnl': 'nav',
     'balance-sheet': 'nav',
     'reconciliation': 'nav',
   };
-  const parentRoute = parentOf[route];
-  const parentLabel = parentRoute ? routeLabels[parentRoute] : '';
+  // Walk the chain: e.g. 'investor' → ['share-register','investors','investor']
+  const ancestors = [];
+  {
+    let r = parentOf[route];
+    let guard = 0;
+    while (r && guard < 5) { ancestors.unshift(r); r = parentOf[r]; guard++; }
+  }
   const currentLabel = routeLabels[route] || '';
   return (
     <header style={{
@@ -852,15 +1084,15 @@ function Navbar({ onNav, route }) {
             <div style={{width:22,height:22,borderRadius:'50%',background:'radial-gradient(circle at 30% 30%,#E9D5FF 0%,transparent 45%),radial-gradient(circle at 70% 35%,#BFDBFE 0%,transparent 50%),radial-gradient(circle at 50% 75%,#FCA5A5 0%,transparent 55%),linear-gradient(135deg,#C4B5FD 0%,#A5B4FC 55%,#FBCFE8 100%)',flexShrink:0}}/>
             <span style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',whiteSpace:'nowrap'}}>POD Crypto Fund</span>
             <Icon.chevron style={{width:14,height:14,color:'var(--ink-3)',flexShrink:0}}/>
-            {parentRoute ? (
-              <React.Fragment>
-                <a onClick={(e)=>{e.preventDefault();onNav(parentRoute);}} href="#" style={{fontSize:14,fontWeight:500,color:'var(--ink-2)',whiteSpace:'nowrap',textDecoration:'none',cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.color='var(--ink-1)'} onMouseLeave={e=>e.currentTarget.style.color='var(--ink-2)'}>{parentLabel}</a>
+            {ancestors.map(a => (
+              <React.Fragment key={a}>
+                <a onClick={(e)=>{e.preventDefault();onNav(a);}} href="#" style={{fontSize:14,fontWeight:500,color:'var(--ink-2)',whiteSpace:'nowrap',textDecoration:'none',cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.color='var(--ink-1)'} onMouseLeave={e=>e.currentTarget.style.color='var(--ink-2)'}>{routeLabels[a] || a}</a>
                 <Icon.chevron style={{width:14,height:14,color:'var(--ink-3)',flexShrink:0}}/>
               </React.Fragment>
-            ) : null}
+            ))}
             <span style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{currentLabel}</span>
           </React.Fragment>
-        ) : (
+        ) : (route === 'home' || route === 'actions') ? null : (
           <span style={{fontSize:14,fontWeight:500,color:'var(--ink-1)',whiteSpace:'nowrap'}}>{currentLabel}</span>
         )}
       </div>
@@ -876,79 +1108,108 @@ function Navbar({ onNav, route }) {
           <span>Ceffu</span>
           <Icon.arrowUpRight style={{width:12,height:12,color:'var(--ink-3)'}}/>
         </button>
-        <button className="icon-btn" style={{width:36,height:36,borderRadius:'50%',border:'none',background:'transparent',cursor:'pointer',color:'var(--ink-2)',display:'inline-flex',alignItems:'center',justifyContent:'center',position:'relative'}}>
-          <Icon.bell style={{width:18,height:18}}/>
-          <span style={{position:'absolute',top:6,right:7,width:8,height:8,borderRadius:'50%',background:'var(--warn)',border:'2px solid var(--bg-canvas)'}}/>
-        </button>
+        <div data-notifications-menu style={{position:'relative'}}>
+          <button onClick={() => setNotifOpen(o=>!o)} className="icon-btn" style={{width:36,height:36,borderRadius:'50%',border:'none',background:'transparent',cursor:'pointer',color:'var(--ink-2)',display:'inline-flex',alignItems:'center',justifyContent:'center',position:'relative'}}>
+            <Icon.bell style={{width:18,height:18}}/>
+            {activityUnread > 0 && <span style={{position:'absolute',top:5,right:6,width:11,height:11,borderRadius:'50%',background:'#EF4444',border:'2px solid var(--bg-canvas)',boxShadow:'0 0 0 1px rgba(0,0,0,0.04)'}}/>}
+          </button>
+          {notifOpen && (
+            <div style={{
+              position:'absolute',top:44,right:0,width:420,
+              background:'var(--bg-canvas)',border:'1px solid var(--line-1)',
+              borderRadius:14,boxShadow:'0 20px 56px rgba(0,0,0,0.14), 0 2px 6px rgba(0,0,0,0.06)',
+              padding:'16px 12px 8px',zIndex:40,
+            }}>
+              {/* Header */}
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 4px',marginBottom:14}}>
+                <div style={{fontSize:16,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>Notifications</div>
+                <button style={{width:28,height:28,borderRadius:8,border:'none',background:'transparent',color:'var(--ink-3)',cursor:'pointer',display:'inline-flex',alignItems:'center',justifyContent:'center'}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                  <Icon.dots style={{width:16,height:16}}/>
+                </button>
+              </div>
+              {/* Chip-pill tabs */}
+              <div style={{display:'flex',flexWrap:'wrap',gap:6,padding:'0 4px',marginBottom:10}}>
+                <TabChip id="all"        label="All"        count={activityUnread}/>
+                <TabChip id="approvals"  label="Approvals"  count={approvalsUnread}/>
+                <TabChip id="reminders"  label="Reminders"  count={0}/>
+                <TabChip id="archive"    label="Archive"    count={0}/>
+              </div>
+              {/* Feed */}
+              <div style={{display:'flex',flexDirection:'column',maxHeight:560,overflowY:'auto'}}>
+                {currentList.length === 0 ? (
+                  <div style={{padding:'48px 16px',textAlign:'center',color:'var(--ink-3)',fontSize:13}}>
+                    Nothing here yet.
+                  </div>
+                ) : currentList.map((n) => <NotifRow key={n.id} n={n}/>)}
+              </div>
+            </div>
+          )}
+        </div>
         <div data-account-menu style={{position:'relative'}}>
           <button onClick={() => setMenuOpen(o=>!o)} style={{position:'relative',width:36,height:36,border:'none',padding:0,cursor:'pointer',background:'transparent'}}>
             <div style={{
               width:36,height:36,borderRadius:'50%',
-              background:'linear-gradient(135deg,#737373 0%,#404040 100%)',color:'#fff',
+              background:'#15151A',color:'#fff',
               display:'inline-flex',alignItems:'center',justifyContent:'center',
               fontSize:12,fontWeight:600,
             }}>RM</div>
-            <span style={{position:'absolute',right:0,bottom:1,width:9,height:9,borderRadius:'50%',background:'var(--green-500)',border:'2px solid var(--bg-canvas)'}}/>
           </button>
           {menuOpen && (
             <div style={{
-              position:'absolute',top:44,right:0,width:296,
+              position:'absolute',top:44,right:0,width:280,
               background:'var(--bg-canvas)',border:'1px solid var(--line-1)',
               borderRadius:14,boxShadow:'0 20px 56px rgba(0,0,0,0.14), 0 2px 6px rgba(0,0,0,0.06)',
-              padding:'14px 14px 12px',zIndex:40,
+              padding:'14px 8px 8px',zIndex:40,
             }}>
-              <div style={{display:'flex',alignItems:'center',gap:13,paddingBottom:13,borderBottom:'1px solid var(--line-1)'}}>
-                <div style={{width:46,height:46,borderRadius:'50%',background:'#15151A',color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:15,fontWeight:600,flexShrink:0}}>RM</div>
+              {/* Header */}
+              <div style={{display:'flex',alignItems:'center',gap:12,padding:'2px 6px 12px'}}>
+                <div style={{width:40,height:40,borderRadius:'50%',background:'#15151A',color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:600,flexShrink:0}}>RM</div>
                 <div style={{minWidth:0}}>
                   <div style={{fontSize:15,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.01em'}}>Riko Matsuda</div>
                   <div style={{fontSize:12.5,color:'var(--ink-3)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>POD Capital</div>
                 </div>
               </div>
-              <div style={{padding:'8px 0 2px',fontSize:11.5,color:'var(--ink-3)',fontWeight:600,paddingLeft:2}}>Workspaces</div>
-              {[
-                { n: 'POD Capital', r: 'Fund Ops', active: true, init: 'PC', grad: 'linear-gradient(135deg,#C4B5FD,#A5B4FC)' },
-                { n: 'Meridian Partners', r: 'Observer', active: false, init: 'MP', grad: 'linear-gradient(135deg,#FDE68A,#FCA5A5)' },
-              ].map((w,i) => (
-                <button key={i} onClick={()=>setMenuOpen(false)} style={{display:'flex',alignItems:'center',gap:12,width:'100%',padding:'8px 6px',border:'none',background:'transparent',borderRadius:9,cursor:'pointer',fontFamily:'inherit',textAlign:'left',color:'var(--ink-1)'}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-                  <span style={{width:26,height:26,borderRadius:7,background:w.grad,display:'inline-flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:10,fontWeight:700,flexShrink:0}}>{w.init}</span>
-                  <div style={{flex:1,minWidth:0}}>
-                    <div style={{fontSize:12.5,fontWeight:500}}>{w.n}</div>
-                    <div style={{fontSize:11,color:'var(--ink-3)'}}>{w.r}</div>
-                  </div>
-                  {w.active && <span style={{color:'var(--green-600)',fontSize:13}}>✓</span>}
-                </button>
-              ))}
-              <div style={{height:1,background:'var(--line-1)',margin:'8px -2px'}}/>
+
+              {/* Divider before items */}
+              <div style={{height:1,background:'var(--line-1)',margin:'0 -2px 4px'}}/>
+
+              {/* Menu items */}
               {[
                 { l: 'Your details', icon: (
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
                 )},
                 { l: 'Settings', icon: (
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="2.6"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06A2 2 0 1 1 4.37 16.9l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="2.6"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06A2 2 0 1 1 4.37 16.9l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 )},
                 { l: 'Help centre', icon: (
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
                 )},
                 { l: 'Give feedback', icon: (
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 )},
               ].map((m,i) => (
-                <button key={i} onClick={()=>setMenuOpen(false)} style={{display:'flex',alignItems:'center',gap:12,width:'100%',padding:'8px 6px',border:'none',background:'transparent',borderRadius:9,cursor:'pointer',fontFamily:'inherit',textAlign:'left',color:'var(--ink-1)',fontSize:13,fontWeight:500}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-                  <span style={{width:18,height:18,color:'var(--ink-1)',display:'inline-flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>{React.cloneElement(m.icon,{width:18,height:18})}</span>
+                <button key={i} onClick={()=>setMenuOpen(false)} style={{display:'flex',alignItems:'center',gap:12,width:'100%',height:40,padding:'0 10px',border:'none',background:'transparent',borderRadius:8,cursor:'pointer',fontFamily:'inherit',textAlign:'left',color:'var(--ink-1)',fontSize:14,fontWeight:500}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                  <span style={{width:20,height:20,color:'var(--ink-1)',display:'inline-flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>{m.icon}</span>
                   {m.l}
                 </button>
               ))}
-              <div style={{display:'flex',alignItems:'center',gap:12,padding:'6px 6px',borderRadius:9}}>
-                <span style={{width:18,height:18,display:'inline-flex',alignItems:'center',justifyContent:'center',color:'var(--ink-1)',flexShrink:0}}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+
+              {/* Theme row */}
+              <div style={{display:'flex',alignItems:'center',gap:12,height:40,padding:'0 10px',borderRadius:8}}>
+                <span style={{width:20,height:20,display:'inline-flex',alignItems:'center',justifyContent:'center',color:'var(--ink-1)',flexShrink:0}}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
                 </span>
-                <span style={{flex:1,fontSize:13,fontWeight:500,color:'var(--ink-1)'}}>Theme</span>
+                <span style={{flex:1,fontSize:14,fontWeight:500,color:'var(--ink-1)'}}>Theme</span>
                 <ThemeSegment/>
               </div>
-              <div style={{height:1,background:'var(--line-1)',margin:'8px -2px'}}/>
-              <button onClick={()=>setMenuOpen(false)} style={{display:'flex',alignItems:'center',gap:12,width:'100%',padding:'8px 6px',border:'none',background:'transparent',borderRadius:9,cursor:'pointer',fontFamily:'inherit',textAlign:'left',color:'var(--ink-1)',fontSize:13,fontWeight:500}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-                <span style={{width:18,height:18,display:'inline-flex',alignItems:'center',justifyContent:'center',color:'var(--ink-1)',flexShrink:0}}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+
+              {/* Divider before logout */}
+              <div style={{height:1,background:'var(--line-1)',margin:'4px -2px'}}/>
+
+              {/* Log out */}
+              <button onClick={()=>setMenuOpen(false)} style={{display:'flex',alignItems:'center',gap:12,width:'100%',height:40,padding:'0 10px',border:'none',background:'transparent',borderRadius:8,cursor:'pointer',fontFamily:'inherit',textAlign:'left',color:'var(--ink-1)',fontSize:14,fontWeight:500}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                <span style={{width:20,height:20,display:'inline-flex',alignItems:'center',justifyContent:'center',color:'var(--ink-1)',flexShrink:0}}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                 </span>
                 Log out
               </button>
@@ -961,7 +1222,221 @@ function Navbar({ onNav, route }) {
   );
 }
 
+function FeedbackModal({ open, onClose, onSubmit }) {
+  const [text, setText] = React.useState('');
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [open, onClose]);
+  if (!open) return null;
+
+  const canSend = text.trim().length > 0;
+  const handleSend = () => {
+    if (!canSend) return;
+    onSubmit?.(text.trim());
+    setText('');
+    onClose();
+  };
+
+  const modal = (
+    <div className="no-page-anim" style={{position:'fixed',inset:0,zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
+      <div onClick={onClose} style={{position:'absolute',inset:0,background:'rgba(10,10,12,0.45)',animation:'navFade 0.18s ease-out both'}}/>
+      <div role="dialog" aria-modal="true" aria-labelledby="feedback-title" style={{position:'relative',width:'min(440px, 100%)',background:'var(--bg-canvas)',border:'none',borderRadius:12,boxShadow:'0 24px 64px rgba(0,0,0,0.22), 0 2px 6px rgba(0,0,0,0.08)',padding:'24px 24px 20px',animation:'navFade 0.18s ease-out both'}}>
+        <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:16,marginBottom:14}}>
+          <div style={{display:'flex',alignItems:'center',gap:12,minWidth:0}}>
+            <img src="assets/Bulb-light.jpg" alt="" className="bulb-img bulb-light" style={{width:44,height:44}}/>
+            <img src="assets/Bulb-dark.jpg"  alt="" className="bulb-img bulb-dark"  style={{width:44,height:44}}/>
+            <div id="feedback-title" style={{fontSize:17,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>An idea to improve POD?</div>
+          </div>
+          <button onClick={onClose} aria-label="Close" style={{width:28,height:28,padding:0,border:'none',background:'transparent',color:'var(--ink-2)',cursor:'pointer',display:'inline-flex',alignItems:'center',justifyContent:'center',fontFamily:'inherit',flexShrink:0}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div style={{fontSize:13,color:'var(--ink-2)',lineHeight:1.5,marginBottom:16}}>Share it with us so that we can better meet your expectations.</div>
+
+        <textarea
+          value={text}
+          onChange={e=>setText(e.target.value)}
+          placeholder="Tell us all about it!"
+          rows={5}
+          autoFocus
+          style={{
+            width:'100%',resize:'vertical',minHeight:120,
+            padding:'12px 14px',
+            background:'var(--glass-bg)',
+            border:'none',borderRadius:10,
+            fontFamily:'inherit',fontSize:13,color:'var(--ink-1)',
+            outline:'none',
+            boxSizing:'border-box',
+            marginBottom:18,
+          }}
+        />
+
+        <div style={{display:'flex',justifyContent:'flex-end',gap:8}}>
+          <button onClick={onClose} style={{background:'var(--bg-canvas)',border:'1px solid var(--line-2)',height:38,padding:'0 16px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,color:'var(--ink-1)',fontFamily:'inherit'}}>Cancel</button>
+          <button
+            onClick={handleSend}
+            disabled={!canSend}
+            style={{
+              background: canSend ? 'var(--accent-plum)' : 'var(--bg-subtle)',
+              color: canSend ? 'var(--accent-plum-on)' : 'var(--ink-3)',
+              border:'none',height:38,padding:'0 18px',borderRadius:8,
+              cursor: canSend ? 'pointer' : 'not-allowed',
+              fontSize:13,fontWeight:500,fontFamily:'inherit',
+              transition:'background 0.12s',
+            }}
+          >Send my idea</button>
+        </div>
+      </div>
+    </div>
+  );
+  return ReactDOM.createPortal(modal, document.body);
+}
+
+/* ─────────────────────── FUND SELECTOR ─────────────────────── */
+const FUND_LIST = [
+  { id: 'pod-crypto',     name: 'POD Crypto Fund',     status: 'active',
+    thumbLg: 'assets/Fund thumbnails/Type=1, Size=lg.png',
+    thumbSm: 'assets/Fund thumbnails/Type=1, Size=sm.png' },
+  { id: 'pod-securities', name: 'POD Securities Fund', status: 'active',
+    thumbLg: 'assets/Fund thumbnails/Type=2, Size=lg.png',
+    thumbSm: 'assets/Fund thumbnails/Type=2, Size=sm.png' },
+  { id: 'fund-b',         name: 'Fund B',              status: 'draft',
+    thumbLg: 'assets/Fund thumbnails/Type=3, Size=lg.png',
+    thumbSm: 'assets/Fund thumbnails/Type=3, Size=sm.png' },
+];
+
+function FundIcon({ src, size = 22 }) {
+  if (!src) return null;
+  return <img src={src} alt="" style={{width:size,height:size,flexShrink:0,objectFit:'contain',display:'block'}}/>;
+}
+
+function FundStatusPill({ status }) {
+  if (!status || status === 'active') return null;
+  const tones = {
+    draft:   { bg:'var(--bg-card)', color:'var(--ink-2)', label:'Draft' },
+    pending: { bg:'#FFF1E6',        color:'#C2410C',      label:'Pending' },
+  };
+  const t = tones[status];
+  if (!t) return null;
+  return <span style={{fontSize:12,fontWeight:500,padding:'2px 8px',borderRadius:6,background:t.bg,color:t.color,whiteSpace:'nowrap'}}>{t.label}</span>;
+}
+
+function FundRow({ fund, active, onClick }) {
+  const baseBg = active ? 'var(--bg-card)' : 'var(--bg-canvas)';
+  return (
+    <div
+      onClick={onClick}
+      style={{display:'flex',alignItems:'center',gap:10,padding:'8px 10px',borderRadius:8,cursor:'pointer',background:baseBg,minHeight:36,transition:'background 0.12s'}}
+      onMouseEnter={e=>{ if(!active) e.currentTarget.style.background='var(--bg-subtle)'; }}
+      onMouseLeave={e=>{ if(!active) e.currentTarget.style.background='var(--bg-canvas)'; }}
+    >
+      <FundIcon src={fund.thumbSm} size={22}/>
+      <span style={{flex:1,fontSize:13,fontWeight:active?700:500,color:'var(--ink-1)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{fund.name}</span>
+      <FundStatusPill status={fund.status}/>
+    </div>
+  );
+}
+
+function FundListDropdown({ funds, currentId, onSelect, onAddFund }) {
+  return (
+    <div style={{background:'var(--bg-canvas)',borderRadius:12,boxShadow:'0 12px 32px rgba(0,0,0,0.10),0 2px 4px rgba(0,0,0,0.04)',padding:6,display:'flex',flexDirection:'column',gap:2,minWidth:240}}>
+      {funds.map(f => (
+        <FundRow key={f.id} fund={f} active={f.id===currentId} onClick={()=>onSelect(f.id)}/>
+      ))}
+      <div style={{height:1,background:'var(--line-2)',margin:'4px 6px'}}/>
+      <div style={{padding:'4px 6px 2px'}}>
+        <button
+          onClick={onAddFund}
+          style={{...btnOutline,height:32,fontSize:12.5,padding:'0 12px'}}
+        >
+          <Icon.plus style={{width:14,height:14}}/>
+          Create a Fund
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function FundSelector({ funds, currentId, onSelect }) {
+  const [open, setOpen] = React.useState(false);
+  const [pos, setPos] = React.useState(null);
+  const triggerRef = React.useRef(null);
+  const dropdownRef = React.useRef(null);
+  const current = funds.find(f => f.id === currentId) || funds[0];
+
+  React.useLayoutEffect(() => {
+    if (!open || !triggerRef.current) return;
+    const update = () => {
+      const r = triggerRef.current.getBoundingClientRect();
+      setPos({ top: r.bottom + 6, left: r.left, width: Math.max(r.width, 240) });
+    };
+    update();
+    window.addEventListener('resize', update);
+    window.addEventListener('scroll', update, true);
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('scroll', update, true);
+    };
+  }, [open]);
+
+  React.useEffect(() => {
+    if (!open) return;
+    const handler = (e) => {
+      if (triggerRef.current && triggerRef.current.contains(e.target)) return;
+      if (dropdownRef.current && dropdownRef.current.contains(e.target)) return;
+      setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  const Chevrons = () => (
+    <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2,color:'var(--ink-2)',flexShrink:0}}>
+      <svg viewBox="0 0 12 6" width="12" height="6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="2 5 6 1 10 5"/></svg>
+      <svg viewBox="0 0 12 6" width="12" height="6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="2 1 6 5 10 1"/></svg>
+    </div>
+  );
+
+  return (
+    <div ref={triggerRef} style={{position:'relative'}}>
+      <div
+        onClick={()=>setOpen(v=>!v)}
+        style={{display:'flex',alignItems:'center',gap:10,padding:'7px 10px',borderRadius:8,cursor:'pointer',background:'var(--bg-canvas)',border:'1px solid var(--line-2)',boxShadow:'0 1px 2px rgba(0,0,0,0.03)',minHeight:36,transition:'border-color 0.12s, box-shadow 0.12s'}}
+        onMouseEnter={e=>{ e.currentTarget.style.borderColor='var(--line-1)'; }}
+        onMouseLeave={e=>{ e.currentTarget.style.borderColor='var(--line-2)'; }}
+      >
+        <FundIcon src={current.thumbSm} size={22}/>
+        <span style={{flex:1,fontSize:13,fontWeight:500,color:'var(--ink-1)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{current.name}</span>
+        <FundStatusPill status={current.status}/>
+        <Chevrons/>
+      </div>
+      {open && pos && ReactDOM.createPortal(
+        <div ref={dropdownRef} style={{position:'fixed',top:pos.top,left:pos.left,width:pos.width,zIndex:100}}>
+          <FundListDropdown
+            funds={funds}
+            currentId={currentId}
+            onSelect={(id)=>{ onSelect(id); setOpen(false); }}
+            onAddFund={()=>setOpen(false)}
+          />
+        </div>,
+        document.body
+      )}
+    </div>
+  );
+}
+
 function Sidebar({ route, onNav }) {
+  const [feedbackOpen, setFeedbackOpen] = React.useState(false);
+  const [feedbackSent, setFeedbackSent] = React.useState(false);
+  const [currentFundId, setCurrentFundId] = React.useState('pod-crypto');
   const primary = [
     { id: 'home', label: 'Home', icon: Icon.home },
     { id: 'actions', label: 'Actions', icon: Icon.zap },
@@ -975,6 +1450,7 @@ function Sidebar({ route, onNav }) {
   // Share Register children
   const shareRegisterChildren = [
     { id: 'share-classes', label: 'Share classes' },
+    { id: 'investors', label: 'Investors' },
   ];
   // Top-level fund items (NAV / Share Register shown separately with expandable chevron)
   const fundTop = [
@@ -982,6 +1458,7 @@ function Sidebar({ route, onNav }) {
   ];
   const fundBetween = [
     { id: 'collateral', label: 'Collateral & Treasury', icon: Icon.vault },
+    { id: 'order-book', label: 'Order Book', icon: Icon.orderBook },
   ];
   const fundBottom = [
     { id: 'economics', label: 'Economics', icon: Icon.chart },
@@ -1078,13 +1555,7 @@ function Sidebar({ route, onNav }) {
       <div style={{display:'flex',flexDirection:'column',gap:12}}>
         <div style={{display:'flex',flexDirection:'column',gap:6,paddingTop:8}}>
           <div style={{color:'var(--ink-2)',padding:'4px 12px',fontSize:12,fontWeight:500}}>Funds</div>
-          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'8px 12px',gap:14,height:42,borderRadius:8,cursor:'pointer',color:'var(--ink-1)'}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-card)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-            <div style={{display:'flex',alignItems:'center',gap:12,minWidth:0}}>
-              <div style={{width:22,height:22,borderRadius:'50%',background:'radial-gradient(circle at 30% 30%,#E9D5FF 0%,transparent 45%),radial-gradient(circle at 70% 35%,#BFDBFE 0%,transparent 50%),radial-gradient(circle at 50% 75%,#FCA5A5 0%,transparent 55%),linear-gradient(135deg,#C4B5FD 0%,#A5B4FC 55%,#FBCFE8 100%)',flexShrink:0}}/>
-              <span style={{fontSize:14,fontWeight:500,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>POD Crypto Fund</span>
-            </div>
-            <Icon.down style={{width:14,height:14,color:'var(--ink-2)',flexShrink:0}}/>
-          </div>
+          <FundSelector funds={FUND_LIST} currentId={currentFundId} onSelect={setCurrentFundId}/>
         </div>
         <div style={{display:'flex',flexDirection:'column',gap:2}}>
           {fundTop.map(i => <NavItem key={i.id} item={i}/>)}
@@ -1094,6 +1565,23 @@ function Sidebar({ route, onNav }) {
           {fundBottom.map(i => <NavItem key={i.id} item={i}/>)}
         </div>
       </div>
+
+      {/* Feedback card — pinned to bottom */}
+      <a href="#" onClick={(e)=>{e.preventDefault();setFeedbackOpen(true);}} style={{
+        marginTop:'auto',display:'flex',alignItems:'center',gap:10,
+        padding:'12px 14px',borderRadius:10,
+        background:'var(--glass-bg)',textDecoration:'none',color:'var(--ink-1)',cursor:'pointer',
+        transition:'background 0.12s',
+      }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='var(--glass-bg)'}>
+        <img src="assets/Bulb-light.jpg" alt="" className="bulb-img bulb-light" style={{width:40,height:40}}/>
+        <img src="assets/Bulb-dark.jpg"  alt="" className="bulb-img bulb-dark"  style={{width:40,height:40}}/>
+        <div style={{minWidth:0,flex:1}}>
+          <div style={{fontSize:13,fontWeight:600,color:'var(--ink-1)',lineHeight:1.3}}>Know how we could improve POD?</div>
+          <div style={{fontSize:12,color:'var(--ink-3)',marginTop:2}}>{feedbackSent ? 'Thanks — sent ✓' : 'Leave feedback'}</div>
+        </div>
+      </a>
+
+      <FeedbackModal open={feedbackOpen} onClose={()=>setFeedbackOpen(false)} onSubmit={()=>setFeedbackSent(true)}/>
     </nav>
   );
 }
@@ -1990,15 +2478,7 @@ function RiskCard({ title, value, peerValue, peerLabel, verdict }) {
   const fmt = v => v.toFixed(2);
   return (
     <div style={{background:'var(--glass-bg)',backdropFilter:'blur(10px)',borderRadius:12,padding:'20px 24px'}}>
-      <div style={{display:'flex',alignItems:'center',gap:8}}>
-        <span style={{fontSize:14,fontWeight:500,color:'var(--ink-2)'}}>{title}</span>
-        <span aria-hidden="true" style={{
-          display:'inline-flex',alignItems:'center',justifyContent:'center',
-          width:14,height:14,borderRadius:'50%',
-          background:'var(--bg-subtle)',color:'var(--ink-3)',
-          fontSize:10,fontWeight:600,
-        }}>?</span>
-      </div>
+      <div style={{fontSize:14,fontWeight:500,color:'var(--ink-2)'}}>{title}</div>
       <div style={{display:'flex',alignItems:'baseline',gap:14,marginTop:10,flexWrap:'wrap'}}>
         <span style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',color:valueColor,fontVariantNumeric:'tabular-nums',lineHeight:1}}>{fmt(value)}</span>
         <span style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:13}}>
@@ -2027,18 +2507,21 @@ const { useState: _s1 } = React;
 // ============================================================================
 function OrderBookView({ onNav }) {
   const [filter, setFilter] = _s1('all');
+  const [fromDate, setFromDate] = _s1('2026-04-01');
+  const [toDate, setToDate] = _s1('2026-04-30');
   const [selected, setSelected] = _s1(null);
 
   const orders = [
-    { id: 'ORD-2026-00418', type: 'sub', holder: 'Meridian Capital Partners', class: 'B', amount: '$450,000', shares: '—', strike: 'Mon 04 May', status: 'approved', created: '30 Apr 14:22', note: 'Wire confirmed' },
-    { id: 'ORD-2026-00417', type: 'red', holder: 'Henri Desrosiers', class: 'C', amount: '$82,500', shares: '2,128', strike: 'Mon 04 May', status: 'pending', created: '30 Apr 13:55', note: 'Awaiting AML re-check' },
-    { id: 'ORD-2026-00416', type: 'sub', holder: 'Saltbush Super Fund', class: 'A', amount: 'A$1,200,000', shares: '—', strike: 'Mon 04 May', status: 'approved', created: '30 Apr 11:40', note: 'Settled' },
-    { id: 'ORD-2026-00415', type: 'red', holder: 'M. Okafor', class: 'C', amount: '$24,000', shares: '619', strike: 'Mon 04 May', status: 'hold', created: '30 Apr 09:12', note: 'Cooling-off period' },
-    { id: 'ORD-2026-00414', type: 'sub', holder: 'Peninsula Platform Nominees', class: 'D', amount: '$2,100,000', shares: '—', strike: 'Mon 04 May', status: 'approved', created: '29 Apr 18:30', note: 'Bulk platform order' },
-    { id: 'ORD-2026-00413', type: 'sub', holder: 'J. Whitley-Bent', class: 'C', amount: '$15,000', shares: '—', strike: 'Mon 04 May', status: 'approved', created: '29 Apr 15:02', note: 'Monthly recurring' },
-    { id: 'ORD-2026-00412', type: 'red', holder: 'Verdant Family Office', class: 'A', amount: '$780,000', shares: '21,576', strike: 'Mon 04 May', status: 'approved', created: '29 Apr 10:18', note: 'Rebalancing' },
+    { id: 'ORD-2026-00418', type: 'sub', holder: 'Meridian Capital Partners', class: 'B', amount: '$450,000', shares: '—', strike: 'Mon 04 May', status: 'approved', created: '30 Apr 14:22', createdISO: '2026-04-30', note: 'Wire confirmed' },
+    { id: 'ORD-2026-00417', type: 'red', holder: 'Henri Desrosiers', class: 'C', amount: '$82,500', shares: '2,128', strike: 'Mon 04 May', status: 'pending', created: '30 Apr 13:55', createdISO: '2026-04-30', note: 'Awaiting AML re-check' },
+    { id: 'ORD-2026-00416', type: 'sub', holder: 'Saltbush Super Fund', class: 'A', amount: 'A$1,200,000', shares: '—', strike: 'Mon 04 May', status: 'approved', created: '30 Apr 11:40', createdISO: '2026-04-30', note: 'Settled' },
+    { id: 'ORD-2026-00415', type: 'red', holder: 'M. Okafor', class: 'C', amount: '$24,000', shares: '619', strike: 'Mon 04 May', status: 'hold', created: '30 Apr 09:12', createdISO: '2026-04-30', note: 'Cooling-off period' },
+    { id: 'ORD-2026-00414', type: 'sub', holder: 'Peninsula Platform Nominees', class: 'D', amount: '$2,100,000', shares: '—', strike: 'Mon 04 May', status: 'approved', created: '29 Apr 18:30', createdISO: '2026-04-29', note: 'Bulk platform order' },
+    { id: 'ORD-2026-00413', type: 'sub', holder: 'J. Whitley-Bent', class: 'C', amount: '$15,000', shares: '—', strike: 'Mon 04 May', status: 'approved', created: '29 Apr 15:02', createdISO: '2026-04-29', note: 'Monthly recurring' },
+    { id: 'ORD-2026-00412', type: 'red', holder: 'Verdant Family Office', class: 'A', amount: '$780,000', shares: '21,576', strike: 'Mon 04 May', status: 'approved', created: '29 Apr 10:18', createdISO: '2026-04-29', note: 'Rebalancing' },
   ];
-  const filtered = filter === 'all' ? orders : orders.filter(o => filter === 'sub' ? o.type === 'sub' : filter === 'red' ? o.type === 'red' : o.status === filter);
+  const byStatus = filter === 'all' ? orders : orders.filter(o => filter === 'sub' ? o.type === 'sub' : filter === 'red' ? o.type === 'red' : o.status === filter);
+  const filtered = byStatus.filter(o => (!fromDate || o.createdISO >= fromDate) && (!toDate || o.createdISO <= toDate));
 
   return (
     <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
@@ -2049,7 +2532,6 @@ function OrderBookView({ onNav }) {
         </div>
         <div style={{display:'flex',gap:8,flexShrink:0}}>
           <button style={btnOutline}><Icon.download style={{width:13,height:13}}/> Export CSV</button>
-          <button style={btnPrimary}>+ New order</button>
         </div>
       </div>
 
@@ -2070,16 +2552,50 @@ function OrderBookView({ onNav }) {
       </div>
 
       {/* Filter chips */}
-      <div style={{display:'flex',alignItems:'center',gap:6,paddingBottom:12,borderBottom:'1px solid var(--line-1)',marginBottom:0,flexWrap:'wrap'}}>
-        {[['all','All orders'],['sub','Subscriptions'],['red','Redemptions'],['pending','Pending review'],['hold','On hold']].map(([k,l]) => (
-          <button key={k} onClick={()=>setFilter(k)} style={{
-            background: filter === k ? 'var(--ink-1)' : 'transparent',
-            color: filter === k ? '#fff' : 'var(--ink-1)',
-            border: filter === k ? 'none' : '1px solid var(--line-2)',
-            padding: '6px 14px',borderRadius:999,fontSize:12,fontWeight:500,cursor:'pointer',fontFamily:'inherit',
-          }}>{l}</button>
-        ))}
+      <div style={{display:'flex',alignItems:'center',gap:10,paddingBottom:12,borderBottom:'1px solid var(--line-1)',marginBottom:0,flexWrap:'wrap'}}>
+        <div style={{display:'flex',alignItems:'center',gap:6,flexWrap:'wrap'}}>
+          {[['all','All orders'],['sub','Subscriptions'],['red','Redemptions'],['pending','Pending review'],['hold','On hold']].map(([k,l]) => (
+            <button key={k} onClick={()=>setFilter(k)} style={{
+              background: filter === k ? 'var(--ink-1)' : 'transparent',
+              color: filter === k ? 'var(--bg-canvas)' : 'var(--ink-1)',
+              border: filter === k ? 'none' : '1px solid var(--line-2)',
+              padding: '6px 14px',borderRadius:999,fontSize:12,fontWeight:500,cursor:'pointer',fontFamily:'inherit',
+            }}>{l}</button>
+          ))}
+        </div>
         <div style={{flex:1}}/>
+        <div style={{display:'inline-flex',alignItems:'center',gap:8}}>
+          <input
+            type="date"
+            value={fromDate}
+            onChange={e=>setFromDate(e.target.value)}
+            style={{
+              border:'1px solid var(--line-2)',background:'var(--bg-canvas)',color:'var(--ink-1)',
+              padding:'6px 10px',borderRadius:8,fontSize:12,fontWeight:500,fontFamily:'inherit',outline:'none',
+              colorScheme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+            }}
+          />
+          <span style={{color:'var(--ink-3)',fontSize:12}}>→</span>
+          <input
+            type="date"
+            value={toDate}
+            onChange={e=>setToDate(e.target.value)}
+            style={{
+              border:'1px solid var(--line-2)',background:'var(--bg-canvas)',color:'var(--ink-1)',
+              padding:'6px 10px',borderRadius:8,fontSize:12,fontWeight:500,fontFamily:'inherit',outline:'none',
+              colorScheme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+            }}
+          />
+          {(fromDate || toDate) && (
+            <button
+              onClick={()=>{setFromDate('');setToDate('');}}
+              style={{
+                border:'1px solid var(--line-2)',background:'transparent',color:'var(--ink-2)',
+                padding:'6px 12px',borderRadius:8,fontSize:12,fontWeight:500,fontFamily:'inherit',cursor:'pointer',
+              }}
+            >Clear</button>
+          )}
+        </div>
         <div style={{display:'flex',alignItems:'center',gap:6,color:'var(--ink-2)',fontSize:12}}>
           <Icon.clock style={{width:13,height:13}}/> Cutoff in 18h 42m
         </div>
@@ -2090,8 +2606,9 @@ function OrderBookView({ onNav }) {
         <thead>
           <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>
             <th style={th}>Order</th>
+            <th style={th}>Created</th>
             <th style={th}>Holder</th>
-            <th style={{...th,textAlign:'center'}}>Class</th>
+            <th style={th}>Class</th>
             <th style={{...th,textAlign:'right'}}>Amount</th>
             <th style={{...th,textAlign:'right'}}>Est. shares</th>
             <th style={th}>Strike</th>
@@ -2101,25 +2618,25 @@ function OrderBookView({ onNav }) {
         </thead>
         <tbody>
           {filtered.map(o => (
-            <tr key={o.id} onClick={() => setSelected(o)} style={{fontSize:13,cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <tr key={o.id} data-row onClick={() => setSelected(o)} style={{fontSize:13,cursor:'pointer'}}>
               <td style={td}>
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <OrderTypeTag type={o.type}/>
-                  <div>
-                    <div style={{fontSize:11.5,color:'var(--ink-2)'}}>{o.id}</div>
-                    <div style={{fontSize:11,color:'var(--ink-3)',marginTop:1}}>{o.created}</div>
-                  </div>
+                  <span style={{fontWeight:500,color:'var(--ink-1)'}}>{o.id}</span>
                 </div>
               </td>
-              <td style={td}>{o.holder}</td>
-              <td style={{...td,textAlign:'center'}}>
-                <span style={{display:'inline-block',width:22,height:22,lineHeight:'22px',borderRadius:4,background:'var(--bg-card)',fontSize:11,fontWeight:600}}>{o.class}</span>
+              <td style={{...td,color:'var(--ink-2)',whiteSpace:'nowrap'}}>{o.created}</td>
+              <td style={td}>
+                <a onClick={(e)=>{e.stopPropagation();window.openInvestor?.(o.holder);}} style={{color:'var(--ink-1)',cursor:'pointer',textDecoration:'none'}} onMouseEnter={e=>e.currentTarget.style.textDecoration='underline'} onMouseLeave={e=>e.currentTarget.style.textDecoration='none'}>{o.holder}</a>
+              </td>
+              <td style={td}>
+                <span style={{display:'inline-block',width:22,height:22,lineHeight:'22px',textAlign:'center',borderRadius:4,background:'var(--bg-subtle)',fontSize:11,fontWeight:600,color:'var(--ink-1)'}}>{o.class}</span>
               </td>
               <td style={{...td,textAlign:'right',fontWeight:500}}>{o.amount}</td>
               <td style={{...td,textAlign:'right',color:'var(--ink-2)'}}>{o.shares}</td>
-              <td style={td}>{o.strike}</td>
+              <td style={{...td,color:'var(--ink-2)',whiteSpace:'nowrap'}}>{o.strike}</td>
               <td style={td}><StatusChipX status={o.status}/></td>
-              <td style={{...td,textAlign:'right',color:'var(--ink-3)'}}><Icon.chevron style={{width:14,height:14,transform:'rotate(-90deg)'}}/></td>
+              <td style={{...td,textAlign:'right',color:'var(--ink-3)',width:24}}><Icon.chevron style={{width:14,height:14}}/></td>
             </tr>
           ))}
         </tbody>
@@ -2131,15 +2648,15 @@ function OrderBookView({ onNav }) {
 }
 
 function OrderTypeTag({ type }) {
-  const cfg = type === 'sub' ? { bg: 'var(--green-50)', fg: 'var(--green-700)', label: 'Sub', sym: '↑' } : { bg: '#FFF2F0', fg: '#e13733', label: 'Red', sym: '↓' };
+  const cfg = type === 'sub' ? { bg: 'var(--green-50)', fg: 'var(--green-700)', label: 'Subscription', sym: '↑' } : { bg: 'var(--neg-bg)', fg: 'var(--neg)', label: 'Redemption', sym: '↓' };
   return <span style={{display:'inline-flex',alignItems:'center',gap:4,padding:'2px 8px',borderRadius:4,background:cfg.bg,color:cfg.fg,fontSize:11,fontWeight:600}}>{cfg.sym} {cfg.label}</span>;
 }
 
 function StatusChipX({ status }) {
   const map = {
     approved: { bg: 'var(--green-50)', fg: 'var(--green-700)', border: 'var(--green-200)', label: 'Approved' },
-    pending: { bg: '#FFF6E6', fg: '#8A5A10', border: '#F5E2B8', label: 'Pending review' },
-    hold: { bg: '#F4F0FF', fg: '#544497', border: '#DFD7F5', label: 'On hold' },
+    pending:  { bg: 'var(--warn-bg)',  fg: 'var(--warn-fg)',   border: 'var(--warn-border)', label: 'Pending review' },
+    hold:     { bg: 'var(--hold-bg)',  fg: 'var(--hold-fg)',   border: 'var(--hold-border)', label: 'On hold' },
     verified: { bg: 'var(--green-50)', fg: 'var(--green-700)', border: 'var(--green-200)', label: 'Verified' },
   };
   const s = map[status] || map.pending;
@@ -2147,22 +2664,45 @@ function StatusChipX({ status }) {
 }
 
 function OrderDrawer({ order, onClose }) {
+  const [closing, setClosing] = React.useState(false);
+  const beginClose = React.useCallback(() => setClosing(true), []);
+  const onPanelAnimEnd = (e) => {
+    // Only the panel's slide-out should commit unmount (ignore inner element bubbles)
+    if (closing && e.target === e.currentTarget && e.animationName === 'drawerSlideOut') {
+      onClose?.();
+    }
+  };
+  const openToInvestor = (name) => {
+    setClosing(true);
+    setTimeout(() => { onClose?.(); window.openInvestor?.(name); }, 240);
+  };
   return (
     <>
-      <div style={{position:'fixed',inset:0,background:'rgba(10,10,12,0.35)',zIndex:50}} onClick={onClose}/>
-      <div style={{position:'fixed',top:0,right:0,bottom:0,width:480,maxWidth:'92vw',background:'var(--bg-canvas)',borderLeft:'1px solid var(--line-1)',boxShadow:'-12px 0 40px rgba(0,0,0,0.12)',display:'flex',flexDirection:'column',zIndex:51,animation:'slideIn 0.25s cubic-bezier(0.2,0.8,0.2,1)'}}>
+      <div onClick={beginClose} style={{
+        position:'fixed',inset:0,background:'rgba(10,10,12,0.35)',zIndex:50,
+        animation: `${closing ? 'drawerBackdropOut' : 'drawerBackdropIn'} 0.22s ease-out forwards`,
+      }}/>
+      <div onAnimationEnd={onPanelAnimEnd} style={{
+        position:'fixed',top:0,right:0,bottom:0,width:480,maxWidth:'92vw',
+        background:'var(--bg-canvas)',borderLeft:'1px solid var(--line-1)',
+        boxShadow:'-12px 0 40px rgba(0,0,0,0.12)',
+        display:'flex',flexDirection:'column',zIndex:51,
+        animation: `${closing ? 'drawerSlideOut' : 'drawerSlideIn'} 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards`,
+      }}>
         <div style={{padding:'20px 24px 16px',borderBottom:'1px solid var(--line-1)',position:'relative'}}>
-          <button onClick={onClose} style={{position:'absolute',top:20,right:24,padding:'6px 10px',border:'none',background:'var(--bg-surface)',cursor:'pointer',borderRadius:999,fontFamily:'inherit',fontSize:12,fontWeight:500,color:'var(--ink-1)'}}>Close</button>
+          <button onClick={beginClose} style={{position:'absolute',top:20,right:24,padding:'6px 10px',border:'none',background:'var(--bg-surface)',cursor:'pointer',borderRadius:999,fontFamily:'inherit',fontSize:12,fontWeight:500,color:'var(--ink-1)'}}>Close</button>
           <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
             <OrderTypeTag type={order.type}/>
             <span style={{fontSize:11.5,color:'var(--ink-2)'}}>{order.id}</span>
           </div>
           <div style={{fontSize:20,fontWeight:600,letterSpacing:'-0.01em'}}>{order.amount} · Class {order.class}</div>
-          <div style={{fontSize:13,color:'var(--ink-2)',marginTop:2}}>{order.holder}</div>
+          <div style={{fontSize:13,color:'var(--ink-2)',marginTop:2}}>
+            <a onClick={()=>openToInvestor(order.holder)} style={{color:'var(--ink-1)',cursor:'pointer',textDecoration:'none',borderBottom:'1px dotted var(--line-2)'}}>{order.holder}</a>
+          </div>
         </div>
         <div style={{flex:1,overflowY:'auto',padding:'20px 24px'}}>
           <div style={{fontSize:11,color:'var(--ink-3)',fontWeight:600,marginBottom:8}}>Order detail</div>
-          <div style={{background:'var(--bg-card)',borderRadius:8,padding:'14px 16px',display:'grid',gridTemplateColumns:'1fr auto',gap:'10px 16px',fontSize:13,fontVariantNumeric:'tabular-nums',marginBottom:20}}>
+          <div style={{background:'var(--glass-bg)',borderRadius:10,padding:'20px 22px',display:'grid',gridTemplateColumns:'1fr auto',gap:'14px 24px',fontSize:13,fontVariantNumeric:'tabular-nums',marginBottom:24}}>
             <div style={{color:'var(--ink-2)'}}>Created</div><div>{order.created}</div>
             <div style={{color:'var(--ink-2)'}}>Strike</div><div>{order.strike}</div>
             <div style={{color:'var(--ink-2)'}}>Gross amount</div><div style={{fontWeight:500}}>{order.amount}</div>
@@ -2172,26 +2712,66 @@ function OrderDrawer({ order, onClose }) {
             <div style={{color:'var(--ink-2)'}}>Note</div><div>{order.note}</div>
           </div>
 
-          <div style={{fontSize:11,color:'var(--ink-3)',fontWeight:600,marginBottom:8}}>Timeline</div>
-          <div style={{position:'relative',paddingLeft:20,borderLeft:'1px dashed var(--line-2)',marginLeft:6,display:'flex',flexDirection:'column',gap:18,fontSize:12.5}}>
-            {[
-              { t: 'Created', a: order.created, done: true, who: 'Investor portal' },
-              { t: 'Funds verified', a: '30 Apr 14:45', done: order.status!=='pending', who: 'Treasury · Coinbase Prime' },
-              { t: 'AML / KYC', a: order.status==='pending'?'In review':'30 Apr 15:02', done: order.status==='approved', who: 'Compliance' },
-              { t: 'Strike applied', a: 'Mon 04 May 16:00', done: false, who: 'NAV ops' },
-              { t: 'Shares issued', a: '—', done: false, who: 'Registry' },
-            ].map((e,i) => (
-              <div key={i} style={{position:'relative'}}>
-                <span style={{position:'absolute',left:-26,top:3,width:10,height:10,borderRadius:'50%',background: e.done?'var(--green-600)':'var(--bg-surface)',border:`2px solid ${e.done?'var(--green-600)':'var(--line-2)'}`}}/>
-                <div style={{fontWeight:500,color: e.done?'var(--ink-1)':'var(--ink-2)'}}>{e.t}</div>
-                <div style={{color:'var(--ink-3)',fontSize:11.5,marginTop:2}}>{e.a} · {e.who}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div style={{borderTop:'1px solid var(--line-1)',padding:'14px 24px',display:'flex',justifyContent:'flex-end',gap:10}}>
-          <button style={btnOutline}>Hold</button>
-          <button style={btnPrimary}>Approve</button>
+          {(() => {
+            const steps = [
+              { t: 'Created',        a: order.created,                                    done: true,                          who: 'Investor app' },
+              { t: 'Funds verified', a: '30 Apr 14:45',                                   done: order.status !== 'pending',    who: 'Treasury · Coinbase Prime' },
+              { t: 'AML / KYC',      a: order.status === 'pending' ? 'In review' : '30 Apr 15:02', done: order.status === 'approved', who: 'Compliance · Sumsub' },
+              { t: 'Strike applied', a: 'Mon 04 May 16:00',                               done: false,                         who: 'NAV ops' },
+              { t: 'Shares issued',  a: '—',                                              done: false,                         who: 'Registry' },
+            ];
+            const firstPendingIdx = steps.findIndex(s => !s.done);
+            const stepCount = steps.length;
+            const doneCount = steps.filter(s => s.done).length;
+            return (
+              <React.Fragment>
+                <div style={{display:'flex',alignItems:'baseline',justifyContent:'space-between',marginBottom:4}}>
+                  <div style={{fontSize:15,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>Timeline</div>
+                </div>
+                <div style={{fontSize:12.5,color:'var(--ink-2)',marginBottom:18}}>{doneCount} of {stepCount} complete · {firstPendingIdx === -1 ? 'all steps closed' : `next: ${steps[firstPendingIdx].t}`}</div>
+                <div style={{display:'flex',flexDirection:'column'}}>
+                  {steps.map((e,i) => {
+                    const isLast = i === stepCount - 1;
+                    const isCurrent = i === firstPendingIdx;
+                    const state = e.done ? 'done' : isCurrent ? 'current' : 'future';
+                    const titleColor = state === 'future' ? 'var(--ink-3)' : 'var(--ink-1)';
+                    const amountColor = state === 'future' ? 'var(--ink-3)' : 'var(--ink-2)';
+                    const subText = state === 'done' ? `${e.who} · Complete` : state === 'current' ? `${e.who} · In progress` : e.who;
+                    return (
+                      <div key={i} style={{display:'flex',gap:14,alignItems:'stretch'}}>
+                        {/* dot + connector column */}
+                        <div style={{position:'relative',width:14,flexShrink:0,display:'flex',flexDirection:'column',alignItems:'center'}}>
+                          <div style={{
+                            width:14,height:14,borderRadius:'50%',marginTop:2,
+                            background: state === 'done' ? 'var(--ink-1)' : state === 'current' ? 'transparent' : 'var(--line-2)',
+                            border: state === 'current' ? '2px solid var(--ink-1)' : 'none',
+                            boxSizing:'border-box',
+                            flexShrink:0,
+                          }}/>
+                          {!isLast && (
+                            <div style={{
+                              width:2,
+                              flex:1,
+                              background: state === 'done' ? 'var(--ink-1)' : 'var(--line-2)',
+                              marginTop:2,
+                            }}/>
+                          )}
+                        </div>
+                        {/* content */}
+                        <div style={{flex:1,minWidth:0,paddingBottom: isLast ? 0 : 22}}>
+                          <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',gap:12}}>
+                            <div style={{fontSize:13.5,fontWeight:600,color:titleColor,letterSpacing:'-0.005em'}}>{e.t}</div>
+                            <div style={{fontSize:13,color:amountColor,whiteSpace:'nowrap',fontVariantNumeric:'tabular-nums'}}>{e.a}</div>
+                          </div>
+                          <div style={{fontSize:12,color:'var(--ink-3)',marginTop:2}}>{subText}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </React.Fragment>
+            );
+          })()}
         </div>
       </div>
     </>
@@ -2750,6 +3330,7 @@ function ShareRegisterView({ onNav, shareClasses, setShareClasses }) {
           <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>Holders, share classes and lock-ups across the fund.</div>
         </div>
         <div style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
+          <button onClick={()=>onNav('investors')} style={{...btnOutline,height:32,fontSize:12.5}}>View investors</button>
           <button onClick={()=>onNav('share-classes')} style={{...btnOutline,height:32,fontSize:12.5}}>Manage classes</button>
         </div>
       </div>
@@ -3659,7 +4240,7 @@ function ReconciliationView({ onNav }) {
         </thead>
         <tbody>
           {strikes.map((s,i) => (
-            <tr key={i} style={{fontSize:13}} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <tr key={i} data-row style={{fontSize:13}}>
               <td style={td}><div style={{fontWeight:500}}>{s.d} UTC</div></td>
               <td style={{...td,textAlign:'right',fontWeight:500}}>{s.nav}</td>
               <td style={{...td,textAlign:'right',color: s.ch.startsWith('+')?'var(--pos)':'var(--neg)',fontWeight:500}}>{s.ch}</td>
@@ -3844,7 +4425,7 @@ function ByStrategy() {
         </thead>
         <tbody>
           {strategies.map((s,i) => (
-            <tr key={i} style={{fontSize:13}}>
+            <tr key={i} data-row style={{fontSize:13}}>
               <td style={pbTd}><div style={{fontWeight:500}}>{s.name}</div></td>
               <td style={{...pbTd,textAlign:'right'}}>{s.alloc}</td>
               <td style={{...pbTd,textAlign:'right',fontWeight:500,color: s.pos?'var(--pos)':'var(--neg)'}}>{s.pnl}</td>
@@ -3892,7 +4473,7 @@ function ByAsset() {
         </thead>
         <tbody>
           {assets.map((a,i) => (
-            <tr key={i} style={{fontSize:13}}>
+            <tr key={i} data-row style={{fontSize:13}}>
               <td style={pbTd}>
                 <div style={{display:'flex',alignItems:'center',gap:10}}>
                   <span style={{width:24,height:24,borderRadius:'50%',background:a.c,color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:600}}>{a.g}</span>
@@ -4687,7 +5268,7 @@ function OverviewView({ onNav }) {
           </thead>
           <tbody>
             {activity.map((r,i) => (
-              <tr key={i} style={{fontSize:13}}>
+              <tr key={i} data-row style={{fontSize:13}}>
                 <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color:'var(--ink-2)',whiteSpace:'nowrap'}}>{r.date}</td>
                 <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',fontWeight:500}}>{r.investor}</td>
                 <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color: r.type==='Subscription' ? 'var(--pos)' : 'var(--neg)',fontWeight:500}}>{r.type}</td>
@@ -5111,7 +5692,7 @@ function ActionsView({ onNav }) {
         </div>
       </div>
 
-      <div data-kpi-grid style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:80}}>
+      <div data-kpi-grid data-kpi-style="glass" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:80}}>
         {[
           { l: 'Open actions',       v: String(counts.all),    s: 'Across all priorities' },
           { l: 'High priority',      v: String(counts.high),   s: 'Awaiting your decision' },
@@ -5155,10 +5736,10 @@ function ActionsView({ onNav }) {
               gridTemplateColumns:'14px 1fr auto',
               alignItems:'center',gap:20,
               padding:'18px 22px',
-              background:'var(--bg-card)',
-              border:'1px solid var(--line-1)',
+              background:'var(--glass-bg)',
+              border:'none',
               borderRadius:10,
-            }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='var(--bg-card)'}>
+            }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='var(--glass-bg)'}>
               <span style={{width:8,height:8,borderRadius:'50%',background:p.dot,display:'inline-block'}}/>
               <div style={{minWidth:0}}>
                 <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6,flexWrap:'wrap'}}>
@@ -5220,9 +5801,10 @@ Object.assign(window, { ActionsView });
 
 const hBtnOutline = { background:'var(--bg-canvas)',border:'1px solid var(--line-2)',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,color:'var(--ink-1)',display:'inline-flex',alignItems:'center',gap:6,fontFamily:'inherit' };
 
-const FUND_GRADIENTS = {
-  'pod-crypto': 'radial-gradient(circle at 30% 30%,#E9D5FF 0%,transparent 45%),radial-gradient(circle at 70% 35%,#BFDBFE 0%,transparent 50%),radial-gradient(circle at 50% 75%,#FCA5A5 0%,transparent 55%),linear-gradient(135deg,#C4B5FD 0%,#A5B4FC 55%,#FBCFE8 100%)',
-  'pod-securities': 'radial-gradient(circle at 30% 30%,#CFE9DA 0%,transparent 45%),radial-gradient(circle at 70% 35%,#9DA0A4 0%,transparent 55%),radial-gradient(circle at 50% 75%,#1B1E24 0%,transparent 70%),linear-gradient(135deg,#2F333B 0%,#82858B 60%,#E4E3DE 100%)',
+const FUND_THUMBS = {
+  'pod-crypto':     'assets/Fund thumbnails/Type=1, Size=lg.png',
+  'pod-securities': 'assets/Fund thumbnails/Type=2, Size=lg.png',
+  'fund-b':         'assets/Fund thumbnails/Type=3, Size=lg.png',
 };
 
 function HomeView({ onNav }) {
@@ -5252,18 +5834,12 @@ function HomeView({ onNav }) {
     },
   ];
 
-  const updates = [
-    { ts: 'Today, 3:20 PM', text: 'NAV updated: POD Crypto Fund, 100,409,766.29 USD', route: 'nav' },
-    { ts: 'Today, 3:20 PM', text: 'Management fees collected: POD Crypto Fund, 40,200.00 USD', route: 'economics' },
-    { ts: 'Today, 3:20 PM', text: 'Adjustment applied: POD Securities Fund, Class A, Securities', route: 'reconciliation' },
-  ];
-
   const orders = [
-    { date: 'Dec 12, 2025', type: 'Subscription', fund: 'POD Crypto Fund', amount: '$950,000',  status: 'pending' },
-    { date: 'Dec 12, 2025', type: 'Redemption',   fund: 'POD Crypto Fund', amount: '$350,000',  status: 'settled' },
-    { date: 'Dec 10, 2025', type: 'Subscription', fund: 'POD Crypto Fund', amount: '$1,500,000', status: 'pending' },
-    { date: 'Dec 09, 2025', type: 'Redemption',   fund: 'POD Crypto Fund', amount: '$600,000',  status: 'settled' },
-    { date: 'Dec 09, 2025', type: 'Subscription', fund: 'POD Crypto Fund', amount: '$1,100,000', status: 'settled' },
+    { date: '29 Apr 2026', investor: 'NovaTech Fund',  type: 'Subscription', cls: 'A', amount: '$950,000',   units: '9,113.04',  status: 'pending' },
+    { date: '28 Apr 2026', investor: 'GlobalNest',     type: 'Redemption',   cls: 'B', amount: '$350,000',   units: '−1,639.34', status: 'settled' },
+    { date: '25 Apr 2026', investor: 'ApexHoldings',   type: 'Subscription', cls: 'C', amount: '$1,500,000', units: '2,696.15',  status: 'pending' },
+    { date: '23 Apr 2026', investor: 'Zenith Capital', type: 'Redemption',   cls: 'A', amount: '$600,000',   units: '−5,754.44', status: 'settled' },
+    { date: '20 Apr 2026', investor: 'Vanguard Corp',  type: 'Subscription', cls: 'B', amount: '$1,100,000', units: '5,152.22',  status: 'settled' },
   ];
 
   return (
@@ -5283,7 +5859,7 @@ function HomeView({ onNav }) {
       </div>
 
       {/* KPIs — 2:1:1 split */}
-      <div data-kpi-grid style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr',gap:8,marginBottom:64}}>
+      <div data-kpi-grid data-kpi-style="glass" style={{display:'grid',gridTemplateColumns:'2fr 1fr 1fr',gap:8,marginBottom:64}}>
         <div>
           <div>Total AUM</div>
           <div style={{fontSize:36,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>$150,819,532</div>
@@ -5312,10 +5888,10 @@ function HomeView({ onNav }) {
             return (
               <div key={f.id} onClick={()=>onNav('overview')} data-row style={{
                 display:'grid',gridTemplateColumns:'auto 1fr auto auto',alignItems:'center',gap:20,
-                padding:'16px 20px',background:'var(--bg-card)',
-                border:'1px solid var(--line-1)',borderRadius:10,cursor:'pointer',
-              }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='var(--bg-card)'}>
-                <div style={{width:44,height:44,borderRadius:'50%',background:FUND_GRADIENTS[f.id],flexShrink:0}}/>
+                padding:'16px 20px',background:'var(--glass-bg)',
+                border:'none',borderRadius:10,cursor:'pointer',
+              }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='var(--glass-bg)'}>
+                <img src={FUND_THUMBS[f.id]} alt="" style={{width:44,height:44,flexShrink:0,objectFit:'contain',display:'block'}}/>
                 <div style={{minWidth:0}}>
                   <div style={{fontSize:15,fontWeight:600,color:'var(--ink-1)',letterSpacing:'-0.005em'}}>{f.name}</div>
                   <div style={{fontSize:12,color:'var(--ink-3)',marginTop:2}}>{f.status}</div>
@@ -5327,80 +5903,564 @@ function HomeView({ onNav }) {
                     <span style={{color:'var(--ink-3)'}}> ({f.changeAbs})</span>
                   </div>
                 </div>
-                <Icon.arrowRight style={{width:16,height:16,color:'var(--ink-3)'}}/>
+                <Icon.chevron style={{width:16,height:16,color:'var(--ink-3)'}}/>
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* Recent updates + Orders */}
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32}}>
-        {/* Recent updates */}
-        <div>
-          <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',color:'var(--ink-1)',marginBottom:20}}>Recent updates</div>
-          <div style={{display:'flex',flexDirection:'column'}}>
-            {updates.map((u,i) => (
-              <a key={i} onClick={(e)=>{e.preventDefault();onNav(u.route);}} href="#" style={{
-                display:'flex',alignItems:'center',justifyContent:'space-between',gap:16,
-                padding:'16px 4px',
-                borderTop: i===0 ? 'none' : '1px solid var(--line-1)',
-                color:'var(--ink-1)',textDecoration:'none',cursor:'pointer',
-              }} onMouseEnter={e=>e.currentTarget.style.background='var(--bg-subtle)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-                <div style={{minWidth:0}}>
-                  <div style={{fontSize:11.5,color:'var(--ink-3)',marginBottom:4}}>{u.ts}</div>
-                  <div style={{fontSize:13,color:'var(--ink-1)'}}>{u.text}</div>
-                </div>
-                <Icon.arrowRight style={{width:14,height:14,color:'var(--ink-3)',flexShrink:0}}/>
-              </a>
-            ))}
-          </div>
+      {/* Recent Orders — full width */}
+      <div>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20}}>
+          <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',color:'var(--ink-1)'}}>Recent Orders</div>
+          <button onClick={()=>onNav('order-book')} style={{...hBtnOutline,height:30,fontSize:12.5,padding:'0 12px'}}>View all</button>
         </div>
-
-        {/* Orders */}
-        <div>
-          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20}}>
-            <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',color:'var(--ink-1)'}}>Orders</div>
-            <button onClick={()=>onNav('order-book')} style={{...hBtnOutline,height:30,fontSize:12.5,padding:'0 12px'}}>View all</button>
-          </div>
-          <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
-            <thead>
-              <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,textAlign:'left'}}>
-                <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Date</th>
-                <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Type</th>
-                <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Fund</th>
-                <th style={{padding:'4px 4px 8px',fontWeight:500,textAlign:'right',borderBottom:'1px solid var(--line-1)'}}>Amount</th>
-                <th style={{padding:'4px 4px 8px',fontWeight:500,textAlign:'right',borderBottom:'1px solid var(--line-1)'}}>Status</th>
+        <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
+          <thead>
+            <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,textAlign:'left'}}>
+              <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Date</th>
+              <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Investor</th>
+              <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Type</th>
+              <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Class</th>
+              <th style={{padding:'4px 4px 8px',fontWeight:500,textAlign:'right',borderBottom:'1px solid var(--line-1)'}}>Amount</th>
+              <th style={{padding:'4px 4px 8px',fontWeight:500,textAlign:'right',borderBottom:'1px solid var(--line-1)'}}>Units</th>
+              <th style={{padding:'4px 4px 8px',fontWeight:500,textAlign:'right',borderBottom:'1px solid var(--line-1)'}}>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((r,i) => (
+              <tr key={i} data-row style={{fontSize:13}}>
+                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color:'var(--ink-2)',whiteSpace:'nowrap'}}>{r.date}</td>
+                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',fontWeight:500}}>{r.investor}</td>
+                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color: r.type==='Subscription' ? 'var(--pos)' : 'var(--neg)',fontWeight:500}}>{r.type}</td>
+                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color:'var(--ink-2)'}}>{r.cls}</td>
+                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right'}}>{r.amount}</td>
+                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right',color: r.units.startsWith('−') ? 'var(--neg)' : 'var(--ink-1)'}}>{r.units}</td>
+                <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right'}}>
+                  <span style={{
+                    display:'inline-flex',alignItems:'center',gap:5,fontSize:11.5,fontWeight:500,
+                    color: r.status === 'settled' ? 'var(--green-700)' : '#8A5A10',
+                  }}>
+                    {r.status === 'settled' && <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3.5 8.5 6.5 11.5 12.5 5"/></svg>}
+                    {r.status === 'pending' && <span style={{width:6,height:6,borderRadius:'50%',background:'#D89A20'}}/>}
+                    {r.status === 'settled' ? 'Settled' : 'Pending'}
+                  </span>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {orders.map((r,i) => (
-                <tr key={i} style={{fontSize:13}}>
-                  <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color:'var(--ink-2)',whiteSpace:'nowrap'}}>{r.date}</td>
-                  <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color: r.type==='Subscription' ? 'var(--pos)' : 'var(--neg)',fontWeight:500}}>{r.type}</td>
-                  <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color:'var(--ink-2)',whiteSpace:'nowrap'}}>{r.fund}</td>
-                  <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right',fontWeight:500}}>{r.amount}</td>
-                  <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right'}}>
-                    <span style={{
-                      display:'inline-flex',alignItems:'center',gap:5,fontSize:11.5,fontWeight:500,
-                      color: r.status === 'settled' ? 'var(--green-700)' : '#8A5A10',
-                    }}>
-                      {r.status === 'settled' && <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3.5 8.5 6.5 11.5 12.5 5"/></svg>}
-                      {r.status === 'pending' && <span style={{width:6,height:6,borderRadius:'50%',background:'#D89A20'}}/>}
-                      {r.status === 'settled' ? 'Settled' : 'Pending'}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
 }
 
 Object.assign(window, { HomeView });
+
+</script>
+
+<script type="text/babel" data-presets="env,react" data-source="views-investor.jsx">
+/* Investors list (sub-page of Share Register) + per-investor profile.
+   KYC is handled in the Investor app via Sumsub; this surface is read-only. */
+
+const iBtnOutline = { background:'var(--bg-canvas)',border:'1px solid var(--line-2)',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,color:'var(--ink-1)',display:'inline-flex',alignItems:'center',gap:6,fontFamily:'inherit' };
+const iBtnPrimary = { background:'var(--accent-plum)',color:'var(--accent-plum-on)',border:'none',height:34,padding:'0 14px',borderRadius:8,cursor:'pointer',fontSize:13,fontWeight:500,fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:6 };
+const iTh = { textAlign:'left',padding:'8px 12px',borderBottom:'1px solid var(--line-1)',fontWeight:500 };
+const iTd = { padding:'14px 12px',borderBottom:'1px solid var(--line-1)' };
+
+const INVESTOR_SLUG = (name) => String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+const INVESTORS_LIST = [
+  { slug:'meridian-capital-partners', name:'Meridian Capital Partners', type:'Institution',  classes:'A, B',     holdings:'$1,745,142',  pct:'3.67%', lockup:'partial',   kyc:'verified', last:'30 Apr 2026', joined:'18 Jan 2024', status:'active' },
+  { slug:'novatech-fund',             name:'NovaTech Fund',             type:'Institution',  classes:'A',        holdings:'$5,250,000',  pct:'11.06%', lockup:'locked',    kyc:'verified', last:'29 Apr 2026', joined:'22 Apr 2024', status:'active' },
+  { slug:'apex-holdings',             name:'Apex Holdings',             type:'Family office',classes:'C',        holdings:'$3,420,800',  pct:'7.21%', lockup:'available', kyc:'verified', last:'25 Apr 2026', joined:'12 Jul 2024', status:'active' },
+  { slug:'zenith-capital',            name:'Zenith Capital',            type:'Asset manager',classes:'A',        holdings:'$2,890,000',  pct:'6.09%', lockup:'partial',   kyc:'verified', last:'23 Apr 2026', joined:'04 Mar 2024', status:'active' },
+  { slug:'vanguard-corp',             name:'Vanguard Corp',             type:'Institution',  classes:'B',        holdings:'$2,150,000',  pct:'4.53%', lockup:'available', kyc:'verified', last:'20 Apr 2026', joined:'14 Sep 2024', status:'active' },
+  { slug:'globalnest',                name:'GlobalNest',                type:'Institution',  classes:'B',        holdings:'$1,820,400',  pct:'3.84%', lockup:'available', kyc:'verified', last:'28 Apr 2026', joined:'02 Oct 2024', status:'active' },
+  { slug:'verdant-family-office',     name:'Verdant Family Office',     type:'Family office',classes:'A',        holdings:'$1,420,000',  pct:'2.99%', lockup:'available', kyc:'verified', last:'29 Apr 2026', joined:'17 Jun 2024', status:'active' },
+  { slug:'peninsula-platform-nominees', name:'Peninsula Platform Nominees', type:'Platform', classes:'D',        holdings:'$2,100,000',  pct:'4.43%', lockup:'locked',    kyc:'verified', last:'29 Apr 2026', joined:'28 Nov 2024', status:'active' },
+  { slug:'saltbush-super-fund',       name:'Saltbush Super Fund',       type:'Super',        classes:'—',        holdings:'$0',          pct:'0%',    lockup:'none',      kyc:'pending',  last:'02 Apr 2026', joined:'02 Apr 2026', status:'pending-kyc' },
+  { slug:'henri-desrosiers',          name:'Henri Desrosiers',          type:'Individual',   classes:'C',        holdings:'$82,500',     pct:'0.17%', lockup:'available', kyc:'verified', last:'30 Apr 2026', joined:'04 Sep 2025', status:'active' },
+  { slug:'j-whitley-bent',            name:'J. Whitley-Bent',           type:'Individual',   classes:'C',        holdings:'$45,200',     pct:'0.10%', lockup:'available', kyc:'verified', last:'29 Apr 2026', joined:'12 Jan 2025', status:'active' },
+  { slug:'m-okafor',                  name:'M. Okafor',                 type:'Individual',   classes:'C',        holdings:'$24,000',     pct:'0.05%', lockup:'available', kyc:'verified', last:'30 Apr 2026', joined:'08 Mar 2025', status:'active' },
+];
+
+const INVESTORS = {
+  'meridian-capital-partners': {
+    name:'Meridian Capital Partners', type:'Institution · Asset manager', id:'INV-2024-0142', status:'active', joined:'18 Jan 2024',
+    primaryContact:{ name:'Anna Mukherjee', email:'a.mukherjee@meridiancap.com', phone:'+44 20 7946 0958', role:'Authorized signatory' },
+    address:'12 Mansion House Pl · London EC4N 8BJ · United Kingdom',
+    accreditation:'Professional client · MiFID II',
+    kyc:{ status:'verified', source:'Sumsub', risk:'Low', lastReview:'03 Mar 2026', nextReview:'03 Mar 2027', applicantId:'sumsub_64a1f2…' },
+    totals:{ value:'$1,745,142', units:'14,526.60', classes:2, pctOfFund:'3.67%' },
+    lockup:{ status:'partial', detail:'$450,000 unlocks 12 Jun 2026' },
+    holdings:[
+      { class:'Class A', units:'12,418.20', cost:'$1,200,000', value:'$1,295,000', pct:'2.73%' },
+      { class:'Class B', units:'2,108.40',  cost:'$425,000',   value:'$450,142',   pct:'0.94%' },
+    ],
+    activity:[
+      { date:'30 Apr 2026', type:'Subscription', class:'B', amount:'$450,000',   units:'+2,108.40',  status:'approved' },
+      { date:'12 Mar 2026', type:'Subscription', class:'A', amount:'$1,200,000', units:'+12,418.20', status:'settled' },
+      { date:'18 Jan 2024', type:'Onboarded',    class:'—', amount:'—',          units:'—',          status:'settled' },
+    ],
+    documents:[
+      { name:'Subscription Agreement · Class B',     date:'30 Apr 2026', status:'signed' },
+      { name:'Subscription Agreement · Class A',     date:'12 Mar 2026', status:'signed' },
+      { name:'Professional Client Declaration',      date:'15 Jan 2024', status:'signed' },
+      { name:'Beneficial Ownership Statement',       date:'15 Jan 2024', status:'signed' },
+    ],
+  },
+  'henri-desrosiers': {
+    name:'Henri Desrosiers', type:'Individual · Professional investor', id:'INV-2025-0089', status:'active', joined:'04 Sep 2025',
+    primaryContact:{ name:'Henri Desrosiers', email:'h.desrosiers@protonmail.com', phone:'+33 1 42 86 95 12', role:'Self' },
+    address:'24 rue de Rivoli · 75004 Paris · France',
+    accreditation:'Elective professional client',
+    kyc:{ status:'verified', source:'Sumsub', risk:'Medium', lastReview:'02 Sep 2025', nextReview:'02 Sep 2026', applicantId:'sumsub_71d4c8…' },
+    totals:{ value:'$82,500', units:'2,128.00', classes:1, pctOfFund:'0.17%' },
+    lockup:{ status:'available', detail:'No active lock-up' },
+    holdings:[
+      { class:'Class C', units:'2,128.00', cost:'$80,000', value:'$82,500', pct:'0.17%' },
+    ],
+    activity:[
+      { date:'30 Apr 2026', type:'Redemption',   class:'C', amount:'$82,500', units:'−2,128.00', status:'pending' },
+      { date:'12 Oct 2025', type:'Subscription', class:'C', amount:'$80,000', units:'+2,128.00', status:'settled' },
+    ],
+    documents:[
+      { name:'Subscription Agreement · Class C',   date:'12 Oct 2025', status:'signed' },
+      { name:'Elective Professional Declaration',  date:'04 Sep 2025', status:'signed' },
+    ],
+  },
+  'novatech-fund': {
+    name:'NovaTech Fund', type:'Institution · Hedge fund', id:'INV-2024-0203', status:'active', joined:'22 Apr 2024',
+    primaryContact:{ name:'Priya Sundaram', email:'p.sundaram@novatechfund.com', phone:'+1 415 555 0142', role:'Head of allocations' },
+    address:'555 California St · San Francisco CA 94104 · USA',
+    accreditation:'Qualified institutional buyer · US',
+    kyc:{ status:'verified', source:'Sumsub', risk:'Low', lastReview:'14 Apr 2026', nextReview:'14 Apr 2027', applicantId:'sumsub_88e2a3…' },
+    totals:{ value:'$5,250,000', units:'50,361.78', classes:1, pctOfFund:'11.06%' },
+    lockup:{ status:'locked', detail:'$950,000 locked until 29 Jul 2026' },
+    holdings:[
+      { class:'Class A', units:'50,361.78', cost:'$5,000,000', value:'$5,250,000', pct:'11.06%' },
+    ],
+    activity:[
+      { date:'29 Apr 2026', type:'Subscription', class:'A', amount:'$950,000',   units:'+9,113.04',  status:'pending' },
+      { date:'03 Feb 2026', type:'Subscription', class:'A', amount:'$1,500,000', units:'+14,512.39', status:'settled' },
+      { date:'22 Apr 2024', type:'Subscription', class:'A', amount:'$2,550,000', units:'+26,736.35', status:'settled' },
+    ],
+    documents:[
+      { name:'Subscription Agreement · Class A', date:'29 Apr 2026', status:'signed' },
+      { name:'QIB Representation Letter',         date:'22 Apr 2024', status:'signed' },
+      { name:'W-8BEN-E',                          date:'22 Apr 2024', status:'signed' },
+    ],
+  },
+  'saltbush-super-fund': {
+    name:'Saltbush Super Fund', type:'Institution · Self-managed super', id:'INV-2025-0317', status:'pending-kyc', joined:'02 Apr 2026',
+    primaryContact:{ name:'Daniel Whyte', email:'d.whyte@saltbushsmsf.com.au', phone:'+61 2 9347 8200', role:'Trustee' },
+    address:'Lvl 9, 333 George St · Sydney NSW 2000 · Australia',
+    accreditation:'Wholesale client · Australia',
+    kyc:{ status:'pending', source:'Sumsub', risk:'—', lastReview:'—', nextReview:'—', applicantId:'sumsub_pending' },
+    totals:{ value:'$0', units:'0', classes:0, pctOfFund:'0%' },
+    lockup:{ status:'none', detail:'No active holdings' },
+    holdings:[],
+    activity:[
+      { date:'02 Apr 2026', type:'KYC initiated', class:'—', amount:'—', units:'—', status:'pending' },
+    ],
+    documents:[],
+  },
+};
+
+function fallbackInvestor(slug, displayName) {
+  const inListed = INVESTORS_LIST.find(r => r.slug === slug);
+  return {
+    name: displayName || (inListed && inListed.name) || slug,
+    type: (inListed && inListed.type) || 'Individual',
+    id: 'INV-—',
+    status: (inListed && inListed.status) || 'active',
+    joined: (inListed && inListed.joined) || '—',
+    primaryContact:{ name: displayName || slug, email:'—', phone:'—', role:'Self' },
+    address:'—',
+    accreditation:'—',
+    kyc:{ status: inListed && inListed.kyc || 'verified', source:'Sumsub', risk:'—', lastReview:'—', nextReview:'—', applicantId:'—' },
+    totals:{ value: (inListed && inListed.holdings) || '—', units:'—', classes: 0, pctOfFund: (inListed && inListed.pct) || '—' },
+    lockup:{ status: (inListed && inListed.lockup) || 'unknown', detail:'—' },
+    holdings:[],
+    activity:[],
+    documents:[],
+  };
+}
+
+function InvestorStatusPill({ status }) {
+  const cfg = {
+    'active':      { bg:'var(--green-50)', fg:'var(--green-700)', border:'var(--green-200)', label:'Active' },
+    'pending-kyc': { bg:'#FFF6E6',          fg:'#8A5A10',           border:'#F5E2B8',           label:'Pending KYC' },
+    'restricted':  { bg:'#FFF2F0',          fg:'#a3261c',           border:'#F5C2BC',           label:'Restricted' },
+  }[status] || { bg:'var(--bg-subtle)', fg:'var(--ink-2)', border:'var(--line-2)', label:status };
+  return <span style={{display:'inline-flex',alignItems:'center',padding:'2px 10px',borderRadius:999,fontSize:11.5,fontWeight:500,background:cfg.bg,color:cfg.fg,border:`1px solid ${cfg.border}`}}>{cfg.label}</span>;
+}
+
+function KycBadge({ status, compact }) {
+  const cfg = {
+    'verified': { fg:'var(--green-700)', dot:'var(--green-600)', label:'Verified' },
+    'pending':  { fg:'#8A5A10',           dot:'#d4a017',         label: compact ? 'Pending' : 'Pending in Investor app' },
+    'failed':   { fg:'var(--neg)',        dot:'var(--neg)',      label:'Failed' },
+    'expired':  { fg:'#8A5A10',           dot:'#d4a017',         label:'Expired · re-review' },
+  }[status] || { fg:'var(--ink-2)', dot:'var(--ink-3)', label:status };
+  return (
+    <span style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:compact?12:13,fontWeight:500,color:cfg.fg}}>
+      <span style={{width:8,height:8,borderRadius:'50%',background:cfg.dot}}/>
+      {cfg.label}
+    </span>
+  );
+}
+
+function LockupBadge({ status }) {
+  const cfg = {
+    'available': { fg:'var(--green-700)', label:'Available' },
+    'partial':   { fg:'#8A5A10',          label:'Partial' },
+    'locked':    { fg:'var(--ink-2)',     label:'Locked' },
+    'none':      { fg:'var(--ink-3)',     label:'—' },
+  }[status] || { fg:'var(--ink-2)', label:status };
+  return <span style={{fontSize:12.5,color:cfg.fg,fontWeight:500,textTransform:'capitalize'}}>{cfg.label}</span>;
+}
+
+// ============================================================================
+// INVESTORS LIST — sub-page under Share Register
+// ============================================================================
+function InvestorsView({ onNav }) {
+  const [filter, setFilter] = React.useState('all');
+  const [query,  setQuery]  = React.useState('');
+
+  const counts = {
+    all: INVESTORS_LIST.length,
+    active: INVESTORS_LIST.filter(i => i.status === 'active').length,
+    'pending-kyc': INVESTORS_LIST.filter(i => i.status === 'pending-kyc').length,
+  };
+
+  const filtered = INVESTORS_LIST
+    .filter(i => filter === 'all' ? true : i.status === filter)
+    .filter(i => !query.trim() ? true : (i.name.toLowerCase().includes(query.toLowerCase()) || i.classes.toLowerCase().includes(query.toLowerCase())));
+
+  const initialsOf = (n) => n.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
+
+  return (
+    <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 28px',gap:24,flexWrap:'wrap'}}>
+        <div>
+          <div style={{fontSize:24,fontWeight:600,letterSpacing:'-0.015em',color:'var(--ink-1)'}}>Investors</div>
+          <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4}}>All holders on the register. KYC managed in the Investor app via Sumsub.</div>
+        </div>
+        <div style={{display:'flex',gap:8,flexShrink:0}}>
+          <button style={iBtnOutline}><Icon.download style={{width:13,height:13}}/> Export</button>
+          <button style={iBtnPrimary}><Icon.plus style={{width:13,height:13}}/> Invite investor</button>
+        </div>
+      </div>
+
+      <div data-kpi-grid data-kpi-style="glass" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:48}}>
+        <div>
+          <div>Total holders</div>
+          <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>{counts.all}</div>
+          <div style={{fontSize:13}}>Across {INVESTORS_LIST.reduce((s,i)=>s + (i.classes==='—'?0:i.classes.split(',').length),0)} class memberships</div>
+        </div>
+        <div>
+          <div>Active</div>
+          <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>{counts.active}</div>
+          <div style={{fontSize:13}}>Subscribed and verified</div>
+        </div>
+        <div>
+          <div>Pending KYC</div>
+          <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color: counts['pending-kyc'] > 0 ? '#8A5A10' : 'var(--ink-1)'}}>{counts['pending-kyc']}</div>
+          <div style={{fontSize:13}}>Sumsub verification in progress</div>
+        </div>
+        <div>
+          <div>Lock-ups ending</div>
+          <div style={{fontSize:32,fontWeight:500,letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>4</div>
+          <div style={{fontSize:13}}>Within 30 days</div>
+        </div>
+      </div>
+
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16,gap:16,flexWrap:'wrap'}}>
+        <div style={{display:'inline-flex',background:'var(--bg-subtle)',borderRadius:8,padding:2,gap:2}}>
+          {[
+            { k:'all',         l:`All · ${counts.all}` },
+            { k:'active',      l:`Active · ${counts.active}` },
+            { k:'pending-kyc', l:`Pending KYC · ${counts['pending-kyc']}` },
+          ].map(t => (
+            <button key={t.k} onClick={()=>setFilter(t.k)} style={{
+              border:'none',cursor:'pointer',padding:'6px 14px',borderRadius:6,
+              fontSize:12,fontWeight:500,fontFamily:'inherit',
+              background: filter===t.k ? 'var(--bg-canvas)' : 'transparent',
+              color: filter===t.k ? 'var(--ink-1)' : 'var(--ink-2)',
+              boxShadow: filter===t.k ? '0 1px 2px rgba(0,0,0,0.06)' : 'none',
+            }}>{t.l}</button>
+          ))}
+        </div>
+        <div style={{position:'relative',display:'flex',alignItems:'center'}}>
+          <Icon.search style={{position:'absolute',left:10,width:14,height:14,color:'var(--ink-3)'}}/>
+          <input
+            value={query}
+            onChange={e=>setQuery(e.target.value)}
+            placeholder="Search investor, class…"
+            style={{height:34,paddingLeft:32,paddingRight:14,border:'1px solid var(--line-2)',borderRadius:8,fontSize:13,color:'var(--ink-1)',background:'var(--bg-canvas)',minWidth:260,fontFamily:'inherit'}}
+          />
+        </div>
+      </div>
+
+      <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
+        <thead>
+          <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>
+            <th style={iTh}>Investor</th>
+            <th style={iTh}>Type</th>
+            <th style={iTh}>Class</th>
+            <th style={{...iTh,textAlign:'right'}}>Holdings</th>
+            <th style={{...iTh,textAlign:'right'}}>% of fund</th>
+            <th style={iTh}>Lock-up</th>
+            <th style={iTh}>KYC</th>
+            <th style={iTh}>Last activity</th>
+            <th/>
+          </tr>
+        </thead>
+        <tbody>
+          {filtered.map((r,i) => (
+            <tr key={r.slug} data-row style={{fontSize:13,cursor:'pointer'}} onClick={()=>window.openInvestor?.(r.name)}>
+              <td style={iTd}>
+                <div style={{display:'flex',alignItems:'center',gap:10,minWidth:0}}>
+                  <div style={{width:30,height:30,borderRadius:'50%',background:'linear-gradient(135deg,#737373 0%,#404040 100%)',color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:600,flexShrink:0}}>{initialsOf(r.name)}</div>
+                  <div style={{minWidth:0}}>
+                    <div style={{fontWeight:500,color:'var(--ink-1)'}}>{r.name}</div>
+                    <div style={{fontSize:11.5,color:'var(--ink-3)',marginTop:1}}>Joined {r.joined}</div>
+                  </div>
+                </div>
+              </td>
+              <td style={{...iTd,color:'var(--ink-2)'}}>{r.type}</td>
+              <td style={{...iTd,color:'var(--ink-2)'}}>{r.classes}</td>
+              <td style={{...iTd,textAlign:'right',fontWeight:500}}>{r.holdings}</td>
+              <td style={{...iTd,textAlign:'right',color:'var(--ink-2)'}}>{r.pct}</td>
+              <td style={iTd}><LockupBadge status={r.lockup}/></td>
+              <td style={iTd}><KycBadge status={r.kyc} compact/></td>
+              <td style={{...iTd,color:'var(--ink-2)',whiteSpace:'nowrap'}}>{r.last}</td>
+              <td style={{...iTd,textAlign:'right',color:'var(--ink-3)'}}><Icon.chevron style={{width:14,height:14,transform:'rotate(-90deg)'}}/></td>
+            </tr>
+          ))}
+          {filtered.length === 0 && (
+            <tr><td colSpan={9} style={{...iTd,padding:'40px 16px',textAlign:'center',color:'var(--ink-3)'}}>No investors match this filter.</td></tr>
+          )}
+        </tbody>
+      </table>
+
+      <div style={{marginTop:16,fontSize:12,color:'var(--ink-3)'}}>Showing {filtered.length} of {INVESTORS_LIST.length} · KYC source: Sumsub (read-only in Manager OS)</div>
+    </div>
+  );
+}
+
+// ============================================================================
+// INVESTOR PROFILE — drilled into from the Investors list, Order Book, etc.
+// ============================================================================
+function InvestorProfileView({ investorSlug, displayName, onNav }) {
+  const inv = INVESTORS[investorSlug] || fallbackInvestor(investorSlug, displayName);
+  const initials = inv.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+
+  return (
+    <div style={{padding:'48px 40px 80px',maxWidth:1500,margin:'0 auto'}} data-page>
+      {/* Header */}
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',padding:'4px 0 28px',gap:24,flexWrap:'wrap'}}>
+        <div style={{display:'flex',alignItems:'flex-start',gap:18,minWidth:0}}>
+          <div style={{width:52,height:52,borderRadius:'50%',background:'linear-gradient(135deg,#737373 0%,#404040 100%)',color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:18,fontWeight:600,flexShrink:0}}>{initials}</div>
+          <div style={{minWidth:0}}>
+            <div className="serif-title" style={{fontSize:30,letterSpacing:0,color:'var(--ink-1)'}}>{inv.name}</div>
+            <div style={{fontSize:13,color:'var(--ink-2)',marginTop:4,display:'flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
+              <span>{inv.type}</span>
+              <span style={{color:'var(--ink-3)'}}>·</span>
+              <span style={{fontVariantNumeric:'tabular-nums'}}>ID {inv.id}</span>
+              <span style={{color:'var(--ink-3)'}}>·</span>
+              <span>Joined {inv.joined}</span>
+              <InvestorStatusPill status={inv.status}/>
+            </div>
+          </div>
+        </div>
+        <div style={{display:'flex',gap:8,flexShrink:0}}>
+          <button style={iBtnOutline}>Send statement</button>
+          <button style={iBtnOutline}>Message</button>
+          <button aria-label="More" style={{width:34,height:34,border:'1px solid var(--line-2)',background:'var(--bg-canvas)',borderRadius:8,cursor:'pointer',color:'var(--ink-2)',display:'inline-flex',alignItems:'center',justifyContent:'center'}}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      {/* KPIs */}
+      <div data-kpi-grid data-kpi-style="glass" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:48}}>
+        <div>
+          <div>Total holdings</div>
+          <div style={{fontSize:28,fontWeight:500,letterSpacing:'-0.025em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>{inv.totals.value}</div>
+          <div style={{fontSize:13}}>{inv.totals.units} units · {inv.totals.classes} class{inv.totals.classes === 1 ? '' : 'es'}</div>
+        </div>
+        <div>
+          <div>Share of fund</div>
+          <div style={{fontSize:28,fontWeight:500,letterSpacing:'-0.025em',fontVariantNumeric:'tabular-nums',color:'var(--ink-1)'}}>{inv.totals.pctOfFund}</div>
+          <div style={{fontSize:13}}>of fund NAV</div>
+        </div>
+        <div>
+          <div>Lock-up</div>
+          <div style={{fontSize:18,fontWeight:500,color:'var(--ink-1)',letterSpacing:'-0.005em',marginTop:6,marginBottom:6,textTransform:'capitalize'}}>{inv.lockup.status}</div>
+          <div style={{fontSize:13}}>{inv.lockup.detail}</div>
+        </div>
+        <div>
+          <div>KYC · Sumsub</div>
+          <div style={{marginTop:8,marginBottom:8}}><KycBadge status={inv.kyc.status}/></div>
+          <div style={{fontSize:13}}>Risk {inv.kyc.risk} · reviewed {inv.kyc.lastReview}</div>
+        </div>
+      </div>
+
+      {/* Holdings */}
+      <div style={{marginBottom:48}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20}}>
+          <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',color:'var(--ink-1)'}}>Holdings by class</div>
+          <button onClick={()=>onNav('share-classes')} style={{...iBtnOutline,height:30,fontSize:12.5,padding:'0 12px'}}>Open share classes</button>
+        </div>
+        {inv.holdings.length === 0 ? (
+          <div style={{padding:'40px 16px',textAlign:'center',color:'var(--ink-3)',fontSize:13,background:'var(--glass-bg)',borderRadius:10}}>
+            No active holdings. Investor must complete KYC and submit a subscription order from the Investor app.
+          </div>
+        ) : (
+          <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
+            <thead>
+              <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500}}>
+                <th style={iTh}>Class</th>
+                <th style={{...iTh,textAlign:'right'}}>Units</th>
+                <th style={{...iTh,textAlign:'right'}}>Cost basis</th>
+                <th style={{...iTh,textAlign:'right'}}>Current value</th>
+                <th style={{...iTh,textAlign:'right'}}>% of fund</th>
+              </tr>
+            </thead>
+            <tbody>
+              {inv.holdings.map((h,i) => (
+                <tr key={i} data-row style={{fontSize:13}}>
+                  <td style={{...iTd,fontWeight:500}}>{h.class}</td>
+                  <td style={{...iTd,textAlign:'right'}}>{h.units}</td>
+                  <td style={{...iTd,textAlign:'right',color:'var(--ink-2)'}}>{h.cost}</td>
+                  <td style={{...iTd,textAlign:'right',fontWeight:500}}>{h.value}</td>
+                  <td style={{...iTd,textAlign:'right',color:'var(--ink-2)'}}>{h.pct}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* Activity */}
+      <div style={{marginBottom:48}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20}}>
+          <div style={{fontSize:18,fontWeight:600,letterSpacing:'-0.005em',color:'var(--ink-1)'}}>Activity</div>
+          <button onClick={()=>onNav('order-book')} style={{...iBtnOutline,height:30,fontSize:12.5,padding:'0 12px'}}>Open order book</button>
+        </div>
+        {inv.activity.length === 0 ? (
+          <div style={{padding:'40px 16px',textAlign:'center',color:'var(--ink-3)',fontSize:13,background:'var(--glass-bg)',borderRadius:10}}>No activity yet.</div>
+        ) : (
+          <table style={{width:'100%',borderCollapse:'collapse',fontVariantNumeric:'tabular-nums'}}>
+            <thead>
+              <tr style={{fontSize:11.5,color:'var(--ink-3)',fontWeight:500,textAlign:'left'}}>
+                <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Date</th>
+                <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Type</th>
+                <th style={{padding:'4px 4px 8px',fontWeight:500,borderBottom:'1px solid var(--line-1)'}}>Class</th>
+                <th style={{padding:'4px 4px 8px',fontWeight:500,textAlign:'right',borderBottom:'1px solid var(--line-1)'}}>Amount</th>
+                <th style={{padding:'4px 4px 8px',fontWeight:500,textAlign:'right',borderBottom:'1px solid var(--line-1)'}}>Units</th>
+                <th style={{padding:'4px 4px 8px',fontWeight:500,textAlign:'right',borderBottom:'1px solid var(--line-1)'}}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {inv.activity.map((r,i) => {
+                const settled = r.status === 'settled';
+                const pending = r.status === 'pending';
+                return (
+                  <tr key={i} data-row style={{fontSize:13}}>
+                    <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color:'var(--ink-2)',whiteSpace:'nowrap'}}>{r.date}</td>
+                    <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color: r.type==='Subscription' ? 'var(--pos)' : r.type==='Redemption' ? 'var(--neg)' : 'var(--ink-1)',fontWeight:500}}>{r.type}</td>
+                    <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',color:'var(--ink-2)'}}>{r.class}</td>
+                    <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right',fontWeight:500}}>{r.amount}</td>
+                    <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right',color: r.units.startsWith('−') ? 'var(--neg)' : 'var(--ink-1)'}}>{r.units}</td>
+                    <td style={{padding:'12px 4px',borderBottom:'1px solid var(--line-1)',textAlign:'right'}}>
+                      <span style={{display:'inline-flex',alignItems:'center',gap:5,fontSize:11.5,fontWeight:500,color: settled ? 'var(--green-700)' : pending ? '#8A5A10' : 'var(--ink-2)'}}>
+                        {settled && <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3.5 8.5 6.5 11.5 12.5 5"/></svg>}
+                        {pending && <span style={{width:6,height:6,borderRadius:'50%',background:'#D89A20'}}/>}
+                        {settled ? 'Settled' : pending ? 'Pending' : r.status.charAt(0).toUpperCase() + r.status.slice(1)}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* Identity + Documents */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:32,marginBottom:32}}>
+        <div style={{background:'var(--glass-bg)',borderRadius:10,padding:'20px 22px'}}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
+            <div style={{fontSize:14,fontWeight:600,color:'var(--ink-1)'}}>Identity &amp; compliance</div>
+            <span style={{fontSize:11.5,color:'var(--ink-3)'}}>Source · Sumsub</span>
+          </div>
+          {[
+            { l:'KYC status',       v:<KycBadge status={inv.kyc.status}/> },
+            { l:'Risk rating',      v:inv.kyc.risk },
+            { l:'Accreditation',    v:inv.accreditation },
+            { l:'Last review',      v:inv.kyc.lastReview },
+            { l:'Next review due',  v:inv.kyc.nextReview },
+            { l:'Sumsub applicant', v:<span style={{fontFamily:'monospace',fontSize:12}}>{inv.kyc.applicantId}</span> },
+          ].map((r,i) => (
+            <div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'10px 0',borderTop: i===0 ? 'none' : '1px solid var(--line-1)',fontSize:13}}>
+              <span style={{color:'var(--ink-2)'}}>{r.l}</span>
+              <span style={{color:'var(--ink-1)',textAlign:'right'}}>{r.v}</span>
+            </div>
+          ))}
+          <div style={{marginTop:14,paddingTop:14,borderTop:'1px solid var(--line-1)',fontSize:11.5,color:'var(--ink-3)',lineHeight:1.5}}>
+            KYC, AML and accreditation checks are completed in the Investor app via Sumsub. Manager OS is read-only. Subscriptions cannot be created without a verified KYC status.
+          </div>
+        </div>
+
+        <div style={{background:'var(--glass-bg)',borderRadius:10,padding:'20px 22px'}}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
+            <div style={{fontSize:14,fontWeight:600,color:'var(--ink-1)'}}>Fund documents</div>
+            <span style={{fontSize:11.5,color:'var(--ink-3)'}}>{inv.documents.length} {inv.documents.length === 1 ? 'doc' : 'docs'}</span>
+          </div>
+          {inv.documents.length === 0 ? (
+            <div style={{padding:'24px 4px',textAlign:'center',color:'var(--ink-3)',fontSize:13}}>No fund documents on file.</div>
+          ) : inv.documents.map((d,i) => (
+            <div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'10px 0',borderTop: i===0 ? 'none' : '1px solid var(--line-1)',fontSize:13}}>
+              <div style={{minWidth:0}}>
+                <div style={{color:'var(--ink-1)'}}>{d.name}</div>
+                <div style={{fontSize:11.5,color:'var(--ink-3)',marginTop:2}}>{d.date}</div>
+              </div>
+              <span style={{display:'inline-flex',alignItems:'center',gap:5,fontSize:11.5,fontWeight:500,color:'var(--green-700)'}}>
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3.5 8.5 6.5 11.5 12.5 5"/></svg>
+                {d.status}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Contact */}
+      <div style={{background:'var(--glass-bg)',borderRadius:10,padding:'20px 22px'}}>
+        <div style={{fontSize:14,fontWeight:600,color:'var(--ink-1)',marginBottom:14}}>Contact</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(2, minmax(0,1fr))',rowGap:14,columnGap:32,fontSize:13}}>
+          {[
+            { l:'Primary contact', v:<span><span style={{fontWeight:500}}>{inv.primaryContact.name}</span> <span style={{color:'var(--ink-3)'}}>· {inv.primaryContact.role}</span></span> },
+            { l:'Email',           v:inv.primaryContact.email },
+            { l:'Phone',           v:inv.primaryContact.phone },
+            { l:'Address',         v:inv.address },
+          ].map((r,i) => (
+            <div key={i}>
+              <div style={{color:'var(--ink-3)',fontSize:11.5,fontWeight:500,marginBottom:4}}>{r.l}</div>
+              <div style={{color:'var(--ink-1)'}}>{r.v}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { InvestorsView, InvestorProfileView, INVESTORS, INVESTORS_LIST, INVESTOR_SLUG });
 
 </script>
 
@@ -5446,7 +6506,7 @@ function App() {
   // Cinematic mode: pin to Overview, force dark, disable navigation
   const isCine = typeof window !== 'undefined' && !!window.__CINE__;
   const [route, setRouteRaw] = React.useState(() =>
-    isCine ? 'overview' : (localStorage.getItem('mos.route') || 'nav'));
+    isCine ? 'overview' : ((new URLSearchParams(window.location.search).get('route')) || localStorage.getItem('mos.route') || 'nav'));
   const setRoute = isCine ? () => {} : setRouteRaw;
   const [showTweaks, setShowTweaks] = React.useState(false);
   const [tweaks, setTweaks] = React.useState(TWEAK_DEFAULTS);
@@ -5508,9 +6568,21 @@ function App() {
     });
   };
 
+  const [investorCtx, setInvestorCtx] = React.useState({ slug: null, name: null });
+  React.useEffect(() => {
+    window.openInvestor = (name) => {
+      const slug = (window.INVESTOR_SLUG || (s => String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')))(name);
+      setInvestorCtx({ slug, name });
+      setRoute('investor');
+    };
+    return () => { try { delete window.openInvestor; } catch(_) {} };
+  }, []);
+
   let view;
   if (route === 'home') view = <HomeView onNav={setRoute}/>;
   else if (route === 'actions') view = <ActionsView onNav={setRoute}/>;
+  else if (route === 'investors') view = <InvestorsView onNav={setRoute}/>;
+  else if (route === 'investor') view = <InvestorProfileView investorSlug={investorCtx.slug} displayName={investorCtx.name} onNav={setRoute}/>;
   else if (route === 'overview') view = <OverviewView onNav={setRoute}/>;
   else if (route === 'order-book') view = <OrderBookView onNav={setRoute}/>;
   else if (route === 'collateral') view = <CollateralView onNav={setRoute}/>;
@@ -5527,7 +6599,7 @@ function App() {
       <Sidebar route={route} onNav={setRoute}/>
       <div style={{display:'flex',flexDirection:'column',flex:1,minWidth:0}}>
         <div style={{position:'sticky',top:0,zIndex:30,background:'var(--bg-canvas)'}}>
-          <Navbar route={route} onNav={setRoute}/>
+          <Navbar route={route} onNav={setRoute} investorName={investorCtx.name}/>
         </div>
         <main style={{flex:1,minWidth:0,background:'var(--bg-canvas)'}}>
           <div key={route}>{view}</div>
@@ -5581,6 +6653,7 @@ function App() {
               <option value="order-book">Order book</option>
               <option value="collateral">Move collateral</option>
               <option value="share-register">Share register</option>
+              <option value="investors">Investors</option>
               <option value="share-classes">Share classes</option>
               <option value="reconciliation">Reconciliation</option>
               <option value="pnl">Profit & Loss</option>

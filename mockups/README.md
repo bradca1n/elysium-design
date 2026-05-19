@@ -10,8 +10,11 @@ mockups/
 ├── elysium-chrome.js      ← shared chrome/nav script, loaded as ./elysium-chrome.js
 ├── fonts/                 ← shared @font-face assets
 ├── *.html                 ← top-level mockups (all siblings of the shared assets)
-├── manager-os-nav/        ← project: Manager OS navigation experiment (v1, Apr 22)
-├── manager-os-nav-v3/     ← project: Manager OS navigation experiment (v3, Apr 28)
+├── account-creation/      ← project: account creation flow
+├── manager-os-deploy/     ← project: Manager OS deploy
+├── manager-os-nav/        ← project: Manager OS navigation experiment
+├── pilot-program/         ← project: pilot program materials
+├── pod-pricing/           ← project: pod pricing
 └── redeem-withdraw/       ← project: redeem/withdraw flow scaffold
 ```
 

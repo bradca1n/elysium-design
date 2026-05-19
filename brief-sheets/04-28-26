@@ -1,0 +1,151 @@
+# Daily UI/UX Design Tasks
+
+**Date:** 04-28-26
+**Project:** Elysium
+**Focus area:**
+**Main outcome needed today:**
+
+---
+
+## Top priorities
+1. [ ] Make KYC desktop-ready
+2. [ ] Integrate ptl-pod feedback into Manager OS nav v1 pages (see "ptl-pod feedback" section below)
+3. [ ] ...
+
+---
+
+## Active design problems
+### Problem 1
+- **Area:**
+- **Context:**
+- **Constraint:**
+- **What good looks like:**
+
+### Problem 2
+- **Area:**
+- **Context:**
+- **Constraint:**
+- **What good looks like:**
+
+### Problem 3
+- **Area:**
+- **Context:**
+- **Constraint:**
+- **What good looks like:**
+
+---
+
+## Work areas
+
+### Figma File
+- [ ] https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+
+### Pages
+- [ ] Widgets > Investor App: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=394-20687&t=8xoT0BWHp9KXDsON-1
+- [ ] Widgets > Manager OS: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69417
+
+### Components
+- [ ] Global: https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69298
+- [ ] Investor App (mobile): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69296
+- [ ] Manager OS (desktop): https://www.figma.com/design/T3F6A4zWXWTWoMh0gnN1YM/Product-Demo?node-id=553-69297
+
+### UX writing / product copy
+- [ ]
+- [ ]
+
+---
+
+## ptl-pod feedback — Manager OS nav v1
+Source: https://github.com/bradca1n/elysium-design/discussions/1 (mockup at https://raw.githack.com/bradca1n/elysium-design/main/mockups/manager-os-nav/index.html)
+
+### NAV / Collateral & Treasury page
+**Reorder**
+- [ ] Move Treasury **above** Collateral (Manager can't miss it)
+
+**Portfolio composition**
+- [ ] Add grouping for spot vs. derivatives (open question with Timo re: Haruko)
+
+**Venue breakdown** (already answers "where are my assets" — extend to two more questions)
+- [ ] Add expense/income per holding (income stream − cost per custody account)
+- [ ] Add margin position vs. required margin, with colour coding as it approaches 100% (liquidation risk)
+
+**Treasury (new "flows" piece)**
+- [ ] Show upcoming net subscription/redemption vs. fund's USD/stables availability
+- [ ] Net flow number at top, with +subscriptions and −redemptions as inputs underneath
+- [ ] Show cash position as a multiple of avg daily withdrawals **and** multiple of max withdrawals in next notice period (rationale for lock-ups & notice periods)
+
+**Collateral**
+- [ ] Add fees per account + blended fee rate
+- [ ] Add income per account + blended income rate
+- [ ] Show net fee rate (+income −fee) for the collateral position
+
+**P&L**
+- [ ] Replace position line items with categories: Realised PnL / Unrealised PnL (line-item detail belongs on the PnL page, not here)
+
+**Balance Sheet** (MVP fine as-is — noted for future)
+- Duration profile on asset side (current/non-current OK for now, await manager feedback)
+- Equity side grouped by share class with minimum time to liquidity (min of notice period or lock-up)
+- Trend representation of balance sheet growth/decline (driven by sub vs. redemption inputs)
+
+### Share Register page
+- [ ] Bring summary charts to the top
+- [ ] Above charts: blended measures — Duration (min of notice/lock-up), Management fees, Performance fees
+- [ ] Default chart view by $ capital (not # investors)
+- [ ] Add "Results delivered for investors" section: % of book by return threshold, % of dealings by return threshold
+- [ ] Order below: Share Classes → Full share register
+- [ ] Add top section showing managers' and POD's own holdings with duration profile + returns earned
+- [ ] Remove KYC health (POD's problem, not theirs)
+
+### Economics page
+- [ ] Add a view showing the same info as % of AUM, alongside the existing $ view
+- [ ] Split manager economics into two:
+  - (a) **% fees earned** — manager's PnL, against which payables (custodian, etc.) should be shown
+  - (b) **% returns generated** from monies the manager invested in the fund — separate from (a), keep the "locked / available for withdrawal" breakdown
+
+---
+
+## Review checklist
+- [ ] User goal is clear
+- [ ] Primary action is clear
+- [ ] Edge cases covered
+- [ ] Empty / loading / error / success states considered
+- [ ] Consistent with design system
+- [ ] Realistic for engineering handoff
+- [ ] Mobile / responsive behaviour considered
+
+---
+
+## Claude session notes
+**Context to give Claude:**
+-
+-
+-
+
+**What I want back from Claude:**
+-
+-
+-
+
+---
+
+## Notes
+-
+-
+-
+
+---
+
+## End of day
+### Done
+-
+-
+-
+
+### Carry forward
+-
+-
+-
+
+### Last task
+- [ ] Run the skill in `elysium-design/skills/daily-summary`
+- [ ] Output the daily summary into `elysium-design/daily-summary`

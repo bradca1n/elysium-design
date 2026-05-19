@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POD — Pricing & Fee Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#F6EEE5;font-family:Calibri,sans-serif;color:#222933;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:2.5rem 1rem}
+.card{background:#fff;border-radius:16px;overflow:hidden;width:100%;max-width:600px;box-shadow:0 4px 40px rgba(12,62,103,0.12)}
+.header{background:#0C3E67;padding:1.75rem 2rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.header-title h1{font-family:'Instrument Serif',Cambria,Georgia,serif;font-size:26px;font-weight:400;color:#fff;margin-bottom:4px}
+.header-title p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.pod-logo{width:42px;height:42px;object-fit:contain;flex-shrink:0}
+.body{padding:1.75rem 2rem}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6F7785;font-weight:600}
+.field .hint{font-size:10px;color:#9aa0a8;margin-top:1px}
+.iw{position:relative}
+.iw .sym{position:absolute;font-size:13px;color:#9aa0a8;pointer-events:none;top:50%;transform:translateY(-50%)}
+.iw .sym.l{left:11px}
+.iw .sym.r{right:11px}
+.iw input{width:100%;height:40px;border:1px solid #ddd4c8;border-radius:7px;background:#fff;font-size:15px;font-weight:600;color:#222933;outline:none;transition:border-color .15s}
+.iw input:focus{border-color:#0C3E67}
+.iw.sl input{padding:0 11px 0 22px}
+.iw.sr input{padding:0 26px 0 11px}
+.section-label{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:#6F7785;font-weight:600;margin:1.25rem 0 .65rem}
+.divider{border:none;border-top:1px solid #ece5de;margin:1.5rem 0}
+.results-title{font-family:'Instrument Serif',Cambria,Georgia,serif;font-size:20px;color:#0C3E67;font-weight:400;margin-bottom:1.1rem}
+.chart-row{display:flex;align-items:center;gap:1.75rem;margin-bottom:1.25rem}
+.donut-wrap{position:relative;flex-shrink:0;width:140px;height:140px}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.dc-num{font-size:21px;font-weight:700;color:#0C3E67;line-height:1}
+.dc-lbl{font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:#6F7785;margin-top:3px}
+.legend{display:flex;flex-direction:column;gap:10px;flex:1}
+.leg{display:flex;align-items:center;gap:9px}
+.leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.leg-name{font-size:12.5px;color:#222933;font-weight:500}
+.leg-val{font-size:11px;color:#6F7785;margin-top:1px}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.stat{border-radius:9px;border:1px solid #ddd4c8;padding:.85rem 1.1rem}
+.stat.sand{background:#F6EEE5}
+.stat.green-highlight{background:rgba(127,197,158,0.12);border:2px solid #7FC59E}
+.stat-lbl{font-size:9px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#6F7785;margin-bottom:5px}
+.stat.green-highlight .stat-lbl{color:#1a6b3c}
+.stat-val{font-size:20px;font-weight:700;color:#222933;line-height:1}
+.stat.green-highlight .stat-val{color:#1a6b3c}
+.bk{background:#fff;border-radius:9px;border:1px solid #ddd4c8;padding:.9rem 1.1rem;margin-bottom:10px}
+.br{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:12.5px}
+.br:not(:last-child){border-bottom:.5px solid #ece5de}
+.br-k{color:#6F7785}
+.br-v{font-weight:600;color:#222933}
+.br-v.g{color:#1a6b3c}
+.br-v.n{color:#0C3E67}
+.br-v.p{color:#5C7A85}
+/* Tier breakdown table */
+.tier-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:.35rem}
+.tier-table th{font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:#6F7785;font-weight:600;padding:5px 8px;text-align:left;border-bottom:1px solid #ece5de}
+.tier-table th:last-child{text-align:right}
+.tier-table td{padding:6px 8px;color:#222933;border-bottom:.5px solid #ece5de}
+.tier-table td:last-child{text-align:right;font-weight:600}
+.tier-table tr:last-child td{border-bottom:none}
+.tier-table .total-row td{border-top:1px solid #ddd4c8;font-weight:700;color:#0C3E67;background:#F6EEE5}
+.tier-table .total-row td:first-child{border-radius:0 0 0 6px}
+.tier-table .total-row td:last-child{border-radius:0 0 6px 0}
+.tier-rate-pill{display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600;background:#F6EEE5;color:#0C3E67}
+.ci-section{display:none}
+.note{font-size:10.5px;color:#9aa0a8;line-height:1.65;margin-top:1rem;padding-top:1rem;border-top:1px solid #ece5de}
+
+
+/* Additional styles for explainer page */
+.page-wrap{max-width:600px;margin:0 auto;padding:2.5rem 1rem}
+.explainer-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 40px rgba(12,62,103,0.12);margin-bottom:2rem}
+.explainer-header{background:#0C3E67;padding:1.75rem 2rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.explainer-header h1{font-family:'Instrument Serif',Cambria,Georgia,serif;font-size:26px;font-weight:400;color:#fff;margin-bottom:4px}
+.explainer-header p{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.explainer-body{padding:1.75rem 2rem}
+.explainer-intro{font-family:'Instrument Serif',Cambria,Georgia,serif;font-size:17px;color:#0C3E67;font-weight:400;line-height:1.5;margin-bottom:1.5rem}
+.explainer-prose{font-size:13.5px;color:#444;line-height:1.75;margin-bottom:1.25rem}
+.pillars{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:1.25rem 0}
+.pillar{background:#F6EEE5;border-radius:10px;padding:1rem;text-align:center}
+.pillar-icon{font-size:20px;margin-bottom:6px}
+.pillar-title{font-size:11px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;color:#0C3E67;margin-bottom:4px}
+.pillar-body{font-size:11.5px;color:#6F7785;line-height:1.5}
+.fee-table{width:100%;border-collapse:collapse;margin:1rem 0 .5rem}
+.fee-table th{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#6F7785;font-weight:600;padding:6px 10px;text-align:left;border-bottom:1px solid #ece5de}
+.fee-table th:last-child{text-align:right}
+.fee-table td{padding:8px 10px;font-size:13px;color:#222933;border-bottom:.5px solid #ece5de}
+.fee-table td:last-child{text-align:right;font-weight:600;color:#0C3E67}
+.fee-table tr:last-child td{border-bottom:none}
+.fee-table .highlight-row td{background:#F6EEE5;font-weight:600}
+.ci-explainer{background:#F6EEE5;border-radius:10px;padding:1.1rem 1.25rem;margin:1.25rem 0}
+.ci-explainer-title{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#0C3E67;margin-bottom:.5rem}
+.ci-explainer-body{font-size:13px;color:#444;line-height:1.7}
+.third-party{background:#fff;border:1px solid #ddd4c8;border-radius:10px;padding:1.1rem 1.25rem;margin:1.25rem 0}
+.third-party-title{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#6F7785;margin-bottom:.5rem}
+.third-party-body{font-size:13px;color:#444;line-height:1.7}
+.check-list{list-style:none;padding:0;margin:.75rem 0 0}
+.check-list li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#444;padding:4px 0;line-height:1.6}
+.check-list li::before{content:'';width:16px;height:16px;border-radius:50%;background:#7FC59E;flex-shrink:0;margin-top:2px;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='8' fill='%237FC59E'/%3E%3Cpath d='M4.5 8l2.5 2.5 4.5-4.5' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-size:contain}
+.divider-label{display:flex;align-items:center;gap:10px;margin:1.5rem 0}
+.divider-label span{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#9aa0a8;white-space:nowrap}
+.divider-label::before,.divider-label::after{content:'';flex:1;border-top:1px solid #ece5de}
+</style>
+</head>
+<body style="background:#F6EEE5;font-family:Calibri,sans-serif;color:#222933;min-height:100vh;padding:2.5rem 1rem">
+<div style="max-width:600px;margin:0 auto">
+
+  <!-- EXPLAINER CARD -->
+  <div class="explainer-card">
+    <div class="explainer-header">
+      <div>
+        <h1>How our pricing works</h1>
+        <p>POD &middot; Confidential</p>
+      </div>
+      <img id="logo-explainer" class="pod-logo" alt="POD">
+    </div>
+    <div class="explainer-body">
+
+      <p class="explainer-intro">You only pay POD as you earn. POD charges no upfront fees, no fixed fees and no minimum fees. We win when you win.</p>
+
+      <p class="explainer-prose">POD charges a percentage of gross manager fees: management fee plus performance fee. This percentage reduces as your AUM grows.</p>
+
+      <div style="background:#F6EEE5;border-left:3px solid #0C3E67;border-radius:8px;padding:1rem 1.25rem;margin:1.25rem 0">
+        <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#0C3E67;margin-bottom:5px">Setup costs</div>
+        <div style="font-size:13.5px;color:#444;line-height:1.7">Pay only legal &amp; registration fees (approx $7k, passed through at cost by POD). After that, you face no further fixed fees, and are charged only via POD's fee sharing structure.</div>
+      </div>
+
+      <div class="divider-label"><span>Base fee structure</span></div>
+
+      <p class="explainer-prose">Our base fee is a percentage of your fund's total gross manager fees, applied progressively across AUM tiers. The more AUM you manage, the lower our blended take rate.</p>
+
+      <table class="fee-table">
+        <thead>
+          <tr>
+            <th>AUM tier</th>
+            <th>POD take rate</th>
+            <th style="text-align:right">Fund stage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>$0 – $10m</td><td><span class="tier-rate-pill">25%</span></td><td style="color:#6F7785;font-weight:400">Launch stage</td></tr>
+          <tr><td>$10m – $25m</td><td><span class="tier-rate-pill">20%</span></td><td style="color:#6F7785;font-weight:400">Early growth</td></tr>
+          <tr><td>$25m – $75m</td><td><span class="tier-rate-pill">15%</span></td><td style="color:#6F7785;font-weight:400">Scaling</td></tr>
+          <tr><td>$75m+</td><td><span class="tier-rate-pill">10%</span></td><td style="color:#6F7785;font-weight:400">Institutional</td></tr>
+        </tbody>
+      </table>
+
+      <p class="explainer-prose" style="font-size:12px;color:#9aa0a8">Tiers are applied progressively, like income tax brackets. A $30m fund pays 25% on the first $10m of fees, 20% on the next $15m, and 15% on the final $5m, resulting in a blended rate between 15% and 20%.</p>
+
+      <div class="divider-label"><span>Capital introduction fee</span></div>
+
+      <div class="ci-explainer">
+        <div class="ci-explainer-title">POD Discover: built-in allocator network</div>
+        <div class="ci-explainer-body">POD operates a growing network of allocators who can browse and invest in funds directly through the platform. If capital comes to your fund via POD's Discover platform, an additional fee applies on the fees generated by that capital only.<br><br>
+        <strong style="color:#0C3E67">Cap intro fee: 20%</strong> of gross fees attributable to capital introduced via POD Discover. This is charged on top of the base take rate, and only on the portion of your AUM that came through the network. Capital you raise independently is not subject to this fee.</div>
+      </div>
+
+      <div class="divider-label"><span>Third-party costs</span></div>
+
+      <div class="third-party">
+        <div class="third-party-title">What you pay to third parties</div>
+        <ul class="check-list">
+          <li>POD is a licensed Fund Administrator, so no additional third-party fund admin is required. We do not charge any minimum fee for admin services, simply a flat 0.20% on AUM, which you pass through to investors as an expense line item. With all other savings, we expect your investor expense ratio to be well below 1%.</li>
+          <li>Any minimum fees charged by third-party providers (e.g. custodians, banks, auditors) are absorbed by POD at the umbrella level. You never face a third-party minimum fee.</li>
+          <li>Variable costs we do pass through (custody, banking, audit) are charged at wholesale rates negotiated at the umbrella level, significantly cheaper than fees charged to an individual fund.</li>
+          <li>Trading volumes are also merged at the umbrella level, resulting in lower trading fees for managers on the POD platform.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <p style="font-family:'Instrument Serif',Cambria,Georgia,serif;font-size:16px;color:#0C3E67;text-align:center;margin:-0.5rem 0 1.5rem;font-style:italic">Use our calculator below to examine your net fee income in different scenarios.</p>
+
+  <!-- CALCULATOR CARD -->
+<div class="card">
+  <div class="header">
+    <div class="header-title">
+      <h1>Fee Calculator</h1>
+      <p>POD &middot; Confidential</p>
+    </div>
+    <img id="logo" class="pod-logo" alt="POD">
+  </div>
+  <div class="body">
+
+    <div class="section-label" style="margin-top:0">Fund details</div>
+    <div class="row">
+      <div class="field">
+        <label>Total AUM (M)</label>
+        <div class="iw sl"><span class="sym l">$</span><input type="number" id="aum" value="10" min="0" step="1"></div>
+      </div>
+      <div class="field">
+        <label>Expected Annual Return</label>
+        <div class="iw sr"><span class="sym r">%</span><input type="number" id="ret" value="20" min="0" max="500" step="1"></div>
+        <span class="hint">net of mgmt fee, on AUM</span>
+      </div>
+    </div>
+
+    <div class="section-label">Your fee structure</div>
+    <div class="row">
+      <div class="field">
+        <label>Management fee</label>
+        <div class="iw sr"><span class="sym r">%</span><input type="number" id="mgmt" value="2" min="0" max="10" step="0.1"></div>
+      </div>
+      <div class="field">
+        <label>Performance fee</label>
+        <div class="iw sr"><span class="sym r">%</span><input type="number" id="perf" value="20" min="0" max="50" step="1"></div>
+      </div>
+    </div>
+
+    <div class="section-label">Capital introduction</div>
+    <div style="max-width:260px">
+      <div class="field">
+        <label>Cap Intro AUM (M)</label>
+        <div class="iw sl"><span class="sym l">$</span><input type="number" id="ci" value="0" min="0" step="1"></div>
+        <span class="hint">capital coming from POD's Discover platform</span>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="results-title">Fee Income Distribution</div>
+
+    <div class="chart-row">
+      <div class="donut-wrap">
+        <canvas id="donut" width="140" height="140"></canvas>
+        <div class="donut-center">
+          <div class="dc-num" id="dc-pct">-</div>
+          <div class="dc-lbl">your fee share</div>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#7FC59E"></div><div><div class="leg-name">Your net fee income</div><div class="leg-val" id="lg-keep">-</div></div></div>
+        <div class="leg"><div class="leg-dot" style="background:#0C3E67"></div><div><div class="leg-name">POD base take</div><div class="leg-val" id="lg-base">-</div></div></div>
+        <div class="leg" id="lg-ci-row"><div class="leg-dot" style="background:#95B5B3"></div><div><div class="leg-name">POD cap intro take</div><div class="leg-val" id="lg-ci">-</div></div></div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat sand">
+        <div class="stat-lbl">Gross Fees</div>
+        <div class="stat-val" id="s-gross">-</div>
+      </div>
+      <div class="stat green-highlight">
+        <div class="stat-lbl">Your Net Fee Income</div>
+        <div class="stat-val" id="s-keep">-</div>
+      </div>
+    </div>
+
+    <div class="bk">
+      <div class="br"><span class="br-k">Management fee income</span><span class="br-v" id="b-mgmt">-</span></div>
+      <div class="br"><span class="br-k">Performance fee income</span><span class="br-v" id="b-perf">-</span></div>
+      <div class="br"><span class="br-k">Total gross fees</span><span class="br-v n" id="b-gross">-</span></div>
+      <div class="br"><span class="br-k">POD base take</span><span class="br-v p" id="b-base">-</span></div>
+      <div class="br" id="b-ci-row"><span class="br-k">POD cap intro take</span><span class="br-v p" id="b-ci">-</span></div>
+      <div class="br"><span class="br-k" style="font-weight:700;color:#222933">Your Net Fee Income</span><span class="br-v g" id="b-keep">-</span></div>
+    </div>
+
+
+    <div class="section-label">AUM tier breakdown</div>
+    <div class="bk" style="padding:0;overflow:hidden">
+      <table class="tier-table">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>AUM in tier</th>
+            <th>Take rate</th>
+            <th>POD fee</th>
+          </tr>
+        </thead>
+        <tbody id="tier-tbody"></tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="2">Blended base rate</td>
+            <td id="tf-blended" colspan="2" style="text-align:right">-</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="ci-section" id="ci-section">
+      <div class="section-label">Cap intro fee breakdown</div>
+      <div class="bk" style="padding:0;overflow:hidden">
+        <table class="tier-table">
+          <thead>
+            <tr>
+              <th>Cap Intro AUM</th>
+              <th>% of Total AUM</th>
+              <th>Additional take rate</th>
+              <th style="text-align:right">POD fee</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="ci-t-aum">-</td>
+              <td id="ci-t-pct">-</td>
+              <td><span class="tier-rate-pill">20%</span></td>
+              <td style="text-align:right" id="ci-t-fees">-</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="2">Cap intro take</td>
+              <td id="ci-t-rate" colspan="2" style="text-align:right">-</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <div class="bk">
+      <div class="br"><span class="br-k">Blended POD take rate on gross fees</span><span class="br-v n" id="b-blended">-</span></div>
+    </div>
+
+    <p class="note">POD's fee is charged as a percentage of your total manager fees &mdash; no upfront or fixed costs. The blended base rate is calculated progressively across AUM tiers. Cap intro fees (an additional 20% of fees proportional to cap intro AUM) apply only to capital sourced via POD's Discover platform. Leave cap intro AUM at 0 if not applicable. Performance fee is calculated on return net of management fee.</p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+document.getElementById('logo').src = 'REPLACE_WITH_WEBFLOW_LOGO_URL';
+
+var chart = null;
+var tiers = [
+  {label:'$0 – 10m',   min:0,  max:10,       rate:.25},
+  {label:'$10 – 25m',  min:10, max:25,       rate:.20},
+  {label:'$25 – 75m',  min:25, max:75,       rate:.15},
+  {label:'$75m+',      min:75, max:1e12,     rate:.10}
+];
+
+var fmt  = function(n){ return '$'+Math.round(n).toLocaleString(); };
+var pct  = function(n,d){ return n.toFixed(d===undefined?1:d)+'%'; };
+var g    = function(id){ return document.getElementById(id); };
+
+function calcTiers(aum){
+  var res=[], rem=aum, prev=0;
+  for(var i=0;i<tiers.length;i++){
+    var slice=Math.min(Math.max(tiers[i].max-prev,0),rem);
+    res.push(slice);
+    rem-=slice; prev=tiers[i].max;
+    if(rem<=0) break;
+  }
+  while(res.length<tiers.length) res.push(0);
+  return res;
+}
+
+function resetOutputs(){
+  var ids=['s-gross','s-keep','b-mgmt','b-perf','b-gross','b-base','b-keep','b-blended','lg-keep','lg-base','dc-pct'];
+  ids.forEach(function(id){ var el=g(id); if(el) el.textContent='-'; });
+  g('b-ci-row').style.display='none';
+  g('lg-ci-row').style.display='none';
+  g('ci-section').style.display='none';
+  g('tier-tbody').innerHTML='';
+  g('tf-blended').textContent='-';
+  if(chart){ chart.data.datasets[0].data=[1]; chart.data.datasets[0].backgroundColor=['#ece5de']; chart.update(); }
+}
+
+function calc(){
+  var aum  = parseFloat(g('aum').value)  || 0;
+  var ret  = parseFloat(g('ret').value)  || 0;
+  var mgmt = parseFloat(g('mgmt').value) || 0;
+  var perf = parseFloat(g('perf').value) || 0;
+  var ci   = Math.min(parseFloat(g('ci').value)||0, aum);
+
+  var aumV = aum*1e6, ciV=ci*1e6;
+  if(aum<=0){ resetOutputs(); return; }
+
+  // Formulas per spec
+  var mgmtInc = aumV*(mgmt/100);
+  var netRet  = Math.max(ret-mgmt,0);          // net of mgmt fee
+  var perfInc = aumV*(netRet/100)*(perf/100);
+  var total   = mgmtInc+perfInc;
+
+  // Tier amounts (in $m)
+  var tierAmts = calcTiers(aum);
+  var podFeePerTier = [];
+  var podBaseTotal  = 0;
+  for(var i=0;i<tiers.length;i++){
+    // fees attributable to this AUM slice × tier rate
+    var feesInSlice = aum>0 ? total*(tierAmts[i]/aum) : 0;
+    var fee = feesInSlice*tiers[i].rate;
+    podFeePerTier.push(fee);
+    podBaseTotal += fee;
+  }
+
+  var bf      = total>0 ? podBaseTotal/total : 0;
+  var ciFrac  = aum>0 ? ciV/aumV : 0;
+  var podCI   = total*ciFrac*0.20;
+  var podTot  = podBaseTotal+podCI;
+  var keeps   = total-podTot;
+  var blended = total>0 ? (podTot/total)*100 : 0;
+  var keepPF  = total>0 ? (keeps/total)*100 : 0;
+  var grossP  = aumV>0 ? (total/aumV)*100 : 0;
+  var keepP   = aumV>0 ? (keeps/aumV)*100 : 0;
+
+  // Stats
+  g('s-gross').textContent = fmt(total);
+  g('s-keep').textContent  = fmt(keeps);
+  g('b-mgmt').textContent  = fmt(mgmtInc);
+  g('b-perf').textContent  = fmt(perfInc);
+  g('b-gross').textContent = fmt(total);
+  g('b-base').textContent  = fmt(podBaseTotal);
+  g('b-keep').textContent  = fmt(keeps);
+  g('b-blended').textContent = pct(blended);
+  g('lg-keep').textContent = fmt(keeps);
+  g('lg-base').textContent = fmt(podBaseTotal)+' · '+pct(bf*100)+' blended';
+  g('dc-pct').textContent  = Math.round(keepPF)+'%';
+
+  // Cap intro
+  var showCI = ci>0;
+  g('b-ci-row').style.display   = showCI?'flex':'none';
+  g('lg-ci-row').style.display  = showCI?'flex':'none';
+  g('ci-section').style.display = showCI?'block':'none';
+  if(showCI){
+    g('b-ci').textContent   = fmt(podCI);
+    g('lg-ci').textContent  = fmt(podCI)+' · 20% of fees related to cap intro AUM';
+    // Cap intro table
+    var ciFeesBase = aum>0 ? total*(ci/aum) : 0;
+    g('ci-t-aum').textContent   = '$'+ci.toFixed(1)+'m';
+    g('ci-t-pct').textContent   = aum>0?pct((ci/aum)*100,0):'-';
+    g('ci-t-fees').textContent  = fmt(podCI);
+    g('ci-t-rate').textContent  = '20% × '+fmt(ciFeesBase)+' fees attributable = '+fmt(podCI);
+  }
+
+  // Tier breakdown table
+  var tbody = g('tier-tbody');
+  tbody.innerHTML='';
+  for(var i=0;i<tiers.length;i++){
+    if(tierAmts[i]<=0) continue;
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+tiers[i].label+'</td>'+
+      '<td>$'+tierAmts[i].toFixed(1)+'m</td>'+
+      '<td><span class="tier-rate-pill">'+pct(tiers[i].rate*100,0)+'</span></td>'+
+      '<td style="text-align:right">'+fmt(podFeePerTier[i])+'</td>';
+    tbody.appendChild(tr);
+  }
+  g('tf-blended').textContent = pct(bf*100)+' ('+fmt(podBaseTotal)+')';
+
+  // Donut
+  var segs=[
+    {v:keeps>0?keeps:0,   c:'#7FC59E', l:'Your net fee income'},
+    {v:podBaseTotal>0?podBaseTotal:0, c:'#0C3E67', l:'POD base'},
+    {v:podCI>0?podCI:0,   c:'#95B5B3', l:'Cap intro'}
+  ].filter(function(s){return s.v>0;});
+  if(!segs.length) segs=[{v:1,c:'#ece5de',l:''}];
+
+  if(chart){
+    chart.data.datasets[0].data=segs.map(function(s){return s.v;});
+    chart.data.datasets[0].backgroundColor=segs.map(function(s){return s.c;});
+    chart.data.labels=segs.map(function(s){return s.l;});
+    chart.update();
+  } else {
+    chart=new Chart(g('donut'),{
+      type:'doughnut',
+      data:{labels:segs.map(function(s){return s.l;}),datasets:[{
+        data:segs.map(function(s){return s.v;}),
+        backgroundColor:segs.map(function(s){return s.c;}),
+        borderWidth:0,hoverOffset:4
+      }]},
+      options:{cutout:'68%',plugins:{legend:{display:false},
+        tooltip:{callbacks:{label:function(ctx){return' '+fmt(ctx.raw);}}}},
+        animation:{duration:300}}
+    });
+  }
+}
+
+['aum','ret','mgmt','perf','ci'].forEach(function(id){
+  document.getElementById(id).addEventListener('input',calc);
+});
+calc();
+</script>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+document.getElementById('logo').src = 'REPLACE_WITH_WEBFLOW_LOGO_URL';
+document.getElementById('logo-explainer').src = 'REPLACE_WITH_WEBFLOW_LOGO_URL';
+
+var chart = null;
+var tiers = [
+  {label:'$0 – 10m',   min:0,  max:10,   rate:.25},
+  {label:'$10 – 25m',  min:10, max:25,   rate:.20},
+  {label:'$25 – 75m',  min:25, max:75,   rate:.15},
+  {label:'$75m+',           min:75, max:1e12, rate:.10}
+];
+
+var fmt  = function(n){ return '$'+Math.round(n).toLocaleString(); };
+var pct  = function(n,d){ return n.toFixed(d===undefined?1:d)+'%'; };
+var g    = function(id){ return document.getElementById(id); };
+
+function resetOutputs(){
+  var ids=['s-gross','s-keep','b-mgmt','b-perf','b-gross','b-base','b-keep','b-blended','lg-keep','lg-base','dc-pct'];
+  ids.forEach(function(id){ var el=g(id); if(el) el.textContent='-'; });
+  g('b-ci-row').style.display='none';
+  g('lg-ci-row').style.display='none';
+  g('ci-section').style.display='none';
+  g('tier-tbody').innerHTML='';
+  g('tf-blended').textContent='-';
+  if(chart){ chart.data.datasets[0].data=[1]; chart.data.datasets[0].backgroundColor=['#ece5de']; chart.update(); }
+}
+
+function calcTiers(aum){
+  var res=[], rem=aum, prev=0;
+  for(var i=0;i<tiers.length;i++){
+    var slice=Math.min(Math.max(tiers[i].max-prev,0),rem);
+    res.push(slice);
+    rem-=slice; prev=tiers[i].max;
+    if(rem<=0) break;
+  }
+  while(res.length<tiers.length) res.push(0);
+  return res;
+}
+
+function calc(){
+  var aum  = parseFloat(g('aum').value)  || 0;
+  var ret  = parseFloat(g('ret').value)  || 0;
+  var mgmt = parseFloat(g('mgmt').value) || 0;
+  var perf = parseFloat(g('perf').value) || 0;
+  var ci   = Math.min(parseFloat(g('ci').value)||0, aum);
+
+  var aumV = aum*1e6, ciV=ci*1e6;
+  if(aum<=0){ resetOutputs(); return; }
+
+  var mgmtInc = aumV*(mgmt/100);
+  var netRet  = Math.max(ret-mgmt,0);
+  var perfInc = aumV*(netRet/100)*(perf/100);
+  var total   = mgmtInc+perfInc;
+
+  var tierAmts = calcTiers(aum);
+  var podFeePerTier = [];
+  var podBaseTotal  = 0;
+  for(var i=0;i<tiers.length;i++){
+    var feesInSlice = (aum>0 && tierAmts[i]>0) ? total*(tierAmts[i]/aum) : 0;
+    var fee = feesInSlice*tiers[i].rate;
+    podFeePerTier.push(fee);
+    podBaseTotal += fee;
+  }
+
+  var bf      = total>0 ? podBaseTotal/total : 0;
+  var ciFrac  = aum>0 ? ciV/aumV : 0;
+  var podCI   = total*ciFrac*0.20;
+  var podTot  = podBaseTotal+podCI;
+  var keeps   = total-podTot;
+  var blended = total>0 ? (podTot/total)*100 : 0;
+  var keepPF  = total>0 ? (keeps/total)*100 : 0;
+
+  g('s-gross').textContent = fmt(total);
+  g('s-keep').textContent  = fmt(keeps);
+  g('b-mgmt').textContent  = fmt(mgmtInc);
+  g('b-perf').textContent  = fmt(perfInc);
+  g('b-gross').textContent = fmt(total);
+  g('b-base').textContent  = fmt(podBaseTotal);
+  g('b-keep').textContent  = fmt(keeps);
+  g('b-blended').textContent = pct(blended);
+  g('lg-keep').textContent = fmt(keeps);
+  g('lg-base').textContent = fmt(podBaseTotal)+' · '+pct(bf*100)+' blended';
+  g('dc-pct').textContent  = Math.round(keepPF)+'%';
+
+  var showCI = ci>0;
+  g('b-ci-row').style.display   = showCI?'flex':'none';
+  g('lg-ci-row').style.display  = showCI?'flex':'none';
+  g('ci-section').style.display = showCI?'block':'none';
+  if(showCI){
+    g('b-ci').textContent   = fmt(podCI);
+    g('lg-ci').textContent  = fmt(podCI)+' · 20% of fees related to cap intro AUM';
+    var ciFeesBase = aum>0 ? total*(ci/aum) : 0;
+    g('ci-t-aum').textContent   = '$'+ci.toFixed(1)+'m';
+    g('ci-t-pct').textContent   = aum>0?pct((ci/aum)*100,0):'-';
+    g('ci-t-fees').textContent  = fmt(podCI);
+    g('ci-t-rate').textContent  = '20% × '+fmt(ciFeesBase)+' fees attributable = '+fmt(podCI);
+  }
+
+  var tbody = g('tier-tbody');
+  tbody.innerHTML='';
+  for(var i=0;i<tiers.length;i++){
+    if(tierAmts[i]<=0) continue;
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+tiers[i].label+'</td>'+
+      '<td>$'+tierAmts[i].toFixed(1)+'m</td>'+
+      '<td><span class="tier-rate-pill">'+pct(tiers[i].rate*100,0)+'</span></td>'+
+      '<td style="text-align:right">'+fmt(podFeePerTier[i])+'</td>';
+    tbody.appendChild(tr);
+  }
+  g('tf-blended').textContent = pct(bf*100)+' ('+fmt(podBaseTotal)+')';
+
+  var segs=[
+    {v:keeps>0?keeps:0,       c:'#7FC59E', l:'Your net fee income'},
+    {v:podBaseTotal>0?podBaseTotal:0, c:'#0C3E67', l:'POD base'},
+    {v:podCI>0?podCI:0,       c:'#95B5B3', l:'Cap intro'}
+  ].filter(function(s){return s.v>0;});
+  if(!segs.length) segs=[{v:1,c:'#ece5de',l:''}];
+
+  if(chart){
+    chart.data.datasets[0].data=segs.map(function(s){return s.v;});
+    chart.data.datasets[0].backgroundColor=segs.map(function(s){return s.c;});
+    chart.data.labels=segs.map(function(s){return s.l;});
+    chart.update();
+  } else {
+    chart=new Chart(g('donut'),{
+      type:'doughnut',
+      data:{labels:segs.map(function(s){return s.l;}),datasets:[{
+        data:segs.map(function(s){return s.v;}),
+        backgroundColor:segs.map(function(s){return s.c;}),
+        borderWidth:0,hoverOffset:4
+      }]},
+      options:{cutout:'68%',plugins:{legend:{display:false},
+        tooltip:{callbacks:{label:function(ctx){return' '+fmt(ctx.raw);}}}},
+        animation:{duration:300}}
+    });
+  }
+}
+
+['aum','ret','mgmt','perf','ci'].forEach(function(id){
+  document.getElementById(id).addEventListener('input',calc);
+});
+calc();
+</script>
+</body>
+</html>

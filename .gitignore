@@ -3,3 +3,5 @@
 _handoff/
 output/
 daily-summary/
+captures/
+.~lock.*#
